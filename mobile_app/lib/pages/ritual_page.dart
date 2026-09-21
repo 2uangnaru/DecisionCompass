@@ -102,19 +102,24 @@ class _RitualPageState extends State<RitualPage>
                   animation: _pulseController,
                   builder: (context, child) {
                     final pulse = reduceMotion ? 0.0 : _pulseController.value;
-                    return Transform.scale(
-                      scale: _locked ? 0.96 : 1 + pulse * 0.022,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Container(
+                    // Outer ring breathes noticeably wider than the core button
+                    // so the pulse reads clearly without the whole control
+                    // feeling like it is jumping in size.
+                    final ringScale = _locked ? 0.96 : 1 + pulse * 0.09;
+                    final coreScale = _locked ? 0.96 : 1 + pulse * 0.022;
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform.scale(
+                          scale: ringScale,
+                          child: Container(
                             width: ringSize,
                             height: ringSize,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
                                 color: CompassColors.blueLight.withValues(
-                                  alpha: 0.2 + pulse * 0.22,
+                                  alpha: 0.2 + pulse * 0.28,
                                 ),
                               ),
                               boxShadow: [
@@ -122,13 +127,16 @@ class _RitualPageState extends State<RitualPage>
                                   color: CompassColors.blueLight.withValues(
                                     alpha: 0.08 + pulse * 0.1,
                                   ),
-                                  blurRadius: 24 + pulse * 18,
-                                  spreadRadius: pulse * 4,
+                                  blurRadius: 24 + pulse * 26,
+                                  spreadRadius: pulse * 6,
                                 ),
                               ],
                             ),
                           ),
-                          Container(
+                        ),
+                        Transform.scale(
+                          scale: coreScale,
+                          child: Container(
                             width: buttonSize,
                             height: buttonSize,
                             decoration: BoxDecoration(
@@ -169,8 +177,8 @@ class _RitualPageState extends State<RitualPage>
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     );
                   },
                 ),
