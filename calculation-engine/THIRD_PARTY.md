@@ -1,0 +1,44 @@
+# Providers and attribution
+
+Direct dependencies are pinned in package.json, transitive dependencies in pnpm-lock.yaml.
+No external service is called during calculation.
+
+| Package | Version | Declared code license | Role |
+|---|---|---|---|
+| lunar-javascript | 1.7.7 | MIT | Civil lunar calendar, day pillars, solar-term tables |
+| iztro | 2.6.1 | MIT | Zi Wei chart and horoscope generators |
+| astronomy-engine | 2.1.19 | MIT | Geocentric astronomical coordinates |
+| moment-timezone | 0.6.4 | MIT | IANA timezone transitions; bundled tzdb 2026d |
+| geo-tz | 8.1.9 | MIT | Coordinate-to-IANA-zone lookup |
+
+Keep upstream license notices when redistributing the packages. Astronomy Engine's
+MIT notice is embedded at the top of its JavaScript source. geo-tz uses LICENSE.md.
+iztro also includes lunar-lite/lunar-typescript and other dependencies; the lockfile
+is part of reproducible delivery and should be preserved.
+
+Timezone geometry is a separate data asset from package code. It comes from
+[timezone-boundary-builder](https://github.com/evansiroky/timezone-boundary-builder),
+whose output is [ODbL](https://github.com/evansiroky/timezone-boundary-builder/blob/master/DATA_LICENSE),
+with contributions from [OpenStreetMap](https://www.openstreetmap.org/copyright).
+Include attribution to OpenStreetMap contributors and the timezone-boundary-builder project
+when distributing or publicly using this geometry. Review the actual data-license terms
+for the chosen packaging/distribution. No geometry was modified in this project.
+
+## Primary technical sources
+
+- [lunar-javascript source and documentation](https://github.com/6tail/lunar-javascript)
+- [iztro configuration and chart documentation](https://iztro.com/en_US/quick-start)
+- [Astronomy Engine JS API](https://github.com/cosinekitty/astronomy/blob/master/source/js/README.md)
+- [geo-tz dataset behavior](https://github.com/evansiroky/node-geo-tz)
+- [Moment Timezone](https://momentjs.com/timezone/)
+
+## Independent calendar/astronomy fixtures
+
+- [HKO 2024 Gregorian–Lunar conversion](https://www.hko.gov.hk/en/gts/time/calendar/pdf/files/2024e.pdf)
+- [HKO 2025 calendar](https://www.hko.gov.hk/en/publica/calendar/files/Cal_2025.pdf)
+- [HKO 2024 almanac: Li Chun](https://my.weather.gov.hk/en/gts/astron2024/files/HKO_almanac_2024.pdf)
+- [HKO 2025 almanac: new Moon](https://www.hko.gov.hk/tc/gts/astron2025/files/HKO_almanac_2025.pdf)
+- [USNO equinoxes and solstices](https://aa.usno.navy.mil/data/Earth_Seasons)
+
+Calendar/astronomy references support physical/calendrical features only. The A/C scores,
+weights, scenario-coverage caps and percentage mapping are editorial product rules.

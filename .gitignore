@@ -1,0 +1,29 @@
+# Tool/IDE caches and profiles — never commit (large, machine-specific, may hold session data)
+.android/
+.appdata/
+.edge-profile*/
+.gradle-cache/
+.pub-cache/
+
+# calculation-engine
+calculation-engine/node_modules/
+calculation-engine/.pnpm-store/
+calculation-engine/artifacts/
+
+# mobile_app (Flutter/Dart)
+mobile_app/.dart_tool/
+mobile_app/.flutter-plugins-dependencies
+mobile_app/build/
+mobile_app/.idea/
+mobile_app/**/doc/api/
+mobile_app/**/ios/Flutter/.last_build_id
+mobile_app/android/app/debug/
+mobile_app/android/app/profile/
+mobile_app/android/app/release/
+mobile_app/.metadata
+
+# Misc
+*.log
+*.class
+*.pyc
+.DS_Store

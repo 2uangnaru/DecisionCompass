@@ -1,0 +1,25 @@
+{
+  "name": "decision-compass-calculation-engine",
+  "version": "3.0.0-mvp",
+  "private": true,
+  "description": "Offline deterministic symbolic reading engine; no AI or generated interpretations.",
+  "type": "module",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "exports": "./src/index.js",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "demo": "node examples/demo.js",
+    "stress": "node scripts/stress.js",
+    "reference-check": "node scripts/check-reference.js",
+    "calculate": "node src/cli.js"
+  },
+  "dependencies": {
+    "astronomy-engine": "2.1.19",
+    "geo-tz": "8.1.9",
+    "iztro": "2.6.1",
+    "lunar-javascript": "1.7.7",
+    "moment-timezone": "0.6.4"
+  }
+}

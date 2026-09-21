@@ -1,0 +1,21 @@
+{
+  "profile": {
+    "birthDate": "1998-06-21",
+    "birthTime": "14:30",
+    "birthCountry": "VN",
+    "traditionalProfile": "male"
+  },
+  "context": {
+    "instantUtc": "2026-09-18T08:30:00Z",
+    "deviceTimezone": "Asia/Ho_Chi_Minh",
+    "location": {
+      "latitude": 10.7769,
+      "longitude": 106.7009,
+      "accuracyMeters": 100,
+      "capturedAtUtc": "2026-09-18T08:29:45Z"
+    }
+  },
+  "period": "evening",
+  "mode": "yes_no",
+  "diagnostics": false
+}
