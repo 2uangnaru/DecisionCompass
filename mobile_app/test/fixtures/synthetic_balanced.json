@@ -1,0 +1,86 @@
+{
+  "engineVersion": "3.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2024b"
+  },
+  "status": "balanced",
+  "percentages": { "ACT": 50, "WAIT": 50 },
+  "winner": null,
+  "dataCoverage": 0.79,
+  "readingKey": "d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef012345a1b2c",
+  "axisScores": { "action": 0.0, "change": 0.0, "selected": 0.0 },
+  "modeScore": 0.0,
+  "modeBasis": "action_timing",
+  "period": "midday",
+  "mode": "act_wait",
+  "category": "general",
+  "context": {
+    "instantMs": 1789709400000,
+    "instantUtc": "2026-09-18T05:30:00.000Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "zoneSource": "device",
+    "offsetSeconds": 25200,
+    "localDate": "2026-09-18",
+    "region": "Asia",
+    "countryCandidates": ["VN"],
+    "locationStatus": "not_provided",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2024b"
+  },
+  "birthData": {
+    "status": "exact",
+    "timeKnown": true,
+    "timezoneSource": "single_zone_birth_country",
+    "timezoneCandidates": ["Asia/Ho_Chi_Minh"]
+  },
+  "warnings": [],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "birthTimezone": null,
+      "traditionalProfile": "male",
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-18T05:30:00.000Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "zoneSource": "device"
+    },
+    "period": "midday",
+    "mode": "act_wait"
+  },
+  "evaluatedAtUtc": "2026-09-18T05:30:00.000Z",
+  "luckyWindows": [
+    {
+      "startUtc": "2026-09-18T06:00:00.000Z",
+      "endUtc": "2026-09-18T07:00:00.000Z",
+      "startLocal": "2026-09-18T13:00:00+07:00",
+      "endLocal": "2026-09-18T14:00:00+07:00",
+      "score": 52,
+      "dataCoverage": 0.79,
+      "hourBranch": 7,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
+      "startUtc": "2026-09-18T05:30:00.000Z",
+      "endUtc": "2026-09-18T06:00:00.000Z",
+      "startLocal": "2026-09-18T12:30:00+07:00",
+      "endLocal": "2026-09-18T13:00:00+07:00",
+      "score": 50,
+      "dataCoverage": 0.79,
+      "hourBranch": 6,
+      "meaning": "symbolic_timing_score_not_probability"
+    }
+  ],
+  "windowStatus": "two_available",
+  "dailyBrief": { "luckyNumber": 4, "colorInspiration": "coral" },
+  "monetizationHandledByApp": true
+}

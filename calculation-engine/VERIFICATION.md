@@ -1,7 +1,49 @@
 # Verification record — 2026-09-19
 
-Runtime used: Node.js 24.19.0, Python 3.14.7, Windows. Engine 3.0.0-mvp.
+Runtime used: Node.js 24.19.0, Python 3.14.7, Windows. Engine 3.0.0-mvp at the time these
+checks were executed.
 Pinned package versions and tzdb are emitted in every result.
+
+> **Metadata migration note (2026-09-21):** `package.json`, this file's header and
+> `README.md` previously lagged `src/core.js`, which already reported `VERSION =
+> '3.1.0-mvp'` / `RULESET = 'civil-midnight-chinese-calendar-symbolic-v4'`. Metadata
+> strings were normalized to `3.1.0-mvp` to match the running code. No score formula,
+> module weight, decision-mode projection or calendar/BaZi/Zi Wei/numerology/astronomy
+> logic was changed, and no executable file was touched — the change is limited to
+> `package.json`, `README.md` and this header. No test or script reads the
+> `package.json` version, so the counts recorded below still describe the current code.
+> **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
+> Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
+
+## Mobile fixture generation run — 2026-09-21
+
+Runtime: Node **v24.19.0** on Windows, engine `3.1.0-mvp`, ruleset
+`civil-midnight-chinese-calendar-symbolic-v4`.
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **47 passed, 0 failed** (exit 0) |
+| `node scripts/mobile-fixtures.mjs --write` | `Wrote 10 fixtures` (exit 0) |
+| `node scripts/mobile-fixtures.mjs --check` | `All 10 engine fixtures match current engine output.` (**exit 0**) |
+
+What this establishes:
+
+- The ten engine-reproducible fixtures in `mobile_app/test/fixtures/` are now **real
+  engine golden output**, written verbatim by the engine (including `segments` and the
+  emitted `tzdb` 2026d), not hand-authored numbers.
+- `--check` re-ran every scenario and compared it to the committed file, and validated
+  each fixture's projection with the engine's own `MODES` / `percent` / `scoreForMode`,
+  so `modeScore`, `axisScores.selected`, the percentage split and the winner are
+  consistent with the shipped formulas rather than with a re-implementation.
+- `mobile_app/test/fixtures/synthetic_balanced.json` and `synthetic_insufficient_data.json`
+  are **not** generated and remain clearly marked parser-only synthetic fixtures; `--check`
+  still validates their projections.
+- No calculation formula, module weight or decision-mode projection was modified to reach
+  these results. One Flutter test assumption was corrected instead (it had assumed two
+  fixtures shared axis scores, which is only true for hand-built data).
+
+Downstream on the same day: `flutter analyze` clean, `flutter test` 74/74,
+`dart format --set-exit-if-changed lib/data test/data` exit 0.
 
 ## Executed checks
 
@@ -50,7 +92,14 @@ From `calculation-engine`:
 node --test test/*.test.js
 node scripts/stress.js
 node scripts/check-reference.js
+node scripts/mobile-fixtures.mjs --check
 ```
+
+`scripts/mobile-fixtures.mjs` regenerates (`--write`) or verifies (`--check`) the Flutter
+DTO fixtures in `mobile_app/test/fixtures/` against live engine output, and validates each
+fixture's mode projection with the engine's own `MODES`/`percent`/`scoreForMode`. It was
+run on 2026-09-21: `--write` produced 10 fixtures and `--check` exited 0. See
+`mobile_app/test/fixtures/README.md` for per-fixture provenance.
 
 From the workspace root:
 

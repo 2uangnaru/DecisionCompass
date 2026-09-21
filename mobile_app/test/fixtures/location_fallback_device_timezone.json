@@ -1,0 +1,241 @@
+{
+  "engineVersion": "3.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2026d"
+  },
+  "mode": "stay_go",
+  "period": "midday",
+  "category": "general",
+  "context": {
+    "instantMs": 1789641000000,
+    "instantUtc": "2026-09-17T10:30:00.000Z",
+    "timezone": "Europe/Paris",
+    "zoneSource": "device",
+    "offsetSeconds": 7200,
+    "localDate": "2026-09-17",
+    "region": "Europe",
+    "countryCandidates": [
+      "FR",
+      "MC"
+    ],
+    "locationStatus": "stale_fix",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2026d"
+  },
+  "birthData": {
+    "status": "exact",
+    "timeKnown": true,
+    "timezoneSource": "birth_country_zone_candidates",
+    "timezoneCandidates": [
+      "Asia/Bangkok",
+      "Asia/Ho_Chi_Minh"
+    ]
+  },
+  "warnings": [],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "birthTimezone": null,
+      "traditionalProfile": "male",
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-17T10:30:00.000Z",
+      "timezone": "Europe/Paris",
+      "zoneSource": "device"
+    },
+    "period": "midday",
+    "mode": "stay_go"
+  },
+  "status": "ready",
+  "winner": "GO",
+  "percentages": {
+    "STAY": 48,
+    "GO": 52
+  },
+  "dataCoverage": 0.9666666667,
+  "modeScore": -0.0611678711,
+  "modeBasis": "change_alignment",
+  "meaning": "symbolic_alignment_not_success_probability",
+  "readingKey": "eedefd201f7633c4c29adb6b224b1abf082f22954ff405bf91e835a8691c14de",
+  "axisScores": {
+    "action": 0.0871800005,
+    "change": 0.0611678711,
+    "selected": -0.0611678711
+  },
+  "evaluatedAtUtc": "2026-09-17T10:00:00.000Z",
+  "luckyWindows": [
+    {
+      "startUtc": "2026-09-17T10:30:00.000Z",
+      "endUtc": "2026-09-17T11:00:00.000Z",
+      "startLocal": "2026-09-17T12:30:00+02:00",
+      "endLocal": "2026-09-17T13:00:00+02:00",
+      "score": 48,
+      "dataCoverage": 0.9666666667,
+      "hourBranch": 6,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
+      "startUtc": "2026-09-17T11:00:00.000Z",
+      "endUtc": "2026-09-17T12:00:00.000Z",
+      "startLocal": "2026-09-17T13:00:00+02:00",
+      "endLocal": "2026-09-17T14:00:00+02:00",
+      "score": 48,
+      "dataCoverage": 0.9666666667,
+      "hourBranch": 7,
+      "meaning": "symbolic_timing_score_not_probability"
+    }
+  ],
+  "windowStatus": "two_available",
+  "dailyBrief": {
+    "luckyNumber": 9,
+    "colorInspiration": "sage"
+  },
+  "segments": [
+    {
+      "startUtc": "2026-09-17T10:00:00.000Z",
+      "endUtc": "2026-09-17T11:00:00.000Z",
+      "includedFromUtc": "2026-09-17T10:30:00.000Z",
+      "durationSeconds": 1800,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0696176471,
+          "c": -0.0442205882,
+          "contribution": {
+            "a": 0.01315,
+            "c": -0.0083527778
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0625885417,
+          "c": -0.01699375,
+          "contribution": {
+            "a": 0.0139085648,
+            "c": -0.0037763889
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.43,
+          "c": -0.3,
+          "contribution": {
+            "a": 0.0477777778,
+            "c": -0.0333333333
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0064809056,
+          "c": 0.0153359183,
+          "contribution": {
+            "a": 0.0014402013,
+            "c": 0.0034079819
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.12,
+          "c": 0.6,
+          "contribution": {
+            "a": 0.02,
+            "c": 0.1
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.2993684717,
+          "c": 0.0745885653,
+          "contribution": {
+            "a": 0.0166315818,
+            "c": 0.0041438092
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-17T11:00:00.000Z",
+      "endUtc": "2026-09-17T12:00:00.000Z",
+      "includedFromUtc": "2026-09-17T11:00:00.000Z",
+      "durationSeconds": 3600,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0773823529,
+          "c": -0.0413088235,
+          "contribution": {
+            "a": 0.0146166667,
+            "c": -0.0078027778
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0833697917,
+          "c": -0.02574375,
+          "contribution": {
+            "a": 0.0185266204,
+            "c": -0.0057208333
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.03,
+          "c": -0.3,
+          "contribution": {
+            "a": 0.0033333333,
+            "c": -0.0333333333
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0052837958,
+          "c": 0.0157774205,
+          "contribution": {
+            "a": 0.0011741768,
+            "c": 0.0035060934
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.12,
+          "c": 0.6,
+          "contribution": {
+            "a": 0.02,
+            "c": 0.1
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.2999725341,
+          "c": 0.0730442194,
+          "contribution": {
+            "a": 0.0166651408,
+            "c": 0.0040580122
+          }
+        }
+      }
+    }
+  ],
+  "monetizationHandledByApp": true
+}

@@ -1,0 +1,62 @@
+{
+  "engineVersion": "3.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2024b"
+  },
+  "status": "insufficient_data",
+  "percentages": null,
+  "winner": null,
+  "readingKey": "e5f60718293a4b5c6d7e8f9012345678901234567890abcdef012345a1b2c3d",
+  "axisScores": { "action": 0.0, "change": 0.0, "selected": 0.0 },
+  "period": "now",
+  "mode": "advance_retreat",
+  "category": "general",
+  "context": {
+    "instantMs": 1789720200000,
+    "instantUtc": "2026-09-18T08:30:00.000Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "zoneSource": "device",
+    "offsetSeconds": 25200,
+    "localDate": "2026-09-18",
+    "region": "Asia",
+    "countryCandidates": [],
+    "locationStatus": "not_provided",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2024b"
+  },
+  "birthData": {
+    "status": "birth_timezone_unresolved",
+    "timeKnown": false,
+    "timezoneSource": "birth_country_zone_candidates",
+    "timezoneCandidates": []
+  },
+  "warnings": ["birth_timezone_unresolved", "unknown_birth_time", "unspecified_traditional_convention"],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": null,
+      "birthCountry": null,
+      "birthTimezone": null,
+      "traditionalProfile": null,
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-18T08:30:00.000Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "zoneSource": "device"
+    },
+    "period": "now",
+    "mode": "advance_retreat"
+  },
+  "evaluatedAtUtc": "2026-09-18T08:30:00.000Z",
+  "luckyWindows": [],
+  "windowStatus": "not_applicable",
+  "dailyBrief": { "luckyNumber": 1, "colorInspiration": "pearl" },
+  "monetizationHandledByApp": true
+}

@@ -1,8 +1,10 @@
 # Decision Compass — Calculation Engine
 
-Engine MVP 3.0.0, triển khai 19/09/2026. Nhận hồ sơ người dùng và thời điểm hiện tại,
-tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline trên Node.js,
-không AI, không API trả phí, không sinh văn bản luận giải, không có random trong đường tính kết quả.
+Engine MVP 3.1.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v4`, triển khai
+19/09/2026, metadata đồng bộ 21/09/2026 (không đổi công thức tính). Nhận hồ sơ người dùng
+và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
+trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
+trong đường tính kết quả.
 
 ## Chạy ngay
 
