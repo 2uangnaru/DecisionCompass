@@ -1,0 +1,11 @@
+Use case: stylized-concept
+Asset type: master production concept sheet for 12 circular mobile-app zodiac user avatars
+Primary request: Create a cohesive set of all twelve Western zodiac avatars in one strict 4-column by 3-row grid, in canonical order left-to-right and top-to-bottom: Aries ram head, Taurus bull head, Gemini mirrored twin profiles, Cancer crab, Leo lion head, Virgo elegant maiden profile holding a single wheat stem, Libra balanced scales, Scorpio scorpion, Sagittarius bow and arrow, Capricorn sea-goat, Aquarius ceremonial vessel pouring two streams of water, Pisces two fish circling each other.
+Scene/backdrop: genuinely transparent canvas outside the medallions, with generous equal spacing between every medallion; no shared background panel
+Style/medium: premium vector-like 2.5D celestial observatory icon system, modern mystical, calm, trustworthy, elegant geometric linework, not cartoonish, not photorealistic
+Composition/framing: every sign centered inside an identical circular medallion; exactly equal diameter, equal padding, equal line weight, identical camera angle and lighting; each must remain clearly recognizable at 64 px
+Lighting/mood: restrained inner glow and subtle orbital halo, refined and mysterious, no dramatic flare
+Color palette: deep midnight navy #070B16 and raised navy #0D1424 inside each medallion, muted antique gold #D8B66A linework, subtle violet #786FE8 and ocean blue #2477C9 accents, soft ivory highlights #F4F7FC
+Materials/textures: matte dark enamel, brushed antique metal, very subtle glass depth
+Constraints: exactly twelve separate circular medallions; preserve canonical order; no text, no letters, no words, no zodiac glyph characters, no numbers, no watermark; leave transparent gutters wide enough for clean cropping; all symbols must have the same visual complexity and silhouette weight
+Avoid: fantasy character portraits, human faces except the abstract Gemini twins and stylized Virgo profile, neon rainbow colors, harsh red, busy star fields, ornate frames, tarot cards, logos, gradients outside medallions, cropped circles, overlapping medallions

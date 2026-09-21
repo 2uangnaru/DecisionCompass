@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "style": "celestial_observatory",
+  "avatars": {
+    "aries": "assets/zodiac/zodiac_01_aries.png",
+    "taurus": "assets/zodiac/zodiac_02_taurus.png",
+    "gemini": "assets/zodiac/zodiac_03_gemini.png",
+    "cancer": "assets/zodiac/zodiac_04_cancer.png",
+    "leo": "assets/zodiac/zodiac_05_leo.png",
+    "virgo": "assets/zodiac/zodiac_06_virgo.png",
+    "libra": "assets/zodiac/zodiac_07_libra.png",
+    "scorpio": "assets/zodiac/zodiac_08_scorpio.png",
+    "sagittarius": "assets/zodiac/zodiac_09_sagittarius.png",
+    "capricorn": "assets/zodiac/zodiac_10_capricorn.png",
+    "aquarius": "assets/zodiac/zodiac_11_aquarius.png",
+    "pisces": "assets/zodiac/zodiac_12_pisces.png"
+  }
+}

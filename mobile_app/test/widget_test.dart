@@ -1,6 +1,7 @@
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/mock_reading_engine.dart';
 import 'package:decision_compass/models.dart';
+import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -10,6 +11,26 @@ void main() {
     expect(zodiacForDate(DateTime(2000, 6, 21)), ZodiacSign.cancer);
     expect(zodiacForDate(DateTime(2000, 12, 22)), ZodiacSign.capricorn);
     expect(zodiacForDate(DateTime(2000, 2, 19)), ZodiacSign.pisces);
+    expect(ZodiacSign.aries.assetPath, 'assets/zodiac/zodiac_01_aries.png');
+  });
+
+  testWidgets('zodiac avatar renders the artwork for the selected sign', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(body: ZodiacAvatar(sign: ZodiacSign.capricorn)),
+      ),
+    );
+
+    expect(find.byKey(const Key('zodiac_avatar_capricorn')), findsOneWidget);
+    final image = tester.widget<Image>(
+      find.byKey(const Key('zodiac_avatar_capricorn')),
+    );
+    expect(
+      (image.image as AssetImage).assetName,
+      'assets/zodiac/zodiac_10_capricorn.png',
+    );
   });
 
   test('mock result always produces complementary percentages', () {

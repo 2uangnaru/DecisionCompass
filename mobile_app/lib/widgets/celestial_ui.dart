@@ -103,32 +103,64 @@ class ZodiacAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const RadialGradient(
-          colors: [Color(0xFF223A62), Color(0xFF11192B)],
+    return Semantics(
+      image: true,
+      label: '${sign.label} zodiac avatar',
+      child: AnimatedSwitcher(
+        duration: const Duration(milliseconds: 420),
+        switchInCurve: Curves.easeOutBack,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (child, animation) => FadeTransition(
+          opacity: animation,
+          child: ScaleTransition(
+            scale: Tween<double>(begin: 0.88, end: 1).animate(animation),
+            child: child,
+          ),
         ),
-        border: Border.all(color: CompassColors.gold.withValues(alpha: 0.72)),
-        boxShadow: glow
-            ? [
-                BoxShadow(
-                  color: CompassColors.blueLight.withValues(alpha: 0.28),
-                  blurRadius: 32,
-                  spreadRadius: 5,
+        child: Container(
+          key: ValueKey(sign),
+          width: size,
+          height: size,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            boxShadow: glow
+                ? [
+                    BoxShadow(
+                      color: CompassColors.blueLight.withValues(alpha: 0.3),
+                      blurRadius: size * 0.38,
+                      spreadRadius: size * 0.05,
+                    ),
+                  ]
+                : null,
+          ),
+          child: Image.asset(
+            sign.assetPath,
+            key: Key('zodiac_avatar_${sign.name}'),
+            width: size,
+            height: size,
+            fit: BoxFit.contain,
+            filterQuality: FilterQuality.high,
+            gaplessPlayback: true,
+            errorBuilder: (context, error, stackTrace) => DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: const Color(0xFF11192B),
+                border: Border.all(
+                  color: CompassColors.gold.withValues(alpha: 0.72),
                 ),
-              ]
-            : null,
-      ),
-      alignment: Alignment.center,
-      child: Text(
-        sign.glyph,
-        style: TextStyle(
-          color: CompassColors.gold,
-          fontSize: size * 0.46,
-          height: 1,
+              ),
+              child: Center(
+                child: Text(
+                  sign.glyph,
+                  style: TextStyle(
+                    color: CompassColors.gold,
+                    fontSize: size * 0.46,
+                    height: 1,
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

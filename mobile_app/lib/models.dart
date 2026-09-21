@@ -36,23 +36,24 @@ enum DecisionMode {
 }
 
 enum ZodiacSign {
-  aries('♈', 'Aries'),
-  taurus('♉', 'Taurus'),
-  gemini('♊', 'Gemini'),
-  cancer('♋', 'Cancer'),
-  leo('♌', 'Leo'),
-  virgo('♍', 'Virgo'),
-  libra('♎', 'Libra'),
-  scorpio('♏', 'Scorpio'),
-  sagittarius('♐', 'Sagittarius'),
-  capricorn('♑', 'Capricorn'),
-  aquarius('♒', 'Aquarius'),
-  pisces('♓', 'Pisces');
+  aries('♈', 'Aries', 'assets/zodiac/zodiac_01_aries.png'),
+  taurus('♉', 'Taurus', 'assets/zodiac/zodiac_02_taurus.png'),
+  gemini('♊', 'Gemini', 'assets/zodiac/zodiac_03_gemini.png'),
+  cancer('♋', 'Cancer', 'assets/zodiac/zodiac_04_cancer.png'),
+  leo('♌', 'Leo', 'assets/zodiac/zodiac_05_leo.png'),
+  virgo('♍', 'Virgo', 'assets/zodiac/zodiac_06_virgo.png'),
+  libra('♎', 'Libra', 'assets/zodiac/zodiac_07_libra.png'),
+  scorpio('♏', 'Scorpio', 'assets/zodiac/zodiac_08_scorpio.png'),
+  sagittarius('♐', 'Sagittarius', 'assets/zodiac/zodiac_09_sagittarius.png'),
+  capricorn('♑', 'Capricorn', 'assets/zodiac/zodiac_10_capricorn.png'),
+  aquarius('♒', 'Aquarius', 'assets/zodiac/zodiac_11_aquarius.png'),
+  pisces('♓', 'Pisces', 'assets/zodiac/zodiac_12_pisces.png');
 
-  const ZodiacSign(this.glyph, this.label);
+  const ZodiacSign(this.glyph, this.label, this.assetPath);
 
   final String glyph;
   final String label;
+  final String assetPath;
 }
 
 ZodiacSign zodiacForDate(DateTime date) {
