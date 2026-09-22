@@ -7,6 +7,17 @@ import {skyAt} from '../src/astronomy.js';
 const starIds=Object.fromEntries('紫微:ziwei 天机:tianji 太阳:taiyang 武曲:wuqu 天同:tiantong 廉贞:lianzhen 天府:tianfu 太阴:taiyin 贪狼:tanlang 巨门:jumen 天相:tianxiang 天梁:tianliang 七杀:qisha 破军:pojun 左辅:zuofu 右弼:youbi 文昌:wenchang 文曲:wenqu 天魁:tiankui 天钺:tianyue 擎羊:qingyang 陀罗:tuoluo 火星:huoxing 铃星:lingxing 地空:dikong 地劫:dijie'.split(' ').map(x=>x.split(':')));
 const brightness={'庙':'miao','旺':'wang','得':'de','利':'li','平':'ping','不':'bu','陷':'xian'};
 const transforms={'禄':'lu','权':'quan','科':'khoa','忌':'ky'};
+// Since the category-aware ruleset the natal layer reports weighted target
+// palaces instead of one index. These cases all run the default `general`
+// category, which resolves to the single life palace at weight 1 — exactly
+// what the legacy Python reference models — so it collapses back to an index.
+// Any other shape would mean the reference is no longer comparable.
+const layerTarget=target=>{
+  if(typeof target==='number')return target;
+  assert.equal(target.length,1,'general must resolve to exactly one target palace');
+  assert.equal(target[0].weight,1,'general target palace must carry the whole weight');
+  return target[0].index;
+};
 const cases=[],results=[];
 for(const [date,clock,zone,gender] of [['2000-08-16','03:00','Asia/Shanghai','male'],['1986-05-29','11:30','Asia/Ho_Chi_Minh','female'],['1998-06-21','14:30','America/New_York','male']]){
   const engine=createCalculator({birthDate:date,birthTime:clock,birthTimezone:zone,traditionalProfile:gender});
@@ -16,7 +27,7 @@ for(const [date,clock,zone,gender] of [['2000-08-16','03:00','Asia/Shanghai','ma
     const mods=r.segments[0].modules,cal=mods.T.diagnostics.calendar,z=mods.Z.diagnostics;
     const sky=skyAt(Date.parse(r.evaluatedAtUtc));
     const stars=chart.palaces.flatMap((p,i)=>[...p.majorStars,...p.minorStars,...p.adjectiveStars].filter(s=>s.name in starIds).map(s=>[starIds[s.name],i,brightness[s.brightness]??null]));
-    const layers=Object.fromEntries(Object.entries(z.layers).map(([name,l])=>[name==='decadal'?'decade':name,{target:l.target,events:l.events.map(e=>({kind:transforms[e.kind],palace:e.palace}))}]));
+    const layers=Object.fromEntries(Object.entries(z.layers).map(([name,l])=>[name==='decadal'?'decade':name,{target:layerTarget(l.target),events:l.events.map(e=>({kind:transforms[e.kind],palace:e.palace}))}]));
     cases.push({birth_date:date,date:cal.local.date,pillars:inspected.baZi.pillars.map(p=>p?[p.stem,p.branch]:null),
       timing:Object.fromEntries(Object.entries(mods.B.diagnostics.layers).map(([name,l])=>[name,[l.pillar.stem,l.pillar.branch]])),
       stars,target:z.lifePalace,layers,almanac:[mods.T.diagnostics.dayGod.auspicious,mods.T.diagnostics.hourGod.auspicious,mods.T.diagnostics.officer],
