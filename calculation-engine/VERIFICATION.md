@@ -45,6 +45,43 @@ What this establishes:
 Downstream on the same day: `flutter analyze` clean, `flutter test` 74/74,
 `dart format --set-exit-if-changed lib/data test/data` exit 0.
 
+## Local API run — 2026-09-21
+
+Runtime: Node **v24.19.0** on Windows. `src/server.js` adds a local HTTP API around
+the existing engine; it introduces no dependency and does not touch any calculation
+path.
+
+| Command | Result |
+|---|---|
+| `node --test test/server.test.js` | **21 passed, 0 failed** (exit 0) |
+| `node --test test/*.test.js` | **68 passed, 0 failed** (exit 0) |
+| `node scripts/mobile-fixtures.mjs --check` | exit 0, fixtures unchanged |
+
+The **47** recorded elsewhere in this file is the engine-only suite, which is still
+47 tests and still passes; the full-glob command now also picks up the 21 API tests,
+hence 68. The API tests cover route/method/content-type handling, the 64 KiB body
+limit, `diagnostics: true` rejection, deterministic `readingKey` across repeated
+requests, and an assertion that no error response contains birth data, coordinates,
+`inputSnapshot`, `readingKey` or a stack trace.
+
+Two hardening findings were closed on the same day and are covered by tests:
+
+- **Loopback binding is enforced, not merely defaulted.** `startApiServer` rejects
+  every host except `127.0.0.1` (`0.0.0.0`, `::`, `::1`, `localhost`, LAN addresses,
+  empty and null) *before* `createServer`/`listen`, so no non-loopback listener can
+  exist; the test asserts the sentinel `HOST_MUST_BE_LOOPBACK` rather than an OS
+  bind error, which is what proves the short-circuit. A CLI boot was also checked
+  with `netstat`: one LISTENING socket, on `127.0.0.1` only.
+- **Oversized bodies always get JSON 413.** The server no longer destroys the socket
+  above an internal threshold. It stops buffering at 64 KiB, discards what it held,
+  drains the rest and answers 413 with `no-store` and `nosniff`. Verified at 65 KiB,
+  512 KiB, 1 MiB and 2 MiB, with a valid reading served after each.
+
+Not established here: this is a loopback-only development server with no TLS, auth,
+rate limiting, request timeouts or deployment hardening, and none of that has been
+tested. Draining an oversized upload costs time on an abusive client — a request
+timeout is the correct control and is deliberately deferred.
+
 ## Executed checks
 
 | Check | Result | What it establishes |

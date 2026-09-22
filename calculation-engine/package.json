@@ -10,6 +10,8 @@
   "engines": { "node": ">=22" },
   "scripts": {
     "test": "node --test test/*.test.js",
+    "api": "node src/server.js",
+    "api:test": "node --test test/server.test.js",
     "demo": "node examples/demo.js",
     "stress": "node scripts/stress.js",
     "reference-check": "node scripts/check-reference.js",

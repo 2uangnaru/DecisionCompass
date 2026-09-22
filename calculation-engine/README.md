@@ -126,6 +126,86 @@ Luồng input → kết quả đã chạy được. Tuy nhiên **đây chưa ph�
 4. Không có Ascendant/houses/true solar time vì input MVP không yêu cầu tọa độ sinh. Không có Kỳ Môn, Kinh Dịch hay điểm nhật/nguyệt thực.
 5. Kiểm thử xác nhận phần mềm, lịch và một số mốc thiên văn; không xác nhận khả năng dự đoán ngoài đời.
 
+## API cục bộ (chỉ dùng cho phát triển)
+
+`src/server.js` bọc engine thành HTTP API tối giản, chỉ dùng `node:http`, không
+thêm framework hay dependency mới. Chạy tại thư mục `calculation-engine`:
+
+```sh
+npm run api            # hoặc: node src/server.js
+PORT=9000 npm run api  # cổng mặc định 8787; PORT phải là số nguyên 1–65535
+```
+
+Server **chỉ bind 127.0.0.1**, không bao giờ 0.0.0.0. Không có cách nào cấu hình
+địa chỉ khác: `startApiServer({ host })` **từ chối mọi host khác** `127.0.0.1` —
+kể cả `0.0.0.0`, `::`, `::1`, `localhost`, IP LAN hay chuỗi rỗng — và từ chối
+*trước khi* tạo socket, nên không bao giờ tồn tại một server nghe ngoài loopback.
+CLI thì hard-code loopback, không đọc host từ đâu cả. `PORT` sai định dạng thì
+thoát ngay với mã 1.
+
+Kiểm tra sức khỏe:
+
+```sh
+curl http://127.0.0.1:8787/health
+```
+
+```json
+{
+  "service": "decision-compass-calculation-api",
+  "status": "ok",
+  "engineVersion": "3.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4"
+}
+```
+
+Xin một lượt đọc — body theo đúng `ReadingInput` trong `src/index.d.ts`:
+
+```sh
+curl -X POST http://127.0.0.1:8787/v1/readings \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "traditionalProfile": "male"
+    },
+    "context": {
+      "instantUtc": "2026-09-18T08:30:00Z",
+      "deviceTimezone": "Asia/Ho_Chi_Minh"
+    },
+    "mode": "yes_no",
+    "period": "evening"
+  }'
+```
+
+Trả về nguyên văn `ReadingResult` của engine (giữ `readingKey`, `context`,
+`warnings`, `percentages`, `modeScore`, `dailyBrief`, `luckyWindows`). API không
+thêm giá trị mặc định, không random, không sinh văn bản luận giải.
+
+Mã lỗi: 400 JSON hỏng hoặc body rỗng · 404 sai đường dẫn · 405 sai method ·
+413 body quá 64 KiB · 415 sai `Content-Type` · 422 input engine không hợp lệ
+hoặc có `diagnostics: true` · 500 lỗi nội bộ. Mọi lỗi trả về dạng
+`{"error":{"code","message"}}` cố định, **không** kèm thông điệp ngoại lệ của
+engine, stack trace hay nội dung request.
+
+Body quá cỡ: **mọi** request vượt 64 KiB đều nhận JSON 413 kèm đủ
+`Cache-Control: no-store` và `X-Content-Type-Options: nosniff`, bất kể lớn tới
+đâu (65 KiB, 1 MiB hay 10 MiB đều như nhau). Server không bao giờ đóng socket
+chỉ vì body lớn: nó ngừng giữ dữ liệu ngay khi vượt ngưỡng, xả nốt phần còn lại
+rồi mới trả lời, nên client luôn đọc được 413 thay vì gặp connection reset.
+Bộ nhớ giữ tối đa 64 KiB mỗi request.
+
+Quyền riêng tư: API không ghi log body, hồ sơ sinh, tọa độ, `readingKey` hay
+timezone. `diagnostics: true` bị từ chối thẳng để nội tại từng module không rời
+khỏi tiến trình engine.
+
+> **Chỉ dành cho máy phát triển.** Hiện chưa có HTTPS, xác thực, rate limiting,
+> quota, CORS hay audit log. Trước khi đưa ra ngoài internet bắt buộc phải bổ
+> sung TLS, xác thực, rate limiting và các bước làm cứng khi triển khai.
+
+Test riêng cho API: `npm run api:test`. Lệnh `npm test` đã bao gồm sẵn.
+
 ## Tích hợp mobile
 
 Gói hiện tại là **Node.js SDK chạy trên máy phát triển hoặc backend**, chưa phải plugin C#/Unity,
