@@ -254,6 +254,14 @@ class _LoadingPageState extends State<LoadingPage> {
                   ),
                 ),
               ),
+              const SizedBox(height: 4),
+              Text(
+                key: const Key('loading_period_label'),
+                widget.period.whenPhrase,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(color: CompassColors.muted, letterSpacing: 1.1),
+              ),
               const Spacer(),
               OrbitVisual(
                 size: compact ? 220 : 300,

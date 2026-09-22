@@ -26,7 +26,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   DecisionMode _mode = DecisionMode.yesNo;
-  TimePeriod _period = TimePeriod.now;
 
   /// Overall is the default; the typed enum travels the whole flow, never a
   /// raw wire string.
@@ -37,7 +36,9 @@ class _HomePageState extends State<HomePage> {
       MaterialPageRoute<void>(
         builder: (_) => RitualPage(
           mode: _mode,
-          period: _period,
+          // When is chosen on the ritual screen, next to the moment the user
+          // actually taps Reveal. NOW is where that selector opens.
+          period: TimePeriod.now,
           category: _category,
           profile: widget.profile,
           dependencies: widget.dependencies,
@@ -74,13 +75,6 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 14),
             _modeGrid(),
             const SizedBox(height: 28),
-            Text(
-              'When are you considering it?',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 14),
-            _timeSelector(),
-            const SizedBox(height: 28),
             FilledButton.icon(
               key: const Key('find_direction'),
               onPressed: _beginReading,
@@ -90,7 +84,7 @@ class _HomePageState extends State<HomePage> {
             const SizedBox(height: 12),
             Center(
               child: Text(
-                '${categoryLabel(_category)}  •  ${_mode.label}  •  ${_period.label.toUpperCase()}',
+                '${categoryLabel(_category)}  •  ${_mode.label}',
                 style: Theme.of(context).textTheme.labelSmall
                     ?.copyWith(color: CompassColors.muted, letterSpacing: 0.8),
               ),
@@ -303,35 +297,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ],
-    );
-  }
-
-  Widget _timeSelector() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Row(
-        children: TimePeriod.values.map((period) {
-          final selected = period == _period;
-          return Padding(
-            padding: const EdgeInsets.only(right: 8),
-            child: ChoiceChip(
-              key: Key('period_${period.name}'),
-              label: Text(period.label),
-              selected: selected,
-              showCheckmark: false,
-              onSelected: (_) => setState(() => _period = period),
-              selectedColor: const Color(0xFF244C78),
-              side: BorderSide(
-                color: selected ? CompassColors.blueLight : CompassColors.line,
-              ),
-              labelStyle: TextStyle(
-                color: selected ? Colors.white : CompassColors.secondary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          );
-        }).toList(),
-      ),
     );
   }
 }

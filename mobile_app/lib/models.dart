@@ -75,14 +75,38 @@ ZodiacSign zodiacForDate(DateTime date) {
 }
 
 enum TimePeriod {
-  now('NOW'),
-  morning('Morning'),
-  midday('Midday'),
-  afternoon('Afternoon'),
-  evening('Evening');
+  now('NOW', 'Now', null),
+  morning('Morning', 'This Morning', (6, 12)),
+  midday('Midday', 'Midday', (12, 14)),
+  afternoon('Afternoon', 'This Afternoon', (14, 18)),
+  evening('Evening', 'This Evening', (18, 24));
 
-  const TimePeriod(this.label);
+  const TimePeriod(this.label, this.whenPhrase, this.localHours);
+
+  /// Chip/selector label.
   final String label;
+
+  /// Sentence form, for copy such as "Reveal my direction for this evening".
+  final String whenPhrase;
+
+  /// Local-hour bounds `[start, end)`, mirroring the engine's `PERIODS` table
+  /// in `calculation-engine/src/time.js`. NOW has none: it is the instant of
+  /// the Reveal tap, so it can never be over.
+  final (int, int)? localHours;
+
+  /// Whether this period is already fully behind the user at [localNow].
+  ///
+  /// The engine stays authoritative — it answers `period_elapsed` on its own
+  /// earthly-branch segments, which can run slightly past the boundary below —
+  /// so this only mutes a period that is over by its own definition and never
+  /// disables one that is still running.
+  bool hasElapsedAt(DateTime localNow) {
+    final hours = localHours;
+    if (hours == null) return false;
+    // `hour` is 0–23, so a period ending at 24 never reads as elapsed and
+    // evening stays selectable until midnight.
+    return localNow.hour >= hours.$2;
+  }
 }
 
 class LuckyWindow {

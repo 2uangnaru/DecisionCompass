@@ -9,6 +9,7 @@ class ReadingDependencies {
     required this.repository,
     required this.contextProvider,
     this.nowUtc = _systemNowUtc,
+    this.nowLocal = _systemNowLocal,
   });
 
   final ReadingRepository repository;
@@ -17,5 +18,12 @@ class ReadingDependencies {
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;
 
+  /// The device's wall clock, used only to mute time periods that are already
+  /// over. It is separate from [nowUtc] so tests can pin an hour of the day
+  /// without depending on the host machine's timezone.
+  final DateTime Function() nowLocal;
+
   static DateTime _systemNowUtc() => DateTime.now().toUtc();
+
+  static DateTime _systemNowLocal() => DateTime.now();
 }
