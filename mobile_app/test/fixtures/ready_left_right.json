@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -52,7 +52,8 @@
       "zoneSource": "device"
     },
     "period": "afternoon",
-    "mode": "left_right"
+    "mode": "left_right",
+    "category": "general"
   },
   "status": "ready",
   "winner": "RIGHT",
@@ -64,7 +65,7 @@
   "modeScore": -0.0419795769,
   "modeBasis": "symbolic_polarity",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "058e889b346f1931071d59c431eea44c4d1d937d32252e3e1a65f39753a42e44",
+  "readingKey": "078f3d1c07b8b059dc86adbe240ae0744c4a4634d1b267213176fe2e14587706",
   "axisScores": {
     "action": 0.1376736842,
     "change": 0.1813066735,
@@ -110,6 +111,7 @@
           "coverage": 0.85,
           "a": 0.0346764706,
           "c": 0.0081911765,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.00655,
             "c": 0.0015472222
@@ -120,6 +122,7 @@
           "coverage": 1,
           "a": 0.0445197917,
           "c": -0.00710625,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.009893287,
             "c": -0.0015791667
@@ -130,6 +133,7 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0072222222,
             "c": 0.0666666667
@@ -140,6 +144,7 @@
           "coverage": 1,
           "a": -0.0525031711,
           "c": 0.0415065612,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.0116673713,
             "c": 0.0092236803
@@ -150,6 +155,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -160,6 +166,7 @@
           "coverage": 1,
           "a": 0.3083417601,
           "c": 0.0417343022,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0171300978,
             "c": 0.0023185723
@@ -178,6 +185,7 @@
           "coverage": 0.85,
           "a": 0.0341470588,
           "c": 0.0106617647,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.00645,
             "c": 0.0020138889
@@ -188,6 +196,7 @@
           "coverage": 1,
           "a": 0.0250510417,
           "c": -0.00098125,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0055668981,
             "c": -0.0002180556
@@ -198,6 +207,7 @@
           "coverage": 1,
           "a": 0.465,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0516666667,
             "c": 0.0666666667
@@ -208,6 +218,7 @@
           "coverage": 1,
           "a": -0.0631779999,
           "c": 0.0466839711,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.0140395555,
             "c": 0.0103742158
@@ -218,6 +229,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -228,6 +240,7 @@
           "coverage": 1,
           "a": 0.3085747128,
           "c": 0.040154118,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0171430396,
             "c": 0.0022307843
@@ -246,6 +259,7 @@
           "coverage": 0.85,
           "a": 0.0355588235,
           "c": 0.0441911765,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0067166667,
             "c": 0.0083472222
@@ -256,6 +270,7 @@
           "coverage": 1,
           "a": 0.0423322917,
           "c": -0.00929375,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0094071759,
             "c": -0.0020652778
@@ -266,6 +281,7 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0072222222,
             "c": 0.0666666667
@@ -276,6 +292,7 @@
           "coverage": 1,
           "a": -0.0455656584,
           "c": 0.0375578016,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.0101257019,
             "c": 0.0083461781
@@ -286,6 +303,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -296,6 +314,7 @@
           "coverage": 1,
           "a": 0.3089876878,
           "c": 0.0369914452,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0171659827,
             "c": 0.0020550803

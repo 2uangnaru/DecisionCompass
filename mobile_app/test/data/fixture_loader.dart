@@ -20,6 +20,12 @@ const fixtureFiles = <String>[
   'period_elapsed.json',
   'unknown_birth_time_warnings.json',
   'location_fallback_device_timezone.json',
+  'ready_love_evening.json',
+  'ready_career_now.json',
+  'ready_money_afternoon.json',
+  'ready_study_morning.json',
+  'ready_friends_midday.json',
+  'ready_other_now.json',
   'synthetic_balanced.json',
   'synthetic_insufficient_data.json',
 ];

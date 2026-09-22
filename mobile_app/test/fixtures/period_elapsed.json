@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -52,7 +52,8 @@
       "zoneSource": "device"
     },
     "period": "morning",
-    "mode": "stay_go"
+    "mode": "stay_go",
+    "category": "general"
   },
   "status": "period_elapsed",
   "winner": null,

@@ -48,8 +48,9 @@ test('health reports the engine version and ruleset from the engine itself', asy
   assert.deepEqual(await response.json(), {
     service: SERVICE, status: 'ok', engineVersion: VERSION, rulesetVersion: RULESET,
   });
-  assert.equal(VERSION, '3.1.0-mvp');
-  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v4');
+  // Bumped with the category-aware fusion rules.
+  assert.equal(VERSION, '3.2.0-mvp');
+  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v5');
 });
 
 test('a YES/NO NOW request returns a real engine reading', async () => {

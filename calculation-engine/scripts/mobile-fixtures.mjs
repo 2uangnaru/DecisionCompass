@@ -102,6 +102,47 @@ const SCENARIOS = [
     mode: 'stay_go', period: 'midday',
     expect: { status: 'ready', zoneSource: 'device', locationStatus: 'stale_fix' },
   },
+  // One representative fixture per non-general category, so the app can be
+  // tested against real category-aware engine output rather than a relabelled
+  // general reading.
+  {
+    file: 'ready_love_evening.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'yes_no', period: 'evening', category: 'love',
+    expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
+  },
+  {
+    file: 'ready_career_now.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'act_wait', period: 'now', category: 'career',
+    expect: { status: 'ready', windowStatus: 'not_applicable', luckyWindows: 0 },
+  },
+  {
+    file: 'ready_money_afternoon.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T07:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'advance_retreat', period: 'afternoon', category: 'money',
+    expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
+  },
+  {
+    file: 'ready_study_morning.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-17T23:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'forward_backward', period: 'morning', category: 'study',
+    expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
+  },
+  {
+    file: 'ready_friends_midday.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T05:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'stay_go', period: 'midday', category: 'friends',
+    expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
+  },
+  {
+    // `other` reuses the general formula; the fixture exists to prove it keeps
+    // its own category value and snapshot identity.
+    file: 'ready_other_now.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'left_right', period: 'now', category: 'other',
+    expect: { status: 'ready', windowStatus: 'not_applicable', luckyWindows: 0 },
+  },
 ];
 
 function projectionProblems(result, label) {
@@ -141,6 +182,7 @@ function expectationProblems(result, scenario) {
     }
   };
   check('status', result.status, want.status);
+  check('category', result.category, scenario.category ?? 'general');
   check('windowStatus', result.windowStatus, want.windowStatus);
   check('luckyWindows.length', result.luckyWindows.length, want.luckyWindows);
   check('context.zoneSource', result.context.zoneSource, want.zoneSource);
@@ -154,8 +196,8 @@ function expectationProblems(result, scenario) {
 }
 
 function generate(scenario) {
-  const { profile, context, mode, period } = scenario;
-  return createCalculator(profile).calculate({ context, mode, period });
+  const { profile, context, mode, period, category } = scenario;
+  return createCalculator(profile).calculate({ context, mode, period, category });
 }
 
 function main() {

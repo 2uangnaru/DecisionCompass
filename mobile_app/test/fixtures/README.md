@@ -16,14 +16,15 @@ It validates every fixture's projection using the engine's own
 `MODES` / `percent` / `scoreForMode`, so the formulas are never re-implemented
 outside `src/core.js`.
 
-## Status — generated 2026-09-21
+## Status — regenerated 2026-09-22
 
-The ten engine-reproducible fixtures below are **real engine golden output**,
-written verbatim by `scripts/mobile-fixtures.mjs --write` on Node **v24.19.0**
-against engine `3.1.0-mvp` / ruleset
-`civil-midnight-chinese-calendar-symbolic-v4`. `--check` then exited **0**
-("All 10 engine fixtures match current engine output"), and the engine suite
-passed **47/47** on the same runtime.
+The sixteen engine-reproducible fixtures below are **real engine golden
+output**, written verbatim by `scripts/mobile-fixtures.mjs --write` on Node
+**v24.19.0** against engine `3.2.0-mvp` / ruleset
+`civil-midnight-chinese-calendar-symbolic-v5` (the category-aware fusion
+bump). `--check` then exited **0**
+("All 16 engine fixtures match current engine output"), and the engine suite
+passed **87/87** on the same runtime.
 
 Because they are verbatim, they carry fields the DTO deliberately ignores —
 `segments` (per-module diagnostics) and the top-level `meaning`, which
@@ -48,8 +49,22 @@ files. If a value looks wrong, fix the scenario in the generator and re-run
 | `period_elapsed.json` | engine | elapsed morning: `consumeUnlock:false`, no score/window/day fields at all |
 | `unknown_birth_time_warnings.json` | engine | unknown birth hour, `uncertain` + `unknown_birth_time` warnings, reduced coverage |
 | `location_fallback_device_timezone.json` | engine | a >15-minute-old fix is rejected (`stale_fix`) and the reading falls back to the device timezone |
+| `ready_love_evening.json` | engine | `category: love` — Zi Wei 夫妻/福德 targets, Venus/Moon-weighted Western profile |
+| `ready_career_now.json` | engine | `category: career`, ACT/WAIT, NOW |
+| `ready_money_afternoon.json` | engine | `category: money`, ADVANCE/RETREAT |
+| `ready_study_morning.json` | engine | `category: study`, FORWARD/BACKWARD |
+| `ready_friends_midday.json` | engine | `category: friends` — 仆役/交友 alias resolution |
+| `ready_other_now.json` | engine | `category: other` — general formula, distinct snapshot identity |
 | `synthetic_balanced.json` | **synthetic — parser only** | `balanced` (exactly 50/50) |
 | `synthetic_insufficient_data.json` | **synthetic — parser only** | `insufficient_data`, null percentages/winner |
+
+The two `synthetic_*` files are hand-maintained, so their version strings and
+`inputSnapshot.category` are kept aligned with the contract by hand; they are
+**not** engine output and the generator never writes them.
+
+Every engine fixture now carries `category` at the top level and inside
+`inputSnapshot`, and each module in `segments[].modules` reports the `weight`
+the selected category profile gave it.
 
 "engine" above means the file is byte-for-byte what the engine emitted for that
 scenario, reproducible with `--write` and verified by `--check`.

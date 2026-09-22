@@ -9,9 +9,9 @@
     "momentTimezone": "0.6.4",
     "tzdb": "2026d"
   },
-  "mode": "forward_backward",
+  "mode": "advance_retreat",
   "period": "afternoon",
-  "category": "general",
+  "category": "money",
   "context": {
     "instantMs": 1789716600000,
     "instantUtc": "2026-09-18T07:30:00.000Z",
@@ -28,22 +28,19 @@
     "tzdbVersion": "2026d"
   },
   "birthData": {
-    "status": "uncertain",
-    "timeKnown": false,
+    "status": "exact",
+    "timeKnown": true,
     "timezoneSource": "birth_country_zone_candidates",
     "timezoneCandidates": [
       "Asia/Bangkok",
       "Asia/Ho_Chi_Minh"
     ]
   },
-  "warnings": [
-    "uncertain",
-    "unknown_birth_time"
-  ],
+  "warnings": [],
   "inputSnapshot": {
     "profile": {
       "birthDate": "1998-06-21",
-      "birthTime": null,
+      "birthTime": "14:30",
       "birthCountry": "VN",
       "birthTimezone": null,
       "traditionalProfile": "male",
@@ -55,24 +52,24 @@
       "zoneSource": "device"
     },
     "period": "afternoon",
-    "mode": "forward_backward",
-    "category": "general"
+    "mode": "advance_retreat",
+    "category": "money"
   },
   "status": "ready",
-  "winner": "FORWARD",
+  "winner": "ADVANCE",
   "percentages": {
-    "FORWARD": 57,
-    "BACKWARD": 43
+    "ADVANCE": 56,
+    "RETREAT": 44
   },
-  "dataCoverage": 0.6544444444,
-  "modeScore": 0.162538075,
-  "modeBasis": "temporal_momentum",
+  "dataCoverage": 0.9625,
+  "modeScore": 0.1447358991,
+  "modeBasis": "tactical_momentum",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "f2012d96a5ffa0d684e57c664abdf8daf02d64708b629723f52099d0b932e3ae",
+  "readingKey": "33dc07a89f8c6a3e43141f3c9a58ec002caf321b5b7fa16df77c3f4c551091e4",
   "axisScores": {
-    "action": 0.1368459952,
-    "change": 0.1711021016,
-    "selected": 0.162538075
+    "action": 0.1267536369,
+    "change": 0.1667142196,
+    "selected": 0.1447358991
   },
   "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
   "luckyWindows": [
@@ -81,8 +78,8 @@
       "endUtc": "2026-09-18T10:00:00.000Z",
       "startLocal": "2026-09-18T15:00:00+07:00",
       "endLocal": "2026-09-18T17:00:00+07:00",
-      "score": 57,
-      "dataCoverage": 0.6544444444,
+      "score": 56,
+      "dataCoverage": 0.9625,
       "hourBranch": 8,
       "meaning": "symbolic_timing_score_not_probability"
     },
@@ -91,8 +88,8 @@
       "endUtc": "2026-09-18T08:00:00.000Z",
       "startLocal": "2026-09-18T14:30:00+07:00",
       "endLocal": "2026-09-18T15:00:00+07:00",
-      "score": 56,
-      "dataCoverage": 0.6544444444,
+      "score": 55,
+      "dataCoverage": 0.9625,
       "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"
     }
@@ -111,24 +108,24 @@
       "modules": {
         "B": {
           "status": "partial",
-          "coverage": 0.595,
-          "a": 0.0125490196,
-          "c": -0.0000490196,
-          "weight": 0.2222222222,
+          "coverage": 0.85,
+          "a": 0.0346764706,
+          "c": 0.0081911765,
+          "weight": 0.25,
           "contribution": {
-            "a": 0.0016592593,
-            "c": -0.0000064815
+            "a": 0.00736875,
+            "c": 0.001740625
           }
         },
         "Z": {
-          "status": "scenario_analysis",
-          "coverage": 0.75,
-          "a": 0,
-          "c": 0,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0586921875,
+          "c": -0.03648125,
+          "weight": 0.28,
           "contribution": {
-            "a": 0,
-            "c": 0
+            "a": 0.0164338125,
+            "c": -0.01021475
           }
         },
         "T": {
@@ -136,21 +133,21 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
-          "weight": 0.1111111111,
+          "weight": 0.17,
           "contribution": {
-            "a": 0.0072222222,
-            "c": 0.0666666667
+            "a": 0.01105,
+            "c": 0.102
           }
         },
         "W": {
-          "status": "partial",
-          "coverage": 0.1,
-          "a": -0.0601929852,
-          "c": 0.0300964926,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0731059741,
+          "c": 0.052147503,
+          "weight": 0.15,
           "contribution": {
-            "a": -0.0013376219,
-            "c": 0.0006688109
+            "a": -0.0109658961,
+            "c": 0.0078221254
           }
         },
         "N": {
@@ -158,10 +155,10 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
-          "weight": 0.1666666667,
+          "weight": 0.1,
           "contribution": {
-            "a": 0.0866666667,
-            "c": 0.1
+            "a": 0.052,
+            "c": 0.06
           }
         },
         "U": {
@@ -169,10 +166,10 @@
           "coverage": 1,
           "a": 0.3083417601,
           "c": 0.0417343022,
-          "weight": 0.0555555556,
+          "weight": 0.05,
           "contribution": {
-            "a": 0.0171300978,
-            "c": 0.0023185723
+            "a": 0.015417088,
+            "c": 0.0020867151
           }
         }
       }
@@ -185,24 +182,24 @@
       "modules": {
         "B": {
           "status": "partial",
-          "coverage": 0.595,
-          "a": 0.0099019608,
-          "c": 0.0018137255,
-          "weight": 0.2222222222,
+          "coverage": 0.85,
+          "a": 0.0341470588,
+          "c": 0.0106617647,
+          "weight": 0.25,
           "contribution": {
-            "a": 0.0013092593,
-            "c": 0.0002398148
+            "a": 0.00725625,
+            "c": 0.002265625
           }
         },
         "Z": {
-          "status": "scenario_analysis",
-          "coverage": 0.75,
-          "a": 0,
-          "c": 0,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0392234375,
+          "c": -0.03035625,
+          "weight": 0.28,
           "contribution": {
-            "a": 0,
-            "c": 0
+            "a": 0.0109825625,
+            "c": -0.00849975
           }
         },
         "T": {
@@ -210,21 +207,21 @@
           "coverage": 1,
           "a": 0.465,
           "c": 0.6,
-          "weight": 0.1111111111,
+          "weight": 0.17,
           "contribution": {
-            "a": 0.0516666667,
-            "c": 0.0666666667
+            "a": 0.07905,
+            "c": 0.102
           }
         },
         "W": {
-          "status": "partial",
-          "coverage": 0.1,
-          "a": -0.0612650515,
-          "c": 0.0306325258,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0742340965,
+          "c": 0.0529004957,
+          "weight": 0.15,
           "contribution": {
-            "a": -0.0013614456,
-            "c": 0.0006807228
+            "a": -0.0111351145,
+            "c": 0.0079350744
           }
         },
         "N": {
@@ -232,10 +229,10 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
-          "weight": 0.1666666667,
+          "weight": 0.1,
           "contribution": {
-            "a": 0.0866666667,
-            "c": 0.1
+            "a": 0.052,
+            "c": 0.06
           }
         },
         "U": {
@@ -243,10 +240,10 @@
           "coverage": 1,
           "a": 0.3085747128,
           "c": 0.040154118,
-          "weight": 0.0555555556,
+          "weight": 0.05,
           "contribution": {
-            "a": 0.0171430396,
-            "c": 0.0022307843
+            "a": 0.0154287356,
+            "c": 0.0020077059
           }
         }
       }
@@ -259,24 +256,24 @@
       "modules": {
         "B": {
           "status": "partial",
-          "coverage": 0.595,
-          "a": 0.0129411765,
-          "c": 0.0375980392,
-          "weight": 0.2222222222,
+          "coverage": 0.85,
+          "a": 0.0355588235,
+          "c": 0.0441911765,
+          "weight": 0.25,
           "contribution": {
-            "a": 0.0017111111,
-            "c": 0.0049712963
+            "a": 0.00755625,
+            "c": 0.009390625
           }
         },
         "Z": {
-          "status": "scenario_analysis",
-          "coverage": 0.75,
-          "a": 0.0065125,
-          "c": 0,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0565046875,
+          "c": -0.03866875,
+          "weight": 0.28,
           "contribution": {
-            "a": 0.0010854167,
-            "c": 0
+            "a": 0.0158213125,
+            "c": -0.01082725
           }
         },
         "T": {
@@ -284,21 +281,21 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
-          "weight": 0.1111111111,
+          "weight": 0.17,
           "contribution": {
-            "a": 0.0072222222,
-            "c": 0.0666666667
+            "a": 0.01105,
+            "c": 0.102
           }
         },
         "W": {
-          "status": "partial",
-          "coverage": 0.1,
-          "a": -0.0634095666,
-          "c": 0.0317047833,
-          "weight": 0.2222222222,
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0737064151,
+          "c": 0.0530143534,
+          "weight": 0.15,
           "contribution": {
-            "a": -0.0014091015,
-            "c": 0.0007045507
+            "a": -0.0110559623,
+            "c": 0.007952153
           }
         },
         "N": {
@@ -306,10 +303,10 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
-          "weight": 0.1666666667,
+          "weight": 0.1,
           "contribution": {
-            "a": 0.0866666667,
-            "c": 0.1
+            "a": 0.052,
+            "c": 0.06
           }
         },
         "U": {
@@ -317,10 +314,10 @@
           "coverage": 1,
           "a": 0.3089876878,
           "c": 0.0369914452,
-          "weight": 0.0555555556,
+          "weight": 0.05,
           "contribution": {
-            "a": 0.0171659827,
-            "c": 0.0020550803
+            "a": 0.0154493844,
+            "c": 0.0018495723
           }
         }
       }

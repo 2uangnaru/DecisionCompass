@@ -66,7 +66,12 @@ timeout. Engine không tự bật GPS hoặc xin quyền từ điện thoại.
 | Time windows | NOW, Morning/Midday/Afternoon/Evening, Top 2, hết buổi, còn một khung, DST fold/gap |
 | Audit | Version, input snapshot, module đóng góp, reading key, kết quả có thể tái lập |
 
-Phong thủy không gian đã bỏ khỏi engine mới. Category cố định General.
+Phong thủy không gian đã bỏ khỏi engine mới. Category nhận bảy giá trị:
+`general`, `love`, `career`, `money`, `study`, `friends`, `other` — category
+quyết định trọng số module, cung đích Tử Vi và bảng nhấn hành tinh Western
+trước khi chiếu theo decision mode; giá trị lạ bị từ chối bằng
+`INVALID_CATEGORY`. `other` dùng lại công thức của `general` như một fallback
+trung thực nhưng vẫn là category riêng với reading snapshot riêng.
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
 FORWARD/BACKWARD và LEFT/RIGHT. FORWARD/BACKWARD dùng temporal momentum; LEFT/RIGHT
 dùng symbolic polarity (LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.

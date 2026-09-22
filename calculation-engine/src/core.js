@@ -1,6 +1,41 @@
-export const VERSION = '3.1.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v4';
+export const VERSION = '3.2.0-mvp';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v5';
 export const WEIGHTS = Object.freeze({ B: 2 / 9, Z: 2 / 9, T: 1 / 9, W: 2 / 9, N: 1 / 6, U: 1 / 18 });
+
+export const CATEGORIES = Object.freeze(['general', 'love', 'career', 'money', 'study', 'friends', 'other']);
+
+// Category changes how module evidence is fused, never the decision-mode
+// projections below. `other` deliberately reuses the general formula: an honest
+// fallback beats inventing a profile for "something else".
+// These are symbolic editorial emphases, not validated predictive weights.
+export const CATEGORY_WEIGHTS = Object.freeze({
+  general: WEIGHTS,
+  other: WEIGHTS,
+  love: Object.freeze({ B: .20, Z: .30, T: .08, W: .27, N: .10, U: .05 }),
+  career: Object.freeze({ B: .27, Z: .25, T: .15, W: .18, N: .10, U: .05 }),
+  money: Object.freeze({ B: .25, Z: .28, T: .17, W: .15, N: .10, U: .05 }),
+  study: Object.freeze({ B: .22, Z: .18, T: .13, W: .22, N: .20, U: .05 }),
+  friends: Object.freeze({ B: .18, Z: .25, T: .10, W: .27, N: .15, U: .05 }),
+});
+
+// Validated once at load: a malformed profile must fail the process, not skew a
+// reading silently.
+for (const category of CATEGORIES) {
+  if (!Object.hasOwn(CATEGORY_WEIGHTS, category)) throw new Error(`CATEGORY_PROFILE_MISSING:${category}`);
+  const profile = CATEGORY_WEIGHTS[category], names = Object.keys(profile);
+  if (names.length !== Object.keys(WEIGHTS).length || names.some(name => !Object.hasOwn(WEIGHTS, name))) {
+    throw new Error(`CATEGORY_PROFILE_MODULES:${category}`);
+  }
+  if (!Object.values(profile).every(w => Number.isFinite(w) && w >= 0)) throw new Error(`CATEGORY_PROFILE_VALUE:${category}`);
+  if (Math.abs(Object.values(profile).reduce((s, w) => s + w, 0) - 1) > 1e-9) {
+    throw new Error(`CATEGORY_PROFILE_NOT_NORMALIZED:${category}`);
+  }
+}
+
+export function weightsFor(category = 'general') {
+  if (!Object.hasOwn(CATEGORY_WEIGHTS, category)) throw new Error('INVALID_CATEGORY');
+  return CATEGORY_WEIGHTS[category];
+}
 export const MODES = Object.freeze({
   yes_no: Object.freeze({ labels: ['YES', 'NO'], a: 1, c: 0, sign: 1, basis: 'overall_acceptance' }),
   act_wait: Object.freeze({ labels: ['ACT', 'WAIT'], a: .85, c: .15, sign: 1, basis: 'action_timing' }),
@@ -23,14 +58,16 @@ export function blend(parts) {
   if (!q) return evidence();
   return evidence(...['a', 'c'].map(k => clamp(parts.reduce((s, [w, e]) => s + w * e.coverage * e[k], 0) / q)), q);
 }
-// At the final boundary, coverage is applied exactly once; no missing-module redistribution.
-export function combine(modules) {
+// At the final boundary, coverage is applied exactly once; no missing-module
+// redistribution, whichever category profile is in force.
+export function combine(modules, category = 'general') {
+  const weights = weightsFor(category);
   const out = { a: 0, c: 0, coverage: 0 };
   for (const [name, entry] of Object.entries(modules)) {
-    if (!Object.hasOwn(WEIGHTS, name)) throw new Error(`UNKNOWN_MODULE:${name}`);
+    if (!Object.hasOwn(weights, name)) throw new Error(`UNKNOWN_MODULE:${name}`);
     const e = entry.evidence ?? entry;
     evidence(e.a, e.c, e.coverage);
-    const w = WEIGHTS[name] * e.coverage;
+    const w = weights[name] * e.coverage;
     out.a += w * e.a; out.c += w * e.c; out.coverage += w;
   }
   return evidence(clamp(out.a), clamp(out.c), Math.min(1, out.coverage));

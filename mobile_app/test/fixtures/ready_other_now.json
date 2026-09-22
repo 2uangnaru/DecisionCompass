@@ -9,12 +9,12 @@
     "momentTimezone": "0.6.4",
     "tzdb": "2026d"
   },
-  "mode": "yes_no",
-  "period": "evening",
-  "category": "general",
+  "mode": "left_right",
+  "period": "now",
+  "category": "other",
   "context": {
-    "instantMs": 1789750200000,
-    "instantUtc": "2026-09-18T16:50:00.000Z",
+    "instantMs": 1789720200000,
+    "instantUtc": "2026-09-18T08:30:00.000Z",
     "timezone": "Asia/Ho_Chi_Minh",
     "zoneSource": "device",
     "offsetSeconds": 25200,
@@ -47,86 +47,86 @@
       "revision": 1
     },
     "context": {
-      "instantUtc": "2026-09-18T16:50:00.000Z",
+      "instantUtc": "2026-09-18T08:30:00.000Z",
       "timezone": "Asia/Ho_Chi_Minh",
       "zoneSource": "device"
     },
-    "period": "evening",
-    "mode": "yes_no",
-    "category": "general"
+    "period": "now",
+    "mode": "left_right",
+    "category": "other"
   },
   "status": "ready",
-  "winner": "YES",
+  "winner": "RIGHT",
   "percentages": {
-    "YES": 55,
-    "NO": 45
+    "LEFT": 48,
+    "RIGHT": 52
   },
   "dataCoverage": 0.9666666667,
-  "modeScore": 0.1298561985,
-  "modeBasis": "overall_acceptance",
+  "modeScore": -0.0530973508,
+  "modeBasis": "symbolic_polarity",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "09fa2afb66f23e6a1ccadbec8c4048b1d60c5a5cd0587265a0f5f297e169b41d",
+  "readingKey": "7bb1a2da7ac6fac00c489e7b55cc86b27b37e9b02079a1b039123b47ce9d6f8a",
   "axisScores": {
-    "action": 0.1298561985,
-    "change": 0.1756111612,
-    "selected": 0.1298561985
+    "action": 0.1534537155,
+    "change": 0.1810675001,
+    "selected": -0.0530973508
   },
-  "evaluatedAtUtc": "2026-09-18T16:00:00.000Z",
+  "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
   "luckyWindows": [],
-  "windowStatus": "no_15_minute_window",
+  "windowStatus": "not_applicable",
   "dailyBrief": {
     "luckyNumber": 1,
     "colorInspiration": "sage"
   },
   "segments": [
     {
-      "startUtc": "2026-09-18T16:00:00.000Z",
-      "endUtc": "2026-09-18T17:00:00.000Z",
-      "includedFromUtc": "2026-09-18T16:50:00.000Z",
-      "durationSeconds": 600,
+      "startUtc": "2026-09-18T08:00:00.000Z",
+      "endUtc": "2026-09-18T10:00:00.000Z",
+      "includedFromUtc": "2026-09-18T08:00:00.000Z",
+      "durationSeconds": 7200,
       "modules": {
         "B": {
           "status": "partial",
           "coverage": 0.85,
-          "a": 0.0482647059,
-          "c": 0.0353676471,
+          "a": 0.0341470588,
+          "c": 0.0106617647,
           "weight": 0.2222222222,
           "contribution": {
-            "a": 0.0091166667,
-            "c": 0.0066805556
+            "a": 0.00645,
+            "c": 0.0020138889
           }
         },
         "Z": {
           "status": "calculated",
           "coverage": 1,
-          "a": 0.0434260417,
-          "c": -0.01016875,
+          "a": 0.0250510417,
+          "c": -0.00098125,
           "weight": 0.2222222222,
           "contribution": {
-            "a": 0.0096502315,
-            "c": -0.0022597222
+            "a": 0.0055668981,
+            "c": -0.0002180556
           }
         },
         "T": {
           "status": "calculated",
           "coverage": 1,
-          "a": 0.065,
+          "a": 0.465,
           "c": 0.6,
           "weight": 0.1111111111,
           "contribution": {
-            "a": 0.0072222222,
+            "a": 0.0516666667,
             "c": 0.0666666667
           }
         },
         "W": {
           "status": "calculated",
           "coverage": 1,
-          "a": -0.0000490331,
-          "c": 0.0134837774,
+          "a": -0.0631779999,
+          "c": 0.0466839711,
           "weight": 0.2222222222,
           "contribution": {
-            "a": -0.0000108962,
-            "c": 0.002996395
+            "a": -0.0140395555,
+            "c": 0.0103742158
           }
         },
         "N": {
@@ -143,12 +143,12 @@
         "U": {
           "status": "calculated",
           "coverage": 1,
-          "a": 0.3098035392,
-          "c": 0.0274907927,
+          "a": 0.3085747128,
+          "c": 0.040154118,
           "weight": 0.0555555556,
           "contribution": {
-            "a": 0.0172113077,
-            "c": 0.0015272663
+            "a": 0.0171430396,
+            "c": 0.0022307843
           }
         }
       }

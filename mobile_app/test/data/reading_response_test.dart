@@ -203,17 +203,29 @@ void main() {
     });
   });
 
-  group('category is restricted to the single legal MVP value', () {
-    test('every fixture parses to ReadingCategory.general', () {
+  group('category', () {
+    test('every fixture parses to a legal category and echoes it back', () {
       for (final entry in fixtures.entries) {
         final response = ReadingResponse.fromJson(entry.value);
-        expect(response.category, ReadingCategory.general, reason: entry.key);
-        expect(response.toJson()['category'], 'general');
+        expect(
+          ReadingCategory.values,
+          contains(response.category),
+          reason: entry.key,
+        );
+        expect(response.toJson()['category'], response.category.wireValue);
+        expect(response.category.wireValue, entry.value['category']);
       }
     });
 
-    test('any other category throws a typed exception', () {
-      for (final illegal in ['medical', 'finance', 'General', '']) {
+    test('every category appears in at least one fixture', () {
+      final seen = fixtures.values
+          .map((json) => ReadingCategory.fromWire(json['category'] as String))
+          .toSet();
+      expect(seen, equals(ReadingCategory.values.toSet()));
+    });
+
+    test('an unknown category throws a typed exception', () {
+      for (final illegal in ['medical', 'legal', 'General', '']) {
         final broken = JsonMap.from(fixtures['ready_yes_no_now.json']!)
           ..['category'] = illegal;
         expect(

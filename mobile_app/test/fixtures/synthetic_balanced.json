@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -10,11 +10,18 @@
     "tzdb": "2024b"
   },
   "status": "balanced",
-  "percentages": { "ACT": 50, "WAIT": 50 },
+  "percentages": {
+    "ACT": 50,
+    "WAIT": 50
+  },
   "winner": null,
   "dataCoverage": 0.79,
   "readingKey": "d4e5f60718293a4b5c6d7e8f9012345678901234567890abcdef012345a1b2c",
-  "axisScores": { "action": 0.0, "change": 0.0, "selected": 0.0 },
+  "axisScores": {
+    "action": 0.0,
+    "change": 0.0,
+    "selected": 0.0
+  },
   "modeScore": 0.0,
   "modeBasis": "action_timing",
   "period": "midday",
@@ -28,7 +35,9 @@
     "offsetSeconds": 25200,
     "localDate": "2026-09-18",
     "region": "Asia",
-    "countryCandidates": ["VN"],
+    "countryCandidates": [
+      "VN"
+    ],
     "locationStatus": "not_provided",
     "locationZoneCandidates": [],
     "tzdbVersion": "2024b"
@@ -37,7 +46,9 @@
     "status": "exact",
     "timeKnown": true,
     "timezoneSource": "single_zone_birth_country",
-    "timezoneCandidates": ["Asia/Ho_Chi_Minh"]
+    "timezoneCandidates": [
+      "Asia/Ho_Chi_Minh"
+    ]
   },
   "warnings": [],
   "inputSnapshot": {
@@ -55,7 +66,8 @@
       "zoneSource": "device"
     },
     "period": "midday",
-    "mode": "act_wait"
+    "mode": "act_wait",
+    "category": "general"
   },
   "evaluatedAtUtc": "2026-09-18T05:30:00.000Z",
   "luckyWindows": [
@@ -81,6 +93,9 @@
     }
   ],
   "windowStatus": "two_available",
-  "dailyBrief": { "luckyNumber": 4, "colorInspiration": "coral" },
+  "dailyBrief": {
+    "luckyNumber": 4,
+    "colorInspiration": "coral"
+  },
   "monetizationHandledByApp": true
 }

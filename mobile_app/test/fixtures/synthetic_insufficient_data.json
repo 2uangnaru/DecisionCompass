@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -13,7 +13,11 @@
   "percentages": null,
   "winner": null,
   "readingKey": "e5f60718293a4b5c6d7e8f9012345678901234567890abcdef012345a1b2c3d",
-  "axisScores": { "action": 0.0, "change": 0.0, "selected": 0.0 },
+  "axisScores": {
+    "action": 0.0,
+    "change": 0.0,
+    "selected": 0.0
+  },
   "period": "now",
   "mode": "advance_retreat",
   "category": "general",
@@ -36,7 +40,11 @@
     "timezoneSource": "birth_country_zone_candidates",
     "timezoneCandidates": []
   },
-  "warnings": ["birth_timezone_unresolved", "unknown_birth_time", "unspecified_traditional_convention"],
+  "warnings": [
+    "birth_timezone_unresolved",
+    "unknown_birth_time",
+    "unspecified_traditional_convention"
+  ],
   "inputSnapshot": {
     "profile": {
       "birthDate": "1998-06-21",
@@ -52,11 +60,15 @@
       "zoneSource": "device"
     },
     "period": "now",
-    "mode": "advance_retreat"
+    "mode": "advance_retreat",
+    "category": "general"
   },
   "evaluatedAtUtc": "2026-09-18T08:30:00.000Z",
   "luckyWindows": [],
   "windowStatus": "not_applicable",
-  "dailyBrief": { "luckyNumber": 1, "colorInspiration": "pearl" },
+  "dailyBrief": {
+    "luckyNumber": 1,
+    "colorInspiration": "pearl"
+  },
   "monetizationHandledByApp": true
 }

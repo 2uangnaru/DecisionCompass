@@ -87,6 +87,22 @@ void main() {
       );
     });
 
+    test('every category round-trips through the wire', () {
+      for (final category in ReadingCategory.values) {
+        final request = ReadingRequest(
+          profile: const BirthProfile(birthDate: '1998-06-21'),
+          context: const CurrentContext(
+            instantUtc: '2026-09-18T08:30:00.000Z',
+            deviceTimezone: 'Asia/Ho_Chi_Minh',
+          ),
+          category: category,
+        );
+        final json = request.toJson();
+        expect(json['category'], category.wireValue);
+        expect(ReadingRequest.fromJson(json).category, category);
+      }
+    });
+
     test('category defaults to general and is always serialized', () {
       const request = ReadingRequest(
         profile: BirthProfile(birthDate: '1998-06-21'),
@@ -100,8 +116,8 @@ void main() {
       expect(request.toJson()['category'], 'general');
     });
 
-    test('any category other than general throws a typed exception', () {
-      for (final illegal in ['medical', 'finance', 'General', '']) {
+    test('an unknown category throws a typed exception', () {
+      for (final illegal in ['medical', 'legal', 'General', 'LOVE', '']) {
         final json = {
           'profile': {'birthDate': '1998-06-21'},
           'context': {
@@ -181,8 +197,16 @@ void main() {
       expect(ZoneSource.values.map((s) => s.wireValue), ['device', 'location']);
     });
 
-    test('ReadingCategory has exactly one legal value', () {
-      expect(ReadingCategory.values.map((c) => c.wireValue), ['general']);
+    test('ReadingCategory', () {
+      expect(ReadingCategory.values.map((c) => c.wireValue), [
+        'general',
+        'love',
+        'career',
+        'money',
+        'study',
+        'friends',
+        'other',
+      ]);
     });
 
     test('TraditionalProfile', () {

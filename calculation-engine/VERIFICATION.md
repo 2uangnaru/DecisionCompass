@@ -82,6 +82,41 @@ rate limiting, request timeouts or deployment hardening, and none of that has be
 tested. Draining an oversized upload costs time on an abusive client — a request
 timeout is the correct control and is deliberately deferred.
 
+## Category-aware fusion — 2026-09-22
+
+Engine bumped to **3.2.0-mvp**, ruleset **civil-midnight-chinese-calendar-symbolic-v5**,
+because the fusion rules changed: `category` now selects module weights, Zi Wei
+target palaces and the Western body-emphasis profile.
+
+| Command | Result |
+|---|---|
+| `node --test test/category.test.js` | **19 passed, 0 failed** |
+| `node --test test/*.test.js` | **87 passed, 0 failed** |
+| `node scripts/mobile-fixtures.mjs --write` | 16 fixtures written |
+| `node scripts/mobile-fixtures.mjs --check` | exit 0 |
+
+What this establishes, and what it does not:
+
+- All seven wire categories (`general`, `love`, `career`, `money`, `study`,
+  `friends`, `other`) are accepted; anything else raises `INVALID_CATEGORY`, and
+  an omitted category still defaults to `general`.
+- Category reaches the **calculation**, not just the label: on the reference
+  case the Zi Wei axis moves from `+0.0251` (general) to `-0.0219` (love) and
+  `+0.0392` (money), and at least four distinct mode scores appear across the
+  seven categories.
+- `category` is part of the evaluation cache key, `readingKey` and
+  `inputSnapshot`. `general` and `other` share the formula by design and produce
+  the same score with **different** reading keys; no random noise was added to
+  force them apart.
+- `N` (numerology), `U` (cosmic) and `T` (almanac) remain category-neutral
+  internally, and `B` (BaZi) keeps its verified evidence — category emphasis for
+  `B` comes only from the documented fusion weight.
+- The seven decision-mode coefficients are asserted unchanged, and the Python
+  reference comparison still passes, so `general` behaviour is preserved.
+- The category weights, Zi Wei palace targets and Western body profiles are
+  **symbolic editorial emphases**. Nothing here establishes predictive validity,
+  and no automatic Yong Shen or gender-based spouse/wealth rule was introduced.
+
 ## Executed checks
 
 | Check | Result | What it establishes |

@@ -5,6 +5,28 @@ import { HOUR } from './time.js';
 const BODIES = { sun:'Sun', moon:'Moon', mercury:'Mercury', venus:'Venus', mars:'Mars', jupiter:'Jupiter', saturn:'Saturn' };
 const TRANSIT = {moon:.35,sun:.15,mercury:.1,venus:.1,mars:.1,jupiter:.1,saturn:.1};
 const NATAL = {sun:.3,moon:.3,mercury:.1,venus:.1,mars:.1,jupiter:.05,saturn:.05};
+
+// Body emphasis per category, applied to BOTH sides of the transit/natal grid.
+// `general` and `other` keep the verified default TRANSIT/NATAL pair rather than
+// a category profile. Symbolic editorial weights — not validated astrology.
+export const WESTERN_CATEGORY_PROFILES = Object.freeze({
+  love: Object.freeze({sun:.10,moon:.25,mercury:.15,venus:.30,mars:.08,jupiter:.07,saturn:.05}),
+  career: Object.freeze({sun:.20,moon:.05,mercury:.15,venus:.05,mars:.15,jupiter:.15,saturn:.25}),
+  money: Object.freeze({sun:.10,moon:.05,mercury:.15,venus:.20,mars:.05,jupiter:.20,saturn:.25}),
+  study: Object.freeze({sun:.10,moon:.10,mercury:.30,venus:.05,mars:.05,jupiter:.20,saturn:.20}),
+  friends: Object.freeze({sun:.10,moon:.15,mercury:.25,venus:.20,mars:.05,jupiter:.15,saturn:.10}),
+});
+
+for (const [category, profile] of Object.entries(WESTERN_CATEGORY_PROFILES)) {
+  const names = Object.keys(profile);
+  if (names.length !== Object.keys(BODIES).length || names.some(name => !Object.hasOwn(BODIES, name))) {
+    throw new Error(`WESTERN_PROFILE_BODIES:${category}`);
+  }
+  if (!Object.values(profile).every(w => Number.isFinite(w) && w >= 0)) throw new Error(`WESTERN_PROFILE_VALUE:${category}`);
+  if (Math.abs(Object.values(profile).reduce((s, w) => s + w, 0) - 1) > 1e-9) {
+    throw new Error(`WESTERN_PROFILE_NOT_NORMALIZED:${category}`);
+  }
+}
 const CONJ = {moon:0,sun:.1,mercury:.2,venus:-.1,mars:.4,jupiter:.3,saturn:-.4};
 const ASPECTS = {60:[.5,.2],90:[-.5,.3],120:[.6,-.3],180:[-.6,.3]};
 const skyCache = boundedCache(512);
@@ -47,15 +69,20 @@ export function aspect(transit, natal, body) {
   const strength=Math.max(0,1-Math.abs(distance-angle)/3), v=angle===0?[0,CONJ[body]]:ASPECTS[angle];
   return { angle,strength,a:strength*v[0],c:strength*v[1] };
 }
-export function western(sky,natal) {
+export function western(sky,natal,category='general') {
+  // Aspect geometry is untouched; only the body emphasis is category-aware.
+  const profile=Object.hasOwn(WESTERN_CATEGORY_PROFILES,category)?WESTERN_CATEGORY_PROFILES[category]:null;
+  const transitWeights=profile??TRANSIT, natalWeights=profile??NATAL;
   let a=0,c=0,q=0; const aspects=[];
-  for (const [p,pw] of Object.entries(TRANSIT)) for (const [n,nw] of Object.entries(NATAL)) {
+  for (const [p,pw] of Object.entries(transitWeights)) for (const [n,nw] of Object.entries(natalWeights)) {
     if (natal.positions[n]==null) continue;
     const w=pw*nw, hit=aspect(sky.positions[p],natal.positions[n],p);
     q+=w; a+=w*hit.a; c+=w*hit.c;
     if(hit.strength>0) aspects.push({transit:p,natal:n,angle:hit.angle,strength:hit.strength});
   }
-  return moduleResult(q?evidence(clamp(3*a/q),clamp(3*c/q),Math.min(1,q)):evidence(), {aspects,natal,houseSystem:null});
+  return moduleResult(q?evidence(clamp(3*a/q),clamp(3*c/q),Math.min(1,q)):evidence(),
+    {aspects,natal,houseSystem:null,categoryProfile:profile?category:'default_transit_natal',
+      transitWeights,natalWeights});
 }
 export function cosmic(sky) {
   const phi=mod(sky.positions.moon-sky.positions.sun,360), rad=phi*Math.PI/180, motion=clamp(sky.mercurySpeed/.10);

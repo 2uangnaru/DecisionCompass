@@ -1,5 +1,6 @@
 export type Mode = 'yes_no' | 'act_wait' | 'advance_retreat' | 'stay_go' | 'keep_let_go' | 'forward_backward' | 'left_right';
 export type Period = 'now' | 'morning' | 'midday' | 'afternoon' | 'evening';
+export type Category = 'general' | 'love' | 'career' | 'money' | 'study' | 'friends' | 'other';
 export type ModuleId = 'B' | 'Z' | 'T' | 'W' | 'N' | 'U';
 export interface Profile {
   birthDate: string;
@@ -20,7 +21,7 @@ export interface ReadingInput {
   context: CurrentContext;
   period?: Period;
   mode?: Mode;
-  category?: 'general';
+  category?: Category;
   diagnostics?: boolean;
 }
 export interface ModuleResult {
@@ -49,7 +50,7 @@ export interface ReadingResult {
   axisScores?:{action:number;change:number;selected:number};
   modeScore?:number;
   modeBasis?:'overall_acceptance' | 'action_timing' | 'tactical_momentum' | 'change_alignment' | 'release_alignment' | 'temporal_momentum' | 'symbolic_polarity';
-  period:Period; mode:Mode; category:'general'; context:ResolvedContext;
+  period:Period; mode:Mode; category:Category; context:ResolvedContext;
   birthData:{status:string;timeKnown:boolean;timezoneSource:string;timezoneCandidates:string[]};
   warnings:string[]; inputSnapshot:Record<string,unknown>;
   evaluatedAtUtc?:string; luckyWindows:LuckyWindow[];
@@ -67,3 +68,4 @@ export function resolveCurrentContext(context:CurrentContext):ResolvedContext;
 export const VERSION:string;
 export const RULESET:string;
 export const PROVIDERS:Readonly<Record<string,string>>;
+export const CATEGORIES:ReadonlyArray<Category>;

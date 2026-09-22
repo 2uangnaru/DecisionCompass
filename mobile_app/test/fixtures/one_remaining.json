@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -52,7 +52,8 @@
       "zoneSource": "device"
     },
     "period": "evening",
-    "mode": "keep_let_go"
+    "mode": "keep_let_go",
+    "category": "general"
   },
   "status": "ready",
   "winner": "LET GO",
@@ -64,7 +65,7 @@
   "modeScore": -0.0839709533,
   "modeBasis": "release_alignment",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "8e57801574ca5982518345dc36509bbe43b95e75ba899409a1a800e0e5dfb71c",
+  "readingKey": "c46f5a58adbc3d24414397aa77212565f550881351ba788e589af34084687bc7",
   "axisScores": {
     "action": 0.1298561985,
     "change": 0.1756111612,
@@ -100,6 +101,7 @@
           "coverage": 0.85,
           "a": 0.0482647059,
           "c": 0.0353676471,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0091166667,
             "c": 0.0066805556
@@ -110,6 +112,7 @@
           "coverage": 1,
           "a": 0.0434260417,
           "c": -0.01016875,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0096502315,
             "c": -0.0022597222
@@ -120,6 +123,7 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0072222222,
             "c": 0.0666666667
@@ -130,6 +134,7 @@
           "coverage": 1,
           "a": -0.0000490331,
           "c": 0.0134837774,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.0000108962,
             "c": 0.002996395
@@ -140,6 +145,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -150,6 +156,7 @@
           "coverage": 1,
           "a": 0.3098035392,
           "c": 0.0274907927,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0172113077,
             "c": 0.0015272663

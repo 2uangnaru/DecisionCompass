@@ -1,14 +1,23 @@
 import 'json_types.dart';
 
-/// Reading category.
+/// Which part of life a reading is about.
 ///
-/// `calculation-engine/src/index.d.ts` types this as the literal `'general'`,
-/// and the engine rejects anything else with `MVP_CATEGORY_IS_GENERAL`. The app
-/// never asks what the decision is about, so [general] is the only legal value;
-/// modelling it as an enum makes an illegal category unrepresentable in Dart
-/// and a typed parse failure on the wire.
+/// Wire values match `Category` in `calculation-engine/src/index.d.ts`. The
+/// category changes how the engine prepares and fuses module evidence before
+/// the decision-mode projection — it is not a label on an otherwise identical
+/// reading. The app still never asks *what* the decision is; it only asks which
+/// area of life it belongs to.
+///
+/// [other] deliberately reuses the general formula as an honest fallback, but
+/// remains a distinct category value with its own reading snapshot.
 enum ReadingCategory {
-  general('general');
+  general('general'),
+  love('love'),
+  career('career'),
+  money('money'),
+  study('study'),
+  friends('friends'),
+  other('other');
 
   const ReadingCategory(this.wireValue);
 

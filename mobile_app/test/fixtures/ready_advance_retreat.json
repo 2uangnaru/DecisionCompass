@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4",
+  "engineVersion": "3.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -52,7 +52,8 @@
       "zoneSource": "device"
     },
     "period": "morning",
-    "mode": "advance_retreat"
+    "mode": "advance_retreat",
+    "category": "general"
   },
   "status": "ready",
   "winner": "ADVANCE",
@@ -64,7 +65,7 @@
   "modeScore": 0.1600437799,
   "modeBasis": "tactical_momentum",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "460d22be73f1fe0c025ba053b5484df596b09c20ff62c7f29b95a1bd7d7c6fa9",
+  "readingKey": "e21df87b5aa3f1d99efd2b5eea5f5562f8c46b2c0bafd2abb5850aa9ee254f0e",
   "axisScores": {
     "action": 0.1448798813,
     "change": 0.1785774336,
@@ -110,6 +111,7 @@
           "coverage": 0.85,
           "a": -0.0013235294,
           "c": 0.0034264706,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.00025,
             "c": 0.0006472222
@@ -120,6 +122,7 @@
           "coverage": 1,
           "a": 0.0460510417,
           "c": -0.00754375,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0102335648,
             "c": -0.0016763889
@@ -130,6 +133,7 @@
           "coverage": 1,
           "a": 0.465,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0516666667,
             "c": 0.0666666667
@@ -140,6 +144,7 @@
           "coverage": 1,
           "a": 0.0008438151,
           "c": 0.0161131251,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0001875145,
             "c": 0.0035806945
@@ -150,6 +155,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -160,6 +166,7 @@
           "coverage": 1,
           "a": 0.3058424426,
           "c": 0.0543373634,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0169912468,
             "c": 0.0030187424
@@ -178,6 +185,7 @@
           "coverage": 0.85,
           "a": 0.0277941176,
           "c": 0.0616617647,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.00525,
             "c": 0.0116472222
@@ -188,6 +196,7 @@
           "coverage": 1,
           "a": 0.0471447917,
           "c": -0.0130125,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0104766204,
             "c": -0.0028916667
@@ -198,6 +207,7 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0072222222,
             "c": 0.0666666667
@@ -208,6 +218,7 @@
           "coverage": 1,
           "a": 0.0005796738,
           "c": 0.0160852652,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0001288164,
             "c": 0.0035745034
@@ -218,6 +229,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -228,6 +240,7 @@
           "coverage": 1,
           "a": 0.3062166923,
           "c": 0.0527664814,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0170120385,
             "c": 0.0029314712
@@ -246,6 +259,7 @@
           "coverage": 0.85,
           "a": 0.0304411765,
           "c": 0.0628970588,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.00575,
             "c": 0.0118805556
@@ -256,6 +270,7 @@
           "coverage": 1,
           "a": 0.0368635417,
           "c": -0.00491875,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0081918981,
             "c": -0.0010930556
@@ -266,6 +281,7 @@
           "coverage": 1,
           "a": 0.465,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0516666667,
             "c": 0.0666666667
@@ -276,6 +292,7 @@
           "coverage": 1,
           "a": 0.000053929,
           "c": 0.0160280846,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0000119842,
             "c": 0.0035617966
@@ -286,6 +303,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -296,6 +314,7 @@
           "coverage": 1,
           "a": 0.3069121757,
           "c": 0.0496204474,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0170506764,
             "c": 0.0027566915
@@ -314,6 +333,7 @@
           "coverage": 0.85,
           "a": 0.0385588235,
           "c": -0.0490735294,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0072833333,
             "c": -0.0092694444
@@ -324,6 +344,7 @@
           "coverage": 1,
           "a": 0.0368635417,
           "c": -0.00491875,
+          "weight": 0.2222222222,
           "contribution": {
             "a": 0.0081918981,
             "c": -0.0010930556
@@ -334,6 +355,7 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
+          "weight": 0.1111111111,
           "contribution": {
             "a": 0.0072222222,
             "c": 0.0666666667
@@ -344,6 +366,7 @@
           "coverage": 1,
           "a": -0.0204592658,
           "c": 0.0259646425,
+          "weight": 0.2222222222,
           "contribution": {
             "a": -0.0045465035,
             "c": 0.0057699205
@@ -354,6 +377,7 @@
           "coverage": 1,
           "a": 0.52,
           "c": 0.6,
+          "weight": 0.1666666667,
           "contribution": {
             "a": 0.0866666667,
             "c": 0.1
@@ -364,6 +388,7 @@
           "coverage": 1,
           "a": 0.307536989,
           "c": 0.046469271,
+          "weight": 0.0555555556,
           "contribution": {
             "a": 0.0170853883,
             "c": 0.0025816262
