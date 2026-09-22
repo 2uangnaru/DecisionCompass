@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../category_presentation.dart';
 import '../data/models/models.dart' as engine;
 import '../data/reading_api_exception.dart';
 import '../models.dart';
@@ -18,6 +19,7 @@ class LoadingPage extends StatefulWidget {
     super.key,
     required this.mode,
     required this.period,
+    required this.category,
     required this.profile,
     required this.instantUtc,
     required this.dependencies,
@@ -25,6 +27,7 @@ class LoadingPage extends StatefulWidget {
 
   final DecisionMode mode;
   final TimePeriod period;
+  final engine.ReadingCategory category;
   final AppProfile profile;
 
   /// The instant the Reveal tap happened, recorded by [RitualPage].
@@ -157,7 +160,7 @@ class _LoadingPageState extends State<LoadingPage> {
       context: context,
       mode: toEngineMode(widget.mode),
       period: toEnginePeriod(widget.period),
-      category: engine.ReadingCategory.general,
+      category: widget.category,
     );
   }
 
@@ -237,6 +240,19 @@ class _LoadingPageState extends State<LoadingPage> {
                 widget.mode.label,
                 style: Theme.of(context).textTheme.labelLarge
                     ?.copyWith(color: CompassColors.gold, letterSpacing: 1.8),
+              ),
+              const SizedBox(height: 8),
+              Semantics(
+                label: 'Reading area: ${categoryLabel(widget.category)}',
+                child: Text(
+                  key: const Key('loading_category_label'),
+                  'Reading for ${categoryLabel(widget.category)}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.blueLight,
+                    letterSpacing: 1,
+                  ),
+                ),
               ),
               const Spacer(),
               OrbitVisual(

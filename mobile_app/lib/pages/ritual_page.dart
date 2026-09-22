@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../category_presentation.dart';
+import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
@@ -14,12 +16,14 @@ class RitualPage extends StatefulWidget {
     super.key,
     required this.mode,
     required this.period,
+    required this.category,
     required this.profile,
     required this.dependencies,
   });
 
   final DecisionMode mode;
   final TimePeriod period;
+  final engine.ReadingCategory category;
   final AppProfile profile;
   final ReadingDependencies dependencies;
 
@@ -60,6 +64,7 @@ class _RitualPageState extends State<RitualPage>
         builder: (_) => LoadingPage(
           mode: widget.mode,
           period: widget.period,
+          category: widget.category,
           profile: widget.profile,
           instantUtc: instantUtc,
           dependencies: widget.dependencies,
@@ -97,6 +102,11 @@ class _RitualPageState extends State<RitualPage>
                 ),
                 const SizedBox(width: 48),
               ],
+            ),
+            const SizedBox(height: 10),
+            _CategoryBadge(
+              key: const Key('ritual_category_badge'),
+              label: categoryLabel(widget.category),
             ),
             const Spacer(),
             Semantics(
@@ -211,6 +221,33 @@ class _RitualPageState extends State<RitualPage>
                   ?.copyWith(color: CompassColors.muted, letterSpacing: 1.2),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Compact, calm badge naming the area the reading concerns.
+class _CategoryBadge extends StatelessWidget {
+  const _CategoryBadge({super.key, required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'Reading area: $label',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.07),
+          borderRadius: BorderRadius.circular(999),
+          border: Border.all(color: CompassColors.line),
+        ),
+        child: Text(
+          label,
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: CompassColors.blueLight, letterSpacing: 0.9),
         ),
       ),
     );

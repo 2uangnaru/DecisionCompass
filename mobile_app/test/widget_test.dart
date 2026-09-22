@@ -52,7 +52,7 @@ void main() {
     expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
 
     await completeOnboarding(tester);
-    expect(find.text('A choice is on your mind.'), findsOneWidget);
+    expect(find.text('Caught between choices?'), findsOneWidget);
     expect(find.text('Find My Direction'), findsOneWidget);
   });
 

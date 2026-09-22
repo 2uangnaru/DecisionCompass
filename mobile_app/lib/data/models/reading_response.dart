@@ -108,8 +108,13 @@ class ReadingResponse {
   final TimePeriod period;
   final DecisionMode mode;
 
-  /// Always [ReadingCategory.general] for this MVP; any other wire value is a
-  /// contract violation and fails parsing.
+  /// The category the engine actually evaluated, echoed back.
+  ///
+  /// Any of the seven wire categories may appear here; an unrecognised value is
+  /// a contract violation and fails parsing. Read the category from *this*
+  /// field rather than from what the UI last selected —
+  /// [ReadingCategory.other] deliberately reuses the general formula but stays
+  /// its own category with its own reading snapshot.
   final ReadingCategory category;
 
   final ResolvedContext context;

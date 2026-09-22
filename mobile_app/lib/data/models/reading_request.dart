@@ -22,8 +22,14 @@ class ReadingRequest {
   final TimePeriod? period;
   final DecisionMode? mode;
 
-  /// Always [ReadingCategory.general] for this MVP; the engine rejects any
-  /// other category outright.
+  /// Which area of life the reading is about, defaulting to
+  /// [ReadingCategory.general] when the caller does not choose.
+  ///
+  /// All seven wire categories are supported; the engine rejects anything else
+  /// with `INVALID_CATEGORY`. The category changes how module evidence is
+  /// weighted and fused before the decision-mode projection, so it is part of
+  /// the reading's identity — see the category rules in
+  /// `calculation-engine/VERIFICATION.md`.
   final ReadingCategory category;
 
   /// Never sent from the app in production; diagnostics carry technical

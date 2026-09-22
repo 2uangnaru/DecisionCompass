@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../category_presentation.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_mapping.dart';
@@ -67,7 +68,30 @@ class ResultPage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 26),
+            const SizedBox(height: 14),
+            // Sourced from the response, so a server that evaluated a
+            // different legal category is shown truthfully.
+            Semantics(
+              label: 'Reading area: ${categoryLabel(reading.category)}',
+              child: Container(
+                key: const Key('result_category_badge'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 13,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.09),
+                  borderRadius: BorderRadius.circular(999),
+                  border: Border.all(color: Colors.white24),
+                ),
+                child: Text(
+                  categoryLabel(reading.category),
+                  style: Theme.of(context).textTheme.labelSmall
+                      ?.copyWith(color: Colors.white, letterSpacing: 0.9),
+                ),
+              ),
+            ),
+            const SizedBox(height: 18),
             switch (reading.status) {
               engine.ReadingStatus.ready => _Direction(
                 reading: reading,

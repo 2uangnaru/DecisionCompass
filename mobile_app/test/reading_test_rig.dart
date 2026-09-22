@@ -76,7 +76,15 @@ Future<void> revealReading(
   WidgetTester tester, {
   String? modeLabel,
   String? periodName,
+  ReadingCategory? category,
 }) async {
+  if (category != null) {
+    // Keys mirror the wire value for stability; the value itself is never shown.
+    final key = Key('category_${category.wireValue}');
+    await tester.ensureVisible(find.byKey(key));
+    await tester.tap(find.byKey(key));
+    await tester.pump();
+  }
   if (modeLabel != null) {
     await tester.ensureVisible(find.text(modeLabel).first);
     await tester.tap(find.text(modeLabel).first);

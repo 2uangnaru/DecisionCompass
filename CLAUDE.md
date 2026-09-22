@@ -13,8 +13,13 @@ The user keeps a choice in mind, selects a binary direction and a time period,
 then taps once to receive a deterministic symbolic direction and, for a future
 period, up to two favorable time windows.
 
-The app is not a chatbot and does not ask what the decision is about. Category
-is always `general`. It must not claim that its percentages are real-world
+The app is not a chatbot and does not ask what the decision is about. It asks
+only which area of life the choice belongs to: `general`, `love`, `career`,
+`money`, `study`, `friends` or `other`. Category changes module weights, Zi Wei
+target palaces and the Western body emphasis before the decision-mode
+projection; `other` reuses the general formula as an honest fallback while
+staying a distinct category. See the 2026-09-22 section of
+`calculation-engine/VERIFICATION.md`. It must not claim that its percentages are real-world
 probabilities, accuracy, confidence or guaranteed outcomes.
 
 MVP inputs:
