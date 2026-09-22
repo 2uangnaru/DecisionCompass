@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import '../app_profile.dart';
 import '../models.dart';
+import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'loading_page.dart';
@@ -12,12 +14,14 @@ class RitualPage extends StatefulWidget {
     super.key,
     required this.mode,
     required this.period,
-    required this.zodiacSign,
+    required this.profile,
+    required this.dependencies,
   });
 
   final DecisionMode mode;
   final TimePeriod period;
-  final ZodiacSign zodiacSign;
+  final AppProfile profile;
+  final ReadingDependencies dependencies;
 
   @override
   State<RitualPage> createState() => _RitualPageState();
@@ -46,6 +50,9 @@ class _RitualPageState extends State<RitualPage>
   Future<void> _reveal() async {
     if (_locked) return;
     setState(() => _locked = true);
+    // The reading's moment is this tap, recorded before the transition and
+    // before any timezone or GPS lookup, so a slow lookup cannot move it.
+    final instantUtc = widget.dependencies.nowUtc();
     await Future<void>.delayed(const Duration(milliseconds: 360));
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
@@ -53,7 +60,9 @@ class _RitualPageState extends State<RitualPage>
         builder: (_) => LoadingPage(
           mode: widget.mode,
           period: widget.period,
-          zodiacSign: widget.zodiacSign,
+          profile: widget.profile,
+          instantUtc: instantUtc,
+          dependencies: widget.dependencies,
         ),
       ),
     );
@@ -163,7 +172,7 @@ class _RitualPageState extends State<RitualPage>
                               children: [
                                 ZodiacAvatar(
                                   size: compact ? 54 : 62,
-                                  sign: widget.zodiacSign,
+                                  sign: widget.profile.zodiacSign,
                                 ),
                                 const SizedBox(height: 10),
                                 Text(

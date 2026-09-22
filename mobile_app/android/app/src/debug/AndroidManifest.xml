@@ -4,4 +4,13 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Debug-only cleartext, so an emulator can reach the loopback
+         calculation API at http://10.0.2.2:8787. This override exists in the
+         debug manifest alone: the release build never enables cleartext, and
+         production must use HTTPS. -->
+    <application
+        android:usesCleartextTraffic="true"
+        tools:replace="android:usesCleartextTraffic"
+        xmlns:tools="http://schemas.android.com/tools" />
 </manifest>

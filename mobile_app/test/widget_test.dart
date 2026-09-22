@@ -1,9 +1,10 @@
-import 'package:decision_compass/app.dart';
 import 'package:decision_compass/mock_reading_engine.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+
+import 'reading_test_rig.dart';
 
 void main() {
   test('zodiac avatar follows the entered birth date', () {
@@ -33,6 +34,8 @@ void main() {
     );
   });
 
+  // The mock engine is no longer in the production flow; it is kept only for
+  // this isolated check and for previews.
   test('mock result always produces complementary percentages', () {
     for (final mode in DecisionMode.values) {
       final result = createMockReading(mode, TimePeriod.evening);
@@ -42,16 +45,13 @@ void main() {
   });
 
   testWidgets('onboarding reaches Home', (tester) async {
-    await tester.pumpWidget(const DecisionCompassApp());
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+    );
+    await tester.pumpWidget(rig.app);
     expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
 
-    await tester.tap(find.byKey(const Key('allow_location')));
-    await tester.pumpAndSettle();
-    expect(find.text('Build your personal pattern.'), findsOneWidget);
-
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await completeOnboarding(tester);
     expect(find.text('A choice is on your mind.'), findsOneWidget);
     expect(find.text('Find My Direction'), findsOneWidget);
   });
@@ -59,22 +59,12 @@ void main() {
   testWidgets('double tap during loading shows reassurance then result', (
     tester,
   ) async {
-    await tester.pumpWidget(const DecisionCompassApp());
-    await tester.tap(find.byKey(const Key('allow_location')));
-    await tester.pumpAndSettle();
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
-
-    await tester.ensureVisible(find.byKey(const Key('find_direction')));
-    await tester.tap(find.byKey(const Key('find_direction')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 800));
-    expect(find.byKey(const Key('reveal_button')), findsOneWidget);
-
-    await tester.tap(find.byKey(const Key('reveal_button')));
-    await tester.pump(const Duration(milliseconds: 380));
-    await tester.pump();
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+    );
+    await tester.pumpWidget(rig.app);
+    await completeOnboarding(tester);
+    await revealReading(tester);
     expect(find.byKey(const Key('loading_tap_surface')), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('loading_tap_surface')));
@@ -91,8 +81,9 @@ void main() {
     await tester.pump(const Duration(seconds: 6));
     await tester.pumpAndSettle();
     expect(find.text('YOUR DIRECTION'), findsOneWidget);
+    // Real engine fixture values, not mock ones.
     expect(find.text('YES'), findsOneWidget);
-    expect(find.text('64%'), findsOneWidget);
+    expect(find.text('56%'), findsOneWidget);
   });
 
   testWidgets('core flow renders on common Android window sizes', (
@@ -107,30 +98,22 @@ void main() {
     ];
 
     for (final size in sizes) {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+      );
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pump();
       await tester.binding.setSurfaceSize(size);
-      await tester.pumpWidget(const DecisionCompassApp());
+      await tester.pumpWidget(rig.app);
       await tester.pump();
       expect(tester.takeException(), isNull, reason: 'Failed at $size');
       expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
 
-      await tester.tap(find.byKey(const Key('allow_location')));
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-      await tester.tap(find.byKey(const Key('complete_profile')));
-      await tester.pumpAndSettle();
+      await completeOnboarding(tester);
       await tester.ensureVisible(find.byKey(const Key('find_direction')));
       expect(tester.takeException(), isNull, reason: 'Home failed at $size');
 
-      await tester.tap(find.byKey(const Key('find_direction')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 800));
-      expect(tester.takeException(), isNull, reason: 'Ritual failed at $size');
-
-      await tester.tap(find.byKey(const Key('reveal_button')));
-      await tester.pump(const Duration(milliseconds: 380));
-      await tester.pump();
+      await revealReading(tester);
       expect(tester.takeException(), isNull, reason: 'Loading failed at $size');
 
       await tester.pump(const Duration(seconds: 6));

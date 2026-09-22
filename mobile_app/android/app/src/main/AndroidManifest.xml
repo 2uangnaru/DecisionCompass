@@ -1,4 +1,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required to reach the calculation API. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <!-- Foreground location only, used solely to resolve the CURRENT timezone
+         and region for a reading. Never the birthplace, and deliberately no
+         ACCESS_BACKGROUND_LOCATION. A denied permission degrades to the device
+         timezone instead of blocking the reading. -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
     <application
         android:label="Decision Compass"
         android:name="${applicationName}"

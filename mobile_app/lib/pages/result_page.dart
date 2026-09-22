@@ -1,20 +1,44 @@
 import 'package:flutter/material.dart';
 
+import '../data/models/models.dart' as engine;
 import '../models.dart';
+import '../reading_mapping.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 
+/// Renders a real engine reading. Nothing here invents a direction: every
+/// status the contract defines gets its own explicit presentation.
 class ResultPage extends StatelessWidget {
-  const ResultPage({super.key, required this.result});
+  const ResultPage({super.key, required this.reading});
 
-  final ReadingResult result;
+  final engine.ReadingResponse reading;
+
+  DecisionMode get _mode => fromEngineMode(reading.mode);
+  TimePeriod get _period => fromEnginePeriod(reading.period);
+
+  /// The mode's second side is the cautionary one for every mode, not just
+  /// NO and LET GO.
+  bool get _isCaution => reading.winner == _mode.second;
+
+  /// Label/percentage pairs straight from the response, winner first.
+  List<({String label, int percent})> get _splits {
+    final values = reading.percentages?.values;
+    if (values == null) return const [];
+    final entries = values.entries
+        .map((entry) => (label: entry.key, percent: entry.value))
+        .toList();
+    final leading = reading.winner ?? _mode.first;
+    return [
+      ...entries.where((entry) => entry.label == leading),
+      ...entries.where((entry) => entry.label != leading),
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
-    final isCaution = result.winner == 'NO' || result.winner == 'LET GO';
     return CelestialScaffold(
-      topColor: isCaution ? const Color(0xFF1A1018) : const Color(0xFF071729),
-      bottomColor: isCaution
+      topColor: _isCaution ? const Color(0xFF1A1018) : const Color(0xFF071729),
+      bottomColor: _isCaution
           ? const Color(0xFF552D36)
           : const Color(0xFF103B68),
       child: SingleChildScrollView(
@@ -29,7 +53,7 @@ class ResultPage extends StatelessWidget {
                 ),
                 Expanded(
                   child: Text(
-                    result.mode.label,
+                    _mode.label,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: CompassColors.gold,
@@ -44,48 +68,32 @@ class ResultPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 26),
-            Text(
-              'YOUR DIRECTION',
-              style: Theme.of(context).textTheme.labelLarge
-                  ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              result.winner,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displayLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              '${result.winnerPercent}%',
-              style: Theme.of(context).textTheme.headlineLarge
-                  ?.copyWith(color: CompassColors.blueLight, fontSize: 42),
-            ),
-            const SizedBox(height: 14),
-            Text(
-              '${result.counterpart}  ${result.counterpartPercent}%',
-              style: Theme.of(context).textTheme.headlineMedium
-                  ?.copyWith(color: Colors.white70),
-            ),
-            const SizedBox(height: 14),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(999),
-                border: Border.all(color: Colors.white24),
+            switch (reading.status) {
+              engine.ReadingStatus.ready => _Direction(
+                reading: reading,
+                splits: _splits,
               ),
-              child: Text(result.alignment),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Based on your personal cycles and this moment.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: Colors.white70),
-            ),
+              engine.ReadingStatus.balanced => _Balanced(splits: _splits),
+              engine.ReadingStatus.insufficientData => const _Explanation(
+                key: Key('result_insufficient_data'),
+                headline: 'NOT ENOUGH TO READ',
+                body:
+                    'Your profile does not yet contain enough detail for a '
+                    'direction on this one. Adding your birth time and '
+                    'country of birth gives the cycles more to work with.',
+              ),
+              engine.ReadingStatus.periodElapsed => _Explanation(
+                key: const Key('result_period_elapsed'),
+                headline: 'THAT PERIOD HAS PASSED',
+                body:
+                    '${_period.label} is already over where you are, so there '
+                    'is no window left to read. Pick a later period, or read '
+                    'your current moment instead — today’s reading is not '
+                    'rolled into tomorrow.',
+              ),
+            },
             const SizedBox(height: 30),
-            if (result.period == TimePeriod.now)
+            if (_period == TimePeriod.now)
               const GlassCard(
                 child: Row(
                   children: [
@@ -97,8 +105,12 @@ class ResultPage extends StatelessWidget {
                   ],
                 ),
               )
-            else
-              _LuckyWindows(result: result),
+            else if (reading.luckyWindows.isNotEmpty)
+              _LuckyWindows(reading: reading, period: _period),
+            if (reading.dailyBrief != null) ...[
+              const SizedBox(height: 14),
+              _DailyBrief(brief: reading.dailyBrief!),
+            ],
             const SizedBox(height: 22),
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(),
@@ -132,59 +144,248 @@ class ResultPage extends StatelessWidget {
   }
 }
 
-class _LuckyWindows extends StatelessWidget {
-  const _LuckyWindows({required this.result});
+class _Direction extends StatelessWidget {
+  const _Direction({required this.reading, required this.splits});
 
-  final ReadingResult result;
+  final engine.ReadingResponse reading;
+  final List<({String label, int percent})> splits;
 
   @override
   Widget build(BuildContext context) {
-    final periodName = result.period.label;
+    final winner = splits.isEmpty ? null : splits.first;
+    final counterpart = splits.length < 2 ? null : splits[1];
+    return Column(
+      key: const Key('result_ready'),
+      children: [
+        Text(
+          'YOUR DIRECTION',
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          reading.winner ?? winner?.label ?? '',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.displayLarge,
+        ),
+        if (winner != null) ...[
+          const SizedBox(height: 4),
+          Text(
+            '${winner.percent}%',
+            style: Theme.of(context).textTheme.headlineLarge
+                ?.copyWith(color: CompassColors.blueLight, fontSize: 42),
+          ),
+        ],
+        if (counterpart != null) ...[
+          const SizedBox(height: 14),
+          Text(
+            '${counterpart.label}  ${counterpart.percent}%',
+            style: Theme.of(context).textTheme.headlineMedium
+                ?.copyWith(color: Colors.white70),
+          ),
+        ],
+        const SizedBox(height: 18),
+        Text(
+          'Based on your personal cycles and this moment.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: Colors.white70),
+        ),
+      ],
+    );
+  }
+}
+
+class _Balanced extends StatelessWidget {
+  const _Balanced({required this.splits});
+
+  final List<({String label, int percent})> splits;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      key: const Key('result_balanced'),
+      children: [
+        Text(
+          'EVENLY BALANCED',
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+        ),
+        const SizedBox(height: 20),
+        Text(
+          'BALANCED',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.displayLarge,
+        ),
+        const SizedBox(height: 14),
+        Wrap(
+          alignment: WrapAlignment.center,
+          spacing: 18,
+          children: splits
+              .map(
+                (split) => Text(
+                  '${split.label}  ${split.percent}%',
+                  style: Theme.of(context).textTheme.headlineMedium
+                      ?.copyWith(color: Colors.white70),
+                ),
+              )
+              .toList(),
+        ),
+        const SizedBox(height: 18),
+        Text(
+          'Neither side leads right now. This is a reading of balance, not a '
+          'hidden answer.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: Colors.white70),
+        ),
+      ],
+    );
+  }
+}
+
+class _Explanation extends StatelessWidget {
+  const _Explanation({super.key, required this.headline, required this.body});
+
+  final String headline;
+  final String body;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Text(
+          headline,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelLarge
+              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+        ),
+        const SizedBox(height: 18),
+        const Icon(Icons.blur_on_rounded, size: 58, color: CompassColors.gold),
+        const SizedBox(height: 18),
+        Text(
+          body,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodyMedium
+              ?.copyWith(color: Colors.white70, height: 1.5),
+        ),
+      ],
+    );
+  }
+}
+
+class _DailyBrief extends StatelessWidget {
+  const _DailyBrief({required this.brief});
+
+  final engine.DailyBrief brief;
+
+  @override
+  Widget build(BuildContext context) {
+    final colour = brief.colorInspiration
+        .split('_')
+        .map(
+          (word) => word.isEmpty
+              ? word
+              : '${word[0].toUpperCase()}${word.substring(1)}',
+        )
+        .join(' ');
     return GlassCard(
+      key: const Key('result_daily_brief'),
+      child: Row(
+        children: [
+          const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
+          const SizedBox(width: 12),
+          Expanded(child: Text('Colour to keep near you: $colour')),
+          const SizedBox(width: 10),
+          Text(
+            '${brief.luckyNumber}',
+            style: const TextStyle(
+              color: CompassColors.blueLight,
+              fontWeight: FontWeight.w700,
+              fontSize: 20,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _LuckyWindows extends StatelessWidget {
+  const _LuckyWindows({required this.reading, required this.period});
+
+  final engine.ReadingResponse reading;
+  final TimePeriod period;
+
+  /// Reads the wall clock the engine already resolved for the user's zone.
+  /// The offset is intentionally ignored rather than re-applied through the
+  /// device timezone, which would shift the window.
+  static String _clock(String localIso) {
+    final match = RegExp(r'T(\d{2}):(\d{2})').firstMatch(localIso);
+    if (match == null) return '';
+    final hour24 = int.parse(match.group(1)!);
+    final minute = match.group(2)!;
+    final suffix = hour24 >= 12 && hour24 < 24 ? 'PM' : 'AM';
+    final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+    return '$hour12:$minute $suffix';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      key: const Key('result_lucky_windows'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Your Luckiest Times This $periodName',
+            'Your Luckiest Times This ${period.label}',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 16),
-          ...result.windows.map(
-            (window) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 13,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.06),
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: Colors.white12),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.auto_awesome_rounded,
-                      size: 18,
-                      color: CompassColors.gold,
+          ...reading.luckyWindows
+              .take(2)
+              .map(
+                (window) => Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 13,
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(child: Text(window.time)),
-                    Text(
-                      '${window.score}%',
-                      style: const TextStyle(
-                        color: CompassColors.blueLight,
-                        fontWeight: FontWeight.w700,
-                      ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.06),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: Colors.white12),
                     ),
-                  ],
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.auto_awesome_rounded,
+                          size: 18,
+                          color: CompassColors.gold,
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(
+                            '${_clock(window.startLocal)} – ${_clock(window.endLocal)}',
+                          ),
+                        ),
+                        Text(
+                          '${window.score.round()}%',
+                          style: const TextStyle(
+                            color: CompassColors.blueLight,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
           Text(
-            'Window scores are independent and do not add up to 100%.',
+            'Each percentage is a symbolic timing alignment score, not a '
+            'probability and not a chance of success. Windows are scored '
+            'independently, so they do not add up to 100%.',
             style: Theme.of(context).textTheme.bodySmall
                 ?.copyWith(color: CompassColors.muted),
           ),

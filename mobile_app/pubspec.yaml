@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  http: ^1.6.0
+  # Device IANA timezone id (not a DateTime.timeZoneName abbreviation).
+  flutter_timezone: ^5.1.0
+  # Foreground one-shot position for the *current* location only.
+  geolocator: ^14.0.3
 
 dev_dependencies:
   flutter_test:

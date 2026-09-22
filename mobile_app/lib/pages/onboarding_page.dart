@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../app_profile.dart';
 import '../models.dart';
+import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'home_page.dart';
 
 class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key});
+  const OnboardingPage({super.key, required this.dependencies});
+
+  final ReadingDependencies dependencies;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -17,7 +21,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
   var _step = 0;
   var _birthDate = DateTime(1998, 6, 21);
   var _birthTimeUnknown = true;
-  var _country = 'United States';
+  var _birthTime = const TimeOfDay(hour: 14, minute: 30);
+  var _countryCode = 'US';
+
+  /// The user's latest explicit answer on the explainer screen. Returning to
+  /// that screen and choosing differently overwrites it, so the last choice
+  /// always wins.
+  var _useCurrentLocation = false;
 
   @override
   void dispose() {
@@ -35,14 +45,51 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (picked != null && mounted) setState(() => _birthDate = picked);
   }
 
+  Future<void> _pickBirthTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _birthTime,
+    );
+    if (picked != null && mounted) setState(() => _birthTime = picked);
+  }
+
+  String get _birthTimeValue =>
+      '${_birthTime.hour.toString().padLeft(2, '0')}:'
+      '${_birthTime.minute.toString().padLeft(2, '0')}';
+
+  /// Location permission is requested only here, right after the explainer the
+  /// user just read, and never for the birthplace.
+  Future<void> _continueWithLocation() async {
+    setState(() => _useCurrentLocation = true);
+    await widget.dependencies.contextProvider.requestLocationAccess();
+    if (!mounted) return;
+    setState(() => _step = 1);
+  }
+
+  /// Opting out never touches the permission flow.
+  void _continueWithDeviceTimezone() {
+    setState(() {
+      _useCurrentLocation = false;
+      _step = 1;
+    });
+  }
+
   void _finish() {
     final name = _nameController.text.trim().isEmpty
         ? 'Explorer'
         : _nameController.text.trim();
+    final profile = AppProfile(
+      userName: name,
+      birthDate: _birthDate,
+      birthTime: _birthTimeUnknown ? null : _birthTimeValue,
+      birthCountryCode: _countryCode,
+      zodiacSign: zodiacForDate(_birthDate),
+      useCurrentLocation: _useCurrentLocation,
+    );
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) =>
-            HomePage(userName: name, zodiacSign: zodiacForDate(_birthDate)),
+            HomePage(profile: profile, dependencies: widget.dependencies),
       ),
     );
   }
@@ -115,13 +162,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     children: [
                       FilledButton.icon(
                         key: const Key('allow_location'),
-                        onPressed: () => setState(() => _step = 1),
+                        onPressed: _continueWithLocation,
                         icon: const Icon(Icons.near_me_rounded),
                         label: const Text('Allow Current Location'),
                       ),
                       const SizedBox(height: 4),
                       TextButton(
-                        onPressed: () => setState(() => _step = 1),
+                        // Deliberately does not ask for permission.
+                        key: const Key('skip_location'),
+                        onPressed: _continueWithDeviceTimezone,
                         child: const Text('Use Device Time Zone Instead'),
                       ),
                     ],
@@ -226,6 +275,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           GlassCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
             child: SwitchListTile.adaptive(
+              key: const Key('birth_time_unknown'),
               contentPadding: EdgeInsets.zero,
               title: const Text('Birth time unknown'),
               subtitle: const Text(
@@ -235,26 +285,54 @@ class _OnboardingPageState extends State<OnboardingPage> {
               onChanged: (value) => setState(() => _birthTimeUnknown = value),
             ),
           ),
+          if (!_birthTimeUnknown) ...[
+            const SizedBox(height: 14),
+            GlassCard(
+              key: const Key('birth_time_picker'),
+              onTap: _pickBirthTime,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              child: Row(
+                children: [
+                  const Icon(Icons.schedule_rounded, color: CompassColors.gold),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Time of birth',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          _birthTimeValue,
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 14),
           DropdownButtonFormField<String>(
-            initialValue: _country,
+            key: const Key('birth_country'),
+            // The value is the ISO-3166 alpha-2 code the engine expects; only
+            // the label is a display name.
+            initialValue: _countryCode,
             decoration: const InputDecoration(labelText: 'Country of birth'),
-            items:
-                const [
-                      'United States',
-                      'United Kingdom',
-                      'Germany',
-                      'Japan',
-                      'Vietnam',
-                    ]
-                    .map(
-                      (country) => DropdownMenuItem(
-                        value: country,
-                        child: Text(country),
-                      ),
-                    )
-                    .toList(),
-            onChanged: (value) => setState(() => _country = value ?? _country),
+            items: birthCountryChoices
+                .map(
+                  (choice) => DropdownMenuItem(
+                    value: choice.code,
+                    child: Text(choice.label),
+                  ),
+                )
+                .toList(),
+            onChanged: (value) =>
+                setState(() => _countryCode = value ?? _countryCode),
           ),
           const SizedBox(height: 28),
           FilledButton(

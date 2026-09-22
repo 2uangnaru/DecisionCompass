@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 
+import '../app_profile.dart';
 import '../models.dart';
+import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key, required this.userName, required this.zodiacSign});
+  const HomePage({
+    super.key,
+    required this.profile,
+    required this.dependencies,
+  });
 
-  final String userName;
-  final ZodiacSign zodiacSign;
+  final AppProfile profile;
+  final ReadingDependencies dependencies;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -26,7 +32,8 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => RitualPage(
           mode: _mode,
           period: _period,
-          zodiacSign: widget.zodiacSign,
+          profile: widget.profile,
+          dependencies: widget.dependencies,
         ),
       ),
     );
@@ -86,7 +93,7 @@ class _HomePageState extends State<HomePage> {
   Widget _header() {
     return Row(
       children: [
-        ZodiacAvatar(size: 52, sign: widget.zodiacSign),
+        ZodiacAvatar(size: 52, sign: widget.profile.zodiacSign),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -97,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
-                widget.userName,
+                widget.profile.userName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.headlineMedium,
