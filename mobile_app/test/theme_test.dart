@@ -13,7 +13,12 @@ void main() {
       await tester.pumpWidget(rig.app);
       await tester.pump();
 
-      final context = tester.element(find.byType(MaterialApp));
+      // `Theme.of` walks *up* from its context, so the context must be a
+      // descendant of `MaterialApp` (which builds the `Theme` widget below
+      // itself) — using `MaterialApp`'s own element here would silently find
+      // no ancestor `Theme` at all and fall back to Flutter's own default,
+      // passing for the wrong reason.
+      final context = tester.element(find.byType(Scaffold).first);
       final theme = Theme.of(context);
 
       expect(theme.brightness, Brightness.dark);
