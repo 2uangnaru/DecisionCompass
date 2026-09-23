@@ -1,5 +1,6 @@
 import 'package:decision_compass/category_presentation.dart';
 import 'package:decision_compass/data/models/models.dart';
+import 'package:decision_compass/home_descriptions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -56,9 +57,17 @@ void main() {
       expect(find.byKey(const Key('home_positioning')), findsOneWidget);
       expect(find.text('A COMPASS FOR UNCERTAIN MOMENTS'), findsOneWidget);
       expect(find.text('Caught between choices?'), findsOneWidget);
-      expect(find.textContaining('not a command'), findsOneWidget);
+      // The description below rotates daily; whichever one landed must be one
+      // of the approved thirty.
+      await tester.pump();
+      final description = tester
+          .widget<Text>(find.byKey(const Key('home_description')))
+          .data;
+      expect(homeDescriptions, contains(description));
       expect(find.text('What area is this about?'), findsOneWidget);
-      expect(find.text('Which direction do you need?'), findsOneWidget);
+      // The direction grid carries itself now; its heading was removed.
+      expect(find.text('Which direction do you need?'), findsNothing);
+      expect(find.text('YES'), findsOneWidget);
 
       final rendered = tester
           .widgetList<Text>(find.byType(Text))

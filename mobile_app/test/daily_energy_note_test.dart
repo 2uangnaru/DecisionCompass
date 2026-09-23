@@ -78,28 +78,131 @@ void main() {
   });
 
   group('Home', () {
-    testWidgets('the button reveals one sentence in place and hides it again', (
+    testWidgets('the button opens a tab beside it and closes it again', (
       tester,
     ) async {
       await pumpHome(tester, level: 'quiet');
       expect(find.text('QUIET'), findsOneWidget);
       expect(note, findsNothing);
       final card = find.byKey(const Key('daily_signals_content'));
-      final collapsed = tester.getSize(card).height;
+      final closed = tester.getSize(card).height;
 
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
 
       expect(note, findsOneWidget);
       expect(find.text(quietSentence), findsOneWidget);
-      // The card grew to hold the sentence rather than covering anything.
-      expect(tester.getSize(card).height, greaterThan(collapsed));
+      // It floats over the page, so nothing underneath it moves.
+      expect(tester.getSize(card).height, closed);
 
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
       expect(note, findsNothing);
       expect(find.text(quietSentence), findsNothing);
-      expect(tester.getSize(card).height, collapsed);
+      expect(tester.getSize(card).height, closed);
+    });
+
+    testWidgets('the tab fills the empty band to the right of the icon', (
+      tester,
+    ) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.binding.setSurfaceSize(const Size(720, 900));
+      await pumpHome(tester, level: 'quiet');
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+
+      final icon = tester.getRect(infoButton);
+      final tab = tester.getRect(note);
+      // Beside the icon, not below it: the row's own space is used first.
+      expect(
+        tab.left,
+        greaterThanOrEqualTo(icon.right),
+        reason: 'the tab should sit in the band to the right',
+      );
+      expect(tab.left - icon.right, lessThan(40));
+      // It grows upward from the icon into the empty band, so it never hangs
+      // over whatever the row sits above.
+      expect(
+        tab.bottom,
+        lessThanOrEqualTo(icon.bottom + 1),
+        reason: 'the tab must not reach below the energy row',
+      );
+      expect(tab.bottom, greaterThan(icon.top));
+      // Inside the screen, and small — a tab, not a panel.
+      expect(tab.top, greaterThanOrEqualTo(0));
+      expect(tab.right, lessThanOrEqualTo(720));
+      expect(tab.width, lessThanOrEqualTo(270));
+    });
+
+    testWidgets('the open tab leaves the signal tiles uncovered', (
+      tester,
+    ) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.binding.setSurfaceSize(const Size(720, 900));
+      await pumpHome(tester, level: 'focused'); // the longest sentence
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+
+      final tab = tester.getRect(note);
+      for (final label in ['Lucky number today:', 'Your color today:']) {
+        expect(
+          tab.overlaps(tester.getRect(find.text(label))),
+          isFalse,
+          reason: 'the tab covers $label',
+        );
+      }
+    });
+
+    testWidgets('it drops under the icon when the band is too narrow', (
+      tester,
+    ) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      await pumpHome(tester, level: 'quiet');
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+
+      final icon = tester.getRect(infoButton);
+      final tab = tester.getRect(note);
+      expect(
+        tab.top,
+        greaterThanOrEqualTo(icon.bottom),
+        reason: 'no room beside it on a phone, so it goes below',
+      );
+      expect(tab.top - icon.bottom, lessThan(40));
+      expect(tab.left, greaterThanOrEqualTo(0));
+      expect(tab.right, lessThanOrEqualTo(360));
+    });
+
+    testWidgets('tapping outside the tab closes it', (tester) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.binding.setSurfaceSize(const Size(360, 640));
+      await pumpHome(tester, level: 'quiet');
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+      final tab = tester.getRect(note);
+      expect(note, findsOneWidget);
+
+      // Well clear of the tab, and still on screen.
+      final outside = Offset(180, tab.bottom + 120);
+      expect(tab.contains(outside), isFalse);
+      await tester.tapAt(outside);
+      await tester.pumpAndSettle();
+      expect(note, findsNothing);
+    });
+
+    testWidgets('scrolling the page closes it', (tester) async {
+      await pumpHome(tester, level: 'quiet');
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+      expect(note, findsOneWidget);
+
+      await tester.drag(
+        find.text('Caught between choices?'),
+        const Offset(0, -140),
+      );
+      await tester.pumpAndSettle();
+      expect(note, findsNothing);
     });
 
     testWidgets('it shows only the current label, with no sheet or overlay', (
@@ -109,13 +212,13 @@ void main() {
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
 
-      // Nothing is layered over the page. (A MaterialApp always carries one
-      // ModalBarrier for its own route, so that is not the signal here.)
+      // A tab, not a route: nothing was pushed over the page.
       expect(find.byType(BottomSheet), findsNothing);
       expect(find.byType(Dialog), findsNothing);
       expect(find.byType(AlertDialog), findsNothing);
-      expect(find.byType(PopupMenuButton<Object>), findsNothing);
       expect(find.byKey(const Key('daily_energy_info_sheet')), findsNothing);
+      // Home is still fully on screen behind it.
+      expect(find.byKey(const Key('find_direction')), findsOneWidget);
 
       // No title, no list of the other seven tones, no disclaimer.
       expect(find.text('TODAY’S ENERGY'), findsNothing);
@@ -128,9 +231,8 @@ void main() {
       }
     });
 
-    testWidgets('an open sentence follows the label onto a new local day', (
-      tester,
-    ) async {
+    testWidgets('a new local day closes yesterday’s sentence and offers its '
+        'own', (tester) async {
       final rig = await pumpHome(
         tester,
         level: 'steady',
@@ -148,13 +250,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('FLOWING'), findsOneWidget);
-      expect(find.text(flowingSentence), findsOneWidget);
+      // An insight belongs to one date and tone. Yesterday's cannot linger,
+      // and today's is not shown until it is opened.
       expect(
         find.text(steadySentence),
         findsNothing,
         reason: 'yesterday’s sentence must not outlive its label',
       );
-      expect(note, findsOneWidget, reason: 'it should not collapse by itself');
+      expect(note, findsNothing);
+
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+      expect(find.text(flowingSentence), findsOneWidget);
     });
 
     testWidgets('a day with no energy offers no button', (tester) async {
@@ -204,15 +311,15 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('BRIGHT'), findsOneWidget);
-      expect(inBrief(note), findsNothing);
+      expect(note, findsNothing);
       final card = find.byKey(const Key('result_daily_brief'));
-      final collapsed = tester.getSize(card).height;
+      final closed = tester.getSize(card).height;
 
       await tester.tap(inBrief(infoButton));
       await tester.pumpAndSettle();
 
-      expect(inBrief(note), findsOneWidget);
-      expect(tester.getSize(card).height, greaterThan(collapsed));
+      expect(note, findsOneWidget);
+      expect(tester.getSize(card).height, closed);
       expect(find.text(brightSentence), findsOneWidget);
       expect(find.byType(BottomSheet), findsNothing);
       expect(find.byType(Dialog), findsNothing);
@@ -220,9 +327,9 @@ void main() {
 
       await tester.tap(inBrief(infoButton));
       await tester.pumpAndSettle();
-      expect(inBrief(note), findsNothing);
+      expect(note, findsNothing);
       expect(find.text(brightSentence), findsNothing);
-      expect(tester.getSize(card).height, collapsed);
+      expect(tester.getSize(card).height, closed);
     });
 
     testWidgets('a reading with no energy offers no button', (tester) async {
@@ -244,7 +351,7 @@ void main() {
 
       expect(find.byKey(const Key('result_daily_brief')), findsOneWidget);
       expect(inBrief(infoButton), findsNothing);
-      expect(inBrief(note), findsNothing);
+      expect(note, findsNothing);
     });
   });
 

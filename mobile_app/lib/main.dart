@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'app.dart';
 import 'data/current_context_provider.dart';
+import 'data/daily_energy_insight_deck.dart';
 import 'data/engine_daily_brief_provider.dart';
+import 'data/home_description_deck.dart';
+import 'data/shared_preferences_daily_energy_insight_store.dart';
 import 'data/shared_preferences_history_repository.dart';
+import 'data/shared_preferences_home_description_store.dart';
 import 'data/shared_preferences_profile_repository.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
@@ -23,17 +27,25 @@ void main() {
   // resolver rather than standing up a second instance of either.
   const repository = LocalReadingRepository();
   const contextProvider = DeviceCurrentContextProvider();
+  // A ChangeNotifier, so Home and a Result opened from it stay in step.
+  final dailyEnergyInsights = DailyEnergyInsightController(
+    store: const SharedPreferencesDailyEnergyInsightStore(),
+  );
   runApp(
-    const DecisionCompassApp(
+    DecisionCompassApp(
       dependencies: ReadingDependencies(
         repository: repository,
         contextProvider: contextProvider,
-        historyRepository: SharedPreferencesHistoryRepository(),
-        profileRepository: SharedPreferencesProfileRepository(),
-        dailyBriefProvider: EngineDailyBriefProvider(
+        historyRepository: const SharedPreferencesHistoryRepository(),
+        profileRepository: const SharedPreferencesProfileRepository(),
+        dailyBriefProvider: const EngineDailyBriefProvider(
           repository: repository,
           contextProvider: contextProvider,
         ),
+        homeDescriptionDeck: const HomeDescriptionDeck(
+          store: SharedPreferencesHomeDescriptionStore(),
+        ),
+        dailyEnergyInsights: dailyEnergyInsights,
       ),
     ),
   );

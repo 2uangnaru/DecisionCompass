@@ -1,5 +1,9 @@
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
+import 'package:decision_compass/data/daily_energy_insight_deck.dart';
+import 'package:decision_compass/data/in_memory_daily_energy_insight_store.dart';
+import 'package:decision_compass/data/home_description_deck.dart';
+import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/data/fixed_daily_brief_provider.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
@@ -40,6 +44,12 @@ void main() {
         historyRepository: InMemoryHistoryRepository(),
         profileRepository: InMemoryProfileRepository(),
         dailyBriefProvider: FixedDailyBriefProvider(),
+        homeDescriptionDeck: HomeDescriptionDeck(
+          store: InMemoryHomeDescriptionStore(),
+        ),
+        dailyEnergyInsights: DailyEnergyInsightController(
+          store: InMemoryDailyEnergyInsightStore.ordered(),
+        ),
         nowUtc: () => DateTime.utc(2026, 9, 18, 8, 30),
       ),
     );

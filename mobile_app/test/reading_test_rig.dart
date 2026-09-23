@@ -1,7 +1,13 @@
+import 'dart:math';
+
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
 import 'package:decision_compass/data/fake_reading_repository.dart';
+import 'package:decision_compass/data/daily_energy_insight_deck.dart';
 import 'package:decision_compass/data/fixed_daily_brief_provider.dart';
+import 'package:decision_compass/data/in_memory_daily_energy_insight_store.dart';
+import 'package:decision_compass/data/home_description_deck.dart';
+import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
 import 'package:decision_compass/data/models/models.dart';
@@ -21,10 +27,19 @@ class ReadingTestRig {
     Duration apiDelay = Duration.zero,
     DateTime? now,
     DateTime? localNow,
+    this.liveLocalClock,
     String deviceTimezone = 'Asia/Ho_Chi_Minh',
     CurrentLocation? location,
     this.safetyAcknowledged = true,
-  }) : localClock = localNow ?? _beforeEveryPeriod,
+    InMemoryHomeDescriptionStore? descriptionStore,
+    Random? descriptionRandom,
+    InMemoryDailyEnergyInsightStore? insightStore,
+    Random? insightRandom,
+  }) : descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
+       insightStore = insightStore ?? InMemoryDailyEnergyInsightStore.ordered(),
+       insightRandom = insightRandom,
+       descriptionRandom = descriptionRandom,
+       localClock = localNow ?? _beforeEveryPeriod,
        repository = FakeReadingRepository(
          response: response,
          error: error,
@@ -47,8 +62,21 @@ class ReadingTestRig {
   final InMemoryProfileRepository profileRepository =
       InMemoryProfileRepository();
   final FixedDailyBriefProvider dailyBriefProvider = FixedDailyBriefProvider();
+
+  /// Survives a rig swap when a test passes its own, so a "restart" keeps the
+  /// deck exactly where the previous run left it.
+  final InMemoryHomeDescriptionStore descriptionStore;
   final DateTime revealInstant;
   final bool safetyAcknowledged;
+  final DateTime Function()? liveLocalClock;
+
+  /// Seeded by tests that need a reproducible deal.
+  final Random? descriptionRandom;
+
+  /// Daily Energy insights. Defaults to decks in pool order, so a test that
+  /// is about something else still sees each tone's original sentence.
+  final InMemoryDailyEnergyInsightStore insightStore;
+  final Random? insightRandom;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -62,12 +90,20 @@ class ReadingTestRig {
     historyRepository: historyRepository,
     profileRepository: profileRepository,
     dailyBriefProvider: dailyBriefProvider,
+    homeDescriptionDeck: HomeDescriptionDeck(
+      store: descriptionStore,
+      random: descriptionRandom,
+    ),
+    dailyEnergyInsights: dailyEnergyInsights,
     nowUtc: () {
       clockReads++;
       return revealInstant;
     },
-    nowLocal: () => localClock,
+    nowLocal: () => liveLocalClock?.call() ?? localClock,
   );
+
+  late final DailyEnergyInsightController dailyEnergyInsights =
+      DailyEnergyInsightController(store: insightStore, random: insightRandom);
 
   late final Widget app = DecisionCompassApp(
     dependencies: dependencies,

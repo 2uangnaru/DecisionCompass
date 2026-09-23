@@ -48,7 +48,7 @@ void main() {
       }
       // The other two selectors and the CTA are untouched.
       expect(find.byKey(const Key('category_selector')), findsOneWidget);
-      expect(find.text('Which direction do you need?'), findsOneWidget);
+      expect(find.text('Which direction do you need?'), findsNothing);
       expect(find.byKey(const Key('find_direction')), findsOneWidget);
       expect(find.text('Overall  •  YES / NO'), findsOneWidget);
     });

@@ -1,5 +1,7 @@
 import 'data/current_context_provider.dart';
 import 'data/daily_brief_provider.dart';
+import 'data/daily_energy_insight_deck.dart';
+import 'data/home_description_deck.dart';
 import 'data/history_repository.dart';
 import 'data/profile_repository.dart';
 import 'data/reading_repository.dart';
@@ -14,6 +16,8 @@ class ReadingDependencies {
     required this.historyRepository,
     required this.profileRepository,
     required this.dailyBriefProvider,
+    required this.homeDescriptionDeck,
+    required this.dailyEnergyInsights,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -23,6 +27,14 @@ class ReadingDependencies {
   final HistoryRepository historyRepository;
   final ProfileRepository profileRepository;
   final DailyBriefProvider dailyBriefProvider;
+
+  /// Deals Home's rotating description, one per local calendar day.
+  final HomeDescriptionDeck homeDescriptionDeck;
+
+  /// Deals the Daily Energy insight for a date and tone, and remembers
+  /// which have been read. Shared by Home and Result so opening one clears
+  /// the unread mark on the other.
+  final DailyEnergyInsightController dailyEnergyInsights;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

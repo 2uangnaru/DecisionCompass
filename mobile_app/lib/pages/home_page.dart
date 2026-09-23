@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
 import '../category_presentation.dart';
+import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
@@ -79,12 +80,13 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   /// It never enters reading history; an actual Reveal has its own snapshot.
   late Future<engine.DailyBrief?> _dailyBrief;
 
-  /// Whether the ⓘ next to the energy label has the explanation open. It
-  /// survives a new day's brief on purpose: the sentence just becomes the new
-  /// label's, instead of collapsing under the reader.
-  var _energyNoteOpen = false;
   late String _briefLocalDay;
   Timer? _dayChangeTimer;
+
+  /// Today's rotating description, once the saved deck has been read. Null
+  /// means "not resolved yet"; the copy block holds its space rather than
+  /// showing another day's line for a frame.
+  String? _description;
 
   static String _dayKey(DateTime value) =>
       '${value.year}-${value.month}-${value.day}';
@@ -95,7 +97,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
     _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
+    _loadDescription();
     _scheduleDayChange();
+  }
+
+  /// Deals (or re-reads) the description for the local day now showing.
+  Future<void> _loadDescription() async {
+    final description = await widget.dependencies.homeDescriptionDeck
+        .descriptionFor(widget.dependencies.nowLocal());
+    if (!mounted) return;
+    setState(() => _description = description);
   }
 
   @override
@@ -111,6 +122,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         _briefLocalDay = day;
         _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
       });
+      // Only on a genuinely new day: resuming on the same date must leave the
+      // description exactly as it was.
+      _loadDescription();
     }
     _scheduleDayChange();
   }
@@ -168,20 +182,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             _dailySignals(),
             const SizedBox(height: 28),
             _positioning(),
-            const SizedBox(height: 26),
+            const SizedBox(height: 22),
+            // No heading here: the positioning copy above already asks for
+            // this, and a second one made the screen read as a wall of
+            // headings.
+            _modeGrid(),
+            const SizedBox(height: 28),
             Text(
               'What area is this about?',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 14),
             _categorySelector(),
-            const SizedBox(height: 28),
-            Text(
-              'Which direction do you need?',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 14),
-            _modeGrid(),
             const SizedBox(height: 28),
             FilledButton.icon(
               key: const Key('find_direction'),
@@ -262,11 +274,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 8),
-        Text(
-          'Choose what’s on your mind and the moment you’re considering. '
-          'We’ll read today’s symbolic patterns and offer a direction—not a '
-          'command.',
-          style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.5),
+        // Roughly three lines at this style on a 360dp phone. Holding that
+        // space stops the block from jumping once the saved deck has been
+        // read, without ever rendering the wrong day's line.
+        ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 63),
+          child: Text(
+            _description ?? '',
+            key: const Key('home_description'),
+            style: Theme.of(context).textTheme.bodyMedium
+                ?.copyWith(height: 1.5),
+          ),
         ),
       ],
     );
@@ -365,6 +383,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             builder: (context, snapshot) {
               final brief = snapshot.data;
               final colorName = brief?.colorInspiration;
+              final swatch = colorName == null
+                  ? CompassColors.line
+                  : (_colorSwatches[colorName] ?? CompassColors.blueLight);
               final energy = brief?.energy;
               final energyAccent = switch (energy?.level) {
                 'quiet' || 'soft' => CompassColors.blueLight,
@@ -410,16 +431,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         ),
                                   ),
                                 ),
-                                if (dailyEnergyMessage(energy?.level) !=
-                                    null) ...[
-                                  const SizedBox(width: 2),
-                                  DailyEnergyInfoButton(
-                                    expanded: _energyNoteOpen,
-                                    onPressed: () => setState(
-                                      () => _energyNoteOpen = !_energyNoteOpen,
-                                    ),
+                                const SizedBox(width: 2),
+                                // Home always speaks for the current local
+                                // day, and is where discovery lives.
+                                DailyEnergyInfoButton(
+                                  level: energy?.level,
+                                  controller:
+                                      widget.dependencies.dailyEnergyInsights,
+                                  day: dailyEnergyDayKey(
+                                    widget.dependencies.nowLocal(),
                                   ),
-                                ],
+                                  showsDiscovery: true,
+                                ),
                               ],
                             ),
                           ],
@@ -443,10 +466,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       ),
                     ],
                   ),
-                  DailyEnergyNote(
-                    level: energy?.level,
-                    visible: _energyNoteOpen,
-                  ),
                   const SizedBox(height: 8),
                   IntrinsicHeight(
                     child: Row(
@@ -454,34 +473,45 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       children: [
                         Expanded(
                           child: _TodaySignalTile(
-                            label: 'Your color',
+                            label: 'Your color today:',
                             value: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                // The swatch carries its own colour out into a
+                                // soft halo, so the tile reads as that colour
+                                // at a glance rather than as a line of text.
                                 Container(
-                                  width: 24,
-                                  height: 24,
-                                  padding: const EdgeInsets.all(3),
+                                  width: 22,
+                                  height: 22,
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white38),
-                                  ),
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: colorName == null
-                                          ? CompassColors.line
-                                          : (_colorSwatches[colorName] ??
-                                                CompassColors.blueLight),
+                                    color: swatch,
+                                    border: Border.all(
+                                      color: Colors.white54,
+                                      width: 1.5,
                                     ),
+                                    boxShadow: colorName == null
+                                        ? null
+                                        : [
+                                            BoxShadow(
+                                              color: swatch.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                              blurRadius: 12,
+                                              spreadRadius: 1,
+                                            ),
+                                          ],
                                   ),
                                 ),
-                                const SizedBox(width: 7),
-                                Expanded(
+                                const SizedBox(width: 8),
+                                Flexible(
                                   child: Text(
                                     colorName == null
                                         ? '—'
                                         : titleCaseWords(colorName),
                                     maxLines: 2,
+                                    textAlign: TextAlign.center,
                                     overflow: TextOverflow.ellipsis,
                                     style: const TextStyle(
                                       color: CompassColors.text,
@@ -497,14 +527,26 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         const SizedBox(width: 8),
                         Expanded(
                           child: _TodaySignalTile(
-                            label: 'Lucky number',
+                            label: 'Lucky number today:',
                             value: Text(
                               brief?.luckyNumber.toString() ?? '—',
-                              style: const TextStyle(
-                                color: CompassColors.text,
-                                fontSize: 21,
-                                fontWeight: FontWeight.w700,
-                                height: 1.1,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: brief == null
+                                    ? CompassColors.text
+                                    : CompassColors.blueLight,
+                                fontSize: 26,
+                                fontWeight: FontWeight.w800,
+                                height: 1.05,
+                                shadows: brief == null
+                                    ? null
+                                    : [
+                                        BoxShadow(
+                                          color: CompassColors.blueLight
+                                              .withValues(alpha: 0.45),
+                                          blurRadius: 16,
+                                        ),
+                                      ],
                               ),
                             ),
                           ),
@@ -587,7 +629,8 @@ class _TodaySignalTile extends StatelessWidget {
                 ?.copyWith(color: CompassColors.secondary, fontSize: 11),
           ),
           const SizedBox(height: 3),
-          value,
+          // Only the value is centred; the label stays where it was.
+          Center(child: value),
         ],
       ),
     );

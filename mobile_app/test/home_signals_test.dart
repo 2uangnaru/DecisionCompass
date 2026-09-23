@@ -68,6 +68,60 @@ void main() {
     expect(find.byKey(const Key('daily_energy_note')), findsNothing);
   });
 
+  testWidgets('centres the colour and lucky number in their tiles', (
+    tester,
+  ) async {
+    addTearDown(() => tester.binding.setSurfaceSize(null));
+    await tester.binding.setSurfaceSize(const Size(360, 640));
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+      localNow: DateTime(2026, 9, 18, 7),
+    );
+    rig.dailyBriefProvider.response = const engine.DailyBrief(
+      luckyNumber: 2,
+      // The longest swatch name, so the tile is under its worst case.
+      colorInspiration: 'ocean_blue',
+      energy: engine.DailyEnergy(level: 'steady', index: 51, dataCoverage: 1),
+    );
+    await tester.pumpWidget(rig.app);
+    await completeOnboarding(tester);
+    await tester.pump();
+
+    // Both labels say "today", so the card cannot be read as a standing fact
+    // about the user.
+    expect(find.text('Lucky number today:'), findsOneWidget);
+    expect(find.text('Your color today:'), findsOneWidget);
+
+    Rect tileOf(String label) => tester.getRect(
+      find
+          .ancestor(of: find.text(label), matching: find.byType(Container))
+          .first,
+    );
+
+    // The labels still hug the tile's left edge — only the values moved.
+    for (final label in ['Lucky number today:', 'Your color today:']) {
+      final tile = tileOf(label);
+      expect(
+        tester.getRect(find.text(label)).left - tile.left,
+        lessThan(14),
+        reason: '$label should not have been centred',
+      );
+    }
+
+    // The number sits dead centre of its tile.
+    expect(
+      tester.getRect(find.text('2')).center.dx,
+      moreOrLessEquals(tileOf('Lucky number today:').center.dx, epsilon: 0.5),
+    );
+    // The swatch and the name are centred together, so the pair reads as one
+    // block rather than hugging the left edge.
+    final colourTile = tileOf('Your color today:');
+    final name = tester.getRect(find.text('Ocean Blue'));
+    expect(name.left, greaterThan(colourTile.left));
+    expect(name.right, lessThanOrEqualTo(colourTile.right));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('greets for afternoon and evening too', (tester) async {
     final afternoon = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),

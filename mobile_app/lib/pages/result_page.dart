@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../category_presentation.dart';
 import '../data/history_entry.dart';
+import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
@@ -181,7 +182,17 @@ class _ResultPageState extends State<ResultPage> {
               _LuckyWindows(reading: reading, period: _period),
             if (reading.dailyBrief != null) ...[
               const SizedBox(height: 14),
-              _DailyBrief(brief: reading.dailyBrief!),
+              _DailyBrief(
+                brief: reading.dailyBrief!,
+                // The reading's own local date, not the device's: a Result
+                // left open past midnight keeps the insight it was read
+                // for, and a past one never announces "new today".
+                day: reading.context.localDate,
+                isCurrentDay:
+                    reading.context.localDate ==
+                    dailyEnergyDayKey(widget.dependencies.nowLocal()),
+                insights: widget.dependencies.dailyEnergyInsights,
+              ),
             ],
             const SizedBox(height: 22),
             FilledButton.icon(
@@ -369,22 +380,21 @@ class _Explanation extends StatelessWidget {
   }
 }
 
-class _DailyBrief extends StatefulWidget {
-  const _DailyBrief({required this.brief});
+class _DailyBrief extends StatelessWidget {
+  const _DailyBrief({
+    required this.brief,
+    required this.day,
+    required this.isCurrentDay,
+    required this.insights,
+  });
 
   final engine.DailyBrief brief;
-
-  @override
-  State<_DailyBrief> createState() => _DailyBriefState();
-}
-
-class _DailyBriefState extends State<_DailyBrief> {
-  /// Whether the ⓘ has the one-line explanation open, in this card.
-  var _energyNoteOpen = false;
+  final String day;
+  final bool isCurrentDay;
+  final DailyEnergyInsightController insights;
 
   @override
   Widget build(BuildContext context) {
-    final brief = widget.brief;
     final colour = titleCaseWords(brief.colorInspiration);
     return GlassCard(
       key: const Key('result_daily_brief'),
@@ -427,21 +437,16 @@ class _DailyBriefState extends State<_DailyBrief> {
                         letterSpacing: 1.2,
                       ),
                     ),
-                    if (dailyEnergyMessage(brief.energy!.level) != null) ...[
-                      const SizedBox(width: 2),
-                      DailyEnergyInfoButton(
-                        expanded: _energyNoteOpen,
-                        onPressed: () =>
-                            setState(() => _energyNoteOpen = !_energyNoteOpen),
-                      ),
-                    ],
+                    const SizedBox(width: 2),
+                    DailyEnergyInfoButton(
+                      level: brief.energy!.level,
+                      controller: insights,
+                      day: day,
+                      isCurrentDay: isCurrentDay,
+                    ),
                   ],
                 ),
               ],
-            ),
-            DailyEnergyNote(
-              level: brief.energy!.level,
-              visible: _energyNoteOpen,
             ),
           ],
         ],
