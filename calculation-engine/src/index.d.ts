@@ -55,7 +55,9 @@ export interface ReadingResult {
   warnings:string[]; inputSnapshot:Record<string,unknown>;
   evaluatedAtUtc?:string; luckyWindows:LuckyWindow[];
   windowStatus?:'not_applicable' | 'two_available' | 'one_remaining' | 'no_15_minute_window';
-  dailyBrief?:{luckyNumber:number;colorInspiration:string};
+  dailyBrief?:{luckyNumber:number;colorInspiration:string;energy:{
+    level:'soft'|'steady'|'bright'|'unavailable';index:number|null;dataCoverage:number;
+  }};
   segments?:Array<{startUtc:string;endUtc:string;includedFromUtc:string;durationSeconds:number;modules:Record<ModuleId,ModuleResult>}>;
   consumeUnlock?:false; monetizationHandledByApp?:true;
 }

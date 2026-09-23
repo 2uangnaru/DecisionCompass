@@ -117,6 +117,23 @@ What this establishes, and what it does not:
   **symbolic editorial emphases**. Nothing here establishes predictive validity,
   and no automatic Yong Shen or gender-based spouse/wealth rule was introduced.
 
+## Symbolic daily energy — 2026-09-23
+
+Engine **3.3.0-mvp** / ruleset **v6** adds `dailyBrief.energy`. The full local
+day is segmented with the existing calendar and timezone rules, including
+23/25-hour DST days. General six-module fusion is averaged by actual segment
+duration, then the editorial 65% action / 35% change projection maps to
+`SOFT`, `STEADY` or `BRIGHT`. Coverage below 0.2 returns `unavailable`.
+
+The daily label does not change with mode, category, chosen period or Reveal
+time within the same local date. It is a symbolic product signal; no physical
+energy measurement or predictive accuracy has been established. The Dart
+offline port matches 16 generated engine fixtures and 16 edge readings.
+
+Checks on 2026-09-23: **90/90 Node tests**, **338/338 Flutter tests**, fixture
+check **16/16**, Flutter analyzer clean. See
+`outputs/Daily_Energy_Formula_v1.md` for the exact equation and UI meaning.
+
 ## Executed checks
 
 | Check | Result | What it establishes |

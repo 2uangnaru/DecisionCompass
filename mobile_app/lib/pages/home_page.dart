@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
@@ -48,7 +50,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   DecisionMode _mode = DecisionMode.yesNo;
 
   /// Overall is the default; the typed enum travels the whole flow, never a
@@ -57,13 +59,60 @@ class _HomePageState extends State<HomePage> {
 
   late AppProfile _profile = widget.profile;
 
-  /// Fetched once per Home visit. It never reaches `ResultPage`, so it is
-  /// never saved to history — see `DailyBriefProvider`'s doc comment for why
-  /// this is a separate, ambient preview rather than the reveal flow itself.
-  late final Future<engine.DailyBrief?> _dailyBrief = widget
-      .dependencies
-      .dailyBriefProvider
-      .preview(widget.profile);
+  /// Ambient preview, refreshed when the device's local calendar day changes.
+  /// It never enters reading history; an actual Reveal has its own snapshot.
+  late Future<engine.DailyBrief?> _dailyBrief;
+  late String _briefLocalDay;
+  Timer? _dayChangeTimer;
+
+  static String _dayKey(DateTime value) =>
+      '${value.year}-${value.month}-${value.day}';
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
+    _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
+    _scheduleDayChange();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refreshIfNewDay();
+  }
+
+  void _refreshIfNewDay() {
+    final local = widget.dependencies.nowLocal();
+    final day = _dayKey(local);
+    if (day != _briefLocalDay) {
+      setState(() {
+        _briefLocalDay = day;
+        _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
+      });
+    }
+    _scheduleDayChange();
+  }
+
+  void _scheduleDayChange() {
+    _dayChangeTimer?.cancel();
+    final local = widget.dependencies.nowLocal();
+    final next = DateTime(local.year, local.month, local.day + 1);
+    final remaining = next.difference(local);
+    _dayChangeTimer = Timer(
+      remaining > Duration.zero ? remaining : const Duration(seconds: 1),
+      () {
+        if (mounted) _refreshIfNewDay();
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _dayChangeTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
 
   void _beginReading() {
     Navigator.of(context).push(
@@ -276,30 +325,55 @@ class _HomePageState extends State<HomePage> {
             builder: (context, snapshot) {
               final brief = snapshot.data;
               final colorName = brief?.colorInspiration;
-              return Row(
+              return Column(
                 children: [
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: colorName == null
-                          ? CompassColors.line
-                          : (_colorSwatches[colorName] ??
-                                CompassColors.blueLight),
-                    ),
+                  Row(
+                    children: [
+                      Container(
+                        width: 36,
+                        height: 36,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: colorName == null
+                              ? CompassColors.line
+                              : (_colorSwatches[colorName] ??
+                                    CompassColors.blueLight),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _Signal(
+                          label: 'Your color',
+                          value: colorName == null
+                              ? '—'
+                              : titleCaseWords(colorName),
+                        ),
+                      ),
+                      const SizedBox(width: 10),
+                      _Signal(
+                        label: 'Lucky number',
+                        value: brief?.luckyNumber.toString() ?? '—',
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _Signal(
-                      label: 'Your color',
-                      value: colorName == null ? '—' : titleCaseWords(colorName),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  _Signal(
-                    label: 'Lucky number',
-                    value: brief?.luckyNumber.toString() ?? '—',
+                  const Divider(height: 28, color: CompassColors.line),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Daily energy',
+                        style: TextStyle(color: CompassColors.secondary),
+                      ),
+                      Text(
+                        brief?.energy?.displayLabel ?? '—',
+                        key: const Key('daily_energy_label'),
+                        style: const TextStyle(
+                          color: CompassColors.teal,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               );

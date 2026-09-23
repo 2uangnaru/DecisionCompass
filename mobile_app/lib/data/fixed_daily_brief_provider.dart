@@ -9,7 +9,11 @@ class FixedDailyBriefProvider implements DailyBriefProvider {
   FixedDailyBriefProvider({this.response});
 
   engine.DailyBrief? response;
+  int previewCalls = 0;
 
   @override
-  Future<engine.DailyBrief?> preview(AppProfile profile) async => response;
+  Future<engine.DailyBrief?> preview(AppProfile profile) async {
+    previewCalls++;
+    return response;
+  }
 }

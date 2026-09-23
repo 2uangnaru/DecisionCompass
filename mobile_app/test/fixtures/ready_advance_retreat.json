@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.2.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v5",
+  "engineVersion": "3.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -65,7 +65,7 @@
   "modeScore": 0.1600437799,
   "modeBasis": "tactical_momentum",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "e21df87b5aa3f1d99efd2b5eea5f5562f8c46b2c0bafd2abb5850aa9ee254f0e",
+  "readingKey": "b133f9d1b330aef4fa4f5b3506f2456dc236f841aee1a8c50b0350cb7dabd705",
   "axisScores": {
     "action": 0.1448798813,
     "change": 0.1785774336,
@@ -97,7 +97,12 @@
   "windowStatus": "two_available",
   "dailyBrief": {
     "luckyNumber": 1,
-    "colorInspiration": "sage"
+    "colorInspiration": "sage",
+    "energy": {
+      "level": "bright",
+      "index": 56,
+      "dataCoverage": 0.9666666667
+    }
   },
   "segments": [
     {

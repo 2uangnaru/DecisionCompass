@@ -15,6 +15,7 @@ void main() {
     rig.dailyBriefProvider.response = const engine.DailyBrief(
       luckyNumber: 4,
       colorInspiration: 'ocean_blue',
+      energy: engine.DailyEnergy(level: 'steady', index: 51, dataCoverage: 1),
     );
 
     await tester.pumpWidget(rig.app);
@@ -24,9 +25,8 @@ void main() {
     expect(find.text('Good morning,'), findsOneWidget);
     expect(find.text('4'), findsOneWidget);
     expect(find.text('Ocean Blue'), findsOneWidget);
-    // The old static card is gone entirely, not just its values.
-    expect(find.text('Daily energy'), findsNothing);
-    expect(find.text('STEADY'), findsNothing);
+    expect(find.text('Daily energy'), findsOneWidget);
+    expect(find.text('STEADY'), findsOneWidget);
     expect(find.text('7'), findsNothing);
   });
 
@@ -52,6 +52,39 @@ void main() {
   });
 
   testWidgets(
+    'refreshes daily energy when the app resumes on a new local day',
+    (tester) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        localNow: DateTime(2026, 9, 18, 20),
+      );
+      rig.dailyBriefProvider.response = const engine.DailyBrief(
+        luckyNumber: 4,
+        colorInspiration: 'ocean_blue',
+        energy: engine.DailyEnergy(level: 'steady', index: 50, dataCoverage: 1),
+      );
+      await tester.pumpWidget(rig.app);
+      await completeOnboarding(tester);
+      await tester.pump();
+      expect(find.text('STEADY'), findsOneWidget);
+      expect(rig.dailyBriefProvider.previewCalls, 1);
+
+      rig.localClock = DateTime(2026, 9, 19, 7);
+      rig.dailyBriefProvider.response = const engine.DailyBrief(
+        luckyNumber: 5,
+        colorInspiration: 'sage',
+        energy: engine.DailyEnergy(level: 'bright', index: 58, dataCoverage: 1),
+      );
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump(); // resolve the replacement FutureBuilder snapshot
+      expect(find.text('BRIGHT'), findsOneWidget);
+      expect(find.text('STEADY'), findsNothing);
+      expect(rig.dailyBriefProvider.previewCalls, 2);
+    },
+  );
+
+  testWidgets(
     'falls back to placeholders, never stale mock values, when no brief is '
     'available yet',
     (tester) async {
@@ -62,9 +95,10 @@ void main() {
       await completeOnboarding(tester);
       await tester.pump();
 
-      expect(find.text('—'), findsNWidgets(2));
+      expect(find.text('—'), findsNWidgets(3));
       expect(find.text('Ocean Blue'), findsNothing);
       expect(find.text('7'), findsNothing);
+      expect(find.text('STEADY'), findsNothing);
     },
   );
 }

@@ -1,8 +1,8 @@
 import '../app_profile.dart';
 import 'models/models.dart' as engine;
 
-/// A read-only preview of today's ambient `DailyBrief` — the color/lucky
-/// number shown on Home before the user has revealed anything — independent
+/// A read-only preview of today's ambient `DailyBrief` — color, lucky number
+/// and symbolic daily energy shown on Home before a reveal — independent
 /// of any decision mode/period/category.
 ///
 /// Deliberately its own interface rather than reusing `ReadingRepository`

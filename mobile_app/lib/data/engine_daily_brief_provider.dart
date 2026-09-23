@@ -7,8 +7,8 @@ import 'reading_repository.dart';
 /// Computes a real `DailyBrief` via one default-mode/period/category engine
 /// reading, discarding everything else the response carries.
 ///
-/// `calculation-engine/src/index.js`'s `dailyBrief` (`COLORS`/`briefNumber`)
-/// depends only on the profile and today's calendar date — never on
+/// `calculation-engine/src/index.js`'s `dailyBrief` depends on the profile,
+/// today's local calendar date and current timezone — never on the chosen
 /// `mode`/`period`/`category` — so there is no lighter-weight engine entry
 /// point, but any default request produces the same brief a real reveal
 /// would have.

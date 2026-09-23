@@ -8,6 +8,7 @@ import { buildBaZi, scoreBaZi } from './bazi.js';
 import { buildZiWei, scoreZiWei, inspectZiWei } from './ziwei.js';
 import { natalSky, skyAt, western, cosmic } from './astronomy.js';
 import { almanac } from './calendar.js';
+import { dailyEnergy } from './daily-energy.js';
 
 export { resolveCurrentContext, VERSION, RULESET, CATEGORIES };
 export const PROVIDERS=Object.freeze({lunarJavascript:'1.7.7',iztro:'2.6.1',astronomyEngine:'2.1.19',geoTz:'8.1.9',momentTimezone:'0.6.4'});
@@ -83,12 +84,13 @@ export function createCalculator(inputProfile) {
       meaning:'symbolic_timing_score_not_probability',
     })).sort((a,b)=>b.score-a.score||a.startUtc.localeCompare(b.startUtc)).slice(0,2);
     const first=evaluated[0].value,briefNumber=first.modules.N.diagnostics.personalDay;
+    const energy=dailyEnergy(segments.map(s=>({start:s.start,end:s.end,evidence:evaluate(s.start,zone,'general').evidence})));
     const readingKey=hash({profile,rules:RULESET,providers:base.providers,zone,period,category,
       segments:evaluated.map(s=>[s.start,s.end,period==='now'?null:s.candidateStart])});
     return {...base,...decision(e,mode),readingKey,axisScores:{action:round(e.a),change:round(e.c),selected:round(scoreForMode(e,mode))},
       evaluatedAtUtc:new Date(evaluated[0].start).toISOString(),luckyWindows:windows,
       windowStatus:period==='now'?'not_applicable':windows.length===2?'two_available':windows.length===1?'one_remaining':'no_15_minute_window',
-      dailyBrief:{luckyNumber:briefNumber,colorInspiration:COLORS[Math.floor(first.calendar.day.stem/2)]},
+      dailyBrief:{luckyNumber:briefNumber,colorInspiration:COLORS[Math.floor(first.calendar.day.stem/2)],energy},
       segments:evaluated.map(s=>({startUtc:new Date(s.start).toISOString(),endUtc:new Date(s.end).toISOString(),
         includedFromUtc:new Date(s.candidateStart??s.start).toISOString(),durationSeconds:duration(s),
         modules:moduleSummary(s.value.modules,!!input.diagnostics,category)})),

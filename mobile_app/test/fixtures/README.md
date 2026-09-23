@@ -16,15 +16,15 @@ It validates every fixture's projection using the engine's own
 `MODES` / `percent` / `scoreForMode`, so the formulas are never re-implemented
 outside `src/core.js`.
 
-## Status — regenerated 2026-09-22
+## Status — regenerated 2026-09-23
 
 The sixteen engine-reproducible fixtures below are **real engine golden
 output**, written verbatim by `scripts/mobile-fixtures.mjs --write` on Node
-**v24.19.0** against engine `3.2.0-mvp` / ruleset
-`civil-midnight-chinese-calendar-symbolic-v5` (the category-aware fusion
-bump). `--check` then exited **0**
+**v24.19.0** against engine `3.3.0-mvp` / ruleset
+`civil-midnight-chinese-calendar-symbolic-v6` (symbolic full-day energy).
+`--check` then exited **0**
 ("All 16 engine fixtures match current engine output"), and the engine suite
-passed **87/87** on the same runtime.
+passed **90/90** on the same runtime.
 
 Because they are verbatim, they carry fields the DTO deliberately ignores —
 `segments` (per-module diagnostics) and the top-level `meaning`, which
@@ -34,6 +34,10 @@ field the DTO *emits* matches the payload, rather than whole-map equality.
 Do not hand-edit `percentages`, `modeScore`, `axisScores` or `winner` in these
 files. If a value looks wrong, fix the scenario in the generator and re-run
 `--write`; `--check` is what keeps them honest.
+
+Every generated ready reading also carries `dailyBrief.energy` with its
+symbolic level, internal index and data coverage. The two synthetic parser-only
+files remain hand-maintained and may omit this additive field.
 
 ## Fixtures
 

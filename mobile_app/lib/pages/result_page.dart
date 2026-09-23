@@ -20,7 +20,11 @@ import '../widgets/responsible_use_sheet.dart';
 /// the UX spec's "auto-saved" behavior — there is no separate save action to
 /// forget to wire up.
 class ResultPage extends StatefulWidget {
-  const ResultPage({super.key, required this.reading, required this.dependencies});
+  const ResultPage({
+    super.key,
+    required this.reading,
+    required this.dependencies,
+  });
 
   final engine.ReadingResponse reading;
   final ReadingDependencies dependencies;
@@ -203,15 +207,15 @@ class _ResultPageState extends State<ResultPage> {
               onTap: () => showResponsibleUseSheet(context),
               borderRadius: BorderRadius.circular(10),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 child: Text.rich(
                   TextSpan(
-                    text:
-                        'For everyday reflection only. Important decisions need real information and qualified help.\n',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white60,
-                      height: 1.45,
-                    ),
+                    text: 'For everyday reflection only. Important decisions need real information and qualified help.\n',
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: Colors.white60, height: 1.45),
                     children: const [
                       TextSpan(
                         text: 'Responsible Use & Safety Policy',
@@ -374,20 +378,42 @@ class _DailyBrief extends StatelessWidget {
     final colour = titleCaseWords(brief.colorInspiration);
     return GlassCard(
       key: const Key('result_daily_brief'),
-      child: Row(
+      child: Column(
         children: [
-          const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
-          const SizedBox(width: 12),
-          Expanded(child: Text('Colour to keep near you: $colour')),
-          const SizedBox(width: 10),
-          Text(
-            '${brief.luckyNumber}',
-            style: const TextStyle(
-              color: CompassColors.blueLight,
-              fontWeight: FontWeight.w700,
-              fontSize: 20,
-            ),
+          Row(
+            children: [
+              const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
+              const SizedBox(width: 12),
+              Expanded(child: Text('Colour to keep near you: $colour')),
+              const SizedBox(width: 10),
+              Text(
+                '${brief.luckyNumber}',
+                style: const TextStyle(
+                  color: CompassColors.blueLight,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 20,
+                ),
+              ),
+            ],
           ),
+          if (brief.energy != null) ...[
+            const Divider(height: 28, color: CompassColors.line),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Daily energy'),
+                Text(
+                  brief.energy!.displayLabel,
+                  key: const Key('result_daily_energy_label'),
+                  style: const TextStyle(
+                    color: CompassColors.teal,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
+            ),
+          ],
         ],
       ),
     );

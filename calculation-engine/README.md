@@ -1,7 +1,7 @@
 # AstraCue: Cosmic Decisions — Calculation Engine
 
-Engine MVP 3.1.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v4`, triển khai
-19/09/2026, metadata đồng bộ 21/09/2026 (không đổi công thức tính). Nhận hồ sơ người dùng
+Engine MVP 3.3.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v6`, cập nhật
+23/09/2026. Nhận hồ sơ người dùng
 và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
 trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
 trong đường tính kết quả.
@@ -63,6 +63,7 @@ timeout. Engine không tự bật GPS hoặc xin quyền từ điện thoại.
 | Thần số học | Life Path, Personal Year/Month/Day |
 | Cosmic | Pha Mặt Trăng, vận tốc Mercury, direct/stationary/retrograde |
 | Fusion | Hai trục nền A/C, 7 decision modes với projection riêng, phần trăm, độ phủ dữ liệu |
+| Daily energy | Tông biểu tượng của toàn ngày địa phương từ fusion General của sáu module, trung bình theo độ dài thực từng khung giờ |
 | Time windows | NOW, Morning/Midday/Afternoon/Evening, Top 2, hết buổi, còn một khung, DST fold/gap |
 | Audit | Version, input snapshot, module đóng góp, reading key, kết quả có thể tái lập |
 
@@ -72,6 +73,15 @@ quyết định trọng số module, cung đích Tử Vi và bảng nhấn hành
 trước khi chiếu theo decision mode; giá trị lạ bị từ chối bằng
 `INVALID_CATEGORY`. `other` dùng lại công thức của `general` như một fallback
 trung thực nhưng vẫn là category riêng với reading snapshot riêng.
+
+`dailyBrief.energy` gồm `level`, `index`, `dataCoverage`. Với mỗi khung của
+toàn ngày địa phương, tính fusion `general`; lấy trung bình `A` và `C` theo số
+giây thực của khung. `index = round(50 + 40 × clamp(0.65 × A_day + 0.35 × C_day))`.
+`SOFT` khi index ≤49, `STEADY` khi 50–52, `BRIGHT` khi ≥53. Nếu độ phủ <0.2,
+trả `unavailable` và index `null`. Đây là nhãn biên tập cho suy ngẫm, không phải
+đo năng lượng thể chất hay xác suất thành công. Cùng hồ sơ, ngày và timezone
+cho cùng nhãn, không phụ thuộc mode/category/period; ngày DST 23/25 giờ dùng
+đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v1.md`.
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
 FORWARD/BACKWARD và LEFT/RIGHT. FORWARD/BACKWARD dùng temporal momentum; LEFT/RIGHT
 dùng symbolic polarity (LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.
@@ -158,8 +168,8 @@ curl http://127.0.0.1:8787/health
 {
   "service": "decision-compass-calculation-api",
   "status": "ok",
-  "engineVersion": "3.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v4"
+  "engineVersion": "3.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6"
 }
 ```
 

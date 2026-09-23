@@ -42,14 +42,16 @@ class ReadingTestRig {
 
   final FakeReadingRepository repository;
   final FixedCurrentContextProvider contextProvider;
-  final InMemoryHistoryRepository historyRepository = InMemoryHistoryRepository();
-  final InMemoryProfileRepository profileRepository = InMemoryProfileRepository();
+  final InMemoryHistoryRepository historyRepository =
+      InMemoryHistoryRepository();
+  final InMemoryProfileRepository profileRepository =
+      InMemoryProfileRepository();
   final FixedDailyBriefProvider dailyBriefProvider = FixedDailyBriefProvider();
   final DateTime revealInstant;
   final bool safetyAcknowledged;
 
   /// Device wall clock the ritual reads to mute periods that are over.
-  final DateTime localClock;
+  DateTime localClock;
 
   /// How many times the flow asked for "now".
   var clockReads = 0;

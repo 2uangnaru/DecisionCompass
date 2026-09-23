@@ -32,6 +32,34 @@ void main() {
   });
 
   group('contract coverage across fixtures', () {
+    test(
+      'daily energy is parsed from engine output; old snapshots stay readable',
+      () {
+        final generated = ReadingResponse.fromJson(
+          fixtures['ready_yes_no_now.json']!,
+        );
+        final energy = generated.dailyBrief!.energy!;
+        expect(energy.index, inInclusiveRange(10, 90));
+        expect(energy.dataCoverage, inInclusiveRange(0, 1));
+        expect(energy.displayLabel, isNot('—'));
+
+        final legacy = DailyBrief.fromJson({
+          'luckyNumber': 4,
+          'colorInspiration': 'sage',
+        });
+        expect(legacy.energy, isNull);
+        expect(legacy.toJson().containsKey('energy'), isFalse);
+        expect(
+          () => DailyEnergy.fromJson({
+            'level': 'fortune_guaranteed',
+            'index': 50,
+            'dataCoverage': 1,
+          }),
+          throwsA(isA<ReadingDtoException>()),
+        );
+      },
+    );
+
     test('every DecisionMode appears in at least one fixture', () {
       final modes = fixtures.values.map(
         (json) => DecisionMode.fromWire(json['mode'] as String),
