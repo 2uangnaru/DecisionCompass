@@ -13,7 +13,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
-        android:label="Decision Compass"
+        android:label="AstraCue"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

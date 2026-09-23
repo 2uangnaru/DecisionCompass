@@ -1,4 +1,4 @@
-# Decision Compass zodiac avatars — v1
+# AstraCue: Cosmic Decisions zodiac avatars — v1
 
 Twelve circular avatars for the app's **Celestial Observatory** visual system.
 

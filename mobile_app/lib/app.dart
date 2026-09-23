@@ -53,7 +53,7 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Decision Compass',
+      title: 'AstraCue: Cosmic Decisions',
       debugShowCheckedModeBanner: false,
       home: FutureBuilder<AppProfile?>(
         future: _savedProfile,

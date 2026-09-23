@@ -1,4 +1,4 @@
-# Decision Compass — Project Handoff
+# AstraCue: Cosmic Decisions — Project Handoff
 
 Updated: 2026-09-21
 
@@ -8,7 +8,7 @@ in `outputs/`; this file records what is actually implemented versus planned.
 
 ## 1. Product definition
 
-Decision Compass is a global mobile app for lightweight, everyday reflection.
+AstraCue: Cosmic Decisions is a global mobile app for lightweight, everyday reflection.
 The user keeps a choice in mind, selects a binary direction and a time period,
 then taps once to receive a deterministic symbolic direction and, for a future
 period, up to two favorable time windows.

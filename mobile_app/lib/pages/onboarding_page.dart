@@ -130,7 +130,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'DECISION COMPASS',
+                      'ASTRACUE',
                       style: Theme.of(context).textTheme.labelLarge?.copyWith(
                         color: CompassColors.gold,
                         letterSpacing: 2.2,

@@ -105,7 +105,7 @@ class ResponsibleUseSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'Decision Compass provides symbolic perspectives derived from astronomical rhythms and personal cycles. '
+                    'AstraCue provides symbolic perspectives derived from astronomical rhythms and personal cycles. '
                     'It is strictly provided for everyday self-reflection and entertainment. '
                     'Never use this app as a command, prophecy, or factual certainty.',
                     textAlign: TextAlign.center,

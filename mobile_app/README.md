@@ -1,4 +1,4 @@
-# Decision Compass Mobile
+# AstraCue: Cosmic Decisions — Mobile
 
 Flutter app for Android and iOS. Android is the current priority. **Readings
 are calculated entirely on the device** — the production flow contains no mock

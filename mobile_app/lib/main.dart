@@ -8,7 +8,7 @@ import 'data/shared_preferences_profile_repository.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
 
-/// Decision Compass calculates entirely on the device.
+/// AstraCue calculates entirely on the device.
 ///
 /// There is no API base URL, no HTTP client and no server to reach: the
 /// reading engine is bundled in the app (`lib/local_engine/`) and runs on a
