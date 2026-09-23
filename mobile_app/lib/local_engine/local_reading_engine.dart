@@ -19,6 +19,7 @@ import 'core/bounded_cache.dart';
 import 'core/core.dart';
 import 'core/numbers.dart';
 import 'core/sha256.dart';
+import 'daily_energy.dart';
 import 'location/location.dart';
 import 'numerology/numerology.dart';
 import 'time/local_time.dart';
@@ -337,32 +338,13 @@ class ReadingCalculator {
 
     final first = evaluated[0].value;
     final briefNumber = first.modules['N']!.diagnostics['personalDay']! as int;
-    final energyEvidence = weightedTimeAverage(
-      <({double duration, Evidence evidence})>[
-        for (final s in segments)
-          (
-            duration: (s.end - s.start) / 1000,
-            evidence: _evaluate(s.start, zone, 'general').evidence,
-          ),
-      ],
-    );
-    final energyCoverage = roundTen(energyEvidence.coverage);
-    final energyIndex = energyEvidence.coverage < .2
-        ? null
-        : (50 +
-                  40 *
-                      clampUnit(
-                        .65 * energyEvidence.a + .35 * energyEvidence.c,
-                      ) +
-                  .5)
-              .floor();
-    final energyLevel = energyIndex == null
-        ? 'unavailable'
-        : energyIndex < 50
-        ? 'soft'
-        : energyIndex >= 53
-        ? 'bright'
-        : 'steady';
+    final energy = dailyEnergy(<({double duration, Evidence evidence})>[
+      for (final s in segments)
+        (
+          duration: (s.end - s.start) / 1000,
+          evidence: _evaluate(s.start, zone, 'general').evidence,
+        ),
+    ]);
 
     final readingKey = _hash(<String, Object?>{
       'profile': _profile.toJson(),
@@ -412,9 +394,9 @@ class ReadingCalculator {
         'luckyNumber': briefNumber,
         'colorInspiration': _colors[first.calendar.day.stem ~/ 2],
         'energy': <String, Object?>{
-          'level': energyLevel,
-          'index': energyIndex,
-          'dataCoverage': jsNumber(energyCoverage),
+          'level': energy.level,
+          'index': energy.index,
+          'dataCoverage': jsNumber(energy.dataCoverage),
         },
       },
       'segments': <Object?>[

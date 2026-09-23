@@ -30,6 +30,47 @@ void main() {
     expect(find.text('7'), findsNothing);
   });
 
+  testWidgets('explains only the current energy label in a compact sheet', (
+    tester,
+  ) async {
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+      localNow: DateTime(2026, 9, 18, 7),
+    );
+    rig.dailyBriefProvider.response = const engine.DailyBrief(
+      luckyNumber: 4,
+      colorInspiration: 'ocean_blue',
+      energy: engine.DailyEnergy(level: 'focused', index: 52, dataCoverage: 1),
+    );
+
+    await tester.pumpWidget(rig.app);
+    await completeOnboarding(tester);
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('daily_energy_info_button')));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('daily_energy_info_sheet')), findsOneWidget);
+    expect(find.byKey(const Key('daily_energy_info_label')), findsOneWidget);
+    expect(
+      find.text(
+        'Today’s symbolic energy gathers around a clear direction; '
+        'the action signal takes the lead.',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('QUIET'), findsNothing);
+    expect(find.text('FLOWING'), findsNothing);
+    expect(find.textContaining('A symbolic reflection'), findsOneWidget);
+    expect(
+      tester.getSize(find.byKey(const Key('daily_energy_info_sheet'))).height,
+      lessThan(320),
+    );
+
+    await tester.tap(find.byTooltip('Close'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('daily_energy_info_sheet')), findsNothing);
+  });
+
   testWidgets('greets for afternoon and evening too', (tester) async {
     final afternoon = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
@@ -81,6 +122,15 @@ void main() {
       expect(find.text('BRIGHT'), findsOneWidget);
       expect(find.text('STEADY'), findsNothing);
       expect(rig.dailyBriefProvider.previewCalls, 2);
+      await tester.tap(find.byKey(const Key('daily_energy_info_button')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(
+          'Today’s symbolic energy shines with momentum and room for '
+          'expression.',
+        ),
+        findsOneWidget,
+      );
     },
   );
 
@@ -99,6 +149,7 @@ void main() {
       expect(find.text('Ocean Blue'), findsNothing);
       expect(find.text('7'), findsNothing);
       expect(find.text('STEADY'), findsNothing);
+      expect(find.byKey(const Key('daily_energy_info_button')), findsNothing);
     },
   );
 }

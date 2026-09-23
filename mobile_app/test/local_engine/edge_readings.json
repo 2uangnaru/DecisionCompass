@@ -17,8 +17,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -112,7 +112,7 @@
         "modeScore": 0.0926821825,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "4a7f00c4862612e9ce3b804b8409cd9a5c12ee14687507d77b94ada096f923f9",
+        "readingKey": "6ef441bc4091a894b1f0d045177c15ad950cab7eb916cfcee7056b09ebf49d99",
         "axisScores": {
           "action": 0.0926821825,
           "change": 0.0002455912,
@@ -125,7 +125,7 @@
           "luckyNumber": 6,
           "colorInspiration": "sage",
           "energy": {
-            "level": "steady",
+            "level": "focused",
             "index": 52,
             "dataCoverage": 0.8811111111
           }
@@ -226,8 +226,8 @@
       "mode": "act_wait",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -292,7 +292,7 @@
         "modeScore": -0.0029678881,
         "modeBasis": "action_timing",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "6bc723a3e3427fc2d607aba09ba95cec28b14eab6db95dea8f40222b294a1ddf",
+        "readingKey": "556542db6b4bd3982c53b312fee4d3ded525acfacf454099b9ae777dc36ae0a4",
         "axisScores": {
           "action": 0.009965579,
           "change": -0.0762575349,
@@ -649,8 +649,8 @@
       "mode": "advance_retreat",
       "category": "career",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -715,7 +715,7 @@
         "modeScore": 0.0000126399,
         "modeBasis": "tactical_momentum",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "80e96cb1b00caa552377b98d0e3135ea17a7dfbd3aa64f0a2ba1c720e972f096",
+        "readingKey": "418c951f0bdcd9a2d00b5e371047d94d065f4e195a58117e13dd28a1d4fe8b52",
         "axisScores": {
           "action": 0.0180769207,
           "change": -0.0220659254,
@@ -1072,8 +1072,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1142,7 +1142,7 @@
         "modeScore": 0.1184726692,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "f430864b37355b0c2176190c1ca9e1149dcc5f27d846c8d5ce6cf8b3d64c4664",
+        "readingKey": "274db82827635f2f9ec2d797b17d996dea4c080668885ca7eae89dc8b6074196",
         "axisScores": {
           "action": 0.1184726692,
           "change": 0.1883252288,
@@ -1155,7 +1155,7 @@
           "luckyNumber": 5,
           "colorInspiration": "sage",
           "energy": {
-            "level": "bright",
+            "level": "flowing",
             "index": 55,
             "dataCoverage": 0.3711111111
           }
@@ -1256,8 +1256,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1335,7 +1335,7 @@
         "modeScore": 0.101268669,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "b6218af68612415d51b7927c51c1f003d418bb6127856c30562e0e1967ced281",
+        "readingKey": "120f3197aa6134d12c488b651c8c0e86a76a2393cf5dbce379126205fdaf4d88",
         "axisScores": {
           "action": 0.101268669,
           "change": -0.0067543959,
@@ -1348,7 +1348,7 @@
           "luckyNumber": 6,
           "colorInspiration": "sage",
           "energy": {
-            "level": "steady",
+            "level": "focused",
             "index": 52,
             "dataCoverage": 0.8811111111
           }
@@ -1449,8 +1449,8 @@
       "mode": "stay_go",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1516,7 +1516,7 @@
         "modeScore": -0.0475045786,
         "modeBasis": "change_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "a4319deb261634fc9f10702be8610c6a80a2fc9a5643b5af8c7480bb4a6098d5",
+        "readingKey": "33f82d361c5b1496a1b322bce6a62f98858dc04b63b4d800277bbc0a083679eb",
         "axisScores": {
           "action": -0.038961942,
           "change": 0.0475045786,
@@ -1550,7 +1550,7 @@
           "luckyNumber": 7,
           "colorInspiration": "sage",
           "energy": {
-            "level": "steady",
+            "level": "flowing",
             "index": 50,
             "dataCoverage": 0.3711111111
           }
@@ -1725,8 +1725,8 @@
       "mode": "keep_let_go",
       "category": "love",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1795,7 +1795,7 @@
         "modeScore": -0.0463944461,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "a9d1123d31158954f00dad26db2fd82b84b49da23d663c675cb92275af2f023f",
+        "readingKey": "ae14e6afa25e8c00f895180cea69aa05af3c8ca82da0b95a90b601ebe7cda022",
         "axisScores": {
           "action": 0.1042992393,
           "change": 0.1109774541,
@@ -1909,8 +1909,8 @@
       "mode": "left_right",
       "category": "money",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1975,7 +1975,7 @@
         "modeScore": -0.0371930211,
         "modeBasis": "symbolic_polarity",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "b83f9230f9eeb35c521f2dae693ab3d7dd410514aa3ca9e0e9e469373a7db750",
+        "readingKey": "b96ce8808bc8ab6f3a75dcb20baadc6542c80da0a1ee467148f26503fd88ecf1",
         "axisScores": {
           "action": 0.1244492162,
           "change": 0.1664047673,
@@ -2258,8 +2258,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2338,8 +2338,8 @@
       "mode": "forward_backward",
       "category": "study",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2404,7 +2404,7 @@
         "modeScore": 0.2073655389,
         "modeBasis": "temporal_momentum",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "6968c872e4d79781776c19405ee186b60a42506cda169994833078cc2fc2933e",
+        "readingKey": "e18aa82c3760a9255df480b2f97459b4580c731d04cf1826b052561e2c0b3939",
         "axisScores": {
           "action": 0.124818769,
           "change": 0.2348811289,
@@ -2761,8 +2761,8 @@
       "mode": "keep_let_go",
       "category": "friends",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2827,7 +2827,7 @@
         "modeScore": -0.1092893957,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "fe32b78851a4b2eccda471400dc37f1b7637d4e3218b8a088e57afcc81c611e9",
+        "readingKey": "5a69daddb4675239fadcb8c71f48645ff2e0a78bac029f65324a2bb0505c12e9",
         "axisScores": {
           "action": 0.0912777996,
           "change": 0.1952467651,
@@ -3026,8 +3026,8 @@
       "mode": "keep_let_go",
       "category": "other",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3092,7 +3092,7 @@
         "modeScore": -0.0839709533,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "1c3f23681708a9cc59aa1237f08251316c0ab75a362e07a06fe786aefc5ff1c7",
+        "readingKey": "bb6acd4de8a0b16b09ef6742b6f1f883b21800513c820222936599ec602944ea",
         "axisScores": {
           "action": 0.1298561985,
           "change": 0.1756111612,
@@ -3206,8 +3206,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3271,7 +3271,7 @@
         "modeScore": 0.1534537155,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "0f5104142d58acc4b7240040a8bea747244ee42a7b7c2368cb300f807d84333a",
+        "readingKey": "b9608109d66e984e79d7a3ef0d44a8bcf612e128e9b4e4efd74e97a97e873775",
         "axisScores": {
           "action": 0.1534537155,
           "change": 0.1810675001,
@@ -3384,8 +3384,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3449,7 +3449,7 @@
         "modeScore": 0.1620136414,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "551d9cf63bd4733c2b3629e4369b6a0902c708a65b8b8a11ce59f3ba3c3d938d",
+        "readingKey": "18104f649df10def0188eb3ab34c9d48fc96283c46af426271b078c69d00bcca",
         "axisScores": {
           "action": 0.1620136414,
           "change": 0.168356115,
@@ -3569,8 +3569,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3635,7 +3635,7 @@
         "modeScore": 0.1534537155,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "7cae953072cefab935b0f855396521a419c3dbc04ab93623901d34d807200d77",
+        "readingKey": "07b9aa061084e46af26ccc5892880e3e8c4eb1cda6b484c7edf07889fe9bd888",
         "axisScores": {
           "action": 0.1534537155,
           "change": 0.1810675001,
@@ -3755,8 +3755,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.3.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6",
+        "engineVersion": "3.4.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3821,7 +3821,7 @@
         "modeScore": 0.1534537155,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "7cae953072cefab935b0f855396521a419c3dbc04ab93623901d34d807200d77",
+        "readingKey": "07b9aa061084e46af26ccc5892880e3e8c4eb1cda6b484c7edf07889fe9bd888",
         "axisScores": {
           "action": 0.1534537155,
           "change": 0.1810675001,

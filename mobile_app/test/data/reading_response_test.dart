@@ -42,6 +42,23 @@ void main() {
         expect(energy.index, inInclusiveRange(10, 90));
         expect(energy.dataCoverage, inInclusiveRange(0, 1));
         expect(energy.displayLabel, isNot('—'));
+        for (final level in const [
+          'quiet',
+          'soft',
+          'steady',
+          'lively',
+          'bright',
+          'radiant',
+          'focused',
+          'flowing',
+        ]) {
+          final parsed = DailyEnergy.fromJson({
+            'level': level,
+            'index': 53,
+            'dataCoverage': 1,
+          });
+          expect(parsed.displayLabel, level.toUpperCase());
+        }
 
         final legacy = DailyBrief.fromJson({
           'luckyNumber': 4,

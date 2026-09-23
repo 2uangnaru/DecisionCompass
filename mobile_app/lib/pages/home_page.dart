@@ -10,6 +10,7 @@ import '../reading_dependencies.dart';
 import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/daily_energy_info.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
@@ -25,6 +26,21 @@ const _colorSwatches = <String, Color>{
   'pearl': Color(0xFFE8E3DA),
   'ocean_blue': CompassColors.blueLight,
 };
+
+const _shortMonths = <String>[
+  'JAN',
+  'FEB',
+  'MAR',
+  'APR',
+  'MAY',
+  'JUN',
+  'JUL',
+  'AUG',
+  'SEP',
+  'OCT',
+  'NOV',
+  'DEC',
+];
 
 /// Buckets a real wall-clock hour into the three greetings the design uses.
 /// There is no "good night" bucket: the app's own copy never implies the user
@@ -309,71 +325,177 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _dailySignals() {
+    final today = widget.dependencies.nowLocal();
     return GlassCard(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'TODAY’S SIGNALS',
-            style: Theme.of(context).textTheme.labelSmall
-                ?.copyWith(color: CompassColors.gold, letterSpacing: 1.6),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  'TODAY’S SIGNALS',
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.gold,
+                    fontWeight: FontWeight.w700,
+                    letterSpacing: 1.6,
+                  ),
+                ),
+              ),
+              Text(
+                '${_shortMonths[today.month - 1]} ${today.day}',
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: CompassColors.muted,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           FutureBuilder<engine.DailyBrief?>(
             key: const Key('daily_signals_content'),
             future: _dailyBrief,
             builder: (context, snapshot) {
               final brief = snapshot.data;
               final colorName = brief?.colorInspiration;
+              final energy = brief?.energy;
+              final energyAccent = switch (energy?.level) {
+                'quiet' || 'soft' => CompassColors.blueLight,
+                'steady' => CompassColors.teal,
+                'lively' || 'focused' => CompassColors.teal,
+                'flowing' => CompassColors.violet,
+                'bright' || 'radiant' => CompassColors.gold,
+                _ => CompassColors.muted,
+              };
               return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Daily energy',
+                              style: Theme.of(context).textTheme.bodySmall
+                                  ?.copyWith(
+                                    color: CompassColors.secondary,
+                                    fontSize: 11,
+                                  ),
+                            ),
+                            const SizedBox(height: 1),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    energy?.displayLabel ?? '—',
+                                    key: const Key('daily_energy_label'),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headlineMedium
+                                        ?.copyWith(
+                                          color: CompassColors.text,
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w700,
+                                          letterSpacing: 1.2,
+                                        ),
+                                  ),
+                                ),
+                                if (energy != null) ...[
+                                  const SizedBox(width: 2),
+                                  DailyEnergyInfoButton(level: energy.level),
+                                ],
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                       Container(
-                        width: 36,
-                        height: 36,
+                        width: 34,
+                        height: 34,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: colorName == null
-                              ? CompassColors.line
-                              : (_colorSwatches[colorName] ??
-                                    CompassColors.blueLight),
+                          color: energyAccent.withValues(alpha: 0.12),
+                          border: Border.all(
+                            color: energyAccent.withValues(alpha: 0.35),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: _Signal(
-                          label: 'Your color',
-                          value: colorName == null
-                              ? '—'
-                              : titleCaseWords(colorName),
+                        child: Icon(
+                          Icons.auto_awesome_rounded,
+                          size: 17,
+                          color: energyAccent,
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      _Signal(
-                        label: 'Lucky number',
-                        value: brief?.luckyNumber.toString() ?? '—',
                       ),
                     ],
                   ),
-                  const Divider(height: 28, color: CompassColors.line),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text(
-                        'Daily energy',
-                        style: TextStyle(color: CompassColors.secondary),
-                      ),
-                      Text(
-                        brief?.energy?.displayLabel ?? '—',
-                        key: const Key('daily_energy_label'),
-                        style: const TextStyle(
-                          color: CompassColors.teal,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 1.2,
+                  const SizedBox(height: 8),
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: _TodaySignalTile(
+                            label: 'Your color',
+                            value: Row(
+                              children: [
+                                Container(
+                                  width: 24,
+                                  height: 24,
+                                  padding: const EdgeInsets.all(3),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(color: Colors.white38),
+                                  ),
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color: colorName == null
+                                          ? CompassColors.line
+                                          : (_colorSwatches[colorName] ??
+                                                CompassColors.blueLight),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 7),
+                                Expanded(
+                                  child: Text(
+                                    colorName == null
+                                        ? '—'
+                                        : titleCaseWords(colorName),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      color: CompassColors.text,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _TodaySignalTile(
+                            label: 'Lucky number',
+                            value: Text(
+                              brief?.luckyNumber.toString() ?? '—',
+                              style: const TextStyle(
+                                color: CompassColors.text,
+                                fontSize: 21,
+                                fontWeight: FontWeight.w700,
+                                height: 1.1,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               );
@@ -423,21 +545,36 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 }
 
-class _Signal extends StatelessWidget {
-  const _Signal({required this.label, required this.value});
+class _TodaySignalTile extends StatelessWidget {
+  const _TodaySignalTile({required this.label, required this.value});
 
   final String label;
-  final String value;
+  final Widget value;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: 2),
-        Text(value, style: Theme.of(context).textTheme.bodyLarge),
-      ],
+    return Container(
+      constraints: const BoxConstraints(minHeight: 60),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.045),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: CompassColors.line.withValues(alpha: 0.7)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: CompassColors.secondary, fontSize: 11),
+          ),
+          const SizedBox(height: 3),
+          value,
+        ],
+      ),
     );
   }
 }

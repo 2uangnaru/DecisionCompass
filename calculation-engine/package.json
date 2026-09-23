@@ -1,6 +1,6 @@
 {
   "name": "decision-compass-calculation-engine",
-  "version": "3.3.0-mvp",
+  "version": "3.4.0-mvp",
   "private": true,
   "description": "Offline deterministic symbolic reading engine; no AI or generated interpretations.",
   "type": "module",

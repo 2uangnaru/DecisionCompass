@@ -11,6 +11,7 @@ import '../reading_mapping.dart';
 import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/daily_energy_info.dart';
 import '../widgets/responsible_use_sheet.dart';
 
 /// Renders a real engine reading. Nothing here invents a direction: every
@@ -402,14 +403,21 @@ class _DailyBrief extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text('Daily energy'),
-                Text(
-                  brief.energy!.displayLabel,
-                  key: const Key('result_daily_energy_label'),
-                  style: const TextStyle(
-                    color: CompassColors.teal,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1.2,
-                  ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      brief.energy!.displayLabel,
+                      key: const Key('result_daily_energy_label'),
+                      style: const TextStyle(
+                        color: CompassColors.teal,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(width: 2),
+                    DailyEnergyInfoButton(level: brief.energy!.level),
+                  ],
                 ),
               ],
             ),

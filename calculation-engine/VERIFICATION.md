@@ -117,7 +117,30 @@ What this establishes, and what it does not:
   **symbolic editorial emphases**. Nothing here establishes predictive validity,
   and no automatic Yong Shen or gender-based spouse/wealth rule was introduced.
 
-## Symbolic daily energy — 2026-09-23
+## Expanded symbolic daily energy — 2026-09-23
+
+Engine **3.4.0-mvp** / ruleset **v7** retains the duration-weighted full-day
+index and coverage gate from v6. The label now uses both fusion axes:
+`FOCUSED` when action leads change by at least 0.06 and action is at least
+0.04, `FLOWING` for the inverse; otherwise six index bands produce `QUIET`,
+`SOFT`, `STEADY`, `LIVELY`, `BRIGHT`, or `RADIANT`. The axis gate avoids
+calling a negative score action-led merely because the other axis is even
+lower. The rules are editorial symbolic descriptions, not measured mood,
+health, or odds. See `outputs/Daily_Energy_Formula_v2.md`.
+
+A calibration sample of 30 local days for each of three synthetic profiles
+produced seven of the eight labels: `FOCUSED` 20, `FLOWING` 23, `QUIET` 4,
+`SOFT` 6, `STEADY` 15, `LIVELY` 15, `BRIGHT` 7, and `RADIANT` 0. `RADIANT`
+remains possible at a higher index but is intentionally rare. There were 14
+same-label adjacent pairs among the 87 within-profile day transitions. This
+sample tests variety and reachable thresholds; it does not validate the
+symbolic interpretation against real-world outcomes.
+
+Checks on 2026-09-23: **91/91 Node tests**, **338/338 Flutter tests**, fixture
+check **16/16**, all 16 standard and 16 edge readings matched the Dart port,
+Flutter analyzer clean, and the debug Android APK built successfully.
+
+## Symbolic daily energy v6 — 2026-09-23
 
 Engine **3.3.0-mvp** / ruleset **v6** adds `dailyBrief.energy`. The full local
 day is segmented with the existing calendar and timezone rules, including

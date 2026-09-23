@@ -14,16 +14,31 @@ class DailyEnergy {
   final double dataCoverage;
 
   String get displayLabel => switch (level) {
+    'quiet' => 'QUIET',
     'soft' => 'SOFT',
     'steady' => 'STEADY',
+    'lively' => 'LIVELY',
     'bright' => 'BRIGHT',
+    'radiant' => 'RADIANT',
+    'focused' => 'FOCUSED',
+    'flowing' => 'FLOWING',
     _ => '—',
   };
 
   factory DailyEnergy.fromJson(JsonMap json) {
     const context = 'DailyEnergy';
     final level = requireField<String>(json, 'level', context);
-    if (!const {'soft', 'steady', 'bright', 'unavailable'}.contains(level)) {
+    if (!const {
+      'quiet',
+      'soft',
+      'steady',
+      'lively',
+      'bright',
+      'radiant',
+      'focused',
+      'flowing',
+      'unavailable',
+    }.contains(level)) {
       throw const ReadingDtoException('Invalid daily energy level');
     }
     final index = requireNullableField<int>(json, 'index', context);

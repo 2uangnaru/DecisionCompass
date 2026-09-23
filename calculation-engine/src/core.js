@@ -1,5 +1,5 @@
-export const VERSION = '3.3.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v6';
+export const VERSION = '3.4.0-mvp';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v7';
 export const WEIGHTS = Object.freeze({ B: 2 / 9, Z: 2 / 9, T: 1 / 9, W: 2 / 9, N: 1 / 6, U: 1 / 18 });
 
 export const CATEGORIES = Object.freeze(['general', 'love', 'career', 'money', 'study', 'friends', 'other']);

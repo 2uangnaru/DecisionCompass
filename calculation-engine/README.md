@@ -1,6 +1,6 @@
 # AstraCue: Cosmic Decisions — Calculation Engine
 
-Engine MVP 3.3.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v6`, cập nhật
+Engine MVP 3.4.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v7`, cập nhật
 23/09/2026. Nhận hồ sơ người dùng
 và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
 trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
@@ -77,11 +77,14 @@ trung thực nhưng vẫn là category riêng với reading snapshot riêng.
 `dailyBrief.energy` gồm `level`, `index`, `dataCoverage`. Với mỗi khung của
 toàn ngày địa phương, tính fusion `general`; lấy trung bình `A` và `C` theo số
 giây thực của khung. `index = round(50 + 40 × clamp(0.65 × A_day + 0.35 × C_day))`.
-`SOFT` khi index ≤49, `STEADY` khi 50–52, `BRIGHT` khi ≥53. Nếu độ phủ <0.2,
-trả `unavailable` và index `null`. Đây là nhãn biên tập cho suy ngẫm, không phải
+Nhãn tông dùng các dải `QUIET` (<49), `SOFT` (49), `STEADY` (50–51),
+`LIVELY` (52–53), `BRIGHT` (54–57), `RADIANT` (≥58). Nếu trục hành động
+trội hơn trục thay đổi ít nhất 0.06 và đạt 0.04, nhãn là `FOCUSED`; chiều
+ngược lại là `FLOWING`. Nếu độ phủ <0.2, trả `unavailable` và index `null`.
+Đây là nhãn biên tập cho suy ngẫm, không phải
 đo năng lượng thể chất hay xác suất thành công. Cùng hồ sơ, ngày và timezone
 cho cùng nhãn, không phụ thuộc mode/category/period; ngày DST 23/25 giờ dùng
-đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v1.md`.
+đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v2.md`.
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
 FORWARD/BACKWARD và LEFT/RIGHT. FORWARD/BACKWARD dùng temporal momentum; LEFT/RIGHT
 dùng symbolic polarity (LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.
@@ -168,8 +171,8 @@ curl http://127.0.0.1:8787/health
 {
   "service": "decision-compass-calculation-api",
   "status": "ok",
-  "engineVersion": "3.3.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v6"
+  "engineVersion": "3.4.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7"
 }
 ```
 
