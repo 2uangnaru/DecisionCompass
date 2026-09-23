@@ -1,0 +1,8 @@
+Mode: built-in ImageGen image edit
+
+Source images:
+- astracue_celestial_decision_coin_v10_front_x_orbits.png (edit target)
+- astracue_celestial_decision_coin_v7_crisp.png (clean-background reference)
+
+Prompt:
+Edit Image 1 only. Preserve the celestial decision coin, its exact perspective, geometry, gold and obsidian materials, engraved cyan YES/check and red NO/X, and preserve the two thin gold orbital ellipses exactly as they currently cross in front of the coin to form a clean X while their far arcs remain behind it. Change only the background: remove every cloudy, smoky, foggy, milky, nebula-like white or gray patch. Restore the clean, nearly solid deep navy-black subtle radial-gradient background shown in Image 2, with no visible texture and no glow halo except restrained natural object lighting. Keep the composition centered and square, no app-icon frame, no border, no extra objects, no red guide marks. This is a surgical background cleanup; do not redesign, reposition, thicken, resize, or restyle the coin or orbital rings.

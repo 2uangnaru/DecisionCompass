@@ -204,7 +204,7 @@ class _LoadingPageState extends State<LoadingPage> {
       PageRouteBuilder<void>(
         transitionDuration: const Duration(milliseconds: 760),
         pageBuilder: (_, animation, secondaryAnimation) =>
-            ResultPage(reading: reading),
+            ResultPage(reading: reading, dependencies: widget.dependencies),
         transitionsBuilder: (_, animation, secondaryAnimation, child) =>
             FadeTransition(
               opacity: CurvedAnimation(

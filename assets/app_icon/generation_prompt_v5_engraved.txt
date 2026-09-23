@@ -1,0 +1,37 @@
+ASSET
+AstraCue — Celestial Decision Coin, engraved Store-ready master.
+
+MODE
+Built-in ImageGen, precise-object-edit mode.
+
+EDIT TARGET
+C:\Users\ADMIN\Downloads\Gemini_Generated_Image_866lda866lda866l.png
+
+PRESERVED CONCEPT
+- One compact celestial decision-coin silhouette at a 45-degree perspective.
+- Brushed antique-gold upper YES region.
+- Polished obsidian lower NO region with copper/terracotta rim.
+- Midnight navy-to-black full-bleed background.
+- Two thin antique-gold orbital trails behind the coin.
+
+ENGRAVING SPECIFICATION
+- "YES" and its checkmark are deeply debossed into the brushed-gold surface.
+- "NO" and its X are deeply debossed into the obsidian surface.
+- Every cut has a recessed floor, crisp inward bevel, contact-occlusion shadow, and a narrow inner-wall highlight consistent with the upper-left key light and coin perspective.
+- Restrained cyan enamel sits only at the bottom of the YES/checkmark grooves.
+- Restrained terracotta enamel sits only at the bottom of the NO/X grooves.
+- Nothing protrudes above the coin surface; no floating type, neon tubes, stickers, or raised lettering.
+- YES and NO have balanced cap height, stroke weight, depth, and prominence.
+
+STORE POLISH
+- Slightly lift the NO-region exposure without turning it bright red.
+- Remove the gray corner sparkle/watermark.
+- Keep exactly two orbital trails, both behind the coin and never crossing the lettering.
+- Center all critical content inside the safe area.
+- No white margin or baked rounded-square mask.
+
+TEXT
+"YES" and "NO" only, spelled exactly.
+
+EXPORT
+1024 x 1024 PNG master.

@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Required to reach the calculation API. -->
+    <!-- A reading needs no network: the calculation engine is bundled in the
+         app and runs on-device, so readings work in airplane mode. This
+         permission is kept only for the network features still to come (ads,
+         analytics, store services). Drop it if those are dropped. -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <!-- Foreground location only, used solely to resolve the CURRENT timezone

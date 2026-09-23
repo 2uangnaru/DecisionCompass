@@ -1,18 +1,35 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../category_presentation.dart';
+import '../data/history_entry.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
+import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 
 /// Renders a real engine reading. Nothing here invents a direction: every
 /// status the contract defines gets its own explicit presentation.
-class ResultPage extends StatelessWidget {
-  const ResultPage({super.key, required this.reading});
+///
+/// Every reading reaching this page is saved to history exactly once, per
+/// the UX spec's "auto-saved" behavior — there is no separate save action to
+/// forget to wire up.
+class ResultPage extends StatefulWidget {
+  const ResultPage({super.key, required this.reading, required this.dependencies});
 
   final engine.ReadingResponse reading;
+  final ReadingDependencies dependencies;
+
+  @override
+  State<ResultPage> createState() => _ResultPageState();
+}
+
+class _ResultPageState extends State<ResultPage> {
+  engine.ReadingResponse get reading => widget.reading;
 
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
@@ -33,6 +50,31 @@ class ResultPage extends StatelessWidget {
       ...entries.where((entry) => entry.label == leading),
       ...entries.where((entry) => entry.label != leading),
     ];
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_saveToHistory());
+  }
+
+  /// A reading's own `readingKey` already varies by profile, mode, period
+  /// and category (see `eb88f48`); some statuses (e.g. `period_elapsed`)
+  /// omit it, so those fall back to a key built from the same fields plus
+  /// the reveal instant.
+  String get _historyId =>
+      reading.readingKey ??
+      '${reading.context.instantUtc}_${reading.mode.toJson()}_'
+          '${reading.period.toJson()}_${reading.category.toJson()}';
+
+  Future<void> _saveToHistory() {
+    return widget.dependencies.historyRepository.save(
+      HistoryEntry(
+        id: _historyId,
+        reading: reading,
+        savedAtUtc: DateTime.parse(reading.context.instantUtc),
+      ),
+    );
   }
 
   @override
@@ -305,14 +347,7 @@ class _DailyBrief extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colour = brief.colorInspiration
-        .split('_')
-        .map(
-          (word) => word.isEmpty
-              ? word
-              : '${word[0].toUpperCase()}${word.substring(1)}',
-        )
-        .join(' ');
+    final colour = titleCaseWords(brief.colorInspiration);
     return GlassCard(
       key: const Key('result_daily_brief'),
       child: Row(

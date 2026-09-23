@@ -1,0 +1,4204 @@
+{
+  "longitudes": [
+    {
+      "iso": "1900-01-01T00:00:00.000Z",
+      "ms": -2208988800000,
+      "values": {
+        "sun": 280.15345888403544,
+        "moon": 272.41700851369626,
+        "mercury": 258.99780099572547,
+        "venus": 306.37434366346895,
+        "mars": 283.86768514814776,
+        "jupiter": 241.1363905749007,
+        "saturn": 267.7150035768899
+      }
+    },
+    {
+      "iso": "1923-07-04T11:11:11.000Z",
+      "ms": -1467290929000,
+      "values": {
+        "sun": 101.44410630298343,
+        "moon": 353.6274928418702,
+        "mercury": 82.92340100723258,
+        "venus": 83.02493714167498,
+        "mars": 112.53289988038077,
+        "jupiter": 219.07123946898696,
+        "saturn": 193.612446167277
+      }
+    },
+    {
+      "iso": "1950-12-25T18:00:00.000Z",
+      "ms": -600156000000,
+      "values": {
+        "sun": 273.38553081213325,
+        "moon": 107.93905078231609,
+        "mercury": 287.7424263677385,
+        "venus": 283.5123766823315,
+        "mars": 308.1233596432725,
+        "jupiter": 333.5630350085295,
+        "saturn": 182.09108920529488
+      }
+    },
+    {
+      "iso": "1969-07-20T20:17:40.000Z",
+      "ms": -14182940000,
+      "values": {
+        "sun": 117.91113215980877,
+        "moon": 187.87982822708148,
+        "mercury": 115.84314938106729,
+        "venus": 75.03862460545241,
+        "mars": 242.7744010478257,
+        "jupiter": 180.74692725540814,
+        "saturn": 38.09755839603294
+      }
+    },
+    {
+      "iso": "1985-03-31T01:30:00.000Z",
+      "ms": 481080600000,
+      "values": {
+        "sun": 10.287875044632234,
+        "moon": 117.0099922744449,
+        "mercury": 16.40117828685781,
+        "venus": 16.491159958927152,
+        "mars": 41.432354286160084,
+        "jupiter": 310.7821046384966,
+        "saturn": 237.66858489590783
+      }
+    },
+    {
+      "iso": "1998-06-21T07:30:00.000Z",
+      "ms": 898414200000,
+      "values": {
+        "sun": 89.73967391342143,
+        "moon": 51.57251662910719,
+        "mercury": 102.5690028014661,
+        "venus": 56.202151496834084,
+        "mars": 79.71675810747111,
+        "jupiter": 356.92506062294274,
+        "saturn": 31.109807721762802
+      }
+    },
+    {
+      "iso": "2000-01-01T12:00:00.000Z",
+      "ms": 946728000000,
+      "values": {
+        "sun": 280.3687386398185,
+        "moon": 223.32389112747416,
+        "mercury": 271.88891206646304,
+        "venus": 241.56523294036205,
+        "mars": 327.96389907790285,
+        "jupiter": 25.254199844874247,
+        "saturn": 40.3961241371784
+      }
+    },
+    {
+      "iso": "2011-12-30T12:00:00.000Z",
+      "ms": 1325246400000,
+      "values": {
+        "sun": 278.42930369410266,
+        "moon": 348.9278841020783,
+        "mercury": 257.85343685868094,
+        "venus": 311.98118231394204,
+        "mars": 169.74151773738245,
+        "jupiter": 30.401204110331662,
+        "saturn": 208.19301751128745
+      }
+    },
+    {
+      "iso": "2020-02-29T00:00:00.000Z",
+      "ms": 1582934400000,
+      "values": {
+        "sun": 339.861445848974,
+        "moon": 38.191434430294116,
+        "mercury": 333.7941009728371,
+        "venus": 24.318082650751666,
+        "mars": 278.6276904083152,
+        "jupiter": 289.3608359774245,
+        "saturn": 298.0662074168154
+      }
+    },
+    {
+      "iso": "2026-09-18T08:00:00.000Z",
+      "ms": 1789718400000,
+      "values": {
+        "sun": 175.4364389751496,
+        "moon": 259.65289277016075,
+        "mercury": 192.4079292939106,
+        "venus": 214.5948545734976,
+        "mars": 114.15446786043219,
+        "jupiter": 137.21899409551622,
+        "saturn": 12.541730649321197
+      }
+    },
+    {
+      "iso": "2026-09-18T08:30:00.000Z",
+      "ms": 1789720200000,
+      "values": {
+        "sun": 175.45677291096,
+        "moon": 259.90077162349013,
+        "mercury": 192.44029024972428,
+        "venus": 214.60494936244072,
+        "mars": 114.16709939855292,
+        "jupiter": 137.22305278847946,
+        "saturn": 12.540207206000478
+      }
+    },
+    {
+      "iso": "2026-03-08T07:30:00.000Z",
+      "ms": 1772955000000,
+      "values": {
+        "sun": 347.73201378034406,
+        "moon": 223.95815402261007,
+        "mercury": 346.01619522274495,
+        "venus": 2.319328727684229,
+        "mars": 334.50521222756925,
+        "jupiter": 105.09978929252912,
+        "saturn": 2.6043957125225976
+      }
+    },
+    {
+      "iso": "2026-11-01T05:30:00.000Z",
+      "ms": 1793511000000,
+      "values": {
+        "sun": 218.80587183728858,
+        "moon": 120.70282542883339,
+        "mercury": 226.40622149968158,
+        "venus": 206.12952259432151,
+        "mars": 138.7369090788832,
+        "jupiter": 144.3504257929835,
+        "saturn": 9.269122366105691
+      }
+    },
+    {
+      "iso": "2050-06-15T03:21:09.000Z",
+      "ms": 2538876069000,
+      "values": {
+        "sun": 84.2607963640925,
+        "moon": 32.49245246593405,
+        "mercury": 78.17503642730819,
+        "venus": 123.51588526223863,
+        "mars": 321.3980003823221,
+        "jupiter": 124.13986104461773,
+        "saturn": 308.3244515443353
+      }
+    },
+    {
+      "iso": "2099-12-31T23:59:59.000Z",
+      "ms": 4102444799000,
+      "values": {
+        "sun": 280.60567162212885,
+        "moon": 157.43327836653654,
+        "mercury": 288.00831414720375,
+        "venus": 320.07263952953804,
+        "mars": 29.526758749551156,
+        "jupiter": 201.20667955481287,
+        "saturn": 205.63045814461458
+      }
+    }
+  ],
+  "sky": [
+    {
+      "iso": "1900-01-01T00:00:00.000Z",
+      "ms": -2208988800000,
+      "positions": {
+        "sun": 280.15345888403544,
+        "moon": 272.41700851369626,
+        "mercury": 258.99780099572547,
+        "venus": 306.37434366346895,
+        "mars": 283.86768514814776,
+        "jupiter": 241.1363905749007,
+        "saturn": 267.7150035768899
+      },
+      "mercurySpeed": 1.2764349510134707,
+      "evaluatedAtUtc": "1900-01-01T00:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.007692648263002255,
+        "c": 0.21817955199783362,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "1923-07-04T11:11:11.000Z",
+      "ms": -1467290929000,
+      "positions": {
+        "sun": 101.44410630298343,
+        "moon": 353.6274928418702,
+        "mercury": 82.92340100723258,
+        "venus": 83.02493714167498,
+        "mars": 112.53289988038077,
+        "jupiter": 219.07123946898696,
+        "saturn": 193.612446167277
+      },
+      "mercurySpeed": 1.6287577582415906,
+      "evaluatedAtUtc": "1923-07-04T11:11:11.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.23657139976045397,
+        "c": -0.041194274232587993,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "1950-12-25T18:00:00.000Z",
+      "ms": -600156000000,
+      "positions": {
+        "sun": 273.38553081213325,
+        "moon": 107.93905078231609,
+        "mercury": 287.7424263677385,
+        "venus": 283.5123766823315,
+        "mars": 308.1233596432725,
+        "jupiter": 333.5630350085295,
+        "saturn": 182.09108920529488
+      },
+      "mercurySpeed": -0.41099267406571016,
+      "evaluatedAtUtc": "1950-12-25T18:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.10035958750945997,
+        "c": -0.21358266763036166,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "1969-07-20T20:17:40.000Z",
+      "ms": -14182940000,
+      "positions": {
+        "sun": 117.91113215980877,
+        "moon": 187.87982822708148,
+        "mercury": 115.84314938106729,
+        "venus": 75.03862460545241,
+        "mars": 242.7744010478257,
+        "jupiter": 180.74692725540814,
+        "saturn": 38.09755839603294
+      },
+      "mercurySpeed": 2.1348562777120605,
+      "evaluatedAtUtc": "1969-07-20T20:17:40.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.2930615723535337,
+        "c": 0.08850669992143687,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "1985-03-31T01:30:00.000Z",
+      "ms": 481080600000,
+      "positions": {
+        "sun": 10.287875044632234,
+        "moon": 117.0099922744449,
+        "mercury": 16.40117828685781,
+        "venus": 16.491159958927152,
+        "mars": 41.432354286160084,
+        "jupiter": 310.7821046384966,
+        "saturn": 237.66858489590783
+      },
+      "mercurySpeed": -0.6581567755974902,
+      "evaluatedAtUtc": "1985-03-31T01:30:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.2381592191638691,
+        "c": -0.07754604712316954,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "1998-06-21T07:30:00.000Z",
+      "ms": 898414200000,
+      "positions": {
+        "sun": 89.73967391342143,
+        "moon": 51.57251662910719,
+        "mercury": 102.5690028014661,
+        "venus": 56.202151496834084,
+        "mars": 79.71675810747111,
+        "jupiter": 356.92506062294274,
+        "saturn": 31.109807721762802
+      },
+      "mercurySpeed": 1.973650224404082,
+      "evaluatedAtUtc": "1998-06-21T07:30:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.1430281923962864,
+        "c": 0.17724224882112094,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2000-01-01T12:00:00.000Z",
+      "ms": 946728000000,
+      "positions": {
+        "sun": 280.3687386398185,
+        "moon": 223.32389112747416,
+        "mercury": 271.88891206646304,
+        "venus": 241.56523294036205,
+        "mars": 327.96389907790285,
+        "jupiter": 25.254199844874247,
+        "saturn": 40.3961241371784
+      },
+      "mercurySpeed": 1.5562876575886548,
+      "evaluatedAtUtc": "2000-01-01T12:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.2049470535927293,
+        "c": 0.12879648199241606,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2011-12-30T12:00:00.000Z",
+      "ms": 1325246400000,
+      "positions": {
+        "sun": 278.42930369410266,
+        "moon": 348.9278841020783,
+        "mercury": 257.85343685868094,
+        "venus": 311.98118231394204,
+        "mars": 169.74151773738245,
+        "jupiter": 30.401204110331662,
+        "saturn": 208.19301751128745
+      },
+      "mercurySpeed": 1.302831857394267,
+      "evaluatedAtUtc": "2011-12-30T12:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.29393730166128784,
+        "c": 0.0867660429079856,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2020-02-29T00:00:00.000Z",
+      "ms": 1582934400000,
+      "positions": {
+        "sun": 339.861445848974,
+        "moon": 38.191434430294116,
+        "mercury": 333.7941009728371,
+        "venus": 24.318082650751666,
+        "mars": 278.6276904083152,
+        "jupiter": 289.3608359774245,
+        "saturn": 298.0662074168154
+      },
+      "mercurySpeed": -1.0231795648742263,
+      "evaluatedAtUtc": "2020-02-29T00:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.20830408684961493,
+        "c": 0.08500525300458407,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2026-09-18T08:00:00.000Z",
+      "ms": 1789718400000,
+      "positions": {
+        "sun": 175.4364389751496,
+        "moon": 259.65289277016075,
+        "mercury": 192.4079292939106,
+        "venus": 214.5948545734976,
+        "mars": 114.15446786043219,
+        "jupiter": 137.21899409551622,
+        "saturn": 12.541730649321197
+      },
+      "mercurySpeed": 1.5535068095596216,
+      "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.30857471276180126,
+        "c": 0.04015411804883792,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2026-09-18T08:30:00.000Z",
+      "ms": 1789720200000,
+      "positions": {
+        "sun": 175.45677291096,
+        "moon": 259.90077162349013,
+        "mercury": 192.44029024972428,
+        "venus": 214.60494936244072,
+        "mars": 114.16709939855292,
+        "jupiter": 137.22305278847946,
+        "saturn": 12.540207206000478
+      },
+      "mercurySpeed": 1.5531450227567802,
+      "evaluatedAtUtc": "2026-09-18T08:30:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": 0.3086845719346911,
+        "c": 0.03936372272957705,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2026-03-08T07:30:00.000Z",
+      "ms": 1772955000000,
+      "positions": {
+        "sun": 347.73201378034406,
+        "moon": 223.95815402261007,
+        "mercury": 346.01619522274495,
+        "venus": 2.319328727684229,
+        "mars": 334.50521222756925,
+        "jupiter": 105.09978929252912,
+        "saturn": 2.6043957125225976
+      },
+      "mercurySpeed": -1.0145273837670175,
+      "evaluatedAtUtc": "2026-03-08T07:30:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.26274669134159956,
+        "c": -0.13118328696699333,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2026-11-01T05:30:00.000Z",
+      "ms": 1793511000000,
+      "positions": {
+        "sun": 218.80587183728858,
+        "moon": 120.70282542883339,
+        "mercury": 226.40622149968158,
+        "venus": 206.12952259432151,
+        "mars": 138.7369090788832,
+        "jupiter": 144.3504257929835,
+        "saturn": 9.269122366105691
+      },
+      "mercurySpeed": -1.131257780568376,
+      "evaluatedAtUtc": "2026-11-01T05:30:00.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.30720452609322624,
+        "c": -0.048190774231118685,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2050-06-15T03:21:09.000Z",
+      "ms": 2538876069000,
+      "positions": {
+        "sun": 84.2607963640925,
+        "moon": 32.49245246593405,
+        "mercury": 78.17503642730819,
+        "venus": 123.51588526223863,
+        "mars": 321.3980003823221,
+        "jupiter": 124.13986104461773,
+        "saturn": 308.3244515443353
+      },
+      "mercurySpeed": 2.155516475911554,
+      "evaluatedAtUtc": "2050-06-15T03:21:09.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.1899442281755041,
+        "c": 0.14376849788007734,
+        "coverage": 1
+      }
+    },
+    {
+      "iso": "2099-12-31T23:59:59.000Z",
+      "ms": 4102444799000,
+      "positions": {
+        "sun": 280.60567162212885,
+        "moon": 157.43327836653654,
+        "mercury": 288.00831414720375,
+        "venus": 320.07263952953804,
+        "mars": 29.526758749551156,
+        "jupiter": 201.20667955481287,
+        "saturn": 205.63045814461458
+      },
+      "mercurySpeed": 1.6229499850260254,
+      "evaluatedAtUtc": "2099-12-31T23:59:59.000Z",
+      "cosmic": {
+        "status": "calculated",
+        "a": -0.20436785342073654,
+        "c": -0.08943199659633035,
+        "coverage": 1
+      }
+    }
+  ],
+  "aspects": [
+    {
+      "transit": 0,
+      "natal": 0,
+      "body": "sun",
+      "angle": 0,
+      "strength": 1,
+      "a": 0,
+      "c": 0.1
+    },
+    {
+      "transit": 10,
+      "natal": 8,
+      "body": "moon",
+      "angle": 0,
+      "strength": 0.33333333333333337,
+      "a": 0,
+      "c": 0
+    },
+    {
+      "transit": 123.456,
+      "natal": 3.21,
+      "body": "mercury",
+      "angle": 120,
+      "strength": 0.9180000000000064,
+      "a": 0.5508000000000038,
+      "c": -0.2754000000000019
+    },
+    {
+      "transit": 359.9,
+      "natal": 0.05,
+      "body": "venus",
+      "angle": 0,
+      "strength": 0.9499999999999696,
+      "a": 0,
+      "c": -0.09499999999999698
+    },
+    {
+      "transit": 180,
+      "natal": 0,
+      "body": "mars",
+      "angle": 180,
+      "strength": 1,
+      "a": -0.6,
+      "c": 0.3
+    },
+    {
+      "transit": 90.5,
+      "natal": 0,
+      "body": "jupiter",
+      "angle": 90,
+      "strength": 0.8333333333333334,
+      "a": -0.4166666666666667,
+      "c": 0.25
+    },
+    {
+      "transit": 61.2,
+      "natal": 0.1,
+      "body": "saturn",
+      "angle": 60,
+      "strength": 0.6333333333333258,
+      "a": 0.3166666666666629,
+      "c": 0.12666666666666515
+    },
+    {
+      "transit": 271.3,
+      "natal": 91.2,
+      "body": "sun",
+      "angle": 180,
+      "strength": 0.9666666666666591,
+      "a": -0.5799999999999954,
+      "c": 0.2899999999999977
+    },
+    {
+      "transit": 45,
+      "natal": 0,
+      "body": "moon",
+      "angle": 60,
+      "strength": 0,
+      "a": 0,
+      "c": 0
+    },
+    {
+      "transit": 118.9,
+      "natal": 0,
+      "body": "mars",
+      "angle": 120,
+      "strength": 0.6333333333333258,
+      "a": 0.37999999999999545,
+      "c": -0.18999999999999773
+    }
+  ],
+  "natal": [
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "positions": {
+        "sun": 89.73967391342143,
+        "moon": 51.57251662910721,
+        "mercury": 102.56900280146613,
+        "venus": 56.20215149683406,
+        "mars": 79.7167581074711,
+        "jupiter": 356.92506062294274,
+        "saturn": 31.10980772176282
+      },
+      "ranges": {
+        "sun": {
+          "minLongitude": 89.73967391342143,
+          "maxLongitude": 89.73967391342143,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "moon": {
+          "minLongitude": 51.57251662910721,
+          "maxLongitude": 51.57251662910721,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "mercury": {
+          "minLongitude": 102.56900280146613,
+          "maxLongitude": 102.56900280146613,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "venus": {
+          "minLongitude": 56.20215149683406,
+          "maxLongitude": 56.20215149683406,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "mars": {
+          "minLongitude": 79.7167581074711,
+          "maxLongitude": 79.7167581074711,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "jupiter": {
+          "minLongitude": 356.92506062294274,
+          "maxLongitude": 356.92506062294274,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "saturn": {
+          "minLongitude": 31.10980772176282,
+          "maxLongitude": 31.10980772176282,
+          "spanDegrees": 0,
+          "stable": true
+        }
+      },
+      "status": "exact",
+      "sampleCount": 1,
+      "method": "birth_utc"
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "positions": {
+        "jupiter": 356.91604443524307,
+        "saturn": 31.100763737503826
+      },
+      "ranges": {
+        "sun": {
+          "minLongitude": 89.16296116823804,
+          "maxLongitude": 90.11750852679648,
+          "spanDegrees": 0.9545473585584432,
+          "stable": false
+        },
+        "moon": {
+          "minLongitude": 42.79918951993477,
+          "maxLongitude": 57.31912363519473,
+          "spanDegrees": 14.519934115259957,
+          "stable": false
+        },
+        "mercury": {
+          "minLongitude": 101.37044362721889,
+          "maxLongitude": 103.34757308997388,
+          "spanDegrees": 1.9771294627549878,
+          "stable": false
+        },
+        "venus": {
+          "minLongitude": 55.48750739892472,
+          "maxLongitude": 56.670522999932075,
+          "spanDegrees": 1.1830156010073551,
+          "stable": false
+        },
+        "mars": {
+          "minLongitude": 79.30049629813391,
+          "maxLongitude": 79.9893284319702,
+          "spanDegrees": 0.6888321338362857,
+          "stable": false
+        },
+        "jupiter": {
+          "minLongitude": 356.8743958575503,
+          "maxLongitude": 356.9576930129358,
+          "spanDegrees": 0.08329715538559412,
+          "stable": true
+        },
+        "saturn": {
+          "minLongitude": 31.058024671202986,
+          "maxLongitude": 31.143502803804665,
+          "spanDegrees": 0.08547813260167914,
+          "stable": true
+        }
+      },
+      "status": "stable_features_only",
+      "sampleCount": 9,
+      "method": "uncertain_birth_interval_sampled_3h"
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "positions": {
+        "sun": 220.58041968504642,
+        "mercury": 204.86649537753328,
+        "venus": 219.78431093568702,
+        "mars": 214.11825238981567,
+        "jupiter": 337.9885920401407,
+        "saturn": 108.89811481309721
+      },
+      "ranges": {
+        "sun": {
+          "minLongitude": 220.45525717576936,
+          "maxLongitude": 220.70558219432348,
+          "spanDegrees": 0.2503250185541219,
+          "stable": true
+        },
+        "moon": {
+          "minLongitude": 80.50262138701078,
+          "maxLongitude": 83.94517408640468,
+          "spanDegrees": 3.4425526993939,
+          "stable": false
+        },
+        "mercury": {
+          "minLongitude": 204.86322915620212,
+          "maxLongitude": 204.86976159886444,
+          "spanDegrees": 0.006532442662319227,
+          "stable": true
+        },
+        "venus": {
+          "minLongitude": 219.62750633829774,
+          "maxLongitude": 219.9411155330763,
+          "spanDegrees": 0.3136091947785644,
+          "stable": true
+        },
+        "mars": {
+          "minLongitude": 214.03361811418335,
+          "maxLongitude": 214.20288666544798,
+          "spanDegrees": 0.16926855126473583,
+          "stable": true
+        },
+        "jupiter": {
+          "minLongitude": 337.988543067416,
+          "maxLongitude": 337.9886410128655,
+          "spanDegrees": 0.00009794544951091666,
+          "stable": true
+        },
+        "saturn": {
+          "minLongitude": 108.89746858648272,
+          "maxLongitude": 108.8987610397117,
+          "spanDegrees": 0.0012924532289844137,
+          "stable": true
+        }
+      },
+      "status": "stable_features_only",
+      "sampleCount": 7,
+      "method": "uncertain_birth_interval_sampled_3h"
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "positions": {
+        "jupiter": 241.17774553041727,
+        "saturn": 267.73966247046576
+      },
+      "ranges": {
+        "sun": {
+          "minLongitude": 279.8514099807975,
+          "maxLongitude": 280.8885297853036,
+          "spanDegrees": 1.0371198045061192,
+          "stable": false
+        },
+        "moon": {
+          "minLongitude": 268.1894670192743,
+          "maxLongitude": 282.8191651315625,
+          "spanDegrees": 14.629698112288224,
+          "stable": false
+        },
+        "mercury": {
+          "minLongitude": 258.62093143879963,
+          "maxLongitude": 259.92460579623173,
+          "spanDegrees": 1.3036743574321008,
+          "stable": false
+        },
+        "venus": {
+          "minLongitude": 306.00603344831495,
+          "maxLongitude": 307.2705434205201,
+          "spanDegrees": 1.2645099722051327,
+          "stable": false
+        },
+        "mars": {
+          "minLongitude": 283.63953465364875,
+          "maxLongitude": 284.4231491420303,
+          "spanDegrees": 0.783614488381545,
+          "stable": false
+        },
+        "jupiter": {
+          "minLongitude": 241.07840429530393,
+          "maxLongitude": 241.2770867655306,
+          "spanDegrees": 0.19868247022668584,
+          "stable": true
+        },
+        "saturn": {
+          "minLongitude": 267.6805326110242,
+          "maxLongitude": 267.7987923299073,
+          "spanDegrees": 0.1182597188831096,
+          "stable": true
+        }
+      },
+      "status": "stable_features_only",
+      "sampleCount": 18,
+      "method": "uncertain_birth_interval_sampled_3h"
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "positions": {},
+      "ranges": {},
+      "status": "birth_time_nonexistent",
+      "sampleCount": null,
+      "method": "no_birth_instant_available"
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "positions": {
+        "sun": 340.1910251294396,
+        "moon": 17.387761988667762,
+        "mercury": 355.8093782284798,
+        "venus": 311.1552694267094,
+        "mars": 305.0306120693806,
+        "jupiter": 269.89423662915317,
+        "saturn": 285.83669266277207
+      },
+      "ranges": {
+        "sun": {
+          "minLongitude": 340.1910251294396,
+          "maxLongitude": 340.1910251294396,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "moon": {
+          "minLongitude": 17.387761988667762,
+          "maxLongitude": 17.387761988667762,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "mercury": {
+          "minLongitude": 355.8093782284798,
+          "maxLongitude": 355.8093782284798,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "venus": {
+          "minLongitude": 311.1552694267094,
+          "maxLongitude": 311.1552694267094,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "mars": {
+          "minLongitude": 305.0306120693806,
+          "maxLongitude": 305.0306120693806,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "jupiter": {
+          "minLongitude": 269.89423662915317,
+          "maxLongitude": 269.89423662915317,
+          "spanDegrees": 0,
+          "stable": true
+        },
+        "saturn": {
+          "minLongitude": 285.83669266277207,
+          "maxLongitude": 285.83669266277207,
+          "spanDegrees": 0,
+          "stable": true
+        }
+      },
+      "status": "exact",
+      "sampleCount": 1,
+      "method": "birth_utc"
+    }
+  ],
+  "western": [
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": -0.06317799989726232,
+      "c": 0.04668397107828861,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.02666452975690338,
+      "c": 0.032953920460206204,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.1008022398215765,
+      "c": 0.06887889862989593,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.07423409652401615,
+      "c": 0.05290049572789066,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.23105246863390935,
+      "c": 0.14149161466128993,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.11663413017486242,
+      "c": 0.07829600487626123,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": -0.06317799989726232,
+      "c": 0.04668397107828861,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": -0.06078570029772444,
+      "c": 0.04540782031001507,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.025221421754040813,
+      "c": 0.0323011659177058,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.10062489037728566,
+      "c": 0.06886486779306743,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.07424591948509948,
+      "c": 0.053000852386988574,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.23220527596118135,
+      "c": 0.1422131259340742,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.11693684694810413,
+      "c": 0.07857449551478611,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": -0.06078570029772444,
+      "c": 0.04540782031001507,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.01787905600988897,
+      "c": -0.005937010643524836,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.025539701544463746,
+      "c": -0.010221388621100754,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.013463696539399057,
+      "c": 0.011970291059449042,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.001183749045937818,
+      "c": 0.005658052958480425,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.024053493863895187,
+      "c": -0.003086725355531199,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.028826115480212303,
+      "c": -0.008392607560160626,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.01787905600988897,
+      "c": -0.005937010643524836,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": -0.024126770849048698,
+      "c": 0.024576817366489898,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.02538597698408328,
+      "c": 0.021696069298968803,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": 0.0007649968265114613,
+      "c": 0.022267700332479656,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.03796260262075322,
+      "c": 0.0253027502867171,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.03177824932286442,
+      "c": 0.02159213830798382,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.03726155212405714,
+      "c": 0.024882119988699457,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": -0.024126770849048698,
+      "c": 0.024576817366489898,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": -0.024234399132363384,
+      "c": 0.031227576747269566,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.025730033314440338,
+      "c": 0.022534559016322758,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.0003042790368800323,
+      "c": 0.00976125002778291,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.019141083384680582,
+      "c": 0.014487934788054766,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.010176435266995411,
+      "c": 0.011914617015917736,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.01522050928454253,
+      "c": 0.014829975885245955,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": -0.024234399132363384,
+      "c": 0.031227576747269566,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.03489959243306685,
+      "c": 0.025259935477441032,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.011287117348433838,
+      "c": 0.023569646605361,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": 0.05355567420606331,
+      "c": 0.03228958896409967,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": 0.015062260985753395,
+      "c": 0.006574626977572621,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.0024159847498328273,
+      "c": 0.01352176809246963,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.00842409877151854,
+      "c": 0.015567076673274212,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.03489959243306685,
+      "c": 0.025259935477441032,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.06126505154012018,
+      "c": 0.03063252577006009,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.04653795299143312,
+      "c": 0.02326897649571656,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.060370963695660994,
+      "c": 0.030185481847830497,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.03736487539498587,
+      "c": 0.018682437697492935,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.04203548481935909,
+      "c": 0.021017742409679546,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.05044258178323091,
+      "c": 0.025221290891615455,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.06126505154012018,
+      "c": 0.03063252577006009,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.06180113250796692,
+      "c": 0.03090056625398346,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.04689595767741719,
+      "c": 0.023447978838708593,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.060859676395554986,
+      "c": 0.030429838197777493,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.03773869317498718,
+      "c": 0.01886934658749359,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.04245602982186057,
+      "c": 0.021228014910930286,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.050947235786232684,
+      "c": 0.025473617893116342,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.06180113250796692,
+      "c": 0.03090056625398346,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0,
+      "c": 0,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.2276803979913395,
+      "c": 0.1366082387948037,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.1355240464234164,
+      "c": 0.08131442785404983,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.040657213927024934,
+      "c": 0.02439432835621496,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.036139745712911044,
+      "c": 0.021683847427746625,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.06505154228323987,
+      "c": 0.039030925369943924,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.07806185073988786,
+      "c": 0.04683711044393271,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.2276803979913395,
+      "c": 0.1366082387948037,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.027550159213483017,
+      "c": 0.01653009552808981,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.04661016929551681,
+      "c": 0.027966101577310082,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.02206692350787165,
+      "c": 0.013240154104722991,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.04015440260027641,
+      "c": 0.024092641560165853,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.01592977916205029,
+      "c": 0.009557867497230175,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.0337376968760907,
+      "c": 0.020242618125654418,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.027550159213483017,
+      "c": 0.01653009552808981,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0,
+      "c": 0.02851990024094675,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0,
+      "c": 0.019013266827297832,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0,
+      "c": 0.05347481295177517,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0,
+      "c": 0.015844389022748196,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0,
+      "c": 0.014259950120473375,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0,
+      "c": 0.011407960096378704,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0,
+      "c": 0.02851990024094675,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.016342660592135058,
+      "c": 0.006200742331969551,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.018303779863191268,
+      "c": 0.002907394905697037,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.027094410981697604,
+      "c": 0.014264490418241163,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.009031470327232529,
+      "c": 0.0027626739686363207,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.019066437357490893,
+      "c": 0.010738918576628415,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.016823327080139033,
+      "c": 0.007125292934768081,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.016342660592135058,
+      "c": 0.006200742331969551,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.01643288586442598,
+      "c": 0.006269298622405664,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.0184048321681571,
+      "c": 0.003000329613294432,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.027243994985758867,
+      "c": 0.014362210390896149,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.00908133166191962,
+      "c": 0.00280321686307288,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.019171700175163637,
+      "c": 0.010804880375271806,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.0169162060369091,
+      "c": 0.00719289653111611,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.01643288586442598,
+      "c": 0.006269298622405664,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.03469289650718942,
+      "c": -0.01734644825359471,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.02142284395757556,
+      "c": -0.01071142197878778,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.09784191623663847,
+      "c": -0.04892095811831924,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.03587879365173336,
+      "c": -0.01793939682586668,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.03353026955294523,
+      "c": -0.016765134776472616,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.01964018846066699,
+      "c": -0.009820094230333495,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.03469289650718942,
+      "c": -0.01734644825359471,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.03395173292834117,
+      "c": 0.008720690855552753,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.03265938616362973,
+      "c": -0.0013825883543530683,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.08280587502452806,
+      "c": -0.009013005533743002,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.0788252622253971,
+      "c": -0.004053982465974167,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.13222488401641075,
+      "c": 0.007995218708885225,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.0868703263695606,
+      "c": 0.0018589965800540945,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.03395173292834117,
+      "c": 0.008720690855552753,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.07578684962876121,
+      "c": 0.04442789653162057,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.06061855531080194,
+      "c": 0.0370455742485628,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.0355907197640054,
+      "c": 0.025240065270564577,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.05810171134796539,
+      "c": 0.03691233299455345,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.006605331196734768,
+      "c": 0.00036733656303805434,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.014762450392563452,
+      "c": 0.012355189583285733,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.07578684962876121,
+      "c": 0.04442789653162057,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.0890515932850801,
+      "c": 0.06645529902912405,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.04913962000696869,
+      "c": 0.05452317212387231,
+      "coverage": 0.75
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.0057875671640759425,
+      "c": 0.03605857290416786,
+      "coverage": 0.9499999999999998
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.03757822068246873,
+      "c": 0.026735201875983595,
+      "coverage": 0.9500000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.10373350639394012,
+      "c": 0.019547577804382966,
+      "coverage": 0.9000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.02420643742008564,
+      "c": 0.03857156854266304,
+      "coverage": 0.85
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.0890515932850801,
+      "c": 0.06645529902912405,
+      "coverage": 0.7000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.02612911892564397,
+      "c": 0.015677471355386382,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.014516177180913322,
+      "c": 0.008709706308547992,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.04354853154273998,
+      "c": 0.026129118925643985,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.01935490290788443,
+      "c": 0.011612941744730657,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.017419412617095988,
+      "c": 0.01045164757025759,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.013935530093676794,
+      "c": 0.008361318056206076,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.02612911892564397,
+      "c": 0.015677471355386382,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": -0.026891641518534456,
+      "c": 0.016134984911120673,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": -0.014939800843630257,
+      "c": 0.008963880506178155,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": -0.044819402530890784,
+      "c": 0.02689164151853447,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": -0.019919734458173674,
+      "c": 0.011951840674904207,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": -0.017927761012356307,
+      "c": 0.010756656607413786,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": -0.014342208809885052,
+      "c": 0.008605325285931031,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": -0.026891641518534456,
+      "c": 0.016134984911120673,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.10295299861883052,
+      "c": -0.05147649930941526,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.22266738610012352,
+      "c": -0.11133369305006176,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.10940811628732143,
+      "c": -0.054704058143660715,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.20400555067207202,
+      "c": -0.10200277533603601,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.12227724111467522,
+      "c": -0.06113862055733761,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.19044660324098528,
+      "c": -0.09522330162049264,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.10295299861883052,
+      "c": -0.05147649930941526,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.2998798924300904,
+      "c": -0.11866809342829007,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.3078107488523996,
+      "c": -0.07572574245931205,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.05012371329242833,
+      "c": -0.005516948654492206,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.1108821833042033,
+      "c": 0.014051914540687504,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.09312564850068183,
+      "c": -0.030926897856963356,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.1919487194687035,
+      "c": -0.045939395275543554,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.2998798924300904,
+      "c": -0.11866809342829007,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.020992342619344982,
+      "c": -0.010496171309672491,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.07042349806084695,
+      "c": -0.03521174903042348,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.008724529412743327,
+      "c": -0.004362264706371664,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.037319720212168866,
+      "c": -0.018659860106084433,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.012200973170650407,
+      "c": -0.006100486585325204,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.0496997015420368,
+      "c": -0.0248498507710184,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.020992342619344982,
+      "c": -0.010496171309672491,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "partial",
+      "a": 0.05865700348115836,
+      "c": -0.009285599072230753,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "partial",
+      "a": 0.03353719602400878,
+      "c": -0.008417388566859214,
+      "coverage": 0.12000000000000004
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "partial",
+      "a": 0.13781924634432255,
+      "c": -0.006275552333572423,
+      "coverage": 0.39999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "partial",
+      "a": 0.08207587272002238,
+      "c": 0.014636793274290004,
+      "coverage": 0.45000000000000007
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "partial",
+      "a": 0.06273333952115989,
+      "c": 0.00871913557611691,
+      "coverage": 0.40000000000000013
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "partial",
+      "a": 0.032370758133951544,
+      "c": -0.00015105693229702484,
+      "coverage": 0.25
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "partial",
+      "a": 0.05865700348115836,
+      "c": -0.009285599072230753,
+      "coverage": 0.10000000000000003
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "2011-12-30",
+        "birthTime": "12:00",
+        "birthCountry": "WS"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "unavailable",
+      "a": 0,
+      "c": 0,
+      "coverage": 0
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.08741645192404929,
+      "c": -0.03516518021171917,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.07183544581252717,
+      "c": -0.021949245153952694,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.006953796534288319,
+      "c": 0.013514644828996758,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": 0.0594684323971083,
+      "c": 0.007852527544739188,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.023791165792722984,
+      "c": -0.004314128085099897,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.07455900816915727,
+      "c": -0.021475533836026187,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:00:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.08741645192404929,
+      "c": -0.03516518021171917,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.07152890198107249,
+      "c": -0.02720950235081604,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.06150708929158248,
+      "c": -0.016762669904333873,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.007676794014849435,
+      "c": 0.013888498483809946,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": 0.05839991770779839,
+      "c": 0.008426109758581588,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.021804020114905596,
+      "c": -0.003312437902630137,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.0700510953170434,
+      "c": -0.01920281902561135,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-09-18T08:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.07152890198107249,
+      "c": -0.02720950235081604,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.002237986750805814,
+      "c": 0.02329735677557328,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.00004153923655826213,
+      "c": 0.02445968945690333,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": 0.03792497070627932,
+      "c": 0.07150461349702783,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.01245111578665508,
+      "c": 0.07941305717372435,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.03950740115907687,
+      "c": 0.08097026705520056,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.00993628171613108,
+      "c": 0.04407005901417756,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-03-08T07:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.002237986750805814,
+      "c": 0.02329735677557328,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.08008213801340909,
+      "c": -0.029072218854533323,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.03720844291288312,
+      "c": -0.0019069703242175272,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": 0.09546506220868392,
+      "c": -0.000127606237796305,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": 0.0790769932988329,
+      "c": 0.027187997774730993,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.09149853253969581,
+      "c": 0.025048443963523303,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.05213131316792692,
+      "c": 0.011952422865950213,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2026-11-01T05:30:00.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.08008213801340909,
+      "c": -0.029072218854533323,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": -0.003125358831157434,
+      "c": 0.03265453031910684,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": 0.001728287472710452,
+      "c": 0.03701091140409441,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": -0.04855601446524428,
+      "c": 0.03325036276620745,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": -0.022321643686945024,
+      "c": 0.01639142191182067,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": 0.00020301671273872333,
+      "c": 0.031386145554038125,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": 0.008634802751000344,
+      "c": 0.03365634834965801,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2050-06-15T03:21:09.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": -0.003125358831157434,
+      "c": 0.03265453031910684,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "general",
+      "status": "calculated",
+      "a": 0.019841185603561923,
+      "c": 0.05108451919727722,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "love",
+      "status": "calculated",
+      "a": -0.014659311505449222,
+      "c": 0.03530316200734876,
+      "coverage": 0.9999999999999999
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "career",
+      "status": "calculated",
+      "a": 0.07726357301742805,
+      "c": 0.01536422119671212,
+      "coverage": 0.9999999999999997
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "money",
+      "status": "calculated",
+      "a": 0.020647823437809323,
+      "c": 0.009833361937389255,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "study",
+      "status": "calculated",
+      "a": -0.007635530637776063,
+      "c": 0.029670595583844765,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "friends",
+      "status": "calculated",
+      "a": -0.017294972196032474,
+      "c": 0.03313908735975277,
+      "coverage": 1
+    },
+    {
+      "profile": {
+        "birthDate": "1960-02-29",
+        "birthTime": "23:59",
+        "birthCountry": "NP"
+      },
+      "iso": "2099-12-31T23:59:59.000Z",
+      "category": "other",
+      "status": "calculated",
+      "a": 0.019841185603561923,
+      "c": 0.05108451919727722,
+      "coverage": 1
+    }
+  ]
+}

@@ -49,6 +49,7 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
+    await tester.pump(); // let the startup profile-load future settle
     expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
 
     await completeOnboarding(tester);

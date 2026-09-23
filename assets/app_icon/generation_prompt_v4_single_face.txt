@@ -1,0 +1,52 @@
+ASSET
+The Celestial Decision Coin — single-face production mobile app-store icon.
+
+MODE
+Built-in ImageGen, image-edit/reference mode.
+
+SOURCE REFERENCES
+- C:\Users\ADMIN\Desktop\icon_celestial_coin.jpg — original compact YES/NO composition.
+- assets/app_icon/astracue_celestial_decision_coin_v3.png — material, lighting, palette, and cosmic atmosphere.
+
+FINAL DIRECTION
+Create exactly one physical celestial coin floating at an elegant 45-degree 3D tilt. Only one continuous elliptical coin face is visible. YES and NO appear together on this same single face.
+
+Use one continuous thick antique-gold outer rim. Divide the single planar face into two balanced 50/50 regions with a subtle flowing S-curve through the exact center. The divider is a thin softly glowing gold seam. Both regions stay flush on the same plane; neither overlaps, lifts above, or hides the other.
+
+UPPER-LEFT REGION
+- Brushed warm antique gold.
+- Luminous cyan-blue four-point guiding star.
+- Exact embossed uppercase text "YES".
+
+LOWER-RIGHT REGION
+- Polished black obsidian with a restrained terracotta/coral undertone.
+- Terracotta four-point star matching the YES star in size.
+- Exact embossed uppercase text "NO".
+
+BALANCE
+- Both regions have equal visible area and equal luminance weight.
+- YES and NO use the same font, weight, height, spacing, and distance from center.
+- Both stars use the same dimensions and prominence.
+- Neither decision is visually favored.
+
+COMPOSITION
+- One centered coin occupying approximately 66–70% of the square.
+- Full rim visible with comfortable safe margins.
+- Narrow visible thickness and a ridged gold edge suggest the coin is airborne.
+- Two or three thin elliptical gold/cyan orbital trails follow the inertia of the flip and remain behind the typography.
+- Full-bleed midnight-navy cosmic background with subtle blue-violet haze and sparse stars.
+
+PALETTE
+- Midnight: #070B16 / #101B32
+- Antique gold: #D8B66A
+- Cyan: #62B7E8
+- Obsidian: #090B12
+- Terracotta: #C86F67 / #D98A7C
+
+CONSTRAINTS
+- Text is exactly "YES" and "NO" only.
+- One coin, one visible face, two equal internal color fields, one continuous outer rim.
+- No second coin, reverse face, stacked disks, separated halves, yin-yang dots, casino imagery, dollar symbols, roulette, zodiac wheel, hands, people, third option, extra text, watermark, white margin, or baked rounded-square frame.
+
+EXPORT
+- 1024 x 1024 PNG master.

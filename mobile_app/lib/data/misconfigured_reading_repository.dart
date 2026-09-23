@@ -1,3 +1,9 @@
+/// **Development and test artifact — not in the production build.**
+///
+/// It only ever stood in for a missing `DECISION_API_BASE_URL`, which the
+/// offline engine no longer needs. See `lib/main.dart`.
+library;
+
 import 'models/models.dart';
 import 'reading_api_exception.dart';
 import 'reading_repository.dart';

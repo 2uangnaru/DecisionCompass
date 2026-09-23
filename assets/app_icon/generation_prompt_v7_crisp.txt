@@ -1,0 +1,42 @@
+ASSET
+AstraCue — Celestial Decision Coin, crisp UA master.
+
+MODE
+Built-in ImageGen, single-pass precise-object-edit mode.
+
+EDIT TARGET
+C:\Users\ADMIN\Downloads\Gemini_Generated_Image_866lda866lda866l.png
+
+CORE DIRECTION
+Preserve the original celestial decision-coin concept, compact silhouette, 45-degree perspective, curved gold YES region, obsidian NO region, copper-red lower rim and orbital motif. Rebuild the finish as a precision-engineered artifact photographed with controlled studio lighting.
+
+SHARPNESS AND LIGHTING
+- Full-depth focus across the entire coin; no depth of field.
+- Defined upper-left key light, restrained fill and a thin hard rim light.
+- Narrow crisp specular edges and clearly transitioning shadows.
+- High micro-contrast in brushed-gold grain, obsidian texture, bevels and ridged edges.
+- No bloom, volumetric light, fog, diffusion, motion blur, lens glow or soft halo.
+
+ENGRAVING
+- Exact text "YES" and "NO" only.
+- YES/checkmark deeply debossed into gold; NO/X deeply debossed into obsidian.
+- Recessed floors, crisp inward bevels, hard contact shadows and narrow 1–2 px inner-wall highlights.
+- Cyan enamel #42C8F5 / #B9EEFF for YES; coral enamel #F06F64 / #FFD0C8 for NO.
+- Illumination remains inside the grooves with at most a 1–2 px adjacent reflection.
+- Equal cap height, stroke weight, depth and perceived prominence.
+
+BACKGROUND AND ORBITS
+- Clean full-bleed midnight navy-to-black background #050811 to #0B1220.
+- No atmospheric haze or corner watermark.
+- Exactly two thin, sharp antique-gold orbital lines behind the coin; never crossing the lettering.
+
+COMPOSITION
+- Coin occupies approximately 68–72% of the square.
+- Critical content remains within the central safe area.
+- No white margin or baked rounded-square mask.
+
+AVOID
+Dreamy lighting, haze, mist, bloom, Gaussian blur, soft focus, washed highlights, plastic materials, raised typography, neon tubes, floating text, extra objects, watermark, casino or gambling imagery, second coin, white border and baked rounded corners.
+
+EXPORT
+1024 x 1024 PNG master, resized once from the generated source.

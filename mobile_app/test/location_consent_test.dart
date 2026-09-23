@@ -244,6 +244,7 @@ void main() {
         ),
       );
       await tester.pumpWidget(rig.app);
+      await tester.pump(); // let the startup profile-load future settle
 
       // Opt in first...
       await tester.tap(find.byKey(const Key('allow_location')));

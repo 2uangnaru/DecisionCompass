@@ -1,3 +1,9 @@
+/// **Development and test artifact — not in the production build.**
+///
+/// `DECISION_API_BASE_URL` configures the development-only HTTP repository.
+/// The production app needs no define at all: see `lib/main.dart`.
+library;
+
 import 'reading_api_exception.dart';
 
 /// Validated base URL for the calculation API.

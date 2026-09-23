@@ -1,0 +1,28 @@
+ASSET
+AstraCue — Celestial Decision Coin, highlighted engraved Store master.
+
+MODE
+Built-in ImageGen, precise-object-edit mode.
+
+EDIT TARGET
+assets/app_icon/astracue_celestial_decision_coin_v5_engraved.png
+
+PRESERVED
+- Exact coin composition, silhouette, crop, 45-degree perspective, materials, background and two orbital trails.
+- Deeply debossed YES/checkmark and NO/X geometry.
+- Exact words "YES" and "NO".
+
+HIGHLIGHT TREATMENT
+- Increase small-size visibility through illumination originating at the bottom of each engraved groove.
+- YES/checkmark: celestial cyan #55CFF5 with a narrow pale ice-blue core #BCEFFF.
+- NO/X: warm coral #EF776D with a narrow pale-coral core.
+- Light softly bounces only onto inner bevel walls plus a restrained 2–4 px reflection on the immediately adjacent material.
+- Preserve dark inner-wall shadows so every mark remains visibly recessed.
+- Increase local engraving contrast about 25–30%, without raising overall exposure.
+- Keep YES and NO optically equal in prominence; do not use green.
+
+AVOID
+- Raised or extruded lettering, neon tubes, floating glow, stickers, flat printed text, layout changes, additional objects, watermark, white border or baked rounded-square mask.
+
+EXPORT
+1024 x 1024 PNG master.

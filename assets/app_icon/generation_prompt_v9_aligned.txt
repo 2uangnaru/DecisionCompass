@@ -1,0 +1,28 @@
+ASSET
+AstraCue — Celestial Decision Coin, corrected coherent alignment.
+
+MODE
+Built-in ImageGen, precise-object-edit mode.
+
+EDIT TARGET
+assets/app_icon/astracue_celestial_decision_coin_v7_crisp.png
+
+ALIGNMENT CORRECTION
+- Treat "✓ YES" as one rigid engraved group with one shared transform, row and optical centerline.
+- Treat "NO ×" as one rigid engraved group with one shared transform, row and optical centerline.
+- Apply the same surface-plane rotation and perspective matrix to both groups.
+- Use a restrained 6–9 degree clockwise rotation matching the dominant ellipse chord.
+- Keep symbol and word optically centered on the same row; no staircase placement.
+- Keep YES and NO baselines parallel.
+- Preserve ordering "✓ YES" and "NO ×".
+- Maintain a clear gap between NO and X.
+
+INVARIANTS
+- Preserve deeply debossed engraving, recessed enamel floors, crisp bevels and contact shadows.
+- Preserve cyan-blue YES/checkmark and coral NO/X.
+- Preserve exact V7 coin geometry, materials, curved split, crop, lighting, sharpness, background and orbital paths.
+- Exact text "YES" and "NO" only.
+- No independent symbol angles, raised type, floating text, haze, bloom, watermark, border or baked rounded-square mask.
+
+EXPORT
+1024 x 1024 PNG master.

@@ -1,41 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 import 'app.dart';
 import 'data/current_context_provider.dart';
-import 'data/http_reading_repository.dart';
-import 'data/misconfigured_reading_repository.dart';
-import 'data/reading_api_config.dart';
-import 'data/reading_api_exception.dart';
-import 'data/reading_repository.dart';
+import 'data/engine_daily_brief_provider.dart';
+import 'data/shared_preferences_history_repository.dart';
+import 'data/shared_preferences_profile_repository.dart';
+import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
 
+/// Decision Compass calculates entirely on the device.
+///
+/// There is no API base URL, no HTTP client and no server to reach: the
+/// reading engine is bundled in the app (`lib/local_engine/`) and runs on a
+/// background isolate. A build needs no `--dart-define`, and an installed APK
+/// produces readings in airplane mode.
+///
+/// The app may still use the network later for ads, analytics or store
+/// services. The symbolic calculation never does.
 void main() {
-  // This client is owned here, for the whole app lifetime, and closed on
-  // detach. HttpReadingRepository never closes a client it was given.
-  final client = http.Client();
-
+  // Shared with `EngineDailyBriefProvider` below, so Home's ambient preview
+  // and a real reveal both go through the one on-device engine and context
+  // resolver rather than standing up a second instance of either.
+  const repository = LocalReadingRepository();
+  const contextProvider = DeviceCurrentContextProvider();
   runApp(
-    DecisionCompassApp(
+    const DecisionCompassApp(
       dependencies: ReadingDependencies(
-        repository: _buildRepository(client),
-        contextProvider: const DeviceCurrentContextProvider(),
+        repository: repository,
+        contextProvider: contextProvider,
+        historyRepository: SharedPreferencesHistoryRepository(),
+        profileRepository: SharedPreferencesProfileRepository(),
+        dailyBriefProvider: EngineDailyBriefProvider(
+          repository: repository,
+          contextProvider: contextProvider,
+        ),
       ),
-      onDetached: client.close,
     ),
   );
-}
-
-/// A missing or malformed `DECISION_API_BASE_URL` must not crash the launch or
-/// silently fall back to a guessed host. The app starts and the configuration
-/// failure appears in the reading flow's error state instead.
-ReadingRepository _buildRepository(http.Client client) {
-  try {
-    return HttpReadingRepository(
-      client: client,
-      config: ReadingApiConfig.fromEnvironment(),
-    );
-  } on ReadingApiException catch (failure) {
-    return MisconfiguredReadingRepository(failure);
-  }
 }

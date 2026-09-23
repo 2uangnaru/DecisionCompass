@@ -1,4 +1,7 @@
 import 'data/current_context_provider.dart';
+import 'data/daily_brief_provider.dart';
+import 'data/history_repository.dart';
+import 'data/profile_repository.dart';
 import 'data/reading_repository.dart';
 
 /// Everything the reading flow needs from outside the widget tree, passed down
@@ -8,12 +11,18 @@ class ReadingDependencies {
   const ReadingDependencies({
     required this.repository,
     required this.contextProvider,
+    required this.historyRepository,
+    required this.profileRepository,
+    required this.dailyBriefProvider,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
 
   final ReadingRepository repository;
   final CurrentContextProvider contextProvider;
+  final HistoryRepository historyRepository;
+  final ProfileRepository profileRepository;
+  final DailyBriefProvider dailyBriefProvider;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

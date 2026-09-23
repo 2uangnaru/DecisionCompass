@@ -1,3 +1,13 @@
+/// **Development and test artifact — not in the production build.**
+///
+/// Production readings are calculated on the device by
+/// `lib/local_engine/local_reading_repository.dart`; `lib/main.dart` does not
+/// reference this file, so it is tree-shaken out of the app. It is kept so the
+/// loopback Node API in `calculation-engine/src/server.js` stays reachable
+/// while regenerating fixtures or cross-checking the port, and it must never
+/// be wired up as a default.
+library;
+
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';

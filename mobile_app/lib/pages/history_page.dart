@@ -1,10 +1,27 @@
 import 'package:flutter/material.dart';
 
+import '../category_presentation.dart';
+import '../data/history_entry.dart';
+import '../data/models/models.dart' as engine;
+import '../reading_dependencies.dart';
+import '../reading_mapping.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 
-class HistoryPage extends StatelessWidget {
-  const HistoryPage({super.key});
+class HistoryPage extends StatefulWidget {
+  const HistoryPage({super.key, required this.dependencies});
+
+  final ReadingDependencies dependencies;
+
+  @override
+  State<HistoryPage> createState() => _HistoryPageState();
+}
+
+class _HistoryPageState extends State<HistoryPage> {
+  // Loaded once per page visit; a fresh push re-reads storage, so a reading
+  // saved just before opening History always shows up.
+  late final Future<List<HistoryEntry>> _entries =
+      widget.dependencies.historyRepository.list();
 
   @override
   Widget build(BuildContext context) {
@@ -27,27 +44,31 @@ class HistoryPage extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 24),
-            Text(
-              'TODAY',
-              style: Theme.of(context).textTheme.labelMedium
-                  ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
+            const SizedBox(height: 20),
+            Expanded(
+              child: FutureBuilder<List<HistoryEntry>>(
+                future: _entries,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState != ConnectionState.done) {
+                    return const Center(
+                      key: Key('history_loading'),
+                      child: CircularProgressIndicator(
+                        color: CompassColors.gold,
+                      ),
+                    );
+                  }
+                  final entries = snapshot.data ?? const [];
+                  if (entries.isEmpty) {
+                    return const _EmptyHistory();
+                  }
+                  return _HistoryList(
+                    entries: entries,
+                    today: _isoDate(widget.dependencies.nowLocal()),
+                  );
+                },
+              ),
             ),
             const SizedBox(height: 12),
-            const _HistoryRow(
-              mode: 'YES / NO',
-              result: 'YES 64%',
-              period: 'NOW',
-              time: '8:42 PM',
-            ),
-            const SizedBox(height: 10),
-            const _HistoryRow(
-              mode: 'STAY / GO',
-              result: 'GO 58%',
-              period: 'EVENING',
-              time: '7:10 PM',
-            ),
-            const Spacer(),
             Center(
               child: Text(
                 'Results are saved as snapshots and never rerolled.',
@@ -63,21 +84,119 @@ class HistoryPage extends StatelessWidget {
   }
 }
 
-class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({
-    required this.mode,
-    required this.result,
-    required this.period,
-    required this.time,
-  });
+String _isoDate(DateTime date) =>
+    '${date.year.toString().padLeft(4, '0')}-'
+    '${date.month.toString().padLeft(2, '0')}-'
+    '${date.day.toString().padLeft(2, '0')}';
 
-  final String mode;
-  final String result;
-  final String period;
-  final String time;
+/// Local wall-clock hour/minute, derived the same way the engine resolved
+/// them, so it matches what the user actually saw at Reveal regardless of
+/// the reading device's current timezone.
+String _timeOfDay(engine.ReadingResponse reading) {
+  final localMs =
+      reading.context.instantMs + reading.context.offsetSeconds * 1000;
+  final local = DateTime.fromMillisecondsSinceEpoch(localMs, isUtc: true);
+  final hour24 = local.hour;
+  final minute = local.minute.toString().padLeft(2, '0');
+  final suffix = hour24 >= 12 ? 'PM' : 'AM';
+  final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
+  return '$hour12:$minute $suffix';
+}
+
+/// The result column's text for every status the contract defines, not just
+/// `ready` — a balanced or elapsed reading is still a real saved entry.
+String _resultLabel(engine.ReadingResponse reading) {
+  switch (reading.status) {
+    case engine.ReadingStatus.ready:
+      final winner = reading.winner;
+      if (winner == null) return '';
+      final percent = reading.percentages?[winner];
+      return percent == null ? winner : '$winner $percent%';
+    case engine.ReadingStatus.balanced:
+      return 'BALANCED';
+    case engine.ReadingStatus.insufficientData:
+      return 'NOT ENOUGH DATA';
+    case engine.ReadingStatus.periodElapsed:
+      return 'PERIOD PASSED';
+  }
+}
+
+class _EmptyHistory extends StatelessWidget {
+  const _EmptyHistory();
 
   @override
   Widget build(BuildContext context) {
+    return Center(
+      key: const Key('history_empty'),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.history_rounded,
+              size: 42,
+              color: CompassColors.muted,
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'No readings yet. Reveal your first direction to start your '
+              'history.',
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(color: CompassColors.muted),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Entries grouped by the local calendar day they were resolved for, newest
+/// group first, matching the UX spec's `TODAY` / date grouping.
+class _HistoryList extends StatelessWidget {
+  const _HistoryList({required this.entries, required this.today});
+
+  final List<HistoryEntry> entries;
+  final String today;
+
+  @override
+  Widget build(BuildContext context) {
+    final children = <Widget>[];
+    String? openGroup;
+    for (final entry in entries) {
+      final group = entry.reading.context.localDate;
+      if (group != openGroup) {
+        if (openGroup != null) children.add(const SizedBox(height: 18));
+        openGroup = group;
+        children.add(
+          Text(
+            group == today ? 'TODAY' : group,
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
+          ),
+        );
+        children.add(const SizedBox(height: 12));
+      } else {
+        children.add(const SizedBox(height: 10));
+      }
+      children.add(_HistoryRow(entry: entry));
+    }
+    return ListView(key: const Key('history_list'), children: children);
+  }
+}
+
+class _HistoryRow extends StatelessWidget {
+  const _HistoryRow({required this.entry});
+
+  final HistoryEntry entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final reading = entry.reading;
+    final mode = fromEngineMode(reading.mode);
+    final period = fromEnginePeriod(reading.period);
     return GlassCard(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       child: Row(
@@ -86,17 +205,22 @@ class _HistoryRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(mode, style: const TextStyle(fontWeight: FontWeight.w700)),
+                Text(
+                  mode.label,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
                 const SizedBox(height: 4),
                 Text(
-                  '$period  •  $time',
+                  '${categoryLabel(reading.category)}  •  '
+                  '${period.label.toUpperCase()}  •  ${_timeOfDay(reading)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
           ),
           Text(
-            result,
+            _resultLabel(reading),
+            textAlign: TextAlign.right,
             style: const TextStyle(
               color: CompassColors.blueLight,
               fontSize: 17,

@@ -56,6 +56,7 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
       );
       await tester.pumpWidget(rig.app);
+      await tester.pump(); // let the startup profile-load future settle
       await tester.tap(find.byKey(const Key('allow_location')));
       await tester.pumpAndSettle();
 

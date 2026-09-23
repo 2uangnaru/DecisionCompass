@@ -1,0 +1,28 @@
+ASSET
+AstraCue — V7 with foreground X-shaped orbital segments.
+
+MODE
+Built-in ImageGen, precise-object-edit mode.
+
+INPUTS
+- Edit target: assets/app_icon/astracue_celestial_decision_coin_v7_crisp.png
+- Positional guide only: C:\Users\ADMIN\AppData\Local\Temp\codex-clipboard-5d7f335b-6af4-4481-bc72-30af879fe398.png
+
+PRIMARY CHANGE
+- Preserve the same two thin gold elliptical rings from V7: identical size, curvature, angle, location, width, color and style.
+- Change only their occlusion/masking.
+- Reveal each ring's near-side semicircle across the front of the coin following the two red annotation diagonals.
+- The two foreground segments form a thin gold X over the coin.
+- The far-side portions remain behind the coin.
+- At the central crossing, one ring passes cleanly over the other while both remain in front of the coin.
+- Use crisp, believable entry and exit points at the coin rim.
+- Do not reproduce the red annotation or screenshot artifacts.
+
+INVARIANTS
+- Preserve V7 coin size, position, orientation, materials, curved split, lighting, textures and sharpness.
+- Preserve checkmark, "YES", "NO", X symbol, engraving, colors, positions and direction.
+- Preserve the midnight background and square crop.
+- Exactly two rings; no resizing or thickening.
+
+EXPORT
+1024 x 1024 PNG master.

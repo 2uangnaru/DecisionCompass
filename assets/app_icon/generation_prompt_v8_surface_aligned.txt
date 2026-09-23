@@ -1,0 +1,30 @@
+ASSET
+AstraCue — Celestial Decision Coin, surface-aligned engraving.
+
+MODE
+Built-in ImageGen, precise-object-edit mode.
+
+EDIT TARGET
+assets/app_icon/astracue_celestial_decision_coin_v7_crisp.png
+
+PRIMARY CHANGE
+- Reorient and perspective-warp the complete groups "✓ YES" and "NO ×" so they lie on their physical tilted coin surfaces.
+- Baselines follow the same perspective axis as the elliptical rim and local circular grain rather than remaining horizontal to the screen.
+- Rotate naturally clockwise with the coin face, approximately 12–16 degrees where required by the existing ellipse.
+- Apply planar foreshortening to strokes, counters, bevels, groove depths, highlights and shadows.
+- Preserve left-to-right readability and avoid sideways or upside-down text.
+
+LAYOUT
+- Preserve ordering: checkmark then "YES"; "NO" then X.
+- Center each group optically within its material region.
+- Increase the NO/X separation enough to prevent reading "NOX".
+- Balance the apparent weight of checkmark and X.
+
+INVARIANTS
+- Keep all marks deeply debossed with recessed enamel floors and crisp inward bevels.
+- Preserve cyan YES/checkmark and coral NO/X.
+- Preserve exact V7 coin geometry, materials, split, crop, lighting, sharpness, background and orbital lines.
+- No raised type, floating text, bloom, haze, extra words, watermark, white border or baked rounded-square mask.
+
+EXPORT
+1024 x 1024 PNG master.

@@ -1,6 +1,9 @@
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
 import 'package:decision_compass/data/fake_reading_repository.dart';
+import 'package:decision_compass/data/fixed_daily_brief_provider.dart';
+import 'package:decision_compass/data/in_memory_history_repository.dart';
+import 'package:decision_compass/data/in_memory_profile_repository.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -38,6 +41,9 @@ class ReadingTestRig {
 
   final FakeReadingRepository repository;
   final FixedCurrentContextProvider contextProvider;
+  final InMemoryHistoryRepository historyRepository = InMemoryHistoryRepository();
+  final InMemoryProfileRepository profileRepository = InMemoryProfileRepository();
+  final FixedDailyBriefProvider dailyBriefProvider = FixedDailyBriefProvider();
   final DateTime revealInstant;
 
   /// Device wall clock the ritual reads to mute periods that are over.
@@ -49,6 +55,9 @@ class ReadingTestRig {
   late final ReadingDependencies dependencies = ReadingDependencies(
     repository: repository,
     contextProvider: contextProvider,
+    historyRepository: historyRepository,
+    profileRepository: profileRepository,
+    dailyBriefProvider: dailyBriefProvider,
     nowUtc: () {
       clockReads++;
       return revealInstant;
@@ -71,6 +80,10 @@ Future<void> completeOnboarding(
   WidgetTester tester, {
   bool allowLocation = true,
 }) async {
+  // The app's startup gate reads the saved profile before choosing between
+  // Onboarding and Home; this lets that (already-resolved, in-memory) future
+  // settle before the first interaction.
+  await tester.pump();
   await tester.tap(
     find.byKey(Key(allowLocation ? 'allow_location' : 'skip_location')),
   );

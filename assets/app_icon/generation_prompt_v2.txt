@@ -1,0 +1,10 @@
+Use case: logo-brand
+Asset type: revised production mobile app store icon, version 2
+Input image: use the supplied AstraCue V1 icon only as the style, palette, metallic-finish and lighting reference
+Primary change: redesign the central mark so YES versus NO and the exact moment of hesitation are immediately understandable without words. Replace the tree-like form with a crisp symmetrical Y-shaped decision fork. At the fork junction place one small radiant violet-gold pulse with two subtle concentric ripples, representing the instant of indecision. The upper-left branch ends in a clearly legible ocean-blue circular celestial seal containing one simple gold check mark. The upper-right branch ends in a clearly legible soft-terracotta circular celestial seal containing one simple gold X mark. Keep both destination seals equal size and equal visual weight. One thin incomplete antique-gold orbit surrounds the entire decision system.
+Style/medium: preserve the premium modern mystical celestial-observatory character of the reference; vector-friendly 2.5D, clean and globally understandable, not playful or game-like
+Composition: centered, highly symmetrical, bold shapes, large check and X, all important content inside the central 66 percent safe zone, immediately legible at 32–64 px
+Color palette: preserve deep midnight navy background and antique gold; YES seal uses ocean blue #2477C9 to #62B7E8; NO seal uses muted terracotta #A9575C to #D98A7C; hesitation pulse uses restrained violet #786FE8
+Constraints: exactly two choices, exactly one check, exactly one X, exactly one central hesitation pulse, exactly one Y-shaped fork, at most one incomplete orbit; no letters and no words; full-bleed square with no baked rounded corners
+Avoid: tree, plant, sprout, whale tail, person, hands, zodiac wheel, crescent moon, eye, tarot, compass needle, red-green split, casino aesthetic, excessive stars, tiny decoration, text, YES letters, NO letters, mock phone, watermark
+Preserve: premium brushed-metal rendering, navy depth, calm trustworthy mood, strong high-contrast silhouette

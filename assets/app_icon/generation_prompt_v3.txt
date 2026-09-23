@@ -1,0 +1,47 @@
+ASSET
+The Celestial Decision Coin — production mobile app-store icon, generated with built-in ImageGen in image-edit mode.
+
+SOURCE REFERENCE
+C:\Users\ADMIN\Desktop\icon_celestial_coin.jpg
+
+FINAL GENERATION DIRECTION
+Preserve the premium 3D material language, midnight cosmic palette, brushed-gold YES face with cyan guiding star, obsidian NO face with restrained terracotta star, correct exact words "YES" and "NO", and elegant gold/cyan orbital trails.
+
+Depict one celestial decision coin caught mid-flip at an elegant 45-degree 3D angle. Represent the two opposing faces of the same coin as two adjacent rotational motion frames around one shared luminous pivot. Arrange them in a balanced symmetric diagonal composition: YES upper-left, NO lower-right.
+
+The YES and NO rotational states must have the same apparent diameter, the same elliptical visible face area, the same foreshortening, and equal visual brightness and contrast. Neither option may dominate. Their closest gold edges nearly touch at the central flip axis so they read as the same coin rotating, not two unrelated stacked tokens.
+
+YES FACE
+- Solid brushed antique-gold medal surface.
+- Bright cyan-blue four-point guiding star.
+- Exact embossed uppercase word "YES", readable at small icon size.
+
+NO FACE
+- Polished black obsidian medal surface.
+- Restrained muted terracotta/deep-coral inner glow and rim.
+- Four-point terracotta celestial star.
+- Exact embossed uppercase word "NO", readable at small icon size.
+- Red must feel calm, premium, and harmonious—not harsh or alarming.
+
+COMPOSITION
+- Full-bleed square midnight-navy cosmic background.
+- Combined two-face silhouette centered with comfortable safe margin.
+- Two or three clean gold/cyan orbital trails centered on the shared pivot and showing the inertia of the flip.
+- Subtle blue-violet nebular depth with sparse stars; background detail remains subordinate to the coin.
+- Strong silhouette and high contrast at 32–64 px.
+
+PALETTE
+- Midnight navy: #070B16 / #101B32
+- Antique gold: #D8B66A
+- Guiding blue: #2477C9 / #62B7E8
+- Muted terracotta: #A9575C / #D98A7C
+- Tiny violet accent: #786FE8
+
+CONSTRAINTS
+- Exact text "YES" and "NO" only.
+- No white margin, baked rounded-square frame, phone mockup, outer border, or watermark.
+- No casino or gambling cues, dollar signs, roulette, third coin, cropped faces, hands, people, zodiac wheel, extra symbols, extra words, misspelled text, YES dominance, or hidden NO.
+
+EXPORT
+- Master: 1024 x 1024 PNG.
+- Store artwork stays square; iOS and Android apply their own masks.

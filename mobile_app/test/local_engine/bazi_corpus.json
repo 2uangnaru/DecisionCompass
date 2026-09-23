@@ -1,0 +1,3590 @@
+{
+  "hidden": [
+    [
+      9
+    ],
+    [
+      5,
+      9,
+      7
+    ],
+    [
+      0,
+      2,
+      4
+    ],
+    [
+      1
+    ],
+    [
+      4,
+      1,
+      9
+    ],
+    [
+      2,
+      6,
+      4
+    ],
+    [
+      3,
+      5
+    ],
+    [
+      5,
+      3,
+      1
+    ],
+    [
+      6,
+      8,
+      4
+    ],
+    [
+      7
+    ],
+    [
+      4,
+      7,
+      3
+    ],
+    [
+      8,
+      0
+    ]
+  ],
+  "tenGods": [
+    {
+      "day": 0,
+      "other": 0,
+      "god": "peer"
+    },
+    {
+      "day": 0,
+      "other": 1,
+      "god": "competitor"
+    },
+    {
+      "day": 0,
+      "other": 2,
+      "god": "expression"
+    },
+    {
+      "day": 0,
+      "other": 3,
+      "god": "challenge"
+    },
+    {
+      "day": 0,
+      "other": 4,
+      "god": "opportunity"
+    },
+    {
+      "day": 0,
+      "other": 5,
+      "god": "stewardship"
+    },
+    {
+      "day": 0,
+      "other": 6,
+      "god": "pressure"
+    },
+    {
+      "day": 0,
+      "other": 7,
+      "god": "responsibility"
+    },
+    {
+      "day": 0,
+      "other": 8,
+      "god": "reflection"
+    },
+    {
+      "day": 0,
+      "other": 9,
+      "god": "support"
+    },
+    {
+      "day": 1,
+      "other": 0,
+      "god": "competitor"
+    },
+    {
+      "day": 1,
+      "other": 1,
+      "god": "peer"
+    },
+    {
+      "day": 1,
+      "other": 2,
+      "god": "challenge"
+    },
+    {
+      "day": 1,
+      "other": 3,
+      "god": "expression"
+    },
+    {
+      "day": 1,
+      "other": 4,
+      "god": "stewardship"
+    },
+    {
+      "day": 1,
+      "other": 5,
+      "god": "opportunity"
+    },
+    {
+      "day": 1,
+      "other": 6,
+      "god": "responsibility"
+    },
+    {
+      "day": 1,
+      "other": 7,
+      "god": "pressure"
+    },
+    {
+      "day": 1,
+      "other": 8,
+      "god": "support"
+    },
+    {
+      "day": 1,
+      "other": 9,
+      "god": "reflection"
+    },
+    {
+      "day": 2,
+      "other": 0,
+      "god": "reflection"
+    },
+    {
+      "day": 2,
+      "other": 1,
+      "god": "support"
+    },
+    {
+      "day": 2,
+      "other": 2,
+      "god": "peer"
+    },
+    {
+      "day": 2,
+      "other": 3,
+      "god": "competitor"
+    },
+    {
+      "day": 2,
+      "other": 4,
+      "god": "expression"
+    },
+    {
+      "day": 2,
+      "other": 5,
+      "god": "challenge"
+    },
+    {
+      "day": 2,
+      "other": 6,
+      "god": "opportunity"
+    },
+    {
+      "day": 2,
+      "other": 7,
+      "god": "stewardship"
+    },
+    {
+      "day": 2,
+      "other": 8,
+      "god": "pressure"
+    },
+    {
+      "day": 2,
+      "other": 9,
+      "god": "responsibility"
+    },
+    {
+      "day": 3,
+      "other": 0,
+      "god": "support"
+    },
+    {
+      "day": 3,
+      "other": 1,
+      "god": "reflection"
+    },
+    {
+      "day": 3,
+      "other": 2,
+      "god": "competitor"
+    },
+    {
+      "day": 3,
+      "other": 3,
+      "god": "peer"
+    },
+    {
+      "day": 3,
+      "other": 4,
+      "god": "challenge"
+    },
+    {
+      "day": 3,
+      "other": 5,
+      "god": "expression"
+    },
+    {
+      "day": 3,
+      "other": 6,
+      "god": "stewardship"
+    },
+    {
+      "day": 3,
+      "other": 7,
+      "god": "opportunity"
+    },
+    {
+      "day": 3,
+      "other": 8,
+      "god": "responsibility"
+    },
+    {
+      "day": 3,
+      "other": 9,
+      "god": "pressure"
+    },
+    {
+      "day": 4,
+      "other": 0,
+      "god": "pressure"
+    },
+    {
+      "day": 4,
+      "other": 1,
+      "god": "responsibility"
+    },
+    {
+      "day": 4,
+      "other": 2,
+      "god": "reflection"
+    },
+    {
+      "day": 4,
+      "other": 3,
+      "god": "support"
+    },
+    {
+      "day": 4,
+      "other": 4,
+      "god": "peer"
+    },
+    {
+      "day": 4,
+      "other": 5,
+      "god": "competitor"
+    },
+    {
+      "day": 4,
+      "other": 6,
+      "god": "expression"
+    },
+    {
+      "day": 4,
+      "other": 7,
+      "god": "challenge"
+    },
+    {
+      "day": 4,
+      "other": 8,
+      "god": "opportunity"
+    },
+    {
+      "day": 4,
+      "other": 9,
+      "god": "stewardship"
+    },
+    {
+      "day": 5,
+      "other": 0,
+      "god": "responsibility"
+    },
+    {
+      "day": 5,
+      "other": 1,
+      "god": "pressure"
+    },
+    {
+      "day": 5,
+      "other": 2,
+      "god": "support"
+    },
+    {
+      "day": 5,
+      "other": 3,
+      "god": "reflection"
+    },
+    {
+      "day": 5,
+      "other": 4,
+      "god": "competitor"
+    },
+    {
+      "day": 5,
+      "other": 5,
+      "god": "peer"
+    },
+    {
+      "day": 5,
+      "other": 6,
+      "god": "challenge"
+    },
+    {
+      "day": 5,
+      "other": 7,
+      "god": "expression"
+    },
+    {
+      "day": 5,
+      "other": 8,
+      "god": "stewardship"
+    },
+    {
+      "day": 5,
+      "other": 9,
+      "god": "opportunity"
+    },
+    {
+      "day": 6,
+      "other": 0,
+      "god": "opportunity"
+    },
+    {
+      "day": 6,
+      "other": 1,
+      "god": "stewardship"
+    },
+    {
+      "day": 6,
+      "other": 2,
+      "god": "pressure"
+    },
+    {
+      "day": 6,
+      "other": 3,
+      "god": "responsibility"
+    },
+    {
+      "day": 6,
+      "other": 4,
+      "god": "reflection"
+    },
+    {
+      "day": 6,
+      "other": 5,
+      "god": "support"
+    },
+    {
+      "day": 6,
+      "other": 6,
+      "god": "peer"
+    },
+    {
+      "day": 6,
+      "other": 7,
+      "god": "competitor"
+    },
+    {
+      "day": 6,
+      "other": 8,
+      "god": "expression"
+    },
+    {
+      "day": 6,
+      "other": 9,
+      "god": "challenge"
+    },
+    {
+      "day": 7,
+      "other": 0,
+      "god": "stewardship"
+    },
+    {
+      "day": 7,
+      "other": 1,
+      "god": "opportunity"
+    },
+    {
+      "day": 7,
+      "other": 2,
+      "god": "responsibility"
+    },
+    {
+      "day": 7,
+      "other": 3,
+      "god": "pressure"
+    },
+    {
+      "day": 7,
+      "other": 4,
+      "god": "support"
+    },
+    {
+      "day": 7,
+      "other": 5,
+      "god": "reflection"
+    },
+    {
+      "day": 7,
+      "other": 6,
+      "god": "competitor"
+    },
+    {
+      "day": 7,
+      "other": 7,
+      "god": "peer"
+    },
+    {
+      "day": 7,
+      "other": 8,
+      "god": "challenge"
+    },
+    {
+      "day": 7,
+      "other": 9,
+      "god": "expression"
+    },
+    {
+      "day": 8,
+      "other": 0,
+      "god": "expression"
+    },
+    {
+      "day": 8,
+      "other": 1,
+      "god": "challenge"
+    },
+    {
+      "day": 8,
+      "other": 2,
+      "god": "opportunity"
+    },
+    {
+      "day": 8,
+      "other": 3,
+      "god": "stewardship"
+    },
+    {
+      "day": 8,
+      "other": 4,
+      "god": "pressure"
+    },
+    {
+      "day": 8,
+      "other": 5,
+      "god": "responsibility"
+    },
+    {
+      "day": 8,
+      "other": 6,
+      "god": "reflection"
+    },
+    {
+      "day": 8,
+      "other": 7,
+      "god": "support"
+    },
+    {
+      "day": 8,
+      "other": 8,
+      "god": "peer"
+    },
+    {
+      "day": 8,
+      "other": 9,
+      "god": "competitor"
+    },
+    {
+      "day": 9,
+      "other": 0,
+      "god": "challenge"
+    },
+    {
+      "day": 9,
+      "other": 1,
+      "god": "expression"
+    },
+    {
+      "day": 9,
+      "other": 2,
+      "god": "stewardship"
+    },
+    {
+      "day": 9,
+      "other": 3,
+      "god": "opportunity"
+    },
+    {
+      "day": 9,
+      "other": 4,
+      "god": "responsibility"
+    },
+    {
+      "day": 9,
+      "other": 5,
+      "god": "pressure"
+    },
+    {
+      "day": 9,
+      "other": 6,
+      "god": "support"
+    },
+    {
+      "day": 9,
+      "other": 7,
+      "god": "reflection"
+    },
+    {
+      "day": 9,
+      "other": 8,
+      "god": "competitor"
+    },
+    {
+      "day": 9,
+      "other": 9,
+      "god": "peer"
+    }
+  ],
+  "relations": [
+    {
+      "a": 0,
+      "b": 0,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 1,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 0,
+      "b": 3,
+      "relations": [
+        "punishment"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 0,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 0,
+      "b": 6,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 7,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 0,
+      "b": 9,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 0,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 0,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 0,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 1,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 4,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 6,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 7,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 1,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 1,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 2,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 5,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 8,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 2,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 2,
+      "b": 11,
+      "relations": [
+        "combination",
+        "break"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 0,
+      "relations": [
+        "punishment"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 3,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 3,
+      "b": 3,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 4,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 3,
+      "b": 6,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 3,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 3,
+      "b": 9,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 10,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 3,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 1,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 3,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 4,
+      "relations": [
+        "same",
+        "self_punishment"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 4,
+      "b": 9,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 10,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 4,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 2,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 5,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 8,
+      "relations": [
+        "combination",
+        "break"
+      ]
+    },
+    {
+      "a": 5,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 5,
+      "b": 11,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 0,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 1,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 3,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 6,
+      "relations": [
+        "same",
+        "self_punishment"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 7,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 6,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 6,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 0,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 1,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 6,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 7,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 7,
+      "b": 10,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 7,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 2,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 5,
+      "relations": [
+        "combination",
+        "break"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 8,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 8,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 8,
+      "b": 11,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 0,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 3,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 4,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 9,
+      "b": 9,
+      "relations": [
+        "same",
+        "self_punishment"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 10,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 9,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 2,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 3,
+      "relations": [
+        "combination"
+      ]
+    },
+    {
+      "a": 10,
+      "b": 4,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 10,
+      "b": 5,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 7,
+      "relations": [
+        "break"
+      ]
+    },
+    {
+      "a": 10,
+      "b": 8,
+      "relations": []
+    },
+    {
+      "a": 10,
+      "b": 9,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 10,
+      "b": 10,
+      "relations": [
+        "same"
+      ]
+    },
+    {
+      "a": 10,
+      "b": 11,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 0,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 1,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 2,
+      "relations": [
+        "combination",
+        "break"
+      ]
+    },
+    {
+      "a": 11,
+      "b": 3,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 4,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 5,
+      "relations": [
+        "clash"
+      ]
+    },
+    {
+      "a": 11,
+      "b": 6,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 7,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 8,
+      "relations": [
+        "harm"
+      ]
+    },
+    {
+      "a": 11,
+      "b": 9,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 10,
+      "relations": []
+    },
+    {
+      "a": 11,
+      "b": 11,
+      "relations": [
+        "same",
+        "self_punishment"
+      ]
+    }
+  ],
+  "charts": [
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "pillars": [
+        "戊寅",
+        "戊午",
+        "己亥",
+        "辛未"
+      ],
+      "elementDistribution": [
+        0.15555555555555556,
+        0.18888888888888886,
+        0.5000000000000001,
+        0.08888888888888889,
+        0.06666666666666667
+      ],
+      "seasonalDistribution": [
+        0.12389380530973453,
+        0.25073746312684364,
+        0.5309734513274338,
+        0.05899705014749263,
+        0.03539823008849558
+      ],
+      "supportIndex": 0.7817109144542774,
+      "rootPositions": [
+        0,
+        1,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [
+            "combination"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": {
+        "forward": true,
+        "startUtc": 1066721400000,
+        "birthZone": "Asia/Bangkok",
+        "startAge": {
+          "years": 5,
+          "months": 4,
+          "days": 0,
+          "hours": 0
+        },
+        "referenceTerm": {
+          "name": "小暑",
+          "instant": 899796625000
+        }
+      },
+      "tenGods": [
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "responsibility"
+            },
+            {
+              "stem": 2,
+              "god": "support"
+            },
+            {
+              "stem": 4,
+              "god": "competitor"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 5,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "stewardship"
+            },
+            {
+              "stem": 0,
+              "god": "responsibility"
+            }
+          ]
+        },
+        {
+          "visible": "expression",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "peer"
+            },
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 1,
+              "god": "pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "pillars": [
+        "戊寅",
+        "戊午",
+        "己亥",
+        "辛未"
+      ],
+      "elementDistribution": [
+        0.15555555555555556,
+        0.18888888888888886,
+        0.5000000000000001,
+        0.08888888888888889,
+        0.06666666666666667
+      ],
+      "seasonalDistribution": [
+        0.12389380530973453,
+        0.25073746312684364,
+        0.5309734513274338,
+        0.05899705014749263,
+        0.03539823008849558
+      ],
+      "supportIndex": 0.7817109144542774,
+      "rootPositions": [
+        0,
+        1,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [
+            "combination"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": {
+        "forward": true,
+        "startUtc": 1066721400000,
+        "birthZone": "Asia/Ho_Chi_Minh",
+        "startAge": {
+          "years": 5,
+          "months": 4,
+          "days": 0,
+          "hours": 0
+        },
+        "referenceTerm": {
+          "name": "小暑",
+          "instant": 899796625000
+        }
+      },
+      "tenGods": [
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "responsibility"
+            },
+            {
+              "stem": 2,
+              "god": "support"
+            },
+            {
+              "stem": 4,
+              "god": "competitor"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 5,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "stewardship"
+            },
+            {
+              "stem": 0,
+              "god": "responsibility"
+            }
+          ]
+        },
+        {
+          "visible": "expression",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "peer"
+            },
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 1,
+              "god": "pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "pillars": [
+        "戊寅",
+        "戊午",
+        "己亥",
+        "辛未"
+      ],
+      "elementDistribution": [
+        0.15555555555555556,
+        0.18888888888888886,
+        0.5000000000000001,
+        0.08888888888888889,
+        0.06666666666666667
+      ],
+      "seasonalDistribution": [
+        0.12389380530973453,
+        0.25073746312684364,
+        0.5309734513274338,
+        0.05899705014749263,
+        0.03539823008849558
+      ],
+      "supportIndex": 0.7817109144542774,
+      "rootPositions": [
+        0,
+        1,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [
+            "combination"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": {
+        "forward": false,
+        "startUtc": 1060615800000,
+        "birthZone": "Asia/Ho_Chi_Minh",
+        "startAge": {
+          "years": 5,
+          "months": 1,
+          "days": 21,
+          "hours": 8
+        },
+        "referenceTerm": {
+          "name": "芒种",
+          "instant": 897081202000
+        }
+      },
+      "tenGods": [
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "responsibility"
+            },
+            {
+              "stem": 2,
+              "god": "support"
+            },
+            {
+              "stem": 4,
+              "god": "competitor"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 5,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "stewardship"
+            },
+            {
+              "stem": 0,
+              "god": "responsibility"
+            }
+          ]
+        },
+        {
+          "visible": "expression",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "peer"
+            },
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 1,
+              "god": "pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "pillars": [
+        "戊寅",
+        "戊午",
+        "己亥",
+        "辛未"
+      ],
+      "elementDistribution": [
+        0.15555555555555556,
+        0.18888888888888886,
+        0.5000000000000001,
+        0.08888888888888889,
+        0.06666666666666667
+      ],
+      "seasonalDistribution": [
+        0.12389380530973453,
+        0.25073746312684364,
+        0.5309734513274338,
+        0.05899705014749263,
+        0.03539823008849558
+      ],
+      "supportIndex": 0.7817109144542774,
+      "rootPositions": [
+        0,
+        1,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [
+            "combination"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": null,
+      "tenGods": [
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "responsibility"
+            },
+            {
+              "stem": 2,
+              "god": "support"
+            },
+            {
+              "stem": 4,
+              "god": "competitor"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 5,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "stewardship"
+            },
+            {
+              "stem": 0,
+              "god": "responsibility"
+            }
+          ]
+        },
+        {
+          "visible": "expression",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "peer"
+            },
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 1,
+              "god": "pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "pillars": [
+        "戊寅",
+        "戊午",
+        "己亥",
+        null
+      ],
+      "elementDistribution": [
+        0.14285714285714285,
+        0.1857142857142857,
+        0.5857142857142857,
+        0,
+        0.08571428571428572
+      ],
+      "seasonalDistribution": [
+        0.1107011070110701,
+        0.23985239852398524,
+        0.6051660516605167,
+        0,
+        0.04428044280442805
+      ],
+      "supportIndex": 0.845018450184502,
+      "rootPositions": [
+        0,
+        1
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 0.7777777777777778,
+      "missing": [
+        "hour"
+      ],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": null,
+      "tenGods": [
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "responsibility"
+            },
+            {
+              "stem": 2,
+              "god": "support"
+            },
+            {
+              "stem": 4,
+              "god": "competitor"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 3,
+              "god": "reflection"
+            },
+            {
+              "stem": 5,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "stewardship"
+            },
+            {
+              "stem": 0,
+              "god": "responsibility"
+            }
+          ]
+        },
+        null
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "pillars": [
+        "甲寅",
+        "甲戌",
+        "戊申",
+        "癸丑"
+      ],
+      "elementDistribution": [
+        0.2666666666666667,
+        0.1111111111111111,
+        0.2888888888888889,
+        0.15555555555555556,
+        0.17777777777777776
+      ],
+      "seasonalDistribution": [
+        0.15789473684210528,
+        0.09868421052631579,
+        0.4276315789473685,
+        0.1842105263157895,
+        0.13157894736842105
+      ],
+      "supportIndex": 0.5263157894736843,
+      "rootPositions": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "clash"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": true,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": null,
+      "tenGods": [
+        {
+          "visible": "pressure",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "pressure"
+            },
+            {
+              "stem": 2,
+              "god": "reflection"
+            },
+            {
+              "stem": 4,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "pressure",
+          "hidden": [
+            {
+              "stem": 4,
+              "god": "peer"
+            },
+            {
+              "stem": 7,
+              "god": "challenge"
+            },
+            {
+              "stem": 3,
+              "god": "support"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 6,
+              "god": "expression"
+            },
+            {
+              "stem": 8,
+              "god": "opportunity"
+            },
+            {
+              "stem": 4,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "stewardship",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "competitor"
+            },
+            {
+              "stem": 9,
+              "god": "stewardship"
+            },
+            {
+              "stem": 7,
+              "god": "challenge"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "pillars": [
+        "乙巳",
+        "己丑",
+        "戊申",
+        "癸亥"
+      ],
+      "elementDistribution": [
+        0.15555555555555556,
+        0.04444444444444444,
+        0.37777777777777777,
+        0.15555555555555556,
+        0.26666666666666666
+      ],
+      "seasonalDistribution": [
+        0.08588957055214724,
+        0.03680981595092024,
+        0.5214723926380368,
+        0.17177914110429449,
+        0.18404907975460122
+      ],
+      "supportIndex": 0.558282208588957,
+      "rootPositions": [
+        0,
+        1,
+        2
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [
+            "clash"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [
+            "harm"
+          ],
+          "stemCombination": true,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": {
+        "forward": false,
+        "startUtc": 2077974000000,
+        "birthZone": "Asia/Ho_Chi_Minh",
+        "startAge": {
+          "years": 9,
+          "months": 9,
+          "days": 3,
+          "hours": 0
+        },
+        "referenceTerm": {
+          "name": "小寒",
+          "instant": 1767601390000
+        }
+      },
+      "tenGods": [
+        {
+          "visible": "responsibility",
+          "hidden": [
+            {
+              "stem": 2,
+              "god": "reflection"
+            },
+            {
+              "stem": 6,
+              "god": "expression"
+            },
+            {
+              "stem": 4,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "competitor",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "competitor"
+            },
+            {
+              "stem": 9,
+              "god": "stewardship"
+            },
+            {
+              "stem": 7,
+              "god": "challenge"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 6,
+              "god": "expression"
+            },
+            {
+              "stem": 8,
+              "god": "opportunity"
+            },
+            {
+              "stem": 4,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "stewardship",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "opportunity"
+            },
+            {
+              "stem": 0,
+              "god": "pressure"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "pillars": [
+        "己亥",
+        "丙子",
+        "甲戌",
+        null
+      ],
+      "elementDistribution": [
+        0.19999999999999998,
+        0.2285714285714286,
+        0.17142857142857143,
+        0.05714285714285714,
+        0.34285714285714286
+      ],
+      "seasonalDistribution": [
+        0.22222222222222224,
+        0.15873015873015875,
+        0.09523809523809525,
+        0.047619047619047616,
+        0.4761904761904762
+      ],
+      "supportIndex": 0.6984126984126985,
+      "rootPositions": [
+        0
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [],
+          "stemCombination": true,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 0.7777777777777778,
+      "missing": [
+        "hour"
+      ],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": null,
+      "tenGods": [
+        {
+          "visible": "stewardship",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "reflection"
+            },
+            {
+              "stem": 0,
+              "god": "peer"
+            }
+          ]
+        },
+        {
+          "visible": "expression",
+          "hidden": [
+            {
+              "stem": 9,
+              "god": "support"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 4,
+              "god": "opportunity"
+            },
+            {
+              "stem": 7,
+              "god": "responsibility"
+            },
+            {
+              "stem": 3,
+              "god": "challenge"
+            }
+          ]
+        },
+        null
+      ]
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "pillars": [
+        "癸亥",
+        "乙丑",
+        "戊辰",
+        "甲寅"
+      ],
+      "elementDistribution": [
+        0.37777777777777777,
+        0.04444444444444444,
+        0.2444444444444444,
+        0.06666666666666667,
+        0.26666666666666666
+      ],
+      "seasonalDistribution": [
+        0.24817518248175185,
+        0.0437956204379562,
+        0.40145985401459855,
+        0.08759124087591243,
+        0.21897810218978106
+      ],
+      "supportIndex": 0.44525547445255476,
+      "rootPositions": [
+        1,
+        2,
+        3
+      ],
+      "structures": [],
+      "pairs": [
+        {
+          "positions": [
+            0,
+            1
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            2
+          ],
+          "branches": [],
+          "stemCombination": true,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            0,
+            3
+          ],
+          "branches": [
+            "combination",
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            2
+          ],
+          "branches": [
+            "break"
+          ],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            1,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        },
+        {
+          "positions": [
+            2,
+            3
+          ],
+          "branches": [],
+          "stemCombination": false,
+          "transformationConfirmed": false
+        }
+      ],
+      "coverage": 1,
+      "missing": [],
+      "traditionalYongShen": null,
+      "traditionalXiShen": null,
+      "decade": {
+        "forward": true,
+        "startUtc": 453024000000,
+        "birthZone": "Asia/Shanghai",
+        "startAge": {
+          "years": 0,
+          "months": 3,
+          "days": 6,
+          "hours": 12
+        },
+        "referenceTerm": {
+          "name": "立春",
+          "instant": 444755924000
+        }
+      },
+      "tenGods": [
+        {
+          "visible": "stewardship",
+          "hidden": [
+            {
+              "stem": 8,
+              "god": "opportunity"
+            },
+            {
+              "stem": 0,
+              "god": "pressure"
+            }
+          ]
+        },
+        {
+          "visible": "responsibility",
+          "hidden": [
+            {
+              "stem": 5,
+              "god": "competitor"
+            },
+            {
+              "stem": 9,
+              "god": "stewardship"
+            },
+            {
+              "stem": 7,
+              "god": "challenge"
+            }
+          ]
+        },
+        {
+          "visible": "peer",
+          "hidden": [
+            {
+              "stem": 4,
+              "god": "peer"
+            },
+            {
+              "stem": 1,
+              "god": "responsibility"
+            },
+            {
+              "stem": 9,
+              "god": "stewardship"
+            }
+          ]
+        },
+        {
+          "visible": "pressure",
+          "hidden": [
+            {
+              "stem": 0,
+              "god": "pressure"
+            },
+            {
+              "stem": 2,
+              "god": "reflection"
+            },
+            {
+              "stem": 4,
+              "god": "peer"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "scores": [
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.09245098039215685,
+      "c": -0.07161764705882354,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.03414705882352942,
+      "c": 0.010661764705882357,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "辛酉",
+        "index": 3,
+        "startUtc": 1697873400000,
+        "endUtc": 2013492600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.1544117647058824,
+      "c": -0.039191176470588236,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "辛酉",
+        "index": 3,
+        "startUtc": 1697873400000,
+        "endUtc": 2013492600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.08944117647058826,
+      "c": 0.0004117647058823545,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "癸亥",
+        "index": 5,
+        "startUtc": 2329025400000,
+        "endUtc": 2644644600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": -0.04326470588235292,
+      "c": 0.10505882352941176,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "戊辰",
+        "index": 10,
+        "startUtc": 3906948600000,
+        "endUtc": 4222395000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.09245098039215685,
+      "c": -0.07161764705882354,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.03414705882352942,
+      "c": 0.010661764705882357,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "辛酉",
+        "index": 3,
+        "startUtc": 1697873400000,
+        "endUtc": 2013492600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.1544117647058824,
+      "c": -0.039191176470588236,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "辛酉",
+        "index": 3,
+        "startUtc": 1697873400000,
+        "endUtc": 2013492600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.08944117647058826,
+      "c": 0.0004117647058823545,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "癸亥",
+        "index": 5,
+        "startUtc": 2329025400000,
+        "endUtc": 2644644600000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": -0.04326470588235292,
+      "c": 0.10505882352941176,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "戊辰",
+        "index": 10,
+        "startUtc": 3906948600000,
+        "endUtc": 4222395000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.09245098039215685,
+      "c": -0.07161764705882354,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": -0.0014411764705882315,
+      "c": 0.007426470588235298,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "乙卯",
+        "index": 3,
+        "startUtc": 1691767800000,
+        "endUtc": 2007387000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.11882352941176472,
+      "c": -0.042426470588235295,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "乙卯",
+        "index": 3,
+        "startUtc": 1691767800000,
+        "endUtc": 2007387000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.08529411764705884,
+      "c": 0.020205882352941178,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "癸丑",
+        "index": 5,
+        "startUtc": 2322919800000,
+        "endUtc": 2638539000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "female",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": -0.0411470588235294,
+      "c": 0.10229411764705881,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "戊申",
+        "index": 10,
+        "startUtc": 3900843000000,
+        "endUtc": 4216289400000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.09245098039215685,
+      "c": -0.07161764705882354,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.01637254901960785,
+      "c": -0.006127450980392155,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.15000000000000002,
+      "c": -0.061519607843137265,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.0843137254901961,
+      "c": 0.003431372549019611,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": "14:30",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": null,
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": -0.04950980392156862,
+      "c": 0.09803921568627451,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.0942156862745098,
+      "c": -0.07249999999999998,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.00990196078431373,
+      "c": 0.001813725490196081,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.15588235294117644,
+      "c": -0.06710784313725489,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.07343137254901962,
+      "c": 0.01254901960784313,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1998-06-21",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": "male",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": -0.05068627450980392,
+      "c": 0.10068627450980393,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.013970588235294127,
+      "c": 0.0847549019607843,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.030833333333333334,
+      "c": 0.03553921568627451,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": -0.052598039215686274,
+      "c": 0.10367647058823529,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.028137254901960788,
+      "c": -0.004019607843137265,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1974-11-03",
+        "birthTime": "01:30",
+        "birthCountry": "US"
+      },
+      "convention": "female",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": 0.08176470588235293,
+      "c": -0.09529411764705885,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.009852941176470597,
+      "c": 0.0871078431372549,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.04259803921568628,
+      "c": 0.024950980392156864,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": -0.03671568627450981,
+      "c": 0.09308823529411764,
+      "coverage": 0.765,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.028470588235294123,
+      "c": 0.004352941176470569,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "丁亥",
+        "index": 2,
+        "startUtc": 2393593200000,
+        "endUtc": 2709126000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "2026-02-03",
+        "birthTime": "22:00",
+        "birthTimezone": "Asia/Ho_Chi_Minh"
+      },
+      "convention": "male",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": 0.062441176470588236,
+      "c": -0.058794117647058816,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "壬午",
+        "index": 7,
+        "startUtc": 3971430000000,
+        "endUtc": 4286962800000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.06411764705882354,
+      "c": 0.012254901960784303,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.03955882352941178,
+      "c": 0.07098039215686275,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.10450980392156863,
+      "c": 0.031960784313725496,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.061862745098039226,
+      "c": 0.08735294117647058,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1900-01-01",
+        "birthTime": null,
+        "birthCountry": "VN"
+      },
+      "convention": null,
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": 0.14833333333333332,
+      "c": 0.006176470588235292,
+      "coverage": 0.5950000000000001,
+      "activeDecade": null
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "iso": "1998-06-21T07:30:00.000Z",
+      "status": "partial",
+      "a": 0.044397058823529414,
+      "c": 0.04251470588235294,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "丁卯",
+        "index": 2,
+        "startUtc": 768556800000,
+        "endUtc": 1084176000000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "iso": "2026-09-18T08:00:00.000Z",
+      "status": "partial",
+      "a": 0.04301470588235294,
+      "c": 0.044720588235294116,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "庚午",
+        "index": 5,
+        "startUtc": 1715328000000,
+        "endUtc": 2030860800000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "iso": "2026-02-03T21:00:00.000Z",
+      "status": "partial",
+      "a": 0.04098529411764706,
+      "c": 0.03033823529411764,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "庚午",
+        "index": 5,
+        "startUtc": 1715328000000,
+        "endUtc": 2030860800000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "iso": "2050-06-15T03:21:09.000Z",
+      "status": "partial",
+      "a": 0.03579411764705883,
+      "c": 0.007147058823529403,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "壬申",
+        "index": 7,
+        "startUtc": 2346480000000,
+        "endUtc": 2662012800000
+      }
+    },
+    {
+      "profile": {
+        "birthDate": "1984-02-04",
+        "birthTime": "04:00",
+        "birthTimezone": "Asia/Shanghai"
+      },
+      "convention": "female",
+      "iso": "2099-12-31T23:00:00.000Z",
+      "status": "partial",
+      "a": 0.06217647058823529,
+      "c": -0.06958823529411763,
+      "coverage": 0.8500000000000001,
+      "activeDecade": {
+        "pillar": "丁丑",
+        "index": 12,
+        "startUtc": 3924316800000,
+        "endUtc": 4239849600000
+      }
+    }
+  ]
+}

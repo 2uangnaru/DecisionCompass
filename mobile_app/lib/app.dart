@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+import 'app_profile.dart';
+import 'pages/home_page.dart';
 import 'pages/onboarding_page.dart';
 import 'reading_dependencies.dart';
 import 'theme.dart';
+import 'widgets/celestial_ui.dart';
 
 class DecisionCompassApp extends StatefulWidget {
   const DecisionCompassApp({
@@ -13,8 +16,9 @@ class DecisionCompassApp extends StatefulWidget {
 
   final ReadingDependencies dependencies;
 
-  /// Called when the engine detaches, so whoever owns the HTTP client can
-  /// close it. Null in tests, which own nothing to release.
+  /// Called when the app detaches, so a caller that owns a releasable
+  /// resource can close it. Null in production — the bundled offline engine
+  /// holds nothing to release — and null in tests.
   final VoidCallback? onDetached;
 
   @override
@@ -23,6 +27,11 @@ class DecisionCompassApp extends StatefulWidget {
 
 class _DecisionCompassAppState extends State<DecisionCompassApp> {
   AppLifecycleListener? _lifecycle;
+
+  /// Read once at startup, so a saved profile skips onboarding entirely —
+  /// restarting the app must return to Home, not lose everything.
+  late final Future<AppProfile?> _savedProfile =
+      widget.dependencies.profileRepository.load();
 
   @override
   void initState() {
@@ -45,7 +54,22 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
       title: 'Decision Compass',
       debugShowCheckedModeBanner: false,
       theme: buildCompassTheme(),
-      home: OnboardingPage(dependencies: widget.dependencies),
+      home: FutureBuilder<AppProfile?>(
+        future: _savedProfile,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const CelestialScaffold(
+              child: Center(
+                child: CircularProgressIndicator(color: CompassColors.gold),
+              ),
+            );
+          }
+          final profile = snapshot.data;
+          return profile == null
+              ? OnboardingPage(dependencies: widget.dependencies)
+              : HomePage(profile: profile, dependencies: widget.dependencies);
+        },
+      ),
     );
   }
 }

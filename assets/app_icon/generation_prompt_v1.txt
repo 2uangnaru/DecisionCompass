@@ -1,0 +1,12 @@
+Use case: logo-brand
+Asset type: production-ready mobile app store icon master for the global app “AstraCue”
+Primary request: Design one iconic “Celestial Fork” brand mark that communicates a moment of choice guided by a cosmic signal. A single elegant antique-gold path rises from the lower center and splits into two smooth curved branches. The right branch gently aligns with a bright ocean-blue four-point star, while the left branch remains softly gold and unresolved. A thin incomplete antique-gold orbital arc surrounds the fork without forming a literal compass.
+Scene/backdrop: full-bleed square canvas with a deep midnight-navy radial gradient, subtle depth only; do not pre-round the outer corners because iOS and Android apply their own masks
+Style/medium: premium vector-friendly 2.5D icon, modern mystical celestial observatory, calm and trustworthy, extremely clean geometry, strong silhouette, polished enough for App Store and Google Play
+Composition/framing: one large centered symbol occupying about 60 percent of the canvas; important details inside the central safe zone; perfectly balanced negative space; readable at 32–64 px
+Lighting/mood: restrained blue-violet halo around the chosen star, delicate metallic highlight on the gold path, no dramatic lens flare
+Color palette: background #070B16 to #101B32; antique gold #D8B66A; ocean blue #2477C9 and #62B7E8; tiny violet accent #786FE8; ivory highlight #F4F7FC
+Materials/textures: matte midnight enamel background, subtly brushed antique metal mark, very light glass depth
+Text: no text
+Constraints: exactly one forked-path mark, exactly one primary blue star, at most one incomplete orbit, simple and memorable, premium rather than occult, clean edges, high contrast, globally neutral, distinct from navigation compass and astrology-wheel icons
+Avoid: words, letters, monograms, YES or NO text, zodiac symbols, twelve-sign wheel, crescent moon, eye, hand, tarot card, crystal ball, literal compass needle, map pin, atom symbol, red-green split, casino styling, busy star field, tiny decorative stars, ornate frame, watermark, mock phone, border around the square, rounded-square outline

@@ -67,4 +67,33 @@ class AppProfile {
     birthCountry: birthCountryCode,
     traditionalProfile: traditionalProfile,
   );
+
+  /// For local persistence only (see `ProfileRepository`) — never sent to the
+  /// engine or to analytics. [zodiacSign] is not stored: it is re-derived from
+  /// [birthDate] on load, so the two can never disagree.
+  Map<String, dynamic> toJson() => {
+    'userName': userName,
+    'birthDate': formattedBirthDate,
+    if (birthTime != null) 'birthTime': birthTime,
+    'birthCountryCode': birthCountryCode,
+    if (traditionalProfile != null)
+      'traditionalProfile': traditionalProfile!.wireValue,
+    'useCurrentLocation': useCurrentLocation,
+  };
+
+  factory AppProfile.fromJson(Map<String, dynamic> json) {
+    final birthDate = DateTime.parse(json['birthDate'] as String);
+    final rawTraditionalProfile = json['traditionalProfile'] as String?;
+    return AppProfile(
+      userName: json['userName'] as String,
+      birthDate: birthDate,
+      birthTime: json['birthTime'] as String?,
+      birthCountryCode: json['birthCountryCode'] as String,
+      traditionalProfile: rawTraditionalProfile == null
+          ? null
+          : engine.TraditionalProfile.fromWire(rawTraditionalProfile),
+      zodiacSign: zodiacForDate(birthDate),
+      useCurrentLocation: json['useCurrentLocation'] as bool,
+    );
+  }
 }

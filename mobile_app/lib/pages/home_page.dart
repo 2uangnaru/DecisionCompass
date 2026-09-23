@@ -5,10 +5,33 @@ import '../category_presentation.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
+import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
+
+/// Exhaustive per the engine's fixed `COLORS` list
+/// (`calculation-engine/src/index.js`), but looked up rather than
+/// switched-on: a plain string is tolerant of a value this map does not yet
+/// know, falling back to a neutral swatch instead of crashing.
+const _colorSwatches = <String, Color>{
+  'sage': Color(0xFF8FA989),
+  'coral': Color(0xFFD97B69),
+  'sand': Color(0xFFD9C29A),
+  'pearl': Color(0xFFE8E3DA),
+  'ocean_blue': CompassColors.blueLight,
+};
+
+/// Buckets a real wall-clock hour into the three greetings the design uses.
+/// There is no "good night" bucket: the app's own copy never implies the user
+/// should be asleep.
+String _greeting(DateTime local) {
+  final hour = local.hour;
+  if (hour < 12) return 'Good morning,';
+  if (hour < 18) return 'Good afternoon,';
+  return 'Good evening,';
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -30,6 +53,14 @@ class _HomePageState extends State<HomePage> {
   /// Overall is the default; the typed enum travels the whole flow, never a
   /// raw wire string.
   engine.ReadingCategory _category = engine.ReadingCategory.general;
+
+  /// Fetched once per Home visit. It never reaches `ResultPage`, so it is
+  /// never saved to history — see `DailyBriefProvider`'s doc comment for why
+  /// this is a separate, ambient preview rather than the reveal flow itself.
+  late final Future<engine.DailyBrief?> _dailyBrief = widget
+      .dependencies
+      .dailyBriefProvider
+      .preview(widget.profile);
 
   void _beginReading() {
     Navigator.of(context).push(
@@ -105,7 +136,7 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Good evening,',
+                _greeting(widget.dependencies.nowLocal()),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
@@ -119,9 +150,11 @@ class _HomePageState extends State<HomePage> {
         ),
         IconButton.filledTonal(
           tooltip: 'History',
-          onPressed: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute<void>(builder: (_) => const HistoryPage())),
+          onPressed: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => HistoryPage(dependencies: widget.dependencies),
+            ),
+          ),
           icon: const Icon(Icons.history_rounded),
         ),
       ],
@@ -223,39 +256,40 @@ class _HomePageState extends State<HomePage> {
                 ?.copyWith(color: CompassColors.gold, letterSpacing: 1.6),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: LinearGradient(
-                    colors: [CompassColors.blueLight, CompassColors.blue],
+          FutureBuilder<engine.DailyBrief?>(
+            key: const Key('daily_signals_content'),
+            future: _dailyBrief,
+            builder: (context, snapshot) {
+              final brief = snapshot.data;
+              final colorName = brief?.colorInspiration;
+              return Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: colorName == null
+                          ? CompassColors.line
+                          : (_colorSwatches[colorName] ??
+                                CompassColors.blueLight),
+                    ),
                   ),
-                ),
-              ),
-              const SizedBox(width: 12),
-              const Expanded(
-                child: _Signal(label: 'Your color', value: 'Ocean Blue'),
-              ),
-              const SizedBox(width: 10),
-              const _Signal(label: 'Lucky number', value: '7'),
-            ],
-          ),
-          const Divider(height: 28, color: CompassColors.line),
-          const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Daily energy',
-                style: TextStyle(color: CompassColors.secondary),
-              ),
-              Text(
-                'STEADY',
-                style: TextStyle(color: CompassColors.teal, letterSpacing: 1.2),
-              ),
-            ],
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: _Signal(
+                      label: 'Your color',
+                      value: colorName == null ? '—' : titleCaseWords(colorName),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  _Signal(
+                    label: 'Lucky number',
+                    value: brief?.luckyNumber.toString() ?? '—',
+                  ),
+                ],
+              );
+            },
           ),
         ],
       ),

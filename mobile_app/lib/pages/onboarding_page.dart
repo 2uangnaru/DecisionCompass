@@ -46,10 +46,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _pickBirthTime() async {
-    final picked = await showTimePicker(
-      context: context,
-      initialTime: _birthTime,
-    );
+    final picked = await showCompassTimePicker(context, initial: _birthTime);
     if (picked != null && mounted) setState(() => _birthTime = picked);
   }
 
@@ -74,7 +71,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
   }
 
-  void _finish() {
+  Future<void> _finish() async {
     final name = _nameController.text.trim().isEmpty
         ? 'Explorer'
         : _nameController.text.trim();
@@ -86,6 +83,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
       zodiacSign: zodiacForDate(_birthDate),
       useCurrentLocation: _useCurrentLocation,
     );
+    await widget.dependencies.profileRepository.save(profile);
+    if (!mounted) return;
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) =>

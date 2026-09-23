@@ -1,8 +1,8 @@
 # Decision Compass Mobile
 
-Flutter app for Android and iOS. Android is the current priority. Readings come
-from the real Node calculation engine over HTTP — the production flow contains
-no mock data.
+Flutter app for Android and iOS. Android is the current priority. **Readings
+are calculated entirely on the device** — the production flow contains no mock
+data, no server and no HTTP call.
 
 ## Included flow
 
@@ -31,6 +31,8 @@ C:\Users\ADMIN\develop\flutter\bin\flutter.bat run
 
 If Flutter is later added to PATH, use `flutter` directly.
 
+No `--dart-define` is needed: the calculation engine is bundled in the app.
+
 ## Android build
 
 The verified local toolchain uses Android Platform 36, Build-Tools 36.0.0,
@@ -48,62 +50,117 @@ Debug APK output:
 build\app\outputs\flutter-apk\app-debug.apk
 ```
 
-## Calculation API transport
+## Offline local engine
 
-`lib/data/http_reading_repository.dart` is the real `ReadingRepository`
-implementation: it POSTs a `ReadingRequest` to `/v1/readings` on the Node API
-and parses the reply through `ReadingResponse.fromJson`. It never falls back to
-mock data and never retries a failed POST.
+The calculation engine ships **inside the app**. An installed APK produces a
+real reading with the network switched off; there is no API base URL, no
+`--dart-define`, no localhost and no `adb reverse`.
 
-**The reading flow is wired end to end.** `main.dart` owns the single
-`http.Client`, builds the repository and a `DeviceCurrentContextProvider`, and
-passes them down by constructor; no page imports `http` or touches a plugin.
-Tapping Reveal records the UTC instant, resolves the device IANA timezone (and
-an optional one-shot fix when permission was granted), calls the repository
-once, and waits for both the response and the 4.2–5.2s ritual before showing
-the real result. A failure shows an in-theme error state — retryable only for
-timeout, network and server — and never falls back to a mock reading.
-
-`mock_reading_engine.dart` is retained only for an isolated unit test and
-previews; nothing under `lib/` imports it.
-
-### Base URL
-
-There is no built-in default, so a build can never silently target someone
-else's server. Supply it at build time:
-
-```powershell
-C:\Users\ADMIN\develop\flutter\bin\flutter.bat run --dart-define=DECISION_API_BASE_URL=http://127.0.0.1:8787
+```text
+                       +---------------------------- UI isolate -----+
+  Reveal tap --------->| LoadingPage                                 |
+                       |   +- ReadingDependencies                    |
+                       |        +- CurrentContextProvider            |
+                       |        |    flutter_timezone -> IANA id     |
+                       |        |    geolocator -> one-shot fix      |
+                       |        |       (only if the user opted in)  |
+                       |        +- LocalReadingRepository            |
+                       |             ReadingRequest --> JSON map     |
+                       +------------------+--------------------------+
+                                          | Isolate.run (plain maps only --
+                                          | no plugin, no file, no socket)
+                       +------------------v------- background isolate ---+
+                       | lib/local_engine/local_reading_engine.dart      |
+                       |                                                 |
+                       |  time/       tzdb 2026d, DST folds and gaps     |
+                       |  calendar/   solar terms, pillars, almanac  (T) |
+                       |  bazi/       four pillars, decade cycle     (B) |
+                       |  ziwei/      palaces, stars, horoscope      (Z) |
+                       |  astronomy/  VSOP87 + lunar series, aspects (W) |
+                       |  numerology/ life path, personal day        (N) |
+                       |  astronomy/  lunar phase, Mercury motion    (U) |
+                       |      +--> fuse by category -> A and C axes      |
+                       |             +--> project by mode -> percentages |
+                       |                    +--> sha256 -> readingKey    |
+                       +------------------+------------------------------+
+                                          | JSON map
+                       +------------------v-------------------------+
+                       | ReadingResponse.fromJson -> ResultPage      |
+                       +--------------------------------------------+
 ```
 
-| Target | Base URL |
+Nothing about the contract changed: the engine emits the same JSON shape
+`calculation-engine/src/index.d.ts` declares, and the existing `ReadingResponse`
+DTO parses it unchanged.
+
+No `--dart-define` is required, because the engine is bundled.
+
+### Size impact of the bundled engine
+
+Measured by building a release APK twice with only `main.dart` swapped between
+the development HTTP repository and the local engine:
+
+| Release APK | Size |
+|---|---:|
+| Without the engine | 55,335,522 B (52.8 MB) |
+| With the engine | 57,514,594 B (54.9 MB) |
+| **Impact** | **+2,179,072 B (+2.08 MB, +3.9 %)** |
+
+The debug APK grows by about 0.19 MB, since a debug build already carries the
+whole kernel snapshot. See `lib/local_engine/LICENSES.md` for the breakdown.
+
+### Parity with the Node engine
+
+`calculation-engine/` remains the mathematical reference. The port is checked
+against it rather than against anyone's expectations:
+
+| Test | What it proves |
 |---|---|
-| Android emulator | `http://10.0.2.2:8787` |
-| iOS simulator, Flutter desktop | `http://127.0.0.1:8787` |
-| Physical Android device | `http://127.0.0.1:8787` + `adb reverse` |
+| `test/local_engine/golden_reading_parity_test.dart` | All 16 real engine fixtures reproduce field for field, **including every `readingKey`** |
+| `test/local_engine/edge_readings_parity_test.dart` | 16 whole readings for DST folds and gaps, the date line, quarter-hour offsets, unknown birth hours, elapsed periods and two/one/zero windows |
+| `test/local_engine/time_parity_test.dart` | tzdb unpacking, local time, segmentation, birth intervals |
+| `test/local_engine/astronomy_parity_test.dart` | Body longitudes to under a microarcsecond |
+| `test/local_engine/calendar_parity_test.dart` | Solar terms to the millisecond, lunar dates, pillars |
+| `test/local_engine/bazi_parity_test.dart` | Charts, coverage, decade cycle |
+| `test/local_engine/ziwei_parity_test.dart` | 112 charts, 1680 horoscope layers, 224 module scores |
+| `test/local_engine/offline_guarantees_test.dart` | `main.dart` reaches no HTTP repository and no API config |
+| `test/local_engine/offline_flow_test.dart` | The real UI reaches the result page with the real engine |
 
-For a physical Android device, forward the port instead of exposing the server:
+Every expectation file under `test/local_engine/` is generated by running the
+Node engine (`calculation-engine/scripts/port/gen_*.mjs`), so a disagreement is
+a port defect by definition.
 
-```powershell
-adb reverse tcp:8787 tcp:8787
-```
+### What is deliberately *not* bundled
 
-The Node API stays bound to `127.0.0.1` and rejects any other bind address —
-do not rebind it to `0.0.0.0` to reach a device.
+Coordinate-to-timezone geometry. The dataset is 30 MB and ODbL share-alike, so
+shipping it is a product and legal decision rather than an implementation
+detail. A valid position fix therefore reports
+`locationStatus: "zone_lookup_unavailable"` and falls back to the device
+timezone, with the warning `location_zone_lookup_unavailable_using_device`.
+Nothing is guessed. See `lib/local_engine/LICENSES.md` for the full reasoning,
+the attribution table and how to install the dataset later.
 
-`ReadingApiConfig` rejects an empty or malformed URL, a non-http(s) scheme,
-embedded credentials, and any query or fragment. It normalizes trailing slashes,
-preserves an explicit port and base path, and never rewrites `http` to `https`.
+### Development-only HTTP transport
 
-> **Cleartext HTTP is for local development only.** Production builds must use
-> HTTPS. This task does not enable `android:usesCleartextTraffic` in the
-> production manifest; local Android network config comes with the UI wiring.
+`lib/data/http_reading_repository.dart`, `reading_api_config.dart` and
+`misconfigured_reading_repository.dart` are **development and test artifacts**.
+`main.dart` does not reference them, so they are tree-shaken out of the app, and
+`DECISION_API_BASE_URL` has no effect on a production build. They are kept so
+the loopback Node API (`npm run api` in `calculation-engine`) stays reachable
+while regenerating fixtures or cross-checking the port.
 
-Start the API first (from `calculation-engine`):
+> The `ReadingApiFailureKind.configuration` copy on the error screen still
+> mentions that define. It is unreachable in production now that no build can
+> be misconfigured, and is left in place so the error-state switches stay
+> exhaustive.
 
-```powershell
-npm run api
-```
+### Failure handling
+
+A local failure never fabricates a reading. An input the engine refuses
+(`BIRTH_DATE_IN_FUTURE`, `INVALID_IANA_TIMEZONE`, and the rest) becomes a
+non-retryable `rejectedRequest`; anything unexpected becomes a retryable
+`server` failure. Neither carries the input value, a coordinate, a stack trace
+or a formula -- only an app-owned code and sentence.
 
 ## Location: explicit opt-in
 
@@ -131,11 +188,24 @@ no `ACCESS_BACKGROUND_LOCATION`.
 
 ## Android network policy
 
-- **Debug** enables `android:usesCleartextTraffic="true"` in
-  `android/app/src/debug/AndroidManifest.xml` only, so an emulator can reach the
-  loopback API at `http://10.0.2.2:8787`.
-- **Release and profile** manifests never enable cleartext. Production is
-  HTTPS-only.
+A reading needs no network at all, so nothing in the production flow opens a
+socket.
+
+- **Debug** still enables `android:usesCleartextTraffic="true"` in
+  `android/app/src/debug/AndroidManifest.xml`, so a developer build can reach
+  the loopback API when cross-checking the port. Production never does.
+- **Release and profile** manifests never enable cleartext.
+
+### Verifying it offline
+
+```powershell
+C:\Users\ADMIN\develop\flutter\bin\flutter.bat build apk --debug
+adb install -r build\app\outputs\flutter-apk\app-debug.apk
+adb shell cmd connectivity airplane-mode enable
+```
+
+Then open the app and take a reading. No `adb reverse`, no server and no
+`--dart-define` is involved at any point.
 
 ## Remaining work
 
@@ -147,5 +217,8 @@ no `ACCESS_BACKGROUND_LOCATION`.
 - Store release work: icons, screenshots, signing, privacy documents
 - Traditional profile/convention is still not collected (sent as null; the
   engine reduces coverage rather than guessing)
+- Coordinate-to-timezone geometry is not bundled, so a position fix narrows
+  nothing and the reading keeps the device timezone (see
+  `lib/local_engine/LICENSES.md`)
 - iOS: no `NSLocationWhenInUseUsageDescription` yet, so an iOS location request
   will not succeed. iOS location support is **not** complete.
