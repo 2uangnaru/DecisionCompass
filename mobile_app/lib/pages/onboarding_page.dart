@@ -46,11 +46,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
       initialDate: _birthDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      // Typing "MM/DD/YYYY" directly is far faster than paging a calendar
-      // grid back to a decades-old birth date; the keyboard icon in the
-      // dialog still switches to the calendar/year-grid view for anyone who
-      // prefers tapping through it instead.
-      initialEntryMode: DatePickerEntryMode.input,
+      // Flutter's own typed-entry field dismisses the keyboard the instant
+      // it's cleared to empty (a framework quirk, not something this app
+      // controls), so the dialog opens on the calendar/year-grid by default.
+      // Its own keyboard icon still switches to typed entry for anyone who
+      // wants to type the date instead.
     );
     if (picked != null && mounted) setState(() => _birthDate = picked);
   }
