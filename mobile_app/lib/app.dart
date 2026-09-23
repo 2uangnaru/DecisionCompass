@@ -55,6 +55,7 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
     return MaterialApp(
       title: 'AstraCue: Cosmic Decisions',
       debugShowCheckedModeBanner: false,
+      theme: buildCompassTheme(),
       home: FutureBuilder<AppProfile?>(
         future: _savedProfile,
         builder: (context, snapshot) {
