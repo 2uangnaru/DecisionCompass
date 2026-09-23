@@ -78,6 +78,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   /// Ambient preview, refreshed when the device's local calendar day changes.
   /// It never enters reading history; an actual Reveal has its own snapshot.
   late Future<engine.DailyBrief?> _dailyBrief;
+
+  /// Whether the ⓘ next to the energy label has the explanation open. It
+  /// survives a new day's brief on purpose: the sentence just becomes the new
+  /// label's, instead of collapsing under the reader.
+  var _energyNoteOpen = false;
   late String _briefLocalDay;
   Timer? _dayChangeTimer;
 
@@ -405,9 +410,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                         ),
                                   ),
                                 ),
-                                if (energy != null) ...[
+                                if (dailyEnergyMessage(energy?.level) !=
+                                    null) ...[
                                   const SizedBox(width: 2),
-                                  DailyEnergyInfoButton(level: energy.level),
+                                  DailyEnergyInfoButton(
+                                    expanded: _energyNoteOpen,
+                                    onPressed: () => setState(
+                                      () => _energyNoteOpen = !_energyNoteOpen,
+                                    ),
+                                  ),
                                 ],
                               ],
                             ),
@@ -431,6 +442,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         ),
                       ),
                     ],
+                  ),
+                  DailyEnergyNote(
+                    level: energy?.level,
+                    visible: _energyNoteOpen,
                   ),
                   const SizedBox(height: 8),
                   IntrinsicHeight(

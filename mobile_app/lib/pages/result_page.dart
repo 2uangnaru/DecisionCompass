@@ -369,13 +369,22 @@ class _Explanation extends StatelessWidget {
   }
 }
 
-class _DailyBrief extends StatelessWidget {
+class _DailyBrief extends StatefulWidget {
   const _DailyBrief({required this.brief});
 
   final engine.DailyBrief brief;
 
   @override
+  State<_DailyBrief> createState() => _DailyBriefState();
+}
+
+class _DailyBriefState extends State<_DailyBrief> {
+  /// Whether the ⓘ has the one-line explanation open, in this card.
+  var _energyNoteOpen = false;
+
+  @override
   Widget build(BuildContext context) {
+    final brief = widget.brief;
     final colour = titleCaseWords(brief.colorInspiration);
     return GlassCard(
       key: const Key('result_daily_brief'),
@@ -402,7 +411,10 @@ class _DailyBrief extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('Daily energy'),
+                // Flexible so the ⓘ can never push the row past the card, at
+                // a large text scale or in a language with a longer word for
+                // this than English has.
+                const Expanded(child: Text('Daily energy')),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -415,11 +427,21 @@ class _DailyBrief extends StatelessWidget {
                         letterSpacing: 1.2,
                       ),
                     ),
-                    const SizedBox(width: 2),
-                    DailyEnergyInfoButton(level: brief.energy!.level),
+                    if (dailyEnergyMessage(brief.energy!.level) != null) ...[
+                      const SizedBox(width: 2),
+                      DailyEnergyInfoButton(
+                        expanded: _energyNoteOpen,
+                        onPressed: () =>
+                            setState(() => _energyNoteOpen = !_energyNoteOpen),
+                      ),
+                    ],
                   ],
                 ),
               ],
+            ),
+            DailyEnergyNote(
+              level: brief.energy!.level,
+              visible: _energyNoteOpen,
             ),
           ],
         ],

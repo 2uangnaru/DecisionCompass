@@ -30,7 +30,7 @@ void main() {
     expect(find.text('7'), findsNothing);
   });
 
-  testWidgets('explains only the current energy label in a compact sheet', (
+  testWidgets('explains only the current energy label, in place', (
     tester,
   ) async {
     final rig = ReadingTestRig(
@@ -49,8 +49,7 @@ void main() {
     await tester.tap(find.byKey(const Key('daily_energy_info_button')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('daily_energy_info_sheet')), findsOneWidget);
-    expect(find.byKey(const Key('daily_energy_info_label')), findsOneWidget);
+    expect(find.byKey(const Key('daily_energy_note')), findsOneWidget);
     expect(
       find.text(
         'Today’s symbolic energy gathers around a clear direction; '
@@ -60,15 +59,13 @@ void main() {
     );
     expect(find.text('QUIET'), findsNothing);
     expect(find.text('FLOWING'), findsNothing);
-    expect(find.textContaining('A symbolic reflection'), findsOneWidget);
-    expect(
-      tester.getSize(find.byKey(const Key('daily_energy_info_sheet'))).height,
-      lessThan(320),
-    );
+    // One sentence only: no title, no disclaimer, nothing layered over it.
+    expect(find.textContaining('A symbolic reflection'), findsNothing);
+    expect(find.byType(BottomSheet), findsNothing);
 
-    await tester.tap(find.byTooltip('Close'));
+    await tester.tap(find.byKey(const Key('daily_energy_info_button')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const Key('daily_energy_info_sheet')), findsNothing);
+    expect(find.byKey(const Key('daily_energy_note')), findsNothing);
   });
 
   testWidgets('greets for afternoon and evening too', (tester) async {
