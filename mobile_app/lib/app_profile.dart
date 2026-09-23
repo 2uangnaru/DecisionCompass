@@ -25,6 +25,7 @@ class AppProfile {
     required this.useCurrentLocation,
     this.birthTime,
     this.traditionalProfile,
+    this.safetyAcknowledged = false,
   });
 
   /// Display name only; never sent to the engine.
@@ -53,6 +54,32 @@ class AppProfile {
   /// collection for someone who has since opted out.
   final bool useCurrentLocation;
 
+  /// Whether the user has accepted the Responsible Use & Safety boundaries.
+  /// Required before the first reading is revealed.
+  final bool safetyAcknowledged;
+
+  AppProfile copyWith({
+    String? userName,
+    DateTime? birthDate,
+    String? birthTime,
+    String? birthCountryCode,
+    engine.TraditionalProfile? traditionalProfile,
+    ZodiacSign? zodiacSign,
+    bool? useCurrentLocation,
+    bool? safetyAcknowledged,
+  }) {
+    return AppProfile(
+      userName: userName ?? this.userName,
+      birthDate: birthDate ?? this.birthDate,
+      birthTime: birthTime ?? this.birthTime,
+      birthCountryCode: birthCountryCode ?? this.birthCountryCode,
+      traditionalProfile: traditionalProfile ?? this.traditionalProfile,
+      zodiacSign: zodiacSign ?? this.zodiacSign,
+      useCurrentLocation: useCurrentLocation ?? this.useCurrentLocation,
+      safetyAcknowledged: safetyAcknowledged ?? this.safetyAcknowledged,
+    );
+  }
+
   String get formattedBirthDate =>
       '${birthDate.year.toString().padLeft(4, '0')}-'
       '${birthDate.month.toString().padLeft(2, '0')}-'
@@ -79,6 +106,7 @@ class AppProfile {
     if (traditionalProfile != null)
       'traditionalProfile': traditionalProfile!.wireValue,
     'useCurrentLocation': useCurrentLocation,
+    'safetyAcknowledged': safetyAcknowledged,
   };
 
   factory AppProfile.fromJson(Map<String, dynamic> json) {
@@ -94,6 +122,7 @@ class AppProfile {
           : engine.TraditionalProfile.fromWire(rawTraditionalProfile),
       zodiacSign: zodiacForDate(birthDate),
       useCurrentLocation: json['useCurrentLocation'] as bool,
+      safetyAcknowledged: json['safetyAcknowledged'] as bool? ?? false,
     );
   }
 }

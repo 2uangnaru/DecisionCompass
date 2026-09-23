@@ -8,6 +8,7 @@ import '../reading_dependencies.dart';
 import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
 
@@ -54,6 +55,8 @@ class _HomePageState extends State<HomePage> {
   /// raw wire string.
   engine.ReadingCategory _category = engine.ReadingCategory.general;
 
+  late AppProfile _profile = widget.profile;
+
   /// Fetched once per Home visit. It never reaches `ResultPage`, so it is
   /// never saved to history — see `DailyBriefProvider`'s doc comment for why
   /// this is a separate, ambient preview rather than the reveal flow itself.
@@ -71,8 +74,12 @@ class _HomePageState extends State<HomePage> {
           // actually taps Reveal. NOW is where that selector opens.
           period: TimePeriod.now,
           category: _category,
-          profile: widget.profile,
+          profile: _profile,
           dependencies: widget.dependencies,
+          onSafetyAcknowledged: (updated) {
+            setState(() => _profile = updated);
+            widget.dependencies.profileRepository.save(updated);
+          },
         ),
       ),
     );
@@ -148,6 +155,13 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ),
+        IconButton.filledTonal(
+          key: const Key('home_responsible_use_button'),
+          tooltip: 'Responsible Use',
+          onPressed: () => showResponsibleUseSheet(context),
+          icon: const Icon(Icons.shield_outlined, size: 20),
+        ),
+        const SizedBox(width: 8),
         IconButton.filledTonal(
           tooltip: 'History',
           onPressed: () => Navigator.of(context).push(

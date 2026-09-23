@@ -9,6 +9,7 @@ import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/responsible_use_sheet.dart';
 import 'loading_page.dart';
 
 class RitualPage extends StatefulWidget {
@@ -19,6 +20,7 @@ class RitualPage extends StatefulWidget {
     required this.category,
     required this.profile,
     required this.dependencies,
+    this.onSafetyAcknowledged,
   });
 
   final DecisionMode mode;
@@ -26,6 +28,7 @@ class RitualPage extends StatefulWidget {
   final engine.ReadingCategory category;
   final AppProfile profile;
   final ReadingDependencies dependencies;
+  final ValueChanged<AppProfile>? onSafetyAcknowledged;
 
   @override
   State<RitualPage> createState() => _RitualPageState();
@@ -35,6 +38,7 @@ class _RitualPageState extends State<RitualPage>
     with SingleTickerProviderStateMixin {
   var _locked = false;
   late final AnimationController _pulseController;
+  late AppProfile _profile = widget.profile;
 
   /// When the reading is for. Chosen here, beside the Reveal tap, so the
   /// moment and the period are picked together.
@@ -57,6 +61,15 @@ class _RitualPageState extends State<RitualPage>
 
   Future<void> _reveal() async {
     if (_locked) return;
+    if (!_profile.safetyAcknowledged) {
+      final agreed = await showResponsibleUseSheet(
+        context,
+        isFirstTimeAcknowledgement: true,
+      );
+      if (!agreed || !mounted) return;
+      setState(() => _profile = _profile.copyWith(safetyAcknowledged: true));
+      widget.onSafetyAcknowledged?.call(_profile);
+    }
     setState(() => _locked = true);
     // The reading's moment is this tap, recorded before the transition and
     // before any timezone or GPS lookup, so a slow lookup cannot move it.
@@ -69,7 +82,7 @@ class _RitualPageState extends State<RitualPage>
           mode: widget.mode,
           period: _period,
           category: widget.category,
-          profile: widget.profile,
+          profile: _profile,
           instantUtc: instantUtc,
           dependencies: widget.dependencies,
         ),
@@ -133,7 +146,12 @@ class _RitualPageState extends State<RitualPage>
                     ?.copyWith(color: CompassColors.gold, letterSpacing: 1.8),
               ),
             ),
-            const SizedBox(width: 48),
+            IconButton(
+              key: const Key('ritual_responsible_use_button'),
+              tooltip: 'Responsible Use',
+              onPressed: _locked ? null : () => showResponsibleUseSheet(context),
+              icon: const Icon(Icons.shield_outlined, size: 20),
+            ),
           ],
         ),
         const SizedBox(height: 10),
@@ -249,6 +267,15 @@ class _RitualPageState extends State<RitualPage>
           'Keep the choice clearly in your mind.',
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'For everyday reflection only • Never for medical, financial, political, or harmful choices.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall?.copyWith(
+            color: CompassColors.muted,
+            fontSize: 11,
+          ),
         ),
         const Spacer(),
         Text(

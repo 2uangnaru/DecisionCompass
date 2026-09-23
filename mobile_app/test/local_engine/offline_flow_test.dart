@@ -23,8 +23,12 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Widget buildApp({String deviceTimezone = 'Asia/Ho_Chi_Minh'}) {
+  Widget buildApp({
+    String deviceTimezone = 'Asia/Ho_Chi_Minh',
+    bool initialSafetyAcknowledged = true,
+  }) {
     return DecisionCompassApp(
+      initialSafetyAcknowledged: initialSafetyAcknowledged,
       dependencies: ReadingDependencies(
         // `runInline` keeps the calculation on the test isolate so the widget
         // tester's fake clock still governs the flow. The isolate dispatcher

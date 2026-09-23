@@ -8,9 +8,14 @@ import '../widgets/celestial_ui.dart';
 import 'home_page.dart';
 
 class OnboardingPage extends StatefulWidget {
-  const OnboardingPage({super.key, required this.dependencies});
+  const OnboardingPage({
+    super.key,
+    required this.dependencies,
+    this.initialSafetyAcknowledged = false,
+  });
 
   final ReadingDependencies dependencies;
+  final bool initialSafetyAcknowledged;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
@@ -82,6 +87,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       birthCountryCode: _countryCode,
       zodiacSign: zodiacForDate(_birthDate),
       useCurrentLocation: _useCurrentLocation,
+      safetyAcknowledged: widget.initialSafetyAcknowledged,
     );
     await widget.dependencies.profileRepository.save(profile);
     if (!mounted) return;

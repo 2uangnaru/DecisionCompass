@@ -11,6 +11,7 @@ import '../reading_mapping.dart';
 import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/responsible_use_sheet.dart';
 
 /// Renders a real engine reading. Nothing here invents a direction: every
 /// status the contract defines gets its own explicit presentation.
@@ -196,12 +197,35 @@ class _ResultPageState extends State<ResultPage> {
               icon: const Icon(Icons.bookmark_added_rounded),
               label: const Text('Saved to History'),
             ),
-            const SizedBox(height: 22),
-            Text(
-              'For everyday reflection only. Important decisions need real information and qualified help.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: Colors.white60, height: 1.45),
+            const SizedBox(height: 18),
+            InkWell(
+              key: const Key('result_responsible_use_link'),
+              onTap: () => showResponsibleUseSheet(context),
+              borderRadius: BorderRadius.circular(10),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                child: Text.rich(
+                  TextSpan(
+                    text:
+                        'For everyday reflection only. Important decisions need real information and qualified help.\n',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white60,
+                      height: 1.45,
+                    ),
+                    children: const [
+                      TextSpan(
+                        text: 'Responsible Use & Safety Policy',
+                        style: TextStyle(
+                          color: CompassColors.gold,
+                          fontWeight: FontWeight.w600,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ),
             ),
           ],
         ),

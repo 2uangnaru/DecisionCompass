@@ -23,6 +23,7 @@ class ReadingTestRig {
     DateTime? localNow,
     String deviceTimezone = 'Asia/Ho_Chi_Minh',
     CurrentLocation? location,
+    this.safetyAcknowledged = true,
   }) : localClock = localNow ?? _beforeEveryPeriod,
        repository = FakeReadingRepository(
          response: response,
@@ -45,6 +46,7 @@ class ReadingTestRig {
   final InMemoryProfileRepository profileRepository = InMemoryProfileRepository();
   final FixedDailyBriefProvider dailyBriefProvider = FixedDailyBriefProvider();
   final DateTime revealInstant;
+  final bool safetyAcknowledged;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   final DateTime localClock;
@@ -65,7 +67,10 @@ class ReadingTestRig {
     nowLocal: () => localClock,
   );
 
-  late final Widget app = DecisionCompassApp(dependencies: dependencies);
+  late final Widget app = DecisionCompassApp(
+    dependencies: dependencies,
+    initialSafetyAcknowledged: safetyAcknowledged,
+  );
 
   /// The single request the flow sent, or null when it sent none.
   ReadingRequest? get sentRequest =>
@@ -128,4 +133,12 @@ Future<void> revealReading(
   await tester.tap(find.byKey(const Key('reveal_button')));
   await tester.pump(const Duration(milliseconds: 380));
   await tester.pump();
+
+  // If the first-time safety boundaries sheet appears, agree to proceed.
+  final safetyAgreeButton = find.byKey(const Key('agree_safety_boundaries'));
+  if (safetyAgreeButton.evaluate().isNotEmpty) {
+    await tester.tap(safetyAgreeButton);
+    await tester.pump(const Duration(milliseconds: 380));
+    await tester.pump();
+  }
 }

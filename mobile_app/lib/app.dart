@@ -11,10 +11,12 @@ class DecisionCompassApp extends StatefulWidget {
   const DecisionCompassApp({
     super.key,
     required this.dependencies,
+    this.initialSafetyAcknowledged = false,
     this.onDetached,
   });
 
   final ReadingDependencies dependencies;
+  final bool initialSafetyAcknowledged;
 
   /// Called when the app detaches, so a caller that owns a releasable
   /// resource can close it. Null in production — the bundled offline engine
@@ -53,7 +55,6 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
     return MaterialApp(
       title: 'Decision Compass',
       debugShowCheckedModeBanner: false,
-      theme: buildCompassTheme(),
       home: FutureBuilder<AppProfile?>(
         future: _savedProfile,
         builder: (context, snapshot) {
@@ -66,7 +67,10 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
           }
           final profile = snapshot.data;
           return profile == null
-              ? OnboardingPage(dependencies: widget.dependencies)
+              ? OnboardingPage(
+                  dependencies: widget.dependencies,
+                  initialSafetyAcknowledged: widget.initialSafetyAcknowledged,
+                )
               : HomePage(profile: profile, dependencies: widget.dependencies);
         },
       ),
