@@ -46,6 +46,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
       initialDate: _birthDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      // Typing "MM/DD/YYYY" directly is far faster than paging a calendar
+      // grid back to a decades-old birth date; the keyboard icon in the
+      // dialog still switches to the calendar/year-grid view for anyone who
+      // prefers tapping through it instead.
+      initialEntryMode: DatePickerEntryMode.input,
     );
     if (picked != null && mounted) setState(() => _birthDate = picked);
   }
