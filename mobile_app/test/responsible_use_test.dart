@@ -30,7 +30,9 @@ void main() {
       );
 
       // Ritual header has the Responsible Use shield icon
-      final ritualShield = find.byKey(const Key('ritual_responsible_use_button'));
+      final ritualShield = find.byKey(
+        const Key('ritual_responsible_use_button'),
+      );
       expect(ritualShield, findsOneWidget);
       await tester.tap(ritualShield);
       await tester.pump();
@@ -57,13 +59,19 @@ void main() {
       expect(find.text('Driving & Physical Navigation'), findsOneWidget);
       expect(find.text('Politics & Social Conflicts'), findsOneWidget);
       expect(find.text('Health, Medical & Emergencies'), findsOneWidget);
-      expect(find.text('Legal, Criminal & High-Stakes Contracts'), findsOneWidget);
+      expect(
+        find.text('Legal, Criminal & High-Stakes Contracts'),
+        findsOneWidget,
+      );
       expect(find.text('Financial Investments & Gambling'), findsOneWidget);
       expect(find.text('Consent, Minors & Relationships'), findsOneWidget);
 
       // Check legal disclaimers
       expect(find.text('LEGAL DISCLAIMER & AGE NOTICE'), findsOneWidget);
-      expect(find.textContaining('Age Requirement: You must be at least 13'), findsOneWidget);
+      expect(
+        find.textContaining('Age Requirement: You must be at least 13'),
+        findsOneWidget,
+      );
       expect(find.textContaining('No Professional Advice'), findsOneWidget);
       expect(find.textContaining('Assumption of Risk'), findsOneWidget);
 

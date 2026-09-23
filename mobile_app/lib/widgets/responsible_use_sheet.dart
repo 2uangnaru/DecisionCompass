@@ -40,11 +40,7 @@ class ResponsibleUseSheet extends StatelessWidget {
         borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
         border: Border.all(color: CompassColors.line),
         boxShadow: const [
-          BoxShadow(
-            color: Colors.black54,
-            blurRadius: 32,
-            spreadRadius: 4,
-          ),
+          BoxShadow(color: Colors.black54, blurRadius: 32, spreadRadius: 4),
         ],
       ),
       child: Column(
@@ -131,44 +127,37 @@ class ResponsibleUseSheet extends StatelessWidget {
                   const _GuardrailTile(
                     icon: Icons.dangerous_rounded,
                     title: 'Harm & Self-Violence',
-                    detail:
-                        'Never use for self-harm, suicide, physical violence, or endangering yourself or anyone else.',
+                    detail: 'Never use for self-harm, suicide, physical violence, or endangering yourself or anyone else.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.directions_car_rounded,
                     title: 'Driving & Physical Navigation',
-                    detail:
-                        'Directions like LEFT / RIGHT and FORWARD / BACKWARD are symbolic polarities only. Never use them for traffic, driving, route-finding, or physical safety.',
+                    detail: 'Directions like LEFT / RIGHT and FORWARD / BACKWARD are symbolic polarities only. Never use them for traffic, driving, route-finding, or physical safety.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.balance_rounded,
                     title: 'Politics & Social Conflicts',
-                    detail:
-                        'Never use for political campaigning, electoral decisions, civil unrest, or extremist activities.',
+                    detail: 'Never use for political campaigning, electoral decisions, civil unrest, or extremist activities.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.local_hospital_rounded,
                     title: 'Health, Medical & Emergencies',
-                    detail:
-                        'Not a substitute for licensed physicians, prescription medicine, mental health therapy, or acute emergency response.',
+                    detail: 'Not a substitute for licensed physicians, prescription medicine, mental health therapy, or acute emergency response.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.gavel_rounded,
                     title: 'Legal, Criminal & High-Stakes Contracts',
-                    detail:
-                        'Never use for criminal conduct, court litigation, testimony, or binding high-stakes legal contracts.',
+                    detail: 'Never use for criminal conduct, court litigation, testimony, or binding high-stakes legal contracts.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.trending_down_rounded,
                     title: 'Financial Investments & Gambling',
-                    detail:
-                        'Not for speculative trading, borrowing, crypto bets, or gambling. You are solely responsible for your financial decisions.',
+                    detail: 'Not for speculative trading, borrowing, crypto bets, or gambling. You are solely responsible for your financial decisions.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.people_outline_rounded,
                     title: 'Consent, Minors & Relationships',
-                    detail:
-                        'Never use to override another person’s consent or autonomy, or for child custody and minor guardianship decisions.',
+                    detail: 'Never use to override another person’s consent or autonomy, or for child custody and minor guardianship decisions.',
                   ),
 
                   const SizedBox(height: 16),
@@ -210,10 +199,8 @@ class ResponsibleUseSheet extends StatelessWidget {
                           '• Age Requirement: You must be at least 13 years of age (or the minimum legal age in your jurisdiction) to use this application.\n'
                           '• No Professional Advice: Content does not constitute medical, legal, or financial counsel.\n'
                           '• Assumption of Risk: You assume 100% personal responsibility for all actions and choices you make.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Colors.white70,
-                            height: 1.5,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: Colors.white70, height: 1.5),
                         ),
                         if (!isFirstTimeAcknowledgement) ...[
                           const Divider(height: 18, color: Colors.white12),
@@ -249,15 +236,18 @@ class ResponsibleUseSheet extends StatelessWidget {
                         FilledButton(
                           key: const Key('agree_safety_boundaries'),
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text('I Understand & Agree to Boundaries'),
+                          child: const Text(
+                            'I Understand & Agree to Boundaries',
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(
                           'This acknowledgement appears once before your first reading.',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: CompassColors.muted,
-                            fontSize: 11,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: CompassColors.muted,
+                                fontSize: 11,
+                              ),
                         ),
                       ],
                     )

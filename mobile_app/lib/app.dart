@@ -32,8 +32,10 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
 
   /// Read once at startup, so a saved profile skips onboarding entirely —
   /// restarting the app must return to Home, not lose everything.
-  late final Future<AppProfile?> _savedProfile =
-      widget.dependencies.profileRepository.load();
+  late final Future<AppProfile?> _savedProfile = widget
+      .dependencies
+      .profileRepository
+      .load();
 
   @override
   void initState() {

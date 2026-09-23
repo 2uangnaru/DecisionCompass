@@ -20,8 +20,10 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   // Loaded once per page visit; a fresh push re-reads storage, so a reading
   // saved just before opening History always shows up.
-  late final Future<List<HistoryEntry>> _entries =
-      widget.dependencies.historyRepository.list();
+  late final Future<List<HistoryEntry>> _entries = widget
+      .dependencies
+      .historyRepository
+      .list();
 
   @override
   Widget build(BuildContext context) {
