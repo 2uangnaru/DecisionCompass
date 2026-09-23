@@ -51,7 +51,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _pickBirthTime() async {
-    final picked = await showCompassTimePicker(context, initial: _birthTime);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: _birthTime,
+    );
     if (picked != null && mounted) setState(() => _birthTime = picked);
   }
 
