@@ -473,23 +473,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         Expanded(
                           child: _TodaySignalTile(
                             label: 'Your colors today:',
-                            // Two swatches, stacked: side by side, two colour
-                            // names do not fit a half-width tile on a 360dp
-                            // phone. Both hexes come from the engine, so the
-                            // app never invents a shade.
-                            value: Column(
-                              mainAxisSize: MainAxisSize.min,
+                            // Equal-width columns keep both colours on one
+                            // baseline, even in the half-width signal tile.
+                            value: Row(
                               children: [
-                                _Swatch(
-                                  color: colors?.lead,
-                                  role: 'Lead',
-                                  testKey: 'daily_color_lead',
+                                Expanded(
+                                  child: _Swatch(
+                                    color: colors?.lead,
+                                    role: 'Lead',
+                                    testKey: 'daily_color_lead',
+                                  ),
                                 ),
-                                const SizedBox(height: 4),
-                                _Swatch(
-                                  color: colors?.supporting,
-                                  role: 'Supporting',
-                                  testKey: 'daily_color_supporting',
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: _Swatch(
+                                    color: colors?.supporting,
+                                    role: 'Supporting',
+                                    testKey: 'daily_color_supporting',
+                                  ),
                                 ),
                               ],
                             ),
@@ -692,9 +693,10 @@ class _Swatch extends StatelessWidget {
       label: color == null
           ? '$role colour not available yet'
           : '$role colour, ${color!.name}',
-      child: Row(
+      child: Column(
         key: Key(testKey),
         mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Container(
             width: 16,
@@ -714,34 +716,28 @@ class _Swatch extends StatelessWidget {
                     ],
             ),
           ),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  color?.name ?? '—',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: CompassColors.text,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w700,
-                    height: 1.15,
-                  ),
-                ),
-                Text(
-                  role,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: CompassColors.muted,
-                    fontSize: 9.5,
-                    height: 1.2,
-                  ),
-                ),
-              ],
+          const SizedBox(height: 4),
+          Text(
+            color?.name ?? '—',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: CompassColors.text,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
+              height: 1.15,
+            ),
+          ),
+          Text(
+            role,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              color: CompassColors.muted,
+              fontSize: 9.5,
+              height: 1.2,
             ),
           ),
         ],

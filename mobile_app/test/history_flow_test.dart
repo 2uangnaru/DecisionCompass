@@ -1,8 +1,13 @@
+import 'dart:convert';
+
 import 'package:decision_compass/data/history_entry.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
+import 'package:decision_compass/data/shared_preferences_history_repository.dart';
 import 'package:decision_compass/pages/history_page.dart';
+import 'package:decision_compass/pages/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reading_test_rig.dart';
 
@@ -13,6 +18,80 @@ Future<void> pumpPastRitual(WidgetTester tester) async {
 }
 
 void main() {
+  test(
+    'legacy single-colour history survives an upgrade and a new save',
+    () async {
+      final oldReading = fixtureResponse('ready_yes_no_now.json').toJson();
+      oldReading['engineVersion'] = '3.4.0-mvp';
+      oldReading['rulesetVersion'] =
+          'civil-midnight-chinese-calendar-symbolic-v7';
+      final oldBrief = Map<String, dynamic>.from(
+        oldReading['dailyBrief'] as Map,
+      );
+      oldBrief.remove('colors');
+      oldBrief['colorInspiration'] = 'pearl';
+      oldReading['dailyBrief'] = oldBrief;
+      oldReading['percentages'] = {'YES': 56, 'NO': 44};
+      SharedPreferences.setMockInitialValues({
+        'history_entries_v1': jsonEncode([
+          {
+            'id': 'old-reading',
+            'reading': oldReading,
+            'savedAtUtc': '2026-09-22T10:00:00.000Z',
+          },
+        ]),
+      });
+
+      const repository = SharedPreferencesHistoryRepository();
+      final before = await repository.list();
+      expect(before, hasLength(1));
+      expect(before.single.reading.dailyBrief!.colors, isNull);
+      expect(before.single.reading.dailyBrief!.legacyColorInspiration, 'pearl');
+      expect(before.single.reading.percentages!.display('YES'), '56.0');
+
+      await repository.save(
+        HistoryEntry(
+          id: 'new-reading',
+          reading: fixtureResponse('ready_yes_no_now.json'),
+          savedAtUtc: DateTime.utc(2026, 9, 24, 10),
+        ),
+      );
+      final after = await repository.list();
+      expect(after, hasLength(2));
+      expect(
+        after.map((entry) => entry.id),
+        containsAll(['old-reading', 'new-reading']),
+      );
+      final storedOld = after.singleWhere((entry) => entry.id == 'old-reading');
+      final storedBrief = storedOld.reading.toJson()['dailyBrief'] as Map;
+      expect(storedBrief['colorInspiration'], 'pearl');
+      expect(storedBrief.containsKey('colors'), isFalse);
+    },
+  );
+
+  testWidgets('a saved legacy result shows its original single colour', (
+    tester,
+  ) async {
+    final json = fixtureResponse('ready_yes_no_now.json').toJson();
+    final brief = Map<String, dynamic>.from(json['dailyBrief'] as Map);
+    brief.remove('colors');
+    brief['colorInspiration'] = 'ocean_blue';
+    json['dailyBrief'] = brief;
+    final rig = ReadingTestRig();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          reading: engine.ReadingResponse.fromJson(json),
+          dependencies: rig.dependencies,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('Colour to keep near you: Ocean Blue'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'revealing readings for different categories and periods each saves its '
     'own history entry, not a shared/overwritten one',

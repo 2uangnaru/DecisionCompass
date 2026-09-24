@@ -1,6 +1,7 @@
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/local_engine/colors.dart';
 import 'package:decision_compass/local_engine/core/core.dart';
+import 'package:decision_compass/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -265,6 +266,12 @@ void main() {
       );
       expect(card.left, greaterThanOrEqualTo(0));
       expect(card.right, lessThanOrEqualTo(360));
+      final lead = tester.getRect(find.byKey(const Key('daily_color_lead')));
+      final supporting = tester.getRect(
+        find.byKey(const Key('daily_color_supporting')),
+      );
+      expect((lead.top - supporting.top).abs(), lessThan(2));
+      expect(lead.right, lessThan(supporting.left));
     });
   });
 
@@ -286,6 +293,12 @@ void main() {
       // Never a bare integer percentage on the headline split.
       expect(find.text('56%'), findsNothing);
       expect(find.text('NO  44%'), findsNothing);
+      final winner = tester.widget<Text>(
+        find.byKey(const Key('result_winner_label')),
+      );
+      final percent = tester.widget<Text>(find.text('56.1%'));
+      expect(winner.style!.fontSize, greaterThan(percent.style!.fontSize!));
+      expect(winner.style!.color, CompassColors.blueLight);
     });
 
     test('the DTO keeps tenths so the pair is exact', () {

@@ -163,23 +163,34 @@ class DailyColors {
 class DailyBrief {
   const DailyBrief({
     required this.luckyNumber,
-    required this.colors,
+    this.colors,
+    this.legacyColorInspiration,
     this.energy,
-  });
+  }) : assert(colors != null || legacyColorInspiration != null);
 
   final int luckyNumber;
-  final DailyColors colors;
+
+  /// New readings have a pair. Older saved snapshots retain their single
+  /// colour instead of being silently recalculated with today's rules.
+  final DailyColors? colors;
+  final String? legacyColorInspiration;
 
   /// Optional so previously saved reading snapshots remain readable.
   final DailyEnergy? energy;
 
   factory DailyBrief.fromJson(JsonMap json) {
     const context = 'DailyBrief';
+    final rawColors = optionalField<JsonMap>(json, 'colors', context);
+    final legacyColor = rawColors == null
+        ? requireField<String>(json, 'colorInspiration', context)
+        : null;
+    if (legacyColor != null && legacyColor.isEmpty) {
+      throw const ReadingDtoException('Invalid legacy daily colour');
+    }
     return DailyBrief(
       luckyNumber: requireInt(json, 'luckyNumber', context),
-      colors: DailyColors.fromJson(
-        requireField<JsonMap>(json, 'colors', context),
-      ),
+      colors: rawColors == null ? null : DailyColors.fromJson(rawColors),
+      legacyColorInspiration: legacyColor,
       energy: switch (optionalField<JsonMap>(json, 'energy', context)) {
         final JsonMap value => DailyEnergy.fromJson(value),
         null => null,
@@ -189,7 +200,9 @@ class DailyBrief {
 
   JsonMap toJson() => {
     'luckyNumber': luckyNumber,
-    'colors': colors.toJson(),
+    if (colors != null) 'colors': colors!.toJson(),
+    if (legacyColorInspiration != null)
+      'colorInspiration': legacyColorInspiration,
     if (energy != null) 'energy': energy!.toJson(),
   };
 }

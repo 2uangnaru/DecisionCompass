@@ -90,6 +90,7 @@ void main() {
       find.byKey(const Key('ritual_period_selector')),
     );
     final circle = tester.getRect(find.byKey(const Key('reveal_button')));
+    final title = tester.getRect(find.byKey(const Key('ritual_ready_title')));
     final note = tester.getRect(
       find.byKey(const Key('ritual_responsible_use_note')),
     );
@@ -105,6 +106,16 @@ void main() {
     );
     // Order is what it claims to be, top to bottom.
     expect(circle.bottom, lessThan(note.top));
+    expect(
+      title.top - circle.bottom,
+      lessThanOrEqualTo(32),
+      reason: 'Reveal and its instruction must stay together',
+    );
+    expect(
+      note.top - title.bottom,
+      lessThan(65),
+      reason: 'supporting copy must remain in the hero group',
+    );
     expect(note.bottom, lessThanOrEqualTo(size.height));
     // And the circle stays inside the screen.
     expect(circle.left, greaterThanOrEqualTo(0));

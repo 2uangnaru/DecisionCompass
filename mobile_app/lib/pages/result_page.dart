@@ -9,6 +9,7 @@ import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_info.dart';
@@ -302,6 +303,9 @@ class _Direction extends StatelessWidget {
   Widget build(BuildContext context) {
     final winner = splits.isEmpty ? null : splits.first;
     final counterpart = splits.length < 2 ? null : splits[1];
+    final winnerColor = reading.winner == fromEngineMode(reading.mode).second
+        ? const Color(0xFFD88990)
+        : CompassColors.blueLight;
     return Column(
       key: const Key('result_ready'),
       children: [
@@ -310,18 +314,37 @@ class _Direction extends StatelessWidget {
           style: Theme.of(context).textTheme.labelLarge
               ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
         ),
-        const SizedBox(height: 20),
-        Text(
-          reading.winner ?? winner?.label ?? '',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.displayLarge,
+        const SizedBox(height: 14),
+        SizedBox(
+          width: double.infinity,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              reading.winner ?? winner?.label ?? '',
+              key: const Key('result_winner_label'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                color: winnerColor,
+                fontSize: 76,
+                height: 1,
+                fontWeight: FontWeight.w900,
+                letterSpacing: -2,
+                shadows: [
+                  Shadow(
+                    color: winnerColor.withValues(alpha: 0.28),
+                    blurRadius: 24,
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         if (winner != null) ...[
-          const SizedBox(height: 4),
+          const SizedBox(height: 8),
           Text(
             '${winner.percent}%',
             style: Theme.of(context).textTheme.headlineLarge
-                ?.copyWith(color: CompassColors.blueLight, fontSize: 42),
+                ?.copyWith(color: winnerColor, fontSize: 38),
           ),
         ],
         if (counterpart != null) ...[
@@ -438,6 +461,11 @@ class _DailyBrief extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = brief.colors;
+    final colourDescription = colors == null
+        ? 'Colour to keep near you: '
+              '${titleCaseWords(brief.legacyColorInspiration!)}'
+        : 'Colours to keep near you: ${colors.lead.name} '
+              'and ${colors.supporting.name}';
     return GlassCard(
       key: const Key('result_daily_brief'),
       child: Column(
@@ -446,12 +474,7 @@ class _DailyBrief extends StatelessWidget {
             children: [
               const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
               const SizedBox(width: 12),
-              Expanded(
-                child: Text(
-                  'Colours to keep near you: ${colors.lead.name} '
-                  'and ${colors.supporting.name}',
-                ),
-              ),
+              Expanded(child: Text(colourDescription)),
               const SizedBox(width: 10),
               Text(
                 '${brief.luckyNumber}',

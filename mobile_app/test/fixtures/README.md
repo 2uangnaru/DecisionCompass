@@ -13,18 +13,19 @@ node scripts/mobile-fixtures.mjs --check   # fail if a fixture drifts from the e
 ```
 
 It validates every fixture's projection using the engine's own
-`MODES` / `percent` / `scoreForMode`, so the formulas are never re-implemented
+`MODES` / `percentTenths` / `scoreForMode`, so the formulas are never re-implemented
 outside `src/core.js`.
 
-## Status — regenerated 2026-09-23
+## Status — verified 2026-09-24
 
 The sixteen engine-reproducible fixtures below are **real engine golden
 output**, written verbatim by `scripts/mobile-fixtures.mjs --write` on Node
-**v24.19.0** against engine `3.4.0-mvp` / ruleset
-`civil-midnight-chinese-calendar-symbolic-v7` (expanded symbolic full-day tones).
+**v24.19.0** against engine `3.5.0-mvp` / ruleset
+`civil-midnight-chinese-calendar-symbolic-v8` (daily colour pair and tenths).
 `--check` then exited **0**
 ("All 16 engine fixtures match current engine output"), and the engine suite
-passed **91/91** on the same runtime.
+passed **111/111** on the same runtime. Flutter analyze was clean and
+**455/455** Flutter tests passed after the legacy-history and layout fixes.
 
 Because they are verbatim, they carry fields the DTO deliberately ignores —
 `segments` (per-module diagnostics) and the top-level `meaning`, which
@@ -35,20 +36,22 @@ Do not hand-edit `percentages`, `modeScore`, `axisScores` or `winner` in these
 files. If a value looks wrong, fix the scenario in the generator and re-run
 `--write`; `--check` is what keeps them honest.
 
-Every generated ready reading also carries `dailyBrief.energy` with its
-symbolic level, internal index and data coverage. The two synthetic parser-only
-files remain hand-maintained and may omit this additive field.
+Every generated ready reading carries `dailyBrief.energy` and the two-colour
+`dailyBrief.colors` pair. The two synthetic parser-only files remain
+hand-maintained and may omit these fields. Older on-device history snapshots
+with only `colorInspiration` are still read and displayed without inventing a
+second colour for a past reading.
 
 ## Fixtures
 
 | File | Source | Covers |
 |---|---|---|
-| `ready_yes_no_now.json` | engine | NOW, no windows, `not_applicable`, YES 56/44 |
-| `ready_forward_backward_two_windows.json` | engine | evening, `two_available`, FORWARD 57/43 |
-| `ready_left_right.json` | engine | afternoon, `two_available`; RIGHT wins 52/48 where the same axes give YES 56 under YES/NO — LEFT/RIGHT is visibly not an alias |
-| `ready_advance_retreat.json` | engine | morning, `two_available`, ADVANCE 56/44 |
-| `ready_act_wait_midday.json` | engine | midday, `two_available`, ACT 55/45 |
-| `one_remaining.json` | engine | evening late, `one_remaining`, LET GO 53/47 |
+| `ready_yes_no_now.json` | engine | NOW, no windows, `not_applicable`, YES 56.1/43.9 |
+| `ready_forward_backward_two_windows.json` | engine | evening, `two_available`, FORWARD 56.7/43.3 |
+| `ready_left_right.json` | engine | afternoon, `two_available`; RIGHT wins 51.7/48.3 — LEFT/RIGHT is not an alias of YES/NO |
+| `ready_advance_retreat.json` | engine | morning, `two_available`, ADVANCE 56.4/43.6 |
+| `ready_act_wait_midday.json` | engine | midday, `two_available`, ACT 55.1/44.9 |
+| `one_remaining.json` | engine | evening late, `one_remaining`, LET GO 53.4/46.6 |
 | `no_15_minute_window.json` | engine | evening later, `no_15_minute_window`, still `ready` |
 | `period_elapsed.json` | engine | elapsed morning: `consumeUnlock:false`, no score/window/day fields at all |
 | `unknown_birth_time_warnings.json` | engine | unknown birth hour, `uncertain` + `unknown_birth_time` warnings, reduced coverage |
@@ -83,8 +86,8 @@ declares but that the generator cannot request on demand:
   numerology module scores from `birthDate` alone, which is always present, so
   coverage is never 0 on the normal path. Treat this as a defensive
   parser fixture, **not** a reachable engine state.
-- `synthetic_balanced.json` — `balanced` needs `percent(score) == 50`, i.e. a
-  mode score in `[-0.0125, 0.0125)`. That is reachable, but not by asking the
+- `synthetic_balanced.json` — `balanced` needs `percentTenths(score) == 500`,
+  i.e. a mode score in `[-0.00125, 0.00125)`. That is reachable, but not by asking the
   engine for it; it would have to be found by scanning instants. Its numbers are
   self-consistent under the real projection, but it is not engine output.
 

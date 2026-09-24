@@ -140,6 +140,24 @@ Checks on 2026-09-23: **91/91 Node tests**, **338/338 Flutter tests**, fixture
 check **16/16**, all 16 standard and 16 edge readings matched the Dart port,
 Flutter analyzer clean, and the debug Android APK built successfully.
 
+## Daily colours and percentage display — 2026-09-24
+
+Engine **3.5.0-mvp** / ruleset **v8** keeps the established reading scores and
+mode projections. Headline percentages now show one decimal using integer
+tenths; they remain symbolic alignment scores, not success probabilities.
+The daily brief has a lead colour from the local day's stem-specific pair and
+a supporting colour from the generating-element family. The 20-colour rule
+uses duration-weighted full-day general-module signals and does not infer
+traditional Yong Shen or a missing birth hour. The Flutter reader retains
+legacy single-colour history snapshots without recalculating them.
+
+Executed on 2026-09-24: `node --test test/*.test.js` **111/111 passed**;
+`node scripts/mobile-fixtures.mjs --check` **16/16 matched**;
+`flutter analyze --no-pub` **no issues**; `flutter test --no-pub`
+**455/455 passed**; `flutter build apk --debug --no-pub` succeeded.
+The Flutter tests cover history migration and UI geometry, but no connected
+Android device was available for a screenshot review of the updated screens.
+
 ## Symbolic daily energy v6 — 2026-09-23
 
 Engine **3.3.0-mvp** / ruleset **v6** adds `dailyBrief.energy`. The full local
