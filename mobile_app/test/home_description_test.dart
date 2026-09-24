@@ -372,6 +372,42 @@ void main() {
       expect(shownDescription(tester), yesterday);
     });
 
+    testWidgets('a new day blanks the old line rather than holding it', (
+      tester,
+    ) async {
+      final store = InMemoryHomeDescriptionStore(
+        delay: const Duration(seconds: 3),
+      );
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        localNow: DateTime(2026, 9, 18, 20),
+        descriptionStore: store,
+      );
+      await tester.pumpWidget(rig.app);
+      await completeOnboarding(tester);
+      await tester.pump(const Duration(seconds: 4));
+      final yesterday = shownDescription(tester);
+      expect(homeDescriptions, contains(yesterday));
+
+      rig.localClock = DateTime(2026, 9, 19, 7);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+      await tester.pump();
+
+      // The store has not answered for the new day yet. Yesterday's line must
+      // not be standing in for today's.
+      expect(
+        shownDescription(tester),
+        '',
+        reason: 'yesterday’s line lingered while the deck answered',
+      );
+
+      await tester.pump(const Duration(seconds: 4));
+      final today = shownDescription(tester);
+      expect(homeDescriptions, contains(today));
+      expect(today, isNot(yesterday));
+    });
+
     testWidgets('changes while Home is on screen at midnight', (tester) async {
       var clock = DateTime(2026, 9, 18, 23, 59, 30);
       final rig = ReadingTestRig(

@@ -35,8 +35,14 @@ class ResultPage extends StatefulWidget {
   State<ResultPage> createState() => _ResultPageState();
 }
 
-class _ResultPageState extends State<ResultPage> {
+class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   engine.ReadingResponse get reading => widget.reading;
+
+  /// The reader's current local day, watched rather than read once at build:
+  /// a Result left open past midnight stops being "today", and its unread
+  /// mark has to go with it.
+  late String _today;
+  Timer? _dayChangeTimer;
 
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
@@ -62,7 +68,41 @@ class _ResultPageState extends State<ResultPage> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _today = dailyEnergyDayKey(widget.dependencies.nowLocal());
+    _scheduleDayChange();
     unawaited(_saveToHistory());
+  }
+
+  @override
+  void dispose() {
+    _dayChangeTimer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refreshIfNewDay();
+  }
+
+  void _refreshIfNewDay() {
+    final day = dailyEnergyDayKey(widget.dependencies.nowLocal());
+    if (day != _today) setState(() => _today = day);
+    _scheduleDayChange();
+  }
+
+  void _scheduleDayChange() {
+    _dayChangeTimer?.cancel();
+    final local = widget.dependencies.nowLocal();
+    final next = DateTime(local.year, local.month, local.day + 1);
+    final remaining = next.difference(local);
+    _dayChangeTimer = Timer(
+      remaining > Duration.zero ? remaining : const Duration(seconds: 1),
+      () {
+        if (mounted) _refreshIfNewDay();
+      },
+    );
   }
 
   /// A reading's own `readingKey` already varies by profile, mode, period
@@ -188,9 +228,7 @@ class _ResultPageState extends State<ResultPage> {
                 // left open past midnight keeps the insight it was read
                 // for, and a past one never announces "new today".
                 day: reading.context.localDate,
-                isCurrentDay:
-                    reading.context.localDate ==
-                    dailyEnergyDayKey(widget.dependencies.nowLocal()),
+                isCurrentDay: reading.context.localDate == _today,
                 insights: widget.dependencies.dailyEnergyInsights,
               ),
             ],

@@ -664,6 +664,47 @@ void main() {
       expect(shownNote(tester), message);
     });
 
+    testWidgets('an unread Result stops claiming "new today" past midnight', (
+      tester,
+    ) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        localNow: DateTime(2026, 9, 18, 23, 50),
+      );
+      rig.dailyBriefProvider.response = briefWith('bright');
+      await tester.pumpWidget(rig.app);
+      await completeOnboarding(tester);
+      await tester.pump();
+      await revealReading(tester);
+      await tester.pump(const Duration(milliseconds: 5400));
+      await tester.pumpAndSettle();
+
+      final inBrief = find.descendant(
+        of: find.byKey(const Key('result_daily_brief')),
+        matching: unreadDot,
+      );
+      // Left unopened on purpose: the mark is what has to expire.
+      expect(inBrief, findsOneWidget);
+
+      rig.localClock = DateTime(2026, 9, 19, 0, 30);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+
+      expect(
+        inBrief,
+        findsNothing,
+        reason: 'yesterday’s reading cannot still be new today',
+      );
+      // The insight is still readable, and still the reading's own date's.
+      final resultButton = find.descendant(
+        of: find.byKey(const Key('result_daily_brief')),
+        matching: infoButton,
+      );
+      await tester.tap(resultButton);
+      await tester.pumpAndSettle();
+      expect(dailyEnergyMessagePools['bright'], contains(shownNote(tester)));
+    });
+
     testWidgets('a Result held past midnight keeps its own date', (
       tester,
     ) async {

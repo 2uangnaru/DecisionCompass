@@ -88,6 +88,11 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   /// showing another day's line for a frame.
   String? _description;
 
+  /// The local day [_description] belongs to. A load that started on an
+  /// earlier day is discarded when it lands, so a slow store cannot drop
+  /// yesterday's line onto today.
+  String? _descriptionDay;
+
   static String _dayKey(DateTime value) =>
       '${value.year}-${value.month}-${value.day}';
 
@@ -103,9 +108,19 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   /// Deals (or re-reads) the description for the local day now showing.
   Future<void> _loadDescription() async {
+    final local = widget.dependencies.nowLocal();
+    final day = _dayKey(local);
+    if (_descriptionDay != day) {
+      // Yesterday's line must not sit on screen while the deck answers for
+      // today. `initState` reaches here with nothing shown yet, so there is
+      // no setState before the first build.
+      _descriptionDay = day;
+      if (_description != null) setState(() => _description = null);
+    }
+
     final description = await widget.dependencies.homeDescriptionDeck
-        .descriptionFor(widget.dependencies.nowLocal());
-    if (!mounted) return;
+        .descriptionFor(local);
+    if (!mounted || _descriptionDay != day) return;
     setState(() => _description = description);
   }
 
