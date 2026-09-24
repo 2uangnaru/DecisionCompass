@@ -729,17 +729,6 @@ class _Swatch extends StatelessWidget {
               height: 1.15,
             ),
           ),
-          Text(
-            role,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: CompassColors.muted,
-              fontSize: 9.5,
-              height: 1.2,
-            ),
-          ),
         ],
       ),
     );

@@ -311,6 +311,7 @@ class _Direction extends StatelessWidget {
       children: [
         Text(
           'YOUR DIRECTION',
+          key: const Key('result_direction_heading'),
           style: Theme.of(context).textTheme.labelLarge
               ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
         ),
@@ -325,7 +326,7 @@ class _Direction extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
                 color: winnerColor,
-                fontSize: 76,
+                fontSize: 114,
                 height: 1,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -2,

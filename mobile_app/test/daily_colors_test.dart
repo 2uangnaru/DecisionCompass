@@ -207,7 +207,9 @@ void main() {
   });
 
   group('on Home', () {
-    testWidgets('shows both swatches, named and labelled', (tester) async {
+    testWidgets('shows both swatches and names without role captions', (
+      tester,
+    ) async {
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
         localNow: DateTime(2026, 9, 18, 7),
@@ -230,8 +232,8 @@ void main() {
       expect(find.byKey(const Key('daily_color_supporting')), findsOneWidget);
       expect(find.text('Ocean Blue'), findsOneWidget);
       expect(find.text('Cedar'), findsOneWidget);
-      expect(find.text('Lead'), findsOneWidget);
-      expect(find.text('Supporting'), findsOneWidget);
+      expect(find.text('Lead'), findsNothing);
+      expect(find.text('Supporting'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
@@ -296,7 +298,12 @@ void main() {
       final winner = tester.widget<Text>(
         find.byKey(const Key('result_winner_label')),
       );
+      final heading = tester.widget<Text>(
+        find.byKey(const Key('result_direction_heading')),
+      );
       final percent = tester.widget<Text>(find.text('56.1%'));
+      expect(heading.style!.fontSize, lessThanOrEqualTo(18));
+      expect(winner.style!.fontSize, 114);
       expect(winner.style!.fontSize, greaterThan(percent.style!.fontSize!));
       expect(winner.style!.color, CompassColors.blueLight);
     });

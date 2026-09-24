@@ -96,12 +96,11 @@ void main() {
     );
 
     expect(circle.top, greaterThan(chips.bottom));
-    // The slack is shared around the circle instead of piling up above it,
-    // so neither side of it is doing the work of a layout.
+    // A tall screen must not put a large empty band between chips and Reveal.
     final above = circle.top - chips.bottom;
     expect(
       above,
-      lessThan(size.height * 0.2),
+      lessThanOrEqualTo(56),
       reason: 'the gap before the circle is ${above.toStringAsFixed(0)}dp',
     );
     // Order is what it claims to be, top to bottom.
