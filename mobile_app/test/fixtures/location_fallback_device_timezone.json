@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.4.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
+  "engineVersion": "3.5.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -59,14 +59,14 @@
   "status": "ready",
   "winner": "GO",
   "percentages": {
-    "STAY": 48,
-    "GO": 52
+    "STAY": 47.6,
+    "GO": 52.4
   },
   "dataCoverage": 0.9666666667,
   "modeScore": -0.0611678711,
   "modeBasis": "change_alignment",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "b3a10c4407490d253ee7865ccb5c294eb7be7e5c8a67217a9a592ae6dbbfb4a3",
+  "readingKey": "cc5c52ccc8a90cd294e2b0bdf179d642779a161a87b6e0540782280a706fb96b",
   "axisScores": {
     "action": 0.0871800005,
     "change": 0.0611678711,
@@ -98,7 +98,23 @@
   "windowStatus": "two_available",
   "dailyBrief": {
     "luckyNumber": 9,
-    "colorInspiration": "sage",
+    "colors": {
+      "lead": {
+        "key": "jade",
+        "name": "Jade",
+        "hex": "#56C6A5",
+        "element": "wood",
+        "stem": 0
+      },
+      "supporting": {
+        "key": "solar_coral",
+        "name": "Solar Coral",
+        "hex": "#E88862",
+        "element": "fire",
+        "stem": 2
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    },
     "energy": {
       "level": "lively",
       "index": 53,

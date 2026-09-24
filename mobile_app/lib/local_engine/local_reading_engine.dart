@@ -16,6 +16,7 @@ import 'astronomy/astronomy.dart';
 import 'bazi/bazi.dart';
 import 'calendar/calendar.dart';
 import 'core/bounded_cache.dart';
+import 'colors.dart';
 import 'core/core.dart';
 import 'core/numbers.dart';
 import 'core/sha256.dart';
@@ -38,14 +39,6 @@ const Map<String, String> providers = <String, String>{
   'geoTz': '8.1.9',
   'momentTimezone': '0.6.4',
 };
-
-const List<String> _colors = <String>[
-  'sage',
-  'coral',
-  'sand',
-  'pearl',
-  'ocean_blue',
-];
 
 /// A validated birth profile.
 class EngineProfile {
@@ -338,13 +331,34 @@ class ReadingCalculator {
 
     final first = evaluated[0].value;
     final briefNumber = first.modules['N']!.diagnostics['personalDay']! as int;
-    final energy = dailyEnergy(<({double duration, Evidence evidence})>[
+    // The whole local day, read once with the general profile: the brief must
+    // not move with the decision mode, the category, the chosen period or the
+    // moment the app was opened.
+    final daySegments = <({double duration, _Evaluated value})>[
       for (final s in segments)
         (
           duration: (s.end - s.start) / 1000,
-          evidence: _evaluate(s.start, zone, 'general').evidence,
+          value: _evaluate(s.start, zone, 'general'),
         ),
+    ];
+    final energy = dailyEnergy(<({double duration, Evidence evidence})>[
+      for (final s in daySegments)
+        (duration: s.duration, evidence: s.value.evidence),
     ]);
+    final dayStart = daySegments.first.value;
+    final colors = dailyColors(
+      <ColorSegment>[
+        for (final s in daySegments)
+          (
+            duration: s.duration,
+            modules: <String, Evidence>{
+              for (final e in s.value.modules.entries) e.key: e.value.evidence,
+            },
+          ),
+      ],
+      dayStart.calendar.day.stem,
+      dayStart.modules['N']!.diagnostics['personalDay']! as int,
+    );
 
     final readingKey = _hash(<String, Object?>{
       'profile': _profile.toJson(),
@@ -369,7 +383,12 @@ class ReadingCalculator {
       ...base,
       'status': result.status,
       'winner': result.winner,
-      'percentages': result.percentages,
+      'percentages': result.percentages == null
+          ? null
+          : <String, Object?>{
+              for (final e in result.percentages!.entries)
+                e.key: jsNumber(e.value / 10),
+            },
       if (result.dataCoverage != null)
         'dataCoverage': jsNumber(result.dataCoverage!),
       if (result.modeScore != null) 'modeScore': jsNumber(result.modeScore!),
@@ -392,7 +411,7 @@ class ReadingCalculator {
           : 'no_15_minute_window',
       'dailyBrief': <String, Object?>{
         'luckyNumber': briefNumber,
-        'colorInspiration': _colors[first.calendar.day.stem ~/ 2],
+        'colors': colors,
         'energy': <String, Object?>{
           'level': energy.level,
           'index': energy.index,

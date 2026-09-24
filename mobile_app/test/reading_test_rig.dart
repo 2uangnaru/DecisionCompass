@@ -11,6 +11,7 @@ import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
 import 'package:decision_compass/data/models/models.dart';
+import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -180,3 +181,27 @@ Future<void> revealReading(
     await tester.pump();
   }
 }
+
+/// A valid [DailyColors] pair for tests that only need the brief to exist.
+/// Two different element families, as the engine always produces.
+engine.DailyColors testDailyColors({
+  String leadName = 'Ocean Blue',
+  String leadHex = '#66A9D2',
+  String supportingName = 'Cedar',
+  String supportingHex = '#4EAE83',
+}) => engine.DailyColors(
+  lead: engine.DailyColor(
+    key: leadName.toLowerCase().replaceAll(' ', '_'),
+    name: leadName,
+    hex: leadHex,
+    element: 'water',
+    stem: 8,
+  ),
+  supporting: engine.DailyColor(
+    key: supportingName.toLowerCase().replaceAll(' ', '_'),
+    name: supportingName,
+    hex: supportingHex,
+    element: 'wood',
+    stem: 0,
+  ),
+);

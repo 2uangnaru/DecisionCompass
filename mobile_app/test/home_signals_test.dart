@@ -12,10 +12,14 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
       localNow: DateTime(2026, 9, 18, 7),
     );
-    rig.dailyBriefProvider.response = const engine.DailyBrief(
+    rig.dailyBriefProvider.response = engine.DailyBrief(
       luckyNumber: 4,
-      colorInspiration: 'ocean_blue',
-      energy: engine.DailyEnergy(level: 'steady', index: 51, dataCoverage: 1),
+      colors: testDailyColors(),
+      energy: const engine.DailyEnergy(
+        level: 'steady',
+        index: 51,
+        dataCoverage: 1,
+      ),
     );
 
     await tester.pumpWidget(rig.app);
@@ -37,10 +41,14 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
       localNow: DateTime(2026, 9, 18, 7),
     );
-    rig.dailyBriefProvider.response = const engine.DailyBrief(
+    rig.dailyBriefProvider.response = engine.DailyBrief(
       luckyNumber: 4,
-      colorInspiration: 'ocean_blue',
-      energy: engine.DailyEnergy(level: 'focused', index: 52, dataCoverage: 1),
+      colors: testDailyColors(),
+      energy: const engine.DailyEnergy(
+        level: 'focused',
+        index: 52,
+        dataCoverage: 1,
+      ),
     );
 
     await tester.pumpWidget(rig.app);
@@ -77,11 +85,15 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
       localNow: DateTime(2026, 9, 18, 7),
     );
-    rig.dailyBriefProvider.response = const engine.DailyBrief(
+    rig.dailyBriefProvider.response = engine.DailyBrief(
       luckyNumber: 2,
       // The longest swatch name, so the tile is under its worst case.
-      colorInspiration: 'ocean_blue',
-      energy: engine.DailyEnergy(level: 'steady', index: 51, dataCoverage: 1),
+      colors: testDailyColors(),
+      energy: const engine.DailyEnergy(
+        level: 'steady',
+        index: 51,
+        dataCoverage: 1,
+      ),
     );
     await tester.pumpWidget(rig.app);
     await completeOnboarding(tester);
@@ -90,7 +102,7 @@ void main() {
     // Both labels say "today", so the card cannot be read as a standing fact
     // about the user.
     expect(find.text('Lucky number today:'), findsOneWidget);
-    expect(find.text('Your color today:'), findsOneWidget);
+    expect(find.text('Your colors today:'), findsOneWidget);
 
     Rect tileOf(String label) => tester.getRect(
       find
@@ -99,7 +111,7 @@ void main() {
     );
 
     // The labels still hug the tile's left edge — only the values moved.
-    for (final label in ['Lucky number today:', 'Your color today:']) {
+    for (final label in ['Lucky number today:', 'Your colors today:']) {
       final tile = tileOf(label);
       expect(
         tester.getRect(find.text(label)).left - tile.left,
@@ -115,7 +127,7 @@ void main() {
     );
     // The swatch and the name are centred together, so the pair reads as one
     // block rather than hugging the left edge.
-    final colourTile = tileOf('Your color today:');
+    final colourTile = tileOf('Your colors today:');
     final name = tester.getRect(find.text('Ocean Blue'));
     expect(name.left, greaterThan(colourTile.left));
     expect(name.right, lessThanOrEqualTo(colourTile.right));
@@ -150,10 +162,14 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
         localNow: DateTime(2026, 9, 18, 20),
       );
-      rig.dailyBriefProvider.response = const engine.DailyBrief(
+      rig.dailyBriefProvider.response = engine.DailyBrief(
         luckyNumber: 4,
-        colorInspiration: 'ocean_blue',
-        energy: engine.DailyEnergy(level: 'steady', index: 50, dataCoverage: 1),
+        colors: testDailyColors(),
+        energy: const engine.DailyEnergy(
+          level: 'steady',
+          index: 50,
+          dataCoverage: 1,
+        ),
       );
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
@@ -162,10 +178,14 @@ void main() {
       expect(rig.dailyBriefProvider.previewCalls, 1);
 
       rig.localClock = DateTime(2026, 9, 19, 7);
-      rig.dailyBriefProvider.response = const engine.DailyBrief(
+      rig.dailyBriefProvider.response = engine.DailyBrief(
         luckyNumber: 5,
-        colorInspiration: 'sage',
-        energy: engine.DailyEnergy(level: 'bright', index: 58, dataCoverage: 1),
+        colors: testDailyColors(),
+        energy: const engine.DailyEnergy(
+          level: 'bright',
+          index: 58,
+          dataCoverage: 1,
+        ),
       );
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pump();
@@ -196,7 +216,8 @@ void main() {
       await completeOnboarding(tester);
       await tester.pump();
 
-      expect(find.text('—'), findsNWidgets(3));
+      // Energy, both colour swatches and the lucky number all wait.
+      expect(find.text('—'), findsNWidgets(4));
       expect(find.text('Ocean Blue'), findsNothing);
       expect(find.text('7'), findsNothing);
       expect(find.text('STEADY'), findsNothing);

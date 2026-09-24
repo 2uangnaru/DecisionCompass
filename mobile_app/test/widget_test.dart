@@ -84,7 +84,7 @@ void main() {
     expect(find.text('YOUR DIRECTION'), findsOneWidget);
     // Real engine fixture values, not mock ones.
     expect(find.text('YES'), findsOneWidget);
-    expect(find.text('56%'), findsOneWidget);
+    expect(find.text('56.1%'), findsOneWidget);
   });
 
   testWidgets('core flow renders on common Android window sizes', (

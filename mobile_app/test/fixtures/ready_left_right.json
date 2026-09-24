@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.4.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v7",
+  "engineVersion": "3.5.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,14 +58,14 @@
   "status": "ready",
   "winner": "RIGHT",
   "percentages": {
-    "LEFT": 48,
-    "RIGHT": 52
+    "LEFT": 48.3,
+    "RIGHT": 51.7
   },
   "dataCoverage": 0.9666666667,
   "modeScore": -0.0419795769,
   "modeBasis": "symbolic_polarity",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "f3eb4ce1a3a9fc0bf18aa9e861ed1b08e6a2b6c1894ea0172d7629009b92604e",
+  "readingKey": "620e5b0af5614dd2b470a5ab4149e7313b5eda164ff1b4a58b16c7e6642ed8d6",
   "axisScores": {
     "action": 0.1376736842,
     "change": 0.1813066735,
@@ -97,7 +97,23 @@
   "windowStatus": "two_available",
   "dailyBrief": {
     "luckyNumber": 1,
-    "colorInspiration": "sage",
+    "colors": {
+      "lead": {
+        "key": "mint",
+        "name": "Mint",
+        "hex": "#AADBB2",
+        "element": "wood",
+        "stem": 1
+      },
+      "supporting": {
+        "key": "solar_coral",
+        "name": "Solar Coral",
+        "hex": "#E88862",
+        "element": "fire",
+        "stem": 2
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    },
     "energy": {
       "level": "bright",
       "index": 56,

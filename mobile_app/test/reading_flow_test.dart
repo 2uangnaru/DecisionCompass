@@ -244,8 +244,8 @@ void main() {
 
       expect(find.byKey(const Key('result_ready')), findsOneWidget);
       expect(find.text('YES'), findsOneWidget);
-      expect(find.text('56%'), findsOneWidget);
-      expect(find.text('NO  44%'), findsOneWidget);
+      expect(find.text('56.1%'), findsOneWidget);
+      expect(find.text('NO  43.9%'), findsOneWidget);
       // NOW never shows windows.
       expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
       expect(find.byKey(const Key('result_daily_brief')), findsOneWidget);
@@ -267,11 +267,11 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(const Key('result_ready')),
-          matching: find.text('57%'),
+          matching: find.text('56.7%'),
         ),
         findsOneWidget,
       );
-      expect(find.text('BACKWARD  43%'), findsOneWidget);
+      expect(find.text('BACKWARD  43.3%'), findsOneWidget);
       final windowCard = find.byKey(const Key('result_lucky_windows'));
       expect(windowCard, findsOneWidget);
       // The engine's own local wall clock (18:00–19:00 and 19:00–21:00 in
@@ -300,8 +300,8 @@ void main() {
 
       // The engine gave RIGHT the lead here, which YES/NO would not have.
       expect(find.text('RIGHT'), findsWidgets);
-      expect(find.text('52%'), findsOneWidget);
-      expect(find.text('LEFT  48%'), findsOneWidget);
+      expect(find.text('51.7%'), findsOneWidget);
+      expect(find.text('LEFT  48.3%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (
@@ -317,8 +317,8 @@ void main() {
 
       expect(find.byKey(const Key('result_balanced')), findsOneWidget);
       expect(find.text('BALANCED'), findsOneWidget);
-      expect(find.text('ACT  50%'), findsOneWidget);
-      expect(find.text('WAIT  50%'), findsOneWidget);
+      expect(find.text('ACT  50.0%'), findsOneWidget);
+      expect(find.text('WAIT  50.0%'), findsOneWidget);
       expect(find.text('YOUR DIRECTION'), findsNothing);
     });
 

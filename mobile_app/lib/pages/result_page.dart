@@ -9,7 +9,6 @@ import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
-import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_info.dart';
@@ -52,11 +51,16 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   bool get _isCaution => reading.winner == _mode.second;
 
   /// Label/percentage pairs straight from the response, winner first.
-  List<({String label, int percent})> get _splits {
+  List<({String label, String percent})> get _splits {
     final values = reading.percentages?.values;
     if (values == null) return const [];
+    // One decimal, formatted once here: the two sides are integer tenths in
+    // the DTO, so they always read as adding to 100.0.
     final entries = values.entries
-        .map((entry) => (label: entry.key, percent: entry.value))
+        .map(
+          (entry) =>
+              (label: entry.key, percent: entry.value.toStringAsFixed(1)),
+        )
         .toList();
     final leading = reading.winner ?? _mode.first;
     return [
@@ -292,7 +296,7 @@ class _Direction extends StatelessWidget {
   const _Direction({required this.reading, required this.splits});
 
   final engine.ReadingResponse reading;
-  final List<({String label, int percent})> splits;
+  final List<({String label, String percent})> splits;
 
   @override
   Widget build(BuildContext context) {
@@ -343,7 +347,7 @@ class _Direction extends StatelessWidget {
 class _Balanced extends StatelessWidget {
   const _Balanced({required this.splits});
 
-  final List<({String label, int percent})> splits;
+  final List<({String label, String percent})> splits;
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +437,7 @@ class _DailyBrief extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colour = titleCaseWords(brief.colorInspiration);
+    final colors = brief.colors;
     return GlassCard(
       key: const Key('result_daily_brief'),
       child: Column(
@@ -442,7 +446,12 @@ class _DailyBrief extends StatelessWidget {
             children: [
               const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
               const SizedBox(width: 12),
-              Expanded(child: Text('Colour to keep near you: $colour')),
+              Expanded(
+                child: Text(
+                  'Colours to keep near you: ${colors.lead.name} '
+                  'and ${colors.supporting.name}',
+                ),
+              ),
               const SizedBox(width: 10),
               Text(
                 '${brief.luckyNumber}',

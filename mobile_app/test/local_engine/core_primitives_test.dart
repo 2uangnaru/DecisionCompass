@@ -120,7 +120,8 @@ void main() {
       final result = decision(Evidence(0, 0, 1), 'yes_no');
       expect(result.status, 'balanced');
       expect(result.winner, isNull);
-      expect(result.percentages, <String, int>{'YES': 50, 'NO': 50});
+      // Tenths now, so the balance point is 500 on each side.
+      expect(result.percentages, <String, int>{'YES': 500, 'NO': 500});
     });
 
     test('out-of-range evidence is refused rather than clipped silently', () {

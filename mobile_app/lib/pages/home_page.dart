@@ -8,25 +8,12 @@ import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
-import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_info.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
-
-/// Exhaustive per the engine's fixed `COLORS` list
-/// (`calculation-engine/src/index.js`), but looked up rather than
-/// switched-on: a plain string is tolerant of a value this map does not yet
-/// know, falling back to a neutral swatch instead of crashing.
-const _colorSwatches = <String, Color>{
-  'sage': Color(0xFF8FA989),
-  'coral': Color(0xFFD97B69),
-  'sand': Color(0xFFD9C29A),
-  'pearl': Color(0xFFE8E3DA),
-  'ocean_blue': CompassColors.blueLight,
-};
 
 const _shortMonths = <String>[
   'JAN',
@@ -397,10 +384,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             future: _dailyBrief,
             builder: (context, snapshot) {
               final brief = snapshot.data;
-              final colorName = brief?.colorInspiration;
-              final swatch = colorName == null
-                  ? CompassColors.line
-                  : (_colorSwatches[colorName] ?? CompassColors.blueLight);
+              final colors = brief?.colors;
               final energy = brief?.energy;
               final energyAccent = switch (energy?.level) {
                 'quiet' || 'soft' => CompassColors.blueLight,
@@ -488,52 +472,24 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       children: [
                         Expanded(
                           child: _TodaySignalTile(
-                            label: 'Your color today:',
-                            value: Row(
+                            label: 'Your colors today:',
+                            // Two swatches, stacked: side by side, two colour
+                            // names do not fit a half-width tile on a 360dp
+                            // phone. Both hexes come from the engine, so the
+                            // app never invents a shade.
+                            value: Column(
                               mainAxisSize: MainAxisSize.min,
-                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                // The swatch carries its own colour out into a
-                                // soft halo, so the tile reads as that colour
-                                // at a glance rather than as a line of text.
-                                Container(
-                                  width: 22,
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: swatch,
-                                    border: Border.all(
-                                      color: Colors.white54,
-                                      width: 1.5,
-                                    ),
-                                    boxShadow: colorName == null
-                                        ? null
-                                        : [
-                                            BoxShadow(
-                                              color: swatch.withValues(
-                                                alpha: 0.5,
-                                              ),
-                                              blurRadius: 12,
-                                              spreadRadius: 1,
-                                            ),
-                                          ],
-                                  ),
+                                _Swatch(
+                                  color: colors?.lead,
+                                  role: 'Lead',
+                                  testKey: 'daily_color_lead',
                                 ),
-                                const SizedBox(width: 8),
-                                Flexible(
-                                  child: Text(
-                                    colorName == null
-                                        ? '—'
-                                        : titleCaseWords(colorName),
-                                    maxLines: 2,
-                                    textAlign: TextAlign.center,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: CompassColors.text,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
+                                const SizedBox(height: 4),
+                                _Swatch(
+                                  color: colors?.supporting,
+                                  role: 'Supporting',
+                                  testKey: 'daily_color_supporting',
                                 ),
                               ],
                             ),
@@ -708,6 +664,84 @@ class _ModeCard extends StatelessWidget {
                     ? 10
                     : 13,
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// One of the day's two colours: the swatch, its name, and the role it plays.
+/// The hex is the engine's; the app only draws it.
+class _Swatch extends StatelessWidget {
+  const _Swatch({
+    required this.color,
+    required this.role,
+    required this.testKey,
+  });
+
+  final engine.DailyColor? color;
+  final String role;
+  final String testKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final swatch = color == null ? CompassColors.line : Color(color!.argb);
+    return Semantics(
+      label: color == null
+          ? '$role colour not available yet'
+          : '$role colour, ${color!.name}',
+      child: Row(
+        key: Key(testKey),
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            width: 16,
+            height: 16,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: swatch,
+              border: Border.all(color: Colors.white54, width: 1.2),
+              boxShadow: color == null
+                  ? null
+                  : [
+                      BoxShadow(
+                        color: swatch.withValues(alpha: 0.5),
+                        blurRadius: 9,
+                        spreadRadius: 0.5,
+                      ),
+                    ],
+            ),
+          ),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  color?.name ?? '—',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: CompassColors.text,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    height: 1.15,
+                  ),
+                ),
+                Text(
+                  role,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: CompassColors.muted,
+                    fontSize: 9.5,
+                    height: 1.2,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

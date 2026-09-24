@@ -67,9 +67,10 @@ double projectedScore(DecisionMode mode, AxisScores axes) {
   return raw.clamp(-1.0, 1.0);
 }
 
-/// `percent()` in `calculation-engine/src/core.js`.
-int percentFor(double score) =>
-    (50 + 40 * score.clamp(-1.0, 1.0) + 0.5).floor();
+/// `percentTenths()` in `calculation-engine/src/core.js`: the display band in
+/// integer tenths of a percent, so the pair is exact.
+int percentTenthsFor(double score) =>
+    (500 + 400 * score.clamp(-1.0, 1.0) + 0.5).floor();
 
 void main() {
   final fixtures = readAllFixtures();
@@ -120,20 +121,20 @@ void main() {
         if (percentages == null) return;
 
         final projection = projections[response.mode]!;
-        final first = percentFor(response.modeScore!);
+        final first = percentTenthsFor(response.modeScore!);
         expect(
-          percentages[projection.first],
+          percentages.tenths[projection.first],
           first,
           reason:
               '$name: percentages.${projection.first} must be '
-              'floor(50 + 40 * modeScore + 0.5)',
+              'floor(500 + 400 * modeScore + 0.5) tenths',
         );
-        expect(percentages[projection.second], 100 - first);
+        expect(percentages.tenths[projection.second], 1000 - first);
         expect(
           response.winner,
-          first == 50
+          first == 500
               ? isNull
-              : (first > 50 ? projection.first : projection.second),
+              : (first > 500 ? projection.first : projection.second),
           reason: '$name: winner must follow the percentages',
         );
       });
@@ -146,7 +147,7 @@ void main() {
     );
     expect(response.status, ReadingStatus.balanced);
     expect(response.winner, isNull);
-    expect(percentFor(response.modeScore!), 50);
+    expect(percentTenthsFor(response.modeScore!), 500);
   });
 
   test('LEFT/RIGHT and FORWARD/BACKWARD are not relabelled YES/NO', () {
@@ -166,6 +167,9 @@ void main() {
 
     expect(leftRight.modeScore, isNot(closeTo(asYesNo, 1e-9)));
     expect(asForwardBackward, isNot(closeTo(asYesNo, 1e-9)));
-    expect(percentFor(leftRight.modeScore!), isNot(percentFor(asYesNo)));
+    expect(
+      percentTenthsFor(leftRight.modeScore!),
+      isNot(percentTenthsFor(asYesNo)),
+    );
   });
 }

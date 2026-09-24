@@ -49,8 +49,8 @@ test('health reports the engine version and ruleset from the engine itself', asy
     service: SERVICE, status: 'ok', engineVersion: VERSION, rulesetVersion: RULESET,
   });
   // Bumped with the expanded full-day energy tones.
-  assert.equal(VERSION, '3.4.0-mvp');
-  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v7');
+  assert.equal(VERSION, '3.5.0-mvp');
+  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v8');
 });
 
 test('a YES/NO NOW request returns a real engine reading', async () => {
@@ -69,7 +69,10 @@ test('a YES/NO NOW request returns a real engine reading', async () => {
   assert.match(reading.readingKey, /^[0-9a-f]{64}$/);
   assert.equal(reading.context.timezone, 'Asia/Ho_Chi_Minh');
   assert.ok(Array.isArray(reading.warnings));
-  assert.ok(reading.dailyBrief.colorInspiration.length > 0);
+  const colors = reading.dailyBrief.colors;
+  assert.ok(/^#[0-9A-F]{6}$/.test(colors.lead.hex));
+  assert.ok(/^#[0-9A-F]{6}$/.test(colors.supporting.hex));
+  assert.notEqual(colors.lead.hex, colors.supporting.hex);
   assert.ok(reading.inputSnapshot.profile.birthDate === PROFILE.birthDate);
 });
 

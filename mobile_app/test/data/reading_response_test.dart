@@ -62,7 +62,22 @@ void main() {
 
         final legacy = DailyBrief.fromJson({
           'luckyNumber': 4,
-          'colorInspiration': 'sage',
+          'colors': {
+            'lead': {
+              'key': 'sage',
+              'name': 'Sage',
+              'hex': '#9BBF8A',
+              'element': 'wood',
+              'stem': 1,
+            },
+            'supporting': {
+              'key': 'ember',
+              'name': 'Ember',
+              'hex': '#D97566',
+              'element': 'fire',
+              'stem': 2,
+            },
+          },
         });
         expect(legacy.energy, isNull);
         expect(legacy.toJson().containsKey('energy'), isFalse);
@@ -113,15 +128,22 @@ void main() {
         final response = ReadingResponse.fromJson(entry.value);
         if (response.status == ReadingStatus.ready ||
             response.status == ReadingStatus.balanced) {
-          final sum = response.percentages!.values.values.fold<int>(
+          final sum = response.percentages!.tenths.values.fold<int>(
             0,
             (a, b) => a + b,
           );
           expect(
             sum,
-            100,
-            reason: '${entry.key} percentages should sum to 100',
+            1000,
+            reason: '${entry.key} percentages should sum to 100.0',
           );
+          for (final value in response.percentages!.tenths.values) {
+            expect(
+              (value * 10).round() / 10,
+              value,
+              reason: '${entry.key} carries more than one decimal',
+            );
+          }
         }
       }
     });
@@ -298,7 +320,7 @@ void main() {
       );
       expect(() => response.luckyWindows.removeAt(0), throwsUnsupportedError);
       expect(
-        () => response.percentages!.values['FORWARD'] = 99,
+        () => response.percentages!.tenths['FORWARD'] = 99,
         throwsUnsupportedError,
       );
       expect(

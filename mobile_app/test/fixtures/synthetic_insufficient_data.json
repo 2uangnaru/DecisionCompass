@@ -68,7 +68,23 @@
   "windowStatus": "not_applicable",
   "dailyBrief": {
     "luckyNumber": 1,
-    "colorInspiration": "pearl"
+    "colors": {
+      "lead": {
+        "key": "pearl",
+        "name": "Pearl",
+        "hex": "#E8DED0",
+        "element": "metal",
+        "stem": 7
+      },
+      "supporting": {
+        "key": "ocean_blue",
+        "name": "Ocean Blue",
+        "hex": "#66A9D2",
+        "element": "water",
+        "stem": 8
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    }
   },
   "monetizationHandledByApp": true
 }

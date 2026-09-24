@@ -80,7 +80,10 @@ void main() {
           reason: '${period.label} must not start selected',
         );
       }
-      expect(find.text('Reading for Overall · Now'), findsOneWidget);
+      // The old footer repeated the badge and the chips; the hierarchy above
+      // carries that now.
+      expect(find.byKey(const Key('ritual_reading_summary')), findsNothing);
+      expect(find.byKey(const Key('ritual_category_badge')), findsOneWidget);
     });
 
     testWidgets('the reveal control names the chosen period', (tester) async {
@@ -109,7 +112,7 @@ void main() {
             .contains('Reveal my direction for this evening'),
         isTrue,
       );
-      expect(find.text('Reading for Overall · This Evening'), findsOneWidget);
+      expect(find.byKey(const Key('ritual_reading_summary')), findsNothing);
       handle.dispose();
     });
   });
@@ -198,6 +201,65 @@ void main() {
   });
 
   group('periods that are already over', () {
+    testWidgets('lock at noon even when the selector was already open', (
+      tester,
+    ) async {
+      var clock = DateTime(2026, 9, 18, 11, 59, 59);
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_study_morning.json'),
+        liveLocalClock: () => clock,
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
+
+      clock = DateTime(2026, 9, 18, 12);
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Morning · Passed'), findsOneWidget);
+      expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
+      expect(
+        find.text('Morning has passed. Choose another time.'),
+        findsOneWidget,
+      );
+
+      await tester.tap(
+        find.byKey(const Key('reveal_button')),
+        warnIfMissed: false,
+      );
+      await tester.pump();
+      expect(rig.repository.requests, isEmpty);
+
+      await tester.tap(periodChip(TimePeriod.midday));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.midday).selected, isTrue);
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump(const Duration(milliseconds: 380));
+      await tester.pump();
+      expect(rig.sentRequest!.period, engine.TimePeriod.midday);
+      await pumpPastRitual(tester);
+    });
+
+    testWidgets('a stale chip cannot select morning after noon', (
+      tester,
+    ) async {
+      var clock = DateTime(2026, 9, 18, 11, 59, 59);
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        liveLocalClock: () => clock,
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+
+      clock = DateTime(2026, 9, 18, 12);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isFalse);
+      expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+    });
+
     testWidgets('are muted, marked Passed and cannot be chosen', (
       tester,
     ) async {

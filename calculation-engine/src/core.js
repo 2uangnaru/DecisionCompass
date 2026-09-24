@@ -1,5 +1,5 @@
-export const VERSION = '3.4.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v7';
+export const VERSION = '3.5.0-mvp';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v8';
 export const WEIGHTS = Object.freeze({ B: 2 / 9, Z: 2 / 9, T: 1 / 9, W: 2 / 9, N: 1 / 6, U: 1 / 18 });
 
 export const CATEGORIES = Object.freeze(['general', 'love', 'career', 'money', 'study', 'friends', 'other']);
@@ -73,6 +73,20 @@ export function combine(modules, category = 'general') {
   return evidence(clamp(out.a), clamp(out.c), Math.min(1, out.coverage));
 }
 export function percent(score) { return Math.floor(50 + 40 * clamp(score) + .5); }
+/**
+ * The same 10–90 projection carried to one decimal, as an integer number of
+ * tenths.
+ *
+ * Whole percent loses real differences: three consecutive days scoring .0548,
+ * .0565 and .0599 all floor to 52, which reads as a stale value even though
+ * the underlying evidence changed. Tenths separate them (52.2 / 52.3 / 52.4).
+ * Kept as an integer so a decision's two sides are `t` and `1000 - t` and
+ * therefore always add to exactly 100.0%.
+ *
+ * Lucky-window scores deliberately keep whole percent: they are a coarse
+ * ranking of time slots, not the reading's headline number.
+ */
+export function percentTenths(score) { return Math.floor(500 + 400 * clamp(score) + .5); }
 export function scoreForMode(e, mode) {
   if (!Object.hasOwn(MODES, mode)) throw new Error('INVALID_DECISION_MODE');
   const definition = MODES[mode];
@@ -82,9 +96,10 @@ export function decision(e, mode) {
   if (!Object.hasOwn(MODES, mode)) throw new Error('INVALID_DECISION_MODE');
   if (!e.coverage) return { status: 'insufficient_data', percentages: null, winner: null };
   const definition = MODES[mode], [first, second] = definition.labels;
-  const selectedScore = scoreForMode(e, mode), p = percent(selectedScore);
-  return { status: p === 50 ? 'balanced' : 'ready', winner: p === 50 ? null : p > 50 ? first : second,
-    percentages: { [first]: p, [second]: 100 - p }, dataCoverage: round(e.coverage),
+  const selectedScore = scoreForMode(e, mode), tenths = percentTenths(selectedScore);
+  const balanced = tenths === 500;
+  return { status: balanced ? 'balanced' : 'ready', winner: balanced ? null : tenths > 500 ? first : second,
+    percentages: { [first]: tenths / 10, [second]: (1000 - tenths) / 10 }, dataCoverage: round(e.coverage),
     modeScore: round(selectedScore), modeBasis: definition.basis,
     meaning: 'symbolic_alignment_not_success_probability' };
 }

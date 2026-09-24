@@ -50,7 +50,7 @@ String? shownNote(WidgetTester tester) =>
 
 engine.DailyBrief briefWith(String level) => engine.DailyBrief(
   luckyNumber: 4,
-  colorInspiration: 'ocean_blue',
+  colors: testDailyColors(),
   energy: engine.DailyEnergy(level: level, index: 51, dataCoverage: 1),
 );
 
@@ -645,11 +645,15 @@ void main() {
         of: find.byKey(const Key('result_daily_brief')),
         matching: infoButton,
       );
+      await tester.ensureVisible(resultButton);
+      await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
       final message = shownNote(tester);
       expect(dailyEnergyMessagePools['bright'], contains(message));
 
+      await tester.ensureVisible(resultButton);
+      await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.close_rounded).first);
@@ -700,6 +704,8 @@ void main() {
         of: find.byKey(const Key('result_daily_brief')),
         matching: infoButton,
       );
+      await tester.ensureVisible(resultButton);
+      await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
       expect(dailyEnergyMessagePools['bright'], contains(shownNote(tester)));
@@ -724,6 +730,8 @@ void main() {
         of: find.byKey(const Key('result_daily_brief')),
         matching: infoButton,
       );
+      await tester.ensureVisible(resultButton);
+      await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
       final message = shownNote(tester);
@@ -734,7 +742,11 @@ void main() {
       await tester.pumpAndSettle();
 
       // Still the reading's own insight, and no "new today" on a past date.
+      await tester.ensureVisible(resultButton);
+      await tester.pumpAndSettle();
       await tester.tap(resultButton);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(resultButton);
       await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();

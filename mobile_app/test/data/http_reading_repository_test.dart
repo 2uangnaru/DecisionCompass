@@ -129,8 +129,9 @@ void main() {
         expect(reading.engineVersion, fixture['engineVersion']);
         expect(reading.readingKey, fixture['readingKey']);
         expect(reading.status, ReadingStatus.ready);
-        final percentages = reading.percentages!.values.values;
-        expect(percentages.fold<int>(0, (a, b) => a + b), 100);
+        // Tenths, so the pair is exact rather than a floating-point sum.
+        final tenths = reading.percentages!.tenths.values;
+        expect(tenths.fold<int>(0, (a, b) => a + b), 1000);
       });
     }
 

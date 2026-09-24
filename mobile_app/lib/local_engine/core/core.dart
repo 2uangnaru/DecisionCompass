@@ -8,8 +8,8 @@ library;
 
 import 'numbers.dart';
 
-const String engineVersion = '3.4.0-mvp';
-const String rulesetVersion = 'civil-midnight-chinese-calendar-symbolic-v7';
+const String engineVersion = '3.5.0-mvp';
+const String rulesetVersion = 'civil-midnight-chinese-calendar-symbolic-v8';
 
 /// Default module weights: BaZi, Zi Wei, almanac, Western, numerology, cosmic.
 const Map<String, double> defaultWeights = <String, double>{
@@ -262,6 +262,15 @@ Evidence combine(
 /// Maps a symbolic score in [-1, 1] onto the 10–90 display band.
 int percent(double score) => (50 + 40 * clampUnit(score) + .5).floor();
 
+/// The same projection carried to one decimal, as an integer number of tenths.
+///
+/// Whole percent loses real differences: three consecutive days scoring .0548,
+/// .0565 and .0599 all floor to 52, which reads as a stale value even though
+/// the evidence changed. Kept as an integer so a decision's two sides are `t`
+/// and `1000 - t` and therefore always add to exactly 100.0%. Lucky-window
+/// scores deliberately stay at whole percent.
+int percentTenths(double score) => (500 + 400 * clampUnit(score) + .5).floor();
+
 double scoreForMode(Evidence e, String mode) {
   final definition = modes[mode];
   if (definition == null) throw const EngineFailure('INVALID_DECISION_MODE');
@@ -282,6 +291,8 @@ class Decision {
   });
 
   final String status;
+
+  /// Integer tenths of a percent, so the pair sums to exactly 1000.
   final Map<String, int>? percentages;
   final String? winner;
   final double? dataCoverage;
@@ -303,15 +314,16 @@ Decision decision(Evidence e, String mode) {
   final first = definition.labels[0];
   final second = definition.labels[1];
   final selectedScore = scoreForMode(e, mode);
-  final p = percent(selectedScore);
+  final tenths = percentTenths(selectedScore);
+  final balanced = tenths == 500;
   return Decision(
-    status: p == 50 ? 'balanced' : 'ready',
-    winner: p == 50
+    status: balanced ? 'balanced' : 'ready',
+    winner: balanced
         ? null
-        : p > 50
+        : tenths > 500
         ? first
         : second,
-    percentages: <String, int>{first: p, second: 100 - p},
+    percentages: <String, int>{first: tenths, second: 1000 - tenths},
     dataCoverage: roundTen(e.coverage),
     modeScore: roundTen(selectedScore),
     modeBasis: definition.basis,

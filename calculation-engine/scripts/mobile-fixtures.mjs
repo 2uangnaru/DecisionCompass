@@ -15,7 +15,7 @@
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createCalculator } from '../src/index.js';
-import { MODES, percent, scoreForMode } from '../src/core.js';
+import { MODES, percentTenths, scoreForMode } from '../src/core.js';
 
 const FIXTURE_DIR = fileURLToPath(new URL('../../mobile_app/test/fixtures/', import.meta.url));
 const ZONE_VN = 'Asia/Ho_Chi_Minh';
@@ -159,14 +159,18 @@ function projectionProblems(result, label) {
   }
   if (result.percentages) {
     const [first, second] = MODES[result.mode].labels;
-    const expected = percent(result.modeScore);
-    if (result.percentages[first] !== expected) {
-      problems.push(`${label}: percentages.${first} ${result.percentages[first]} != percent(modeScore) ${expected}`);
+    // Percentages carry one decimal, held as an integer number of tenths so
+    // the pair is exact; compare in tenths rather than in floating point.
+    const expected = percentTenths(result.modeScore);
+    const shown = Math.round(result.percentages[first] * 10);
+    if (shown !== expected) {
+      problems.push(`${label}: percentages.${first} ${result.percentages[first]} != percentTenths(modeScore)/10 ${expected / 10}`);
     }
-    if (result.percentages[first] + result.percentages[second] !== 100) {
-      problems.push(`${label}: percentages do not sum to 100`);
+    if (shown + Math.round(result.percentages[second] * 10) !== 1000) {
+      problems.push(`${label}: percentages do not sum to 100.0`);
     }
-    const winner = expected === 50 ? null : expected > 50 ? first : second;
+    // `expected` is in tenths now, so the balance point is 500, not 50.
+    const winner = expected === 500 ? null : expected > 500 ? first : second;
     if (result.winner !== winner) {
       problems.push(`${label}: winner ${result.winner} != ${winner}`);
     }

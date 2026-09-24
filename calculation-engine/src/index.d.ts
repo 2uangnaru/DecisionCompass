@@ -42,6 +42,22 @@ export interface ResolvedContext {
   offsetSeconds:number; localDate:string; region:string; countryCandidates:string[];
   locationStatus:string; locationZoneCandidates:string[]; tzdbVersion:string;
 }
+/** One of the twenty palette entries, with the stem and element it came from. */
+export interface DailyColor {
+  key:string; name:string; hex:string;
+  element:'wood'|'fire'|'earth'|'metal'|'water'; stem:number;
+}
+
+/**
+ * Two colours for the local civil day. `lead` comes from the day stem's own
+ * pair; `supporting` from the family that element generates, so the two are
+ * always different families. Editorial symbolism, not Yong Shen.
+ */
+export interface DailyColors {
+  lead:DailyColor; supporting:DailyColor;
+  meaning:'symbolic_colour_pairing_not_yong_shen';
+}
+
 export interface ReadingResult {
   engineVersion:string; rulesetVersion:string; providers:Record<string,string>;
   status:'ready' | 'balanced' | 'insufficient_data' | 'period_elapsed';
@@ -55,7 +71,9 @@ export interface ReadingResult {
   warnings:string[]; inputSnapshot:Record<string,unknown>;
   evaluatedAtUtc?:string; luckyWindows:LuckyWindow[];
   windowStatus?:'not_applicable' | 'two_available' | 'one_remaining' | 'no_15_minute_window';
-  dailyBrief?:{luckyNumber:number;colorInspiration:string;energy:{
+  /** One decimal, as tenths of a percent: the two sides always sum to 100.0. */
+  percentagesArePercentNotProbability?:true;
+  dailyBrief?:{luckyNumber:number;colors:DailyColors;energy:{
     level:'quiet'|'soft'|'steady'|'lively'|'bright'|'radiant'|'focused'|'flowing'|'unavailable';index:number|null;dataCoverage:number;
   }};
   segments?:Array<{startUtc:string;endUtc:string;includedFromUtc:string;durationSeconds:number;modules:Record<ModuleId,ModuleResult>}>;

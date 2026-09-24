@@ -11,8 +11,8 @@
   },
   "status": "balanced",
   "percentages": {
-    "ACT": 50,
-    "WAIT": 50
+    "ACT": 50.0,
+    "WAIT": 50.0
   },
   "winner": null,
   "dataCoverage": 0.79,
@@ -95,7 +95,23 @@
   "windowStatus": "two_available",
   "dailyBrief": {
     "luckyNumber": 4,
-    "colorInspiration": "coral"
+    "colors": {
+      "lead": {
+        "key": "ember",
+        "name": "Ember",
+        "hex": "#D97566",
+        "element": "fire",
+        "stem": 2
+      },
+      "supporting": {
+        "key": "ochre",
+        "name": "Ochre",
+        "hex": "#C59E61",
+        "element": "earth",
+        "stem": 4
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    }
   },
   "monetizationHandledByApp": true
 }

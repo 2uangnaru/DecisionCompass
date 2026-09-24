@@ -27,7 +27,7 @@ final note = find.byKey(const Key('daily_energy_note'));
 
 engine.DailyBrief briefWith(String level) => engine.DailyBrief(
   luckyNumber: 4,
-  colorInspiration: 'ocean_blue',
+  colors: testDailyColors(),
   energy: engine.DailyEnergy(level: level, index: 51, dataCoverage: 1),
 );
 
@@ -144,7 +144,7 @@ void main() {
       await tester.pumpAndSettle();
 
       final tab = tester.getRect(note);
-      for (final label in ['Lucky number today:', 'Your color today:']) {
+      for (final label in ['Lucky number today:', 'Your colors today:']) {
         expect(
           tab.overlaps(tester.getRect(find.text(label))),
           isFalse,
@@ -269,10 +269,10 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
         localNow: DateTime(2026, 9, 18, 7),
       );
-      rig.dailyBriefProvider.response = const engine.DailyBrief(
+      rig.dailyBriefProvider.response = engine.DailyBrief(
         luckyNumber: 4,
-        colorInspiration: 'ocean_blue',
-        energy: engine.DailyEnergy(
+        colors: testDailyColors(),
+        energy: const engine.DailyEnergy(
           level: 'unavailable',
           index: null,
           dataCoverage: 0.1,
@@ -315,6 +315,8 @@ void main() {
       final card = find.byKey(const Key('result_daily_brief'));
       final closed = tester.getSize(card).height;
 
+      await tester.ensureVisible(inBrief(infoButton));
+      await tester.pumpAndSettle();
       await tester.tap(inBrief(infoButton));
       await tester.pumpAndSettle();
 
@@ -325,6 +327,8 @@ void main() {
       expect(find.byType(Dialog), findsNothing);
       expect(find.text(quietSentence), findsNothing);
 
+      await tester.ensureVisible(inBrief(infoButton));
+      await tester.pumpAndSettle();
       await tester.tap(inBrief(infoButton));
       await tester.pumpAndSettle();
       expect(note, findsNothing);

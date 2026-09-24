@@ -59,17 +59,116 @@ class DailyEnergy {
   };
 }
 
+/// One of the engine's twenty palette entries. Editorial symbolism, not a
+/// Yong Shen claim.
+class DailyColor {
+  const DailyColor({
+    required this.key,
+    required this.name,
+    required this.hex,
+    required this.element,
+    required this.stem,
+  });
+
+  final String key;
+  final String name;
+
+  /// `#RRGGBB`, straight from the engine, so the app never invents a shade.
+  final String hex;
+
+  /// One of wood, fire, earth, metal, water.
+  final String element;
+
+  /// The Heavenly Stem this colour belongs to, 0–9.
+  final int stem;
+
+  /// The hex as an `0xAARRGGBB` value for Flutter's `Color`.
+  int get argb => 0xFF000000 | int.parse(hex.substring(1), radix: 16);
+
+  factory DailyColor.fromJson(JsonMap json, String context) {
+    final hex = requireField<String>(json, 'hex', context);
+    final element = requireField<String>(json, 'element', context);
+    final stem = requireInt(json, 'stem', context);
+    if (!RegExp(r'^#[0-9A-Fa-f]{6}$').hasMatch(hex) ||
+        !const {'wood', 'fire', 'earth', 'metal', 'water'}.contains(element) ||
+        stem < 0 ||
+        stem > 9) {
+      throw const ReadingDtoException('Invalid daily colour');
+    }
+    return DailyColor(
+      key: requireField<String>(json, 'key', context),
+      name: requireField<String>(json, 'name', context),
+      hex: hex,
+      element: element,
+      stem: stem,
+    );
+  }
+
+  JsonMap toJson() => {
+    'key': key,
+    'name': name,
+    'hex': hex,
+    'element': element,
+    'stem': stem,
+  };
+}
+
+/// The day's colour pairing: the lead from the day stem's own family, the
+/// supporting from the family that element generates. Always two different
+/// families, so the swatches are visually distinct.
+class DailyColors {
+  const DailyColors({
+    required this.lead,
+    required this.supporting,
+    this.meaning = 'symbolic_colour_pairing_not_yong_shen',
+  });
+
+  final DailyColor lead;
+  final DailyColor supporting;
+
+  /// The engine's own disclaimer, carried rather than restated by the app.
+  final String meaning;
+
+  factory DailyColors.fromJson(JsonMap json) {
+    const context = 'DailyColors';
+    final colors = DailyColors(
+      lead: DailyColor.fromJson(
+        requireField<JsonMap>(json, 'lead', context),
+        '$context.lead',
+      ),
+      supporting: DailyColor.fromJson(
+        requireField<JsonMap>(json, 'supporting', context),
+        '$context.supporting',
+      ),
+      meaning:
+          optionalField<String>(json, 'meaning', context) ??
+          'symbolic_colour_pairing_not_yong_shen',
+    );
+    if (colors.lead.element == colors.supporting.element ||
+        colors.lead.hex.toUpperCase() == colors.supporting.hex.toUpperCase()) {
+      throw const ReadingDtoException('Daily colours must be distinct');
+    }
+    return colors;
+  }
+
+  JsonMap toJson() => {
+    'lead': lead.toJson(),
+    'supporting': supporting.toJson(),
+    'meaning': meaning,
+  };
+}
+
 /// Small daily-signal card content. Mirrors the `dailyBrief` object on
 /// `ReadingResult` in `calculation-engine/src/index.d.ts`.
 class DailyBrief {
   const DailyBrief({
     required this.luckyNumber,
-    required this.colorInspiration,
+    required this.colors,
     this.energy,
   });
 
   final int luckyNumber;
-  final String colorInspiration;
+  final DailyColors colors;
 
   /// Optional so previously saved reading snapshots remain readable.
   final DailyEnergy? energy;
@@ -78,7 +177,9 @@ class DailyBrief {
     const context = 'DailyBrief';
     return DailyBrief(
       luckyNumber: requireInt(json, 'luckyNumber', context),
-      colorInspiration: requireField<String>(json, 'colorInspiration', context),
+      colors: DailyColors.fromJson(
+        requireField<JsonMap>(json, 'colors', context),
+      ),
       energy: switch (optionalField<JsonMap>(json, 'energy', context)) {
         final JsonMap value => DailyEnergy.fromJson(value),
         null => null,
@@ -88,7 +189,7 @@ class DailyBrief {
 
   JsonMap toJson() => {
     'luckyNumber': luckyNumber,
-    'colorInspiration': colorInspiration,
+    'colors': colors.toJson(),
     if (energy != null) 'energy': energy!.toJson(),
   };
 }
