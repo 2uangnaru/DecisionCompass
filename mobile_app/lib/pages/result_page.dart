@@ -10,6 +10,7 @@ import '../data/models/models.dart' as engine;
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../result_palette.dart';
 import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
@@ -55,10 +56,6 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
-
-  /// The mode's second side is the cautionary one for every mode, not just
-  /// NO and LET GO.
-  bool get _isCaution => reading.winner == _mode.second;
 
   /// Label/percentage pairs straight from the response, winner first.
   List<({String label, String percent})> get _splits {
@@ -187,11 +184,14 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final palette = resultPaletteFor(
+      mode: _mode,
+      status: reading.status,
+      winner: reading.winner,
+    );
     return CelestialScaffold(
-      topColor: _isCaution ? const Color(0xFF1A1018) : const Color(0xFF071729),
-      bottomColor: _isCaution
-          ? const Color(0xFF552D36)
-          : const Color(0xFF103B68),
+      topColor: palette.top,
+      bottomColor: palette.bottom,
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(22, 12, 22, 30),
         child: Column(
@@ -252,6 +252,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
               engine.ReadingStatus.ready => _Direction(
                 reading: reading,
                 splits: _splits,
+                accent: palette.accent,
               ),
               engine.ReadingStatus.balanced => _Balanced(splits: _splits),
               engine.ReadingStatus.insufficientData => const _Explanation(
@@ -391,18 +392,20 @@ String shareTextForReading(engine.ReadingResponse reading) {
 }
 
 class _Direction extends StatelessWidget {
-  const _Direction({required this.reading, required this.splits});
+  const _Direction({
+    required this.reading,
+    required this.splits,
+    required this.accent,
+  });
 
   final engine.ReadingResponse reading;
   final List<({String label, String percent})> splits;
+  final Color accent;
 
   @override
   Widget build(BuildContext context) {
     final winner = splits.isEmpty ? null : splits.first;
     final counterpart = splits.length < 2 ? null : splits[1];
-    final winnerColor = reading.winner == fromEngineMode(reading.mode).second
-        ? const Color(0xFFD88990)
-        : CompassColors.blueLight;
     return Column(
       key: const Key('result_ready'),
       children: [
@@ -422,16 +425,13 @@ class _Direction extends StatelessWidget {
               key: const Key('result_winner_label'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                color: winnerColor,
+                color: accent,
                 fontSize: 114,
                 height: 1,
                 fontWeight: FontWeight.w900,
                 letterSpacing: -2,
                 shadows: [
-                  Shadow(
-                    color: winnerColor.withValues(alpha: 0.28),
-                    blurRadius: 24,
-                  ),
+                  Shadow(color: accent.withValues(alpha: 0.28), blurRadius: 24),
                 ],
               ),
             ),
@@ -442,7 +442,7 @@ class _Direction extends StatelessWidget {
           Text(
             '${winner.percent}%',
             style: Theme.of(context).textTheme.headlineLarge
-                ?.copyWith(color: winnerColor, fontSize: 38),
+                ?.copyWith(color: accent, fontSize: 38),
           ),
         ],
         if (counterpart != null) ...[
