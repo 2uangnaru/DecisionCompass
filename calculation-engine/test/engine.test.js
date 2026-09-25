@@ -8,9 +8,9 @@ import {fileURLToPath} from 'node:url';
 const profile={birthDate:'1998-06-21',birthTime:'14:30',birthCountry:'VN',traditionalProfile:'male'};
 const engine=createCalculator(profile);
 const context={instantUtc:'2026-09-18T08:30:00Z',deviceTimezone:'Asia/Ho_Chi_Minh'};
-test('end-to-end raw profile produces all six modules, not a supplied chart',()=>{
+test('end-to-end raw profile produces all seven modules, not a supplied chart',()=>{
   const r=engine.calculate({context});
-  assert.deepEqual(Object.keys(r.segments[0].modules),['B','Z','T','W','N','U']);
+  assert.deepEqual(Object.keys(r.segments[0].modules),['B','Z','T','W','V','N','U']);
   assert.equal(r.percentages.YES+r.percentages.NO,100);
   assert.ok(r.dataCoverage>0&&r.dataCoverage<=1);assert.equal(r.luckyWindows.length,0);
 });
@@ -66,7 +66,7 @@ test('spatial module excluded and fixed six-module weights sum to one',()=>{
 });
 test('missing module weight is not reassigned and coverage is applied only once',()=>{
   const r=combine({N:evidence(.6,.4,.5)});
-  assert.ok(Math.abs(r.a-.05)<1e-12);assert.ok(Math.abs(r.coverage-1/12)<1e-12);
+  assert.ok(Math.abs(r.a-.045)<1e-12);assert.ok(Math.abs(r.coverage-0.075)<1e-12);
 });
 test('future or invalid profiles fail before yielding an invented answer',()=>{
   assert.throws(()=>calculate({profile:{birthDate:'2099-01-01'},context}),/FUTURE/);

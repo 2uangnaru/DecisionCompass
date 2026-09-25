@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import { VERSION, RULESET, WEIGHTS, CATEGORIES, MODES, combine, decision, percent, scoreForMode, weightedTimeAverage, round, weightsFor, boundedCache } from './core.js';
+import { VERSION, RULESET, WEIGHTS, LUCK_BASELINE, CATEGORIES, MODES, combine, decision, percent, scoreForMode, weightedTimeAverage, round, weightsFor, boundedCache, clamp, evidence } from './core.js';
 import { birthContext, segmentsForDay, periodSegments, localAt, parseBirthDate, parseBirthTime } from './time.js';
 import { resolveCurrentContext } from './location.js';
 import { calendarAt, nearbyBoundaries } from './calendar.js';
@@ -8,6 +8,7 @@ import { buildBaZi, scoreBaZi } from './bazi.js';
 import { buildZiWei, scoreZiWei, inspectZiWei } from './ziwei.js';
 import { natalSky, skyAt, western, cosmic } from './astronomy.js';
 import { almanac } from './calendar.js';
+import { scoreVedic } from './vedic.js';
 
 export { resolveCurrentContext, VERSION, RULESET, CATEGORIES };
 export const PROVIDERS=Object.freeze({lunarJavascript:'1.7.7',iztro:'2.6.1',astronomyEngine:'2.1.19',geoTz:'8.1.9',momentTimezone:'0.6.4'});
@@ -44,8 +45,11 @@ export function createCalculator(inputProfile) {
     if(cache.get(key))return cache.get(key);
     const calendar=calendarAt(ms,zone),sky=skyAt(ms);
     const modules={B:scoreBaZi(baZi,calendar,ms),Z:scoreZiWei(ziWei,calendar,category),T:almanac(calendar),
-      W:western(sky,natal,category),N:numerology(profile.birthDate,calendar.local.date),U:cosmic(sky)};
-    const fusion=combine(modules,category);
+      W:western(sky,natal,category),V:scoreVedic(ms,birth,natal),N:numerology(profile.birthDate,calendar.local.date),U:cosmic(sky)};
+    const raw=combine(modules,category);
+    const a = raw.coverage > 0 ? clamp(raw.a - LUCK_BASELINE * raw.coverage) : 0;
+    const c = raw.coverage > 0 ? clamp(raw.c - LUCK_BASELINE * raw.coverage) : 0;
+    const fusion = evidence(a, c, raw.coverage);
     return cache.set(key,{calendar,modules,evidence:fusion});
   }
   function calculateInternal(input) {

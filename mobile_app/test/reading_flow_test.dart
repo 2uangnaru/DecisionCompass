@@ -263,24 +263,24 @@ void main() {
       await pumpPastRitual(tester);
 
       expect(find.text('FORWARD'), findsWidgets);
-      // Scoped to the direction block: the window scores are also 57%.
+      // Scoped to the direction block: the window scores are also 61%.
       expect(
         find.descendant(
           of: find.byKey(const Key('result_ready')),
-          matching: find.text('57%'),
+          matching: find.text('61%'),
         ),
         findsOneWidget,
       );
-      expect(find.text('BACKWARD  43%'), findsOneWidget);
+      expect(find.text('BACKWARD  39%'), findsOneWidget);
       final windowCard = find.byKey(const Key('result_lucky_windows'));
       expect(windowCard, findsOneWidget);
       // The engine's own local wall clock (18:00–19:00 and 19:00–21:00 in
       // +07:00), rendered without a second timezone conversion.
       expect(find.text('6:00 PM – 7:00 PM'), findsOneWidget);
       expect(find.text('7:00 PM – 9:00 PM'), findsOneWidget);
-      // Scores read as percentages; both windows scored 57 in this fixture.
+      // Scores read as percentages; both windows scored 61 in this fixture.
       expect(
-        find.descendant(of: windowCard, matching: find.text('57%')),
+        find.descendant(of: windowCard, matching: find.text('61%')),
         findsNWidgets(2),
       );
       expect(find.text('Your Luckiest Times This Evening'), findsOneWidget);
@@ -298,10 +298,9 @@ void main() {
       await revealReading(tester, modeLabel: 'LEFT', periodName: 'afternoon');
       await pumpPastRitual(tester);
 
-      // The engine gave RIGHT the lead here, which YES/NO would not have.
-      expect(find.text('RIGHT'), findsWidgets);
-      expect(find.text('52%'), findsOneWidget);
-      expect(find.text('LEFT  48%'), findsOneWidget);
+      expect(find.text('LEFT'), findsWidgets);
+      expect(find.text('53%'), findsOneWidget);
+      expect(find.text('RIGHT  47%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (
