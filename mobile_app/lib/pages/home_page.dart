@@ -507,7 +507,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 color: brief == null
                                     ? CompassColors.text
                                     : CompassColors.blueLight,
-                                fontSize: 26,
+                                fontSize: 30,
                                 fontWeight: FontWeight.w800,
                                 height: 1.05,
                                 shadows: brief == null
@@ -600,7 +600,7 @@ class _TodaySignalTile extends StatelessWidget {
             style: Theme.of(context).textTheme.bodySmall
                 ?.copyWith(color: CompassColors.secondary, fontSize: 11),
           ),
-          const SizedBox(height: 3),
+          const SizedBox(height: 8),
           // Only the value is centred; the label stays where it was.
           Center(child: value),
         ],
