@@ -6,20 +6,25 @@
 /// percentage they produce is a symbolic alignment — never a probability.
 library;
 
+import 'dart:math' as math;
+
 import 'numbers.dart';
 
 const String engineVersion = '3.5.0-mvp';
 const String rulesetVersion = 'civil-midnight-chinese-calendar-symbolic-v8';
 
-/// Default module weights: BaZi, Zi Wei, almanac, Western, numerology, cosmic.
+/// Default module weights: BaZi, Zi Wei, almanac, Western, Vedic, numerology, cosmic.
 const Map<String, double> defaultWeights = <String, double>{
-  'B': 2 / 9,
-  'Z': 2 / 9,
-  'T': 1 / 9,
-  'W': 2 / 9,
-  'N': 1 / 6,
-  'U': 1 / 18,
+  'B': .18,
+  'Z': .18,
+  'T': .10,
+  'W': .18,
+  'V': .16,
+  'N': .15,
+  'U': .05,
 };
+
+const double luckBaseline = 0.05;
 
 const List<String> categories = <String>[
   'general',
@@ -39,42 +44,47 @@ const Map<String, Map<String, double>> categoryWeights =
       'general': defaultWeights,
       'other': defaultWeights,
       'love': <String, double>{
-        'B': .20,
-        'Z': .30,
-        'T': .08,
-        'W': .27,
+        'B': .16,
+        'Z': .24,
+        'T': .07,
+        'W': .22,
+        'V': .16,
         'N': .10,
         'U': .05,
       },
       'career': <String, double>{
-        'B': .27,
-        'Z': .25,
-        'T': .15,
-        'W': .18,
+        'B': .22,
+        'Z': .20,
+        'T': .12,
+        'W': .15,
+        'V': .16,
         'N': .10,
         'U': .05,
       },
       'money': <String, double>{
-        'B': .25,
-        'Z': .28,
-        'T': .17,
-        'W': .15,
+        'B': .20,
+        'Z': .22,
+        'T': .13,
+        'W': .14,
+        'V': .16,
         'N': .10,
         'U': .05,
       },
       'study': <String, double>{
-        'B': .22,
-        'Z': .18,
-        'T': .13,
-        'W': .22,
-        'N': .20,
+        'B': .18,
+        'Z': .15,
+        'T': .11,
+        'W': .18,
+        'V': .15,
+        'N': .18,
         'U': .05,
       },
       'friends': <String, double>{
-        'B': .18,
-        'Z': .25,
-        'T': .10,
-        'W': .27,
+        'B': .15,
+        'Z': .20,
+        'T': .08,
+        'W': .22,
+        'V': .15,
         'N': .15,
         'U': .05,
       },
@@ -259,17 +269,16 @@ Evidence combine(
   return Evidence(clampUnit(a), clampUnit(c), coverage < 1 ? coverage : 1);
 }
 
-/// Maps a symbolic score in [-1, 1] onto the 10–90 display band.
-int percent(double score) => (50 + 40 * clampUnit(score) + .5).floor();
-
 /// The same projection carried to one decimal, as an integer number of tenths.
-///
-/// Whole percent loses real differences: three consecutive days scoring .0548,
-/// .0565 and .0599 all floor to 52, which reads as a stale value even though
-/// the evidence changed. Kept as an integer so a decision's two sides are `t`
-/// and `1000 - t` and therefore always add to exactly 100.0%. Lucky-window
-/// scores deliberately stay at whole percent.
-int percentTenths(double score) => (500 + 400 * clampUnit(score) + .5).floor();
+int percentTenths(double score) {
+  final s = clampUnit(score);
+  final sign = s < 0 ? -1 : s > 0 ? 1 : 0;
+  final expanded = (sign * math.pow(s.abs(), 0.65)).toDouble();
+  return (500 + 400 * clampUnit(expanded) + .5).floor();
+}
+
+/// Maps a symbolic score in [-1, 1] onto the 10–90 display band.
+int percent(double score) => ((percentTenths(score) + 5) / 10).floor();
 
 double scoreForMode(Evidence e, String mode) {
   final definition = modes[mode];

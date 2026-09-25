@@ -58,18 +58,18 @@
   "status": "ready",
   "winner": "ACT",
   "percentages": {
-    "ACT": 55.4,
-    "WAIT": 44.6
+    "ACT": 55.7,
+    "WAIT": 44.3
   },
-  "dataCoverage": 0.9595,
-  "modeScore": 0.1350166656,
+  "dataCoverage": 0.967,
+  "modeScore": 0.0498384708,
   "modeBasis": "action_timing",
   "meaning": "symbolic_alignment_not_success_probability",
   "readingKey": "7d155b0660dd8b6de2b1d8c8d8b827000d3cc7982bb707629a12409c2c6a669e",
   "axisScores": {
-    "action": 0.130218895,
-    "change": 0.1622040327,
-    "selected": 0.1350166656
+    "action": 0.0328221497,
+    "change": 0.1462642907,
+    "selected": 0.0498384708
   },
   "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
   "luckyWindows": [],
@@ -94,9 +94,9 @@
       "meaning": "symbolic_colour_pairing_not_yong_shen"
     },
     "energy": {
-      "level": "bright",
-      "index": 56,
-      "dataCoverage": 0.9666666667
+      "level": "flowing",
+      "index": 53,
+      "dataCoverage": 0.973
     }
   },
   "segments": [
@@ -111,10 +111,10 @@
           "coverage": 0.85,
           "a": 0.0341470588,
           "c": 0.0106617647,
-          "weight": 0.27,
+          "weight": 0.22,
           "contribution": {
-            "a": 0.00783675,
-            "c": 0.002446875
+            "a": 0.0063855,
+            "c": 0.00199375
           }
         },
         "Z": {
@@ -122,10 +122,10 @@
           "coverage": 1,
           "a": 0.01339125,
           "c": -0.018595,
-          "weight": 0.25,
+          "weight": 0.2,
           "contribution": {
-            "a": 0.0033478125,
-            "c": -0.00464875
+            "a": 0.00267825,
+            "c": -0.003719
           }
         },
         "T": {
@@ -133,10 +133,10 @@
           "coverage": 1,
           "a": 0.465,
           "c": 0.6,
-          "weight": 0.15,
+          "weight": 0.12,
           "contribution": {
-            "a": 0.06975,
-            "c": 0.09
+            "a": 0.0558,
+            "c": 0.072
           }
         },
         "W": {
@@ -144,10 +144,21 @@
           "coverage": 1,
           "a": -0.1008022398,
           "c": 0.0688788986,
-          "weight": 0.18,
+          "weight": 0.15,
           "contribution": {
-            "a": -0.0181444032,
-            "c": 0.0123982018
+            "a": -0.015120336,
+            "c": 0.0103318348
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
           }
         },
         "N": {

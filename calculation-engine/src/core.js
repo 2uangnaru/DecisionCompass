@@ -1,6 +1,7 @@
 export const VERSION = '3.5.0-mvp';
 export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v8';
-export const WEIGHTS = Object.freeze({ B: 2 / 9, Z: 2 / 9, T: 1 / 9, W: 2 / 9, N: 1 / 6, U: 1 / 18 });
+export const WEIGHTS = Object.freeze({ B: .18, Z: .18, T: .10, W: .18, V: .16, N: .15, U: .05 });
+export const LUCK_BASELINE = 0.05;
 
 export const CATEGORIES = Object.freeze(['general', 'love', 'career', 'money', 'study', 'friends', 'other']);
 
@@ -11,11 +12,11 @@ export const CATEGORIES = Object.freeze(['general', 'love', 'career', 'money', '
 export const CATEGORY_WEIGHTS = Object.freeze({
   general: WEIGHTS,
   other: WEIGHTS,
-  love: Object.freeze({ B: .20, Z: .30, T: .08, W: .27, N: .10, U: .05 }),
-  career: Object.freeze({ B: .27, Z: .25, T: .15, W: .18, N: .10, U: .05 }),
-  money: Object.freeze({ B: .25, Z: .28, T: .17, W: .15, N: .10, U: .05 }),
-  study: Object.freeze({ B: .22, Z: .18, T: .13, W: .22, N: .20, U: .05 }),
-  friends: Object.freeze({ B: .18, Z: .25, T: .10, W: .27, N: .15, U: .05 }),
+  love: Object.freeze({ B: .16, Z: .24, T: .07, W: .22, V: .16, N: .10, U: .05 }),
+  career: Object.freeze({ B: .22, Z: .20, T: .12, W: .15, V: .16, N: .10, U: .05 }),
+  money: Object.freeze({ B: .20, Z: .22, T: .13, W: .14, V: .16, N: .10, U: .05 }),
+  study: Object.freeze({ B: .18, Z: .15, T: .11, W: .18, V: .15, N: .18, U: .05 }),
+  friends: Object.freeze({ B: .15, Z: .20, T: .08, W: .22, V: .15, N: .15, U: .05 }),
 });
 
 // Validated once at load: a malformed profile must fail the process, not skew a
@@ -72,21 +73,18 @@ export function combine(modules, category = 'general') {
   }
   return evidence(clamp(out.a), clamp(out.c), Math.min(1, out.coverage));
 }
-export function percent(score) { return Math.floor(50 + 40 * clamp(score) + .5); }
-/**
- * The same 10–90 projection carried to one decimal, as an integer number of
- * tenths.
- *
- * Whole percent loses real differences: three consecutive days scoring .0548,
- * .0565 and .0599 all floor to 52, which reads as a stale value even though
- * the underlying evidence changed. Tenths separate them (52.2 / 52.3 / 52.4).
- * Kept as an integer so a decision's two sides are `t` and `1000 - t` and
- * therefore always add to exactly 100.0%.
- *
- * Lucky-window scores deliberately keep whole percent: they are a coarse
- * ranking of time slots, not the reading's headline number.
- */
-export function percentTenths(score) { return Math.floor(500 + 400 * clamp(score) + .5); }
+
+export function percentTenths(score) {
+  const s = clamp(score);
+  const sign = s < 0 ? -1 : s > 0 ? 1 : 0;
+  const expanded = sign * Math.pow(Math.abs(s), 0.65);
+  return Math.floor(500 + 400 * clamp(expanded) + .5);
+}
+
+export function percent(score) {
+  return Math.round(percentTenths(score) / 10);
+}
+
 export function scoreForMode(e, mode) {
   if (!Object.hasOwn(MODES, mode)) throw new Error('INVALID_DECISION_MODE');
   const definition = MODES[mode];

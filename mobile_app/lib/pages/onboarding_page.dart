@@ -164,7 +164,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           'MOMENT',
                           'RHYTHM',
                           'BALANCE',
-                          'CAN CHI',
+                          'ALMANAC',
                         ],
                       ),
                       SizedBox(height: compact ? 14 : 28),

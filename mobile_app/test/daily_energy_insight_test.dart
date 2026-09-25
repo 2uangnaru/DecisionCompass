@@ -622,7 +622,7 @@ void main() {
         localNow: DateTime(2026, 9, 18, 7),
       );
       // The fixture's own engine-calculated tone.
-      rig.dailyBriefProvider.response = briefWith('bright');
+      rig.dailyBriefProvider.response = briefWith('flowing');
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
       await tester.pump();
@@ -642,7 +642,7 @@ void main() {
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
       final message = shownNote(tester);
-      expect(dailyEnergyMessagePools['bright'], contains(message));
+      expect(dailyEnergyMessagePools['flowing'], contains(message));
 
       await tester.ensureVisible(resultButton);
       await tester.pumpAndSettle();
@@ -667,7 +667,7 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
         localNow: DateTime(2026, 9, 18, 23, 50),
       );
-      rig.dailyBriefProvider.response = briefWith('bright');
+      rig.dailyBriefProvider.response = briefWith('flowing');
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
       await tester.pump();
@@ -700,7 +700,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(resultButton);
       await tester.pumpAndSettle();
-      expect(dailyEnergyMessagePools['bright'], contains(shownNote(tester)));
+      expect(dailyEnergyMessagePools['flowing'], contains(shownNote(tester)));
     });
 
     testWidgets('a Result held past midnight keeps its own date', (
@@ -710,7 +710,7 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
         localNow: DateTime(2026, 9, 18, 23, 50),
       );
-      rig.dailyBriefProvider.response = briefWith('bright');
+      rig.dailyBriefProvider.response = briefWith('flowing');
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
       await tester.pump();

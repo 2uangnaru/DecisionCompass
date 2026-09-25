@@ -44,8 +44,8 @@ class _LoadingPageState extends State<LoadingPage> {
       'Give me a moment — I’m still bringing your cosmic signals into focus.';
 
   /// The ritual is never shorter than this, even when the API answers at once.
-  static const _minimumRitual = Duration(milliseconds: 4200);
-  static const _ritualJitterMs = 1001;
+  static const _minimumRitual = Duration(milliseconds: 5040);
+  static const _ritualJitterMs = 250;
 
   final List<Timer> _timers = [];
   late final List<String> _phrases;
@@ -70,6 +70,7 @@ class _LoadingPageState extends State<LoadingPage> {
       'Synchronizing with your local time and hour',
       'Reading your BaZi elemental balance',
       'Mapping Zi Wei cycles around this moment',
+      'Aligning Vedic Nakshatras and lunar mansions',
       'Tracing numerology, lunar and planetary rhythms',
       widget.mode.ritualCopy,
       'Balancing Yin and Yang signals into one direction',
@@ -268,15 +269,15 @@ class _LoadingPageState extends State<LoadingPage> {
               OrbitVisual(
                 size: compact ? 220 : 300,
                 sign: widget.profile.zodiacSign,
-                labels: [
+                labels: const [
                   'BAZI',
                   'ZI WEI',
-                  'CAN CHI',
+                  'ALMANAC',
+                  'VEDIC JYOTISH',
                   'NUMEROLOGY',
                   'LUNAR PHASE',
                   'PLANETARY',
                   'YIN / YANG',
-                  'MOMENT',
                 ],
               ),
               SizedBox(height: compact ? 22 : 38),

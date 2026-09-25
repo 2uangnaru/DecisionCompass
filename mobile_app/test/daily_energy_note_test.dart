@@ -310,7 +310,7 @@ void main() {
         inBrief(find.byKey(const Key('result_daily_energy_label'))),
         findsOneWidget,
       );
-      expect(find.text('BRIGHT'), findsOneWidget);
+      expect(find.text('FLOWING'), findsOneWidget);
       expect(note, findsNothing);
       final card = find.byKey(const Key('result_daily_brief'));
       final closed = tester.getSize(card).height;
@@ -322,7 +322,7 @@ void main() {
 
       expect(note, findsOneWidget);
       expect(tester.getSize(card).height, closed);
-      expect(find.text(brightSentence), findsOneWidget);
+      expect(find.text(flowingSentence), findsOneWidget);
       expect(find.byType(BottomSheet), findsNothing);
       expect(find.byType(Dialog), findsNothing);
       expect(find.text(quietSentence), findsNothing);
@@ -332,7 +332,7 @@ void main() {
       await tester.tap(inBrief(infoButton));
       await tester.pumpAndSettle();
       expect(note, findsNothing);
-      expect(find.text(brightSentence), findsNothing);
+      expect(find.text(flowingSentence), findsNothing);
       expect(tester.getSize(card).height, closed);
     });
 
@@ -418,7 +418,7 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(inBrief);
         await tester.pumpAndSettle();
-        expect(find.text(brightSentence), findsOneWidget);
+        expect(find.text(flowingSentence), findsOneWidget);
         expect(
           tester.takeException(),
           isNull,

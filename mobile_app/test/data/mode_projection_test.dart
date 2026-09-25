@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:decision_compass/data/models/models.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -69,8 +71,14 @@ double projectedScore(DecisionMode mode, AxisScores axes) {
 
 /// `percentTenths()` in `calculation-engine/src/core.js`: the display band in
 /// integer tenths of a percent, so the pair is exact.
-int percentTenthsFor(double score) =>
-    (500 + 400 * score.clamp(-1.0, 1.0) + 0.5).floor();
+int percentTenthsFor(double score) {
+  final s = score.clamp(-1.0, 1.0);
+  final sign = s < 0 ? -1 : s > 0 ? 1 : 0;
+  final expanded = (sign * math.pow(s.abs(), 0.65)).toDouble();
+  return (500 + 400 * expanded.clamp(-1.0, 1.0) + 0.5).floor();
+}
+
+int percentFor(double score) => ((percentTenthsFor(score) + 5) / 10).floor();
 
 void main() {
   final fixtures = readAllFixtures();

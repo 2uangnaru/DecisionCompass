@@ -59,18 +59,18 @@
   "status": "ready",
   "winner": "GO",
   "percentages": {
-    "STAY": 47.6,
-    "GO": 52.4
+    "STAY": 46.8,
+    "GO": 53.2
   },
-  "dataCoverage": 0.9666666667,
-  "modeScore": -0.0611678711,
+  "dataCoverage": 0.973,
+  "modeScore": -0.0208637706,
   "modeBasis": "change_alignment",
   "meaning": "symbolic_alignment_not_success_probability",
   "readingKey": "cc5c52ccc8a90cd294e2b0bdf179d642779a161a87b6e0540782280a706fb96b",
   "axisScores": {
-    "action": 0.0871800005,
-    "change": 0.0611678711,
-    "selected": -0.0611678711
+    "action": 0.0196979897,
+    "change": 0.0208637706,
+    "selected": -0.0208637706
   },
   "evaluatedAtUtc": "2026-09-17T10:00:00.000Z",
   "luckyWindows": [
@@ -79,8 +79,8 @@
       "endUtc": "2026-09-17T11:00:00.000Z",
       "startLocal": "2026-09-17T12:30:00+02:00",
       "endLocal": "2026-09-17T13:00:00+02:00",
-      "score": 48,
-      "dataCoverage": 0.9666666667,
+      "score": 47,
+      "dataCoverage": 0.973,
       "hourBranch": 6,
       "meaning": "symbolic_timing_score_not_probability"
     },
@@ -89,8 +89,8 @@
       "endUtc": "2026-09-17T12:00:00.000Z",
       "startLocal": "2026-09-17T13:00:00+02:00",
       "endLocal": "2026-09-17T14:00:00+02:00",
-      "score": 48,
-      "dataCoverage": 0.9666666667,
+      "score": 47,
+      "dataCoverage": 0.973,
       "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"
     }
@@ -116,9 +116,9 @@
       "meaning": "symbolic_colour_pairing_not_yong_shen"
     },
     "energy": {
-      "level": "lively",
-      "index": 53,
-      "dataCoverage": 0.9666666667
+      "level": "steady",
+      "index": 51,
+      "dataCoverage": 0.973
     }
   },
   "segments": [
@@ -133,10 +133,10 @@
           "coverage": 0.85,
           "a": 0.0696176471,
           "c": -0.0442205882,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.01315,
-            "c": -0.0083527778
+            "a": 0.0106515,
+            "c": -0.00676575
           }
         },
         "Z": {
@@ -144,10 +144,10 @@
           "coverage": 1,
           "a": 0.0625885417,
           "c": -0.01699375,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.0139085648,
-            "c": -0.0037763889
+            "a": 0.0112659375,
+            "c": -0.003058875
           }
         },
         "T": {
@@ -155,10 +155,10 @@
           "coverage": 1,
           "a": 0.43,
           "c": -0.3,
-          "weight": 0.1111111111,
+          "weight": 0.1,
           "contribution": {
-            "a": 0.0477777778,
-            "c": -0.0333333333
+            "a": 0.043,
+            "c": -0.03
           }
         },
         "W": {
@@ -166,10 +166,21 @@
           "coverage": 1,
           "a": 0.0064809056,
           "c": 0.0153359183,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.0014402013,
-            "c": 0.0034079819
+            "a": 0.001166563,
+            "c": 0.0027604653
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.045,
+          "c": 0.085,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.0072,
+            "c": 0.0136
           }
         },
         "N": {
@@ -177,10 +188,10 @@
           "coverage": 1,
           "a": 0.12,
           "c": 0.6,
-          "weight": 0.1666666667,
+          "weight": 0.15,
           "contribution": {
-            "a": 0.02,
-            "c": 0.1
+            "a": 0.018,
+            "c": 0.09
           }
         },
         "U": {
@@ -188,10 +199,10 @@
           "coverage": 1,
           "a": 0.2993684717,
           "c": 0.0745885653,
-          "weight": 0.0555555556,
+          "weight": 0.05,
           "contribution": {
-            "a": 0.0166315818,
-            "c": 0.0041438092
+            "a": 0.0149684236,
+            "c": 0.0037294283
           }
         }
       }
@@ -207,10 +218,10 @@
           "coverage": 0.85,
           "a": 0.0773823529,
           "c": -0.0413088235,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.0146166667,
-            "c": -0.0078027778
+            "a": 0.0118395,
+            "c": -0.00632025
           }
         },
         "Z": {
@@ -218,10 +229,10 @@
           "coverage": 1,
           "a": 0.0833697917,
           "c": -0.02574375,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.0185266204,
-            "c": -0.0057208333
+            "a": 0.0150065625,
+            "c": -0.004633875
           }
         },
         "T": {
@@ -229,10 +240,10 @@
           "coverage": 1,
           "a": 0.03,
           "c": -0.3,
-          "weight": 0.1111111111,
+          "weight": 0.1,
           "contribution": {
-            "a": 0.0033333333,
-            "c": -0.0333333333
+            "a": 0.003,
+            "c": -0.03
           }
         },
         "W": {
@@ -240,10 +251,21 @@
           "coverage": 1,
           "a": 0.0052837958,
           "c": 0.0157774205,
-          "weight": 0.2222222222,
+          "weight": 0.18,
           "contribution": {
-            "a": 0.0011741768,
-            "c": 0.0035060934
+            "a": 0.0009510832,
+            "c": 0.0028399357
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.045,
+          "c": 0.085,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.0072,
+            "c": 0.0136
           }
         },
         "N": {
@@ -251,10 +273,10 @@
           "coverage": 1,
           "a": 0.12,
           "c": 0.6,
-          "weight": 0.1666666667,
+          "weight": 0.15,
           "contribution": {
-            "a": 0.02,
-            "c": 0.1
+            "a": 0.018,
+            "c": 0.09
           }
         },
         "U": {
@@ -262,10 +284,10 @@
           "coverage": 1,
           "a": 0.2999725341,
           "c": 0.0730442194,
-          "weight": 0.0555555556,
+          "weight": 0.05,
           "contribution": {
-            "a": 0.0166651408,
-            "c": 0.0040580122
+            "a": 0.0149986267,
+            "c": 0.003652211
           }
         }
       }

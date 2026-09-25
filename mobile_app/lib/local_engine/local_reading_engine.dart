@@ -24,6 +24,7 @@ import 'daily_energy.dart';
 import 'location/location.dart';
 import 'numerology/numerology.dart';
 import 'time/local_time.dart';
+import 'vedic/vedic.dart';
 import 'ziwei/ziwei.dart';
 
 /// Provider versions, reported verbatim so a saved reading records exactly
@@ -177,12 +178,21 @@ class ReadingCalculator {
       'Z': scoreZiWei(_ziWei, calendar, category),
       'T': almanac(calendar),
       'W': western(sky, _natal, category),
+      'V': scoreVedic(ms, _birth, _natal),
       'N': numerology(_profile.birthDate, calendar.local.date),
       'U': cosmic(sky),
     };
+    final raw = combine(modules, category);
+    final a = raw.coverage > 0
+        ? clampUnit(raw.a - luckBaseline * raw.coverage)
+        : 0.0;
+    final c = raw.coverage > 0
+        ? clampUnit(raw.c - luckBaseline * raw.coverage)
+        : 0.0;
+    final fusion = Evidence(a, c, raw.coverage);
     return _cache.set(
       key,
-      _Evaluated(calendar, modules, combine(modules, category)),
+      _Evaluated(calendar, modules, fusion),
     );
   }
 

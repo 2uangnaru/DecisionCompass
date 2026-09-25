@@ -58,18 +58,18 @@
   "status": "ready",
   "winner": "GO",
   "percentages": {
-    "STAY": 42.3,
-    "GO": 57.7
+    "STAY": 37.2,
+    "GO": 62.8
   },
-  "dataCoverage": 0.973,
-  "modeScore": -0.1929603126,
+  "dataCoverage": 0.9775,
+  "modeScore": -0.1729185886,
   "modeBasis": "change_alignment",
   "meaning": "symbolic_alignment_not_success_probability",
   "readingKey": "c40f558cadc260a6b94ea92bf3c87c63be5b18be9b255fccc3f8e8e8d1bf9fd3",
   "axisScores": {
-    "action": 0.0806018221,
-    "change": 0.1929603126,
-    "selected": -0.1929603126
+    "action": 0.0002899749,
+    "change": 0.1729185886,
+    "selected": -0.1729185886
   },
   "evaluatedAtUtc": "2026-09-18T05:00:00.000Z",
   "luckyWindows": [
@@ -78,8 +78,8 @@
       "endUtc": "2026-09-18T06:00:00.000Z",
       "startLocal": "2026-09-18T12:30:00+07:00",
       "endLocal": "2026-09-18T13:00:00+07:00",
-      "score": 43,
-      "dataCoverage": 0.973,
+      "score": 38,
+      "dataCoverage": 0.9775,
       "hourBranch": 6,
       "meaning": "symbolic_timing_score_not_probability"
     },
@@ -88,8 +88,8 @@
       "endUtc": "2026-09-18T07:00:00.000Z",
       "startLocal": "2026-09-18T13:00:00+07:00",
       "endLocal": "2026-09-18T14:00:00+07:00",
-      "score": 42,
-      "dataCoverage": 0.973,
+      "score": 37,
+      "dataCoverage": 0.9775,
       "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"
     }
@@ -115,9 +115,9 @@
       "meaning": "symbolic_colour_pairing_not_yong_shen"
     },
     "energy": {
-      "level": "bright",
-      "index": 56,
-      "dataCoverage": 0.9666666667
+      "level": "flowing",
+      "index": 53,
+      "dataCoverage": 0.973
     }
   },
   "segments": [
@@ -132,10 +132,10 @@
           "coverage": 0.85,
           "a": 0.0385588235,
           "c": -0.0490735294,
-          "weight": 0.18,
+          "weight": 0.15,
           "contribution": {
-            "a": 0.0058995,
-            "c": -0.00750825
+            "a": 0.00491625,
+            "c": -0.006256875
           }
         },
         "Z": {
@@ -143,10 +143,10 @@
           "coverage": 1,
           "a": 0.0117753125,
           "c": 0.09222125,
-          "weight": 0.25,
+          "weight": 0.2,
           "contribution": {
-            "a": 0.0029438281,
-            "c": 0.0230553125
+            "a": 0.0023550625,
+            "c": 0.01844425
           }
         },
         "T": {
@@ -154,10 +154,10 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
-          "weight": 0.1,
+          "weight": 0.08,
           "contribution": {
-            "a": 0.0065,
-            "c": 0.06
+            "a": 0.0052,
+            "c": 0.048
           }
         },
         "W": {
@@ -165,10 +165,21 @@
           "coverage": 1,
           "a": -0.1048728593,
           "c": 0.0716520221,
-          "weight": 0.27,
+          "weight": 0.22,
           "contribution": {
-            "a": -0.028315672,
-            "c": 0.019346046
+            "a": -0.0230720291,
+            "c": 0.0157634449
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.03375,
+            "c": 0.04875
           }
         },
         "N": {
@@ -206,10 +217,10 @@
           "coverage": 0.85,
           "a": 0.0346764706,
           "c": 0.0081911765,
-          "weight": 0.18,
+          "weight": 0.15,
           "contribution": {
-            "a": 0.0053055,
-            "c": 0.00125325
+            "a": 0.00442125,
+            "c": 0.001044375
           }
         },
         "Z": {
@@ -217,10 +228,10 @@
           "coverage": 1,
           "a": 0.0194315625,
           "c": 0.09003375,
-          "weight": 0.25,
+          "weight": 0.2,
           "contribution": {
-            "a": 0.0048578906,
-            "c": 0.0225084375
+            "a": 0.0038863125,
+            "c": 0.01800675
           }
         },
         "T": {
@@ -228,10 +239,10 @@
           "coverage": 1,
           "a": 0.065,
           "c": 0.6,
-          "weight": 0.1,
+          "weight": 0.08,
           "contribution": {
-            "a": 0.0065,
-            "c": 0.06
+            "a": 0.0052,
+            "c": 0.048
           }
         },
         "W": {
@@ -239,10 +250,21 @@
           "coverage": 1,
           "a": -0.1087948742,
           "c": 0.0738675841,
-          "weight": 0.27,
+          "weight": 0.22,
           "contribution": {
-            "a": -0.029374616,
-            "c": 0.0199442477
+            "a": -0.0239348723,
+            "c": 0.0162508685
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.03375,
+            "c": 0.04875
           }
         },
         "N": {

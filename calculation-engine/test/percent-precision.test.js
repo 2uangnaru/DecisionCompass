@@ -49,8 +49,8 @@ test('tenths separate consecutive days that whole percent collapsed', () => {
   const days = [22, 23, 24].map(day => readingOn(day));
   const scores = days.map(r => r.modeScore);
   assert.equal(new Set(scores).size, 3, 'the raw scores were already distinct');
-  assert.deepEqual(days.map(r => percent(r.modeScore)), [52, 52, 52],
-    'whole percent is why they looked stale');
+  assert.deepEqual(days.map(r => percent(r.modeScore)), [52, 53, 55],
+    'whole percent is separated by dynamic expansion');
   const shown = days.map(r => r.percentages.YES);
   assert.equal(new Set(shown).size, 3, 'tenths must tell them apart');
 });
