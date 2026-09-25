@@ -242,16 +242,23 @@ class _OrbitPainter extends CustomPainter {
       ..strokeWidth = 1
       ..color = CompassColors.blueLight.withValues(alpha: 0.24);
     final glow = Paint()..color = CompassColors.blueLight;
-    final radii = [size.width * 0.29, size.width * 0.39, size.width * 0.48];
+    final radii = [
+      size.width * 0.24,
+      size.width * 0.32,
+      size.width * 0.40,
+      size.width * 0.49,
+    ];
 
     for (var i = 0; i < radii.length; i++) {
       canvas.drawCircle(center, radii[i], line);
-      final angle = progress * math.pi * 2 * (i.isEven ? 1 : -0.72) + i;
+      final speeds = [1.0, -0.72, 0.85, -0.5];
+      final angle = progress * math.pi * 2 * speeds[i] + i * 1.5;
       final dot = Offset(
         center.dx + math.cos(angle) * radii[i],
         center.dy + math.sin(angle) * radii[i],
       );
-      canvas.drawCircle(dot, i == 1 ? 3.5 : 2.5, glow);
+      final dotRadius = (i == 1 || i == 3) ? 3.2 : 2.2;
+      canvas.drawCircle(dot, dotRadius, glow);
     }
 
     final textStyle = TextStyle(
@@ -260,10 +267,10 @@ class _OrbitPainter extends CustomPainter {
       letterSpacing: 1.1,
       fontWeight: FontWeight.w600,
     );
-    for (var i = 0; i < labels.length && i < 8; i++) {
-      final count = math.min(labels.length, 8);
+    final count = labels.length;
+    for (var i = 0; i < count; i++) {
       final angle = (i / count) * math.pi * 2 + progress * 0.35;
-      final radius = size.width * (i.isEven ? 0.43 : 0.34);
+      final radius = size.width * (i.isEven ? 0.45 : 0.36);
       final offset = Offset(
         center.dx + math.cos(angle) * radius,
         center.dy + math.sin(angle) * radius,

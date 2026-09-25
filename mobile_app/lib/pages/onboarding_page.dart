@@ -145,7 +145,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           'MOMENT',
                           'RHYTHM',
                           'BALANCE',
-                          'CAN CHI',
+                          'ALMANAC',
                         ],
                         sign: zodiacForDate(_birthDate),
                       ),

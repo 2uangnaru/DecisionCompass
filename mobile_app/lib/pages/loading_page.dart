@@ -70,6 +70,7 @@ class _LoadingPageState extends State<LoadingPage> {
       'Synchronizing with your local time and hour',
       'Reading your BaZi elemental balance',
       'Mapping Zi Wei cycles around this moment',
+      'Aligning Vedic Nakshatras and lunar mansions',
       'Tracing numerology, lunar and planetary rhythms',
       widget.mode.ritualCopy,
       'Balancing Yin and Yang signals into one direction',
@@ -94,7 +95,7 @@ class _LoadingPageState extends State<LoadingPage> {
   void _startPhraseCycle() {
     _cancelTimers();
     _timers.add(
-      Timer.periodic(const Duration(milliseconds: 720), (timer) {
+      Timer.periodic(const Duration(milliseconds: 620), (timer) {
         if (!mounted || _showingReassurance) return;
         if (_phraseIndex < _phrases.length - 1) {
           setState(() => _phraseIndex++);
@@ -266,15 +267,15 @@ class _LoadingPageState extends State<LoadingPage> {
               OrbitVisual(
                 size: compact ? 220 : 300,
                 sign: widget.profile.zodiacSign,
-                labels: [
+                labels: const [
                   'BAZI',
                   'ZI WEI',
-                  'CAN CHI',
+                  'ALMANAC',
+                  'VEDIC JYOTISH',
                   'NUMEROLOGY',
                   'LUNAR PHASE',
                   'PLANETARY',
                   'YIN / YANG',
-                  'MOMENT',
                 ],
               ),
               SizedBox(height: compact ? 22 : 38),
