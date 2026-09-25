@@ -44,8 +44,8 @@ class _LoadingPageState extends State<LoadingPage> {
       'Give me a moment — I’m still bringing your cosmic signals into focus.';
 
   /// The ritual is never shorter than this, even when the API answers at once.
-  static const _minimumRitual = Duration(milliseconds: 4200);
-  static const _ritualJitterMs = 1001;
+  static const _minimumRitual = Duration(milliseconds: 5040);
+  static const _ritualJitterMs = 250;
 
   final List<Timer> _timers = [];
   late final List<String> _phrases;
@@ -95,7 +95,7 @@ class _LoadingPageState extends State<LoadingPage> {
   void _startPhraseCycle() {
     _cancelTimers();
     _timers.add(
-      Timer.periodic(const Duration(milliseconds: 620), (timer) {
+      Timer.periodic(const Duration(milliseconds: 720), (timer) {
         if (!mounted || _showingReassurance) return;
         if (_phraseIndex < _phrases.length - 1) {
           setState(() => _phraseIndex++);
