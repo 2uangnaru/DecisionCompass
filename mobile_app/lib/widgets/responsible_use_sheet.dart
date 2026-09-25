@@ -152,7 +152,7 @@ class ResponsibleUseSheet extends StatelessWidget {
                   const _GuardrailTile(
                     icon: Icons.trending_down_rounded,
                     title: 'Financial Investments & Gambling',
-                    detail: 'Not for speculative trading, borrowing, crypto bets, or gambling. You are solely responsible for your financial decisions.',
+                    detail: 'The Everyday Money area is for low-stakes spending reflection only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.',
                   ),
                   const _GuardrailTile(
                     icon: Icons.people_outline_rounded,

@@ -1,10 +1,12 @@
 import 'dart:convert';
 
 import 'package:decision_compass/data/history_entry.dart';
+import 'package:decision_compass/data/history_repository.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/shared_preferences_history_repository.dart';
 import 'package:decision_compass/pages/history_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
+import 'package:decision_compass/reading_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -18,6 +20,85 @@ Future<void> pumpPastRitual(WidgetTester tester) async {
 }
 
 void main() {
+  test('shared text includes only the chosen symbolic result', () {
+    final text = shareTextForReading(fixtureResponse('ready_yes_no_now.json'));
+    expect(text, contains('YES'));
+    expect(text, contains('symbolic'));
+    expect(text, isNot(contains('1998-06-21')));
+    expect(text, isNot(contains('birthDate')));
+    expect(text, isNot(contains('latitude')));
+    expect(text, isNot(contains('inputSnapshot')));
+  });
+
+  testWidgets('a failed save is not labelled saved, and retry opens History', (
+    tester,
+  ) async {
+    final rig = ReadingTestRig();
+    final history = _UnreliableHistoryRepository()..failSave = true;
+    final dependencies = _withHistory(rig, history);
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          reading: fixtureResponse('ready_yes_no_now.json'),
+          dependencies: dependencies,
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('Couldn’t save · Retry'), findsOneWidget);
+    expect(history.entries, isEmpty);
+
+    history.failSave = false;
+    await tester.ensureVisible(find.byKey(const Key('result_history_action')));
+    await tester.tap(find.byKey(const Key('result_history_action')));
+    await tester.pump();
+    expect(find.text('View in History'), findsOneWidget);
+    expect(history.entries, hasLength(1));
+
+    await tester.tap(find.byKey(const Key('result_history_action')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('history_list')), findsOneWidget);
+  });
+
+  testWidgets('History shows storage errors, not a false empty state', (
+    tester,
+  ) async {
+    final rig = ReadingTestRig();
+    final history = _UnreliableHistoryRepository()..failList = true;
+    final dependencies = _withHistory(rig, history);
+    await tester.pumpWidget(
+      MaterialApp(home: HistoryPage(dependencies: dependencies)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('history_error')), findsOneWidget);
+    expect(find.byKey(const Key('history_empty')), findsNothing);
+
+    history.failList = false;
+    await tester.tap(find.text('Try Again'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('history_empty')), findsOneWidget);
+  });
+
+  testWidgets('opening a saved snapshot never saves it again', (tester) async {
+    final rig = ReadingTestRig();
+    await rig.historyRepository.save(
+      HistoryEntry(
+        id: 'already-saved',
+        reading: fixtureResponse('ready_yes_no_now.json'),
+        savedAtUtc: DateTime.utc(2026, 9, 18),
+      ),
+    );
+    await tester.pumpWidget(
+      MaterialApp(home: HistoryPage(dependencies: rig.dependencies)),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('YES / NO'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('result_ready')), findsOneWidget);
+    expect(find.text('Back to History'), findsOneWidget);
+    expect(rig.historyRepository.saved, hasLength(1));
+  });
+
   test(
     'legacy single-colour history survives an upgrade and a new save',
     () async {
@@ -193,4 +274,37 @@ void main() {
     expect(find.text('YES / NO'), findsNothing);
     expect(find.text('STAY / GO'), findsNothing);
   });
+}
+
+ReadingDependencies _withHistory(
+  ReadingTestRig rig,
+  HistoryRepository history,
+) => ReadingDependencies(
+  repository: rig.repository,
+  contextProvider: rig.contextProvider,
+  historyRepository: history,
+  profileRepository: rig.profileRepository,
+  dailyBriefProvider: rig.dailyBriefProvider,
+  homeDescriptionDeck: rig.dependencies.homeDescriptionDeck,
+  dailyEnergyInsights: rig.dailyEnergyInsights,
+  nowUtc: rig.dependencies.nowUtc,
+  nowLocal: rig.dependencies.nowLocal,
+);
+
+class _UnreliableHistoryRepository implements HistoryRepository {
+  final entries = <HistoryEntry>[];
+  bool failSave = false;
+  bool failList = false;
+
+  @override
+  Future<void> save(HistoryEntry entry) async {
+    if (failSave) throw StateError('test storage failure');
+    entries.add(entry);
+  }
+
+  @override
+  Future<List<HistoryEntry>> list() async {
+    if (failList) throw StateError('test storage failure');
+    return List.unmodifiable(entries);
+  }
 }

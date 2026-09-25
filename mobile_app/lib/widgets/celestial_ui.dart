@@ -172,12 +172,12 @@ class OrbitVisual extends StatefulWidget {
     super.key,
     this.size = 250,
     this.labels = const [],
-    this.sign = ZodiacSign.cancer,
+    this.sign,
   });
 
   final double size;
   final List<String> labels;
-  final ZodiacSign sign;
+  final ZodiacSign? sign;
 
   @override
   State<OrbitVisual> createState() => _OrbitVisualState();
@@ -221,7 +221,13 @@ class _OrbitVisualState extends State<OrbitVisual>
           child: child,
         ),
         child: Center(
-          child: ZodiacAvatar(size: 86, glow: true, sign: widget.sign),
+          child: widget.sign == null
+              ? const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 48,
+                  color: CompassColors.gold,
+                )
+              : ZodiacAvatar(size: 86, glow: true, sign: widget.sign!),
         ),
       ),
     );

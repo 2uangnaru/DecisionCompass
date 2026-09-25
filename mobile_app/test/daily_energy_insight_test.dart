@@ -57,15 +57,7 @@ engine.DailyBrief briefWith(String level) => engine.DailyBrief(
 /// Walks onboarding with fixed pumps instead of settling, so a one-shot
 /// animation started on Home's first frame is still running to be observed.
 Future<void> onboardWithoutSettling(WidgetTester tester) async {
-  await tester.pump();
-  await tester.tap(find.byKey(const Key('allow_location')));
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 400));
-  await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-  await tester.pump();
-  await tester.tap(find.byKey(const Key('complete_profile')));
-  await tester.pump();
-  await tester.pump(const Duration(milliseconds: 400));
+  await completeOnboarding(tester, settleHome: false);
 }
 
 Future<ReadingTestRig> pumpHome(

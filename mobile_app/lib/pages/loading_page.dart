@@ -151,7 +151,9 @@ class _LoadingPageState extends State<LoadingPage> {
     // request built here, so location is never queried a second time.
     final context = await widget.dependencies.contextProvider.capture(
       instantUtc: widget.instantUtc,
-      includeLocation: widget.profile.useCurrentLocation,
+      // GPS cannot improve the current result until coordinate-to-zone
+      // geometry ships. Ignore even a previously saved opt-in in this build.
+      includeLocation: false,
     );
     // `diagnostics` is intentionally omitted: the API rejects it, and module
     // internals must never reach the app.

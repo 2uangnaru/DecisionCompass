@@ -1,17 +1,6 @@
 import 'data/models/models.dart' as engine;
 import 'models.dart';
 
-/// Birth-country choices offered in onboarding, mapped explicitly to
-/// ISO-3166 alpha-2 codes. The engine expects the code; a display name would
-/// be rejected.
-const birthCountryChoices = <({String code, String label})>[
-  (code: 'US', label: 'United States'),
-  (code: 'GB', label: 'United Kingdom'),
-  (code: 'DE', label: 'Germany'),
-  (code: 'JP', label: 'Japan'),
-  (code: 'VN', label: 'Vietnam'),
-];
-
 /// The profile collected in onboarding, carried for the whole session.
 ///
 /// Immutable, and intentionally without a value-bearing `toString`: these

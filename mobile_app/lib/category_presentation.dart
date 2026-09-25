@@ -39,7 +39,7 @@ const categoryChoices = <CategoryChoice>[
   ),
   CategoryChoice(
     category: engine.ReadingCategory.money,
-    label: 'Money',
+    label: 'Everyday Money',
     icon: Icons.savings_rounded,
   ),
   CategoryChoice(

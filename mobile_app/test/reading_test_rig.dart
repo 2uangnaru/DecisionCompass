@@ -120,21 +120,44 @@ ReadingResponse fixtureResponse(String name) =>
     ReadingResponse.fromJson(readFixture(name));
 
 /// Walks the explainer and profile steps to Home.
-Future<void> completeOnboarding(
-  WidgetTester tester, {
-  bool allowLocation = true,
-}) async {
+Future<void> fillOnboardingProfile(WidgetTester tester) async {
   // The app's startup gate reads the saved profile before choosing between
   // Onboarding and Home; this lets that (already-resolved, in-memory) future
   // settle before the first interaction.
   await tester.pump();
-  await tester.tap(
-    find.byKey(Key(allowLocation ? 'allow_location' : 'skip_location')),
-  );
+  await tester.tap(find.byKey(const Key('continue_to_profile')));
   await tester.pumpAndSettle();
+  await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
+  await tester.tap(find.byKey(const Key('birth_date_value')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('2000').last);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('1').last);
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('OK'));
+  await tester.pumpAndSettle();
+  await tester.ensureVisible(find.byKey(const Key('birth_country')));
+  await tester.tap(find.byKey(const Key('birth_country')));
+  await tester.pumpAndSettle();
+  await tester.enterText(find.byType(TextField).last, 'United States');
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('United States').last);
+  await tester.pumpAndSettle();
+}
+
+Future<void> completeOnboarding(
+  WidgetTester tester, {
+  bool settleHome = true,
+}) async {
+  await fillOnboardingProfile(tester);
   await tester.ensureVisible(find.byKey(const Key('complete_profile')));
   await tester.tap(find.byKey(const Key('complete_profile')));
-  await tester.pumpAndSettle();
+  if (settleHome) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+  }
 }
 
 /// From Home, selects an optional category/mode, enters the ritual, picks an

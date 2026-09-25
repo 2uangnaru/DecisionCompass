@@ -149,19 +149,6 @@ void main() {
       },
     );
 
-    test('country choices are ISO-3166 alpha-2 codes', () {
-      expect(
-        {for (final choice in birthCountryChoices) choice.label: choice.code},
-        {
-          'United States': 'US',
-          'United Kingdom': 'GB',
-          'Germany': 'DE',
-          'Japan': 'JP',
-          'Vietnam': 'VN',
-        },
-      );
-    });
-
     test('traditional profile is never inferred', () {
       expect(profileWith().traditionalProfile, isNull);
       expect(profileWith().toBirthProfile().traditionalProfile, isNull);

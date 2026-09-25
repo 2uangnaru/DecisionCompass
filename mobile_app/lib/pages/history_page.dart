@@ -7,6 +7,7 @@ import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import 'result_page.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key, required this.dependencies});
@@ -20,10 +21,17 @@ class HistoryPage extends StatefulWidget {
 class _HistoryPageState extends State<HistoryPage> {
   // Loaded once per page visit; a fresh push re-reads storage, so a reading
   // saved just before opening History always shows up.
-  late final Future<List<HistoryEntry>> _entries = widget
-      .dependencies
-      .historyRepository
-      .list();
+  late Future<List<HistoryEntry>> _entries;
+
+  @override
+  void initState() {
+    super.initState();
+    _entries = widget.dependencies.historyRepository.list();
+  }
+
+  void _retry() => setState(() {
+    _entries = widget.dependencies.historyRepository.list();
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -59,6 +67,22 @@ class _HistoryPageState extends State<HistoryPage> {
                       ),
                     );
                   }
+                  if (snapshot.hasError) {
+                    return Center(
+                      key: const Key('history_error'),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Your readings could not be opened.'),
+                          const SizedBox(height: 10),
+                          TextButton(
+                            onPressed: _retry,
+                            child: const Text('Try Again'),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                   final entries = snapshot.data ?? const [];
                   if (entries.isEmpty) {
                     return const _EmptyHistory();
@@ -66,6 +90,7 @@ class _HistoryPageState extends State<HistoryPage> {
                   return _HistoryList(
                     entries: entries,
                     today: _isoDate(widget.dependencies.nowLocal()),
+                    dependencies: widget.dependencies,
                   );
                 },
               ),
@@ -158,10 +183,15 @@ class _EmptyHistory extends StatelessWidget {
 /// Entries grouped by the local calendar day they were resolved for, newest
 /// group first, matching the UX spec's `TODAY` / date grouping.
 class _HistoryList extends StatelessWidget {
-  const _HistoryList({required this.entries, required this.today});
+  const _HistoryList({
+    required this.entries,
+    required this.today,
+    required this.dependencies,
+  });
 
   final List<HistoryEntry> entries;
   final String today;
+  final ReadingDependencies dependencies;
 
   @override
   Widget build(BuildContext context) {
@@ -183,16 +213,17 @@ class _HistoryList extends StatelessWidget {
       } else {
         children.add(const SizedBox(height: 10));
       }
-      children.add(_HistoryRow(entry: entry));
+      children.add(_HistoryRow(entry: entry, dependencies: dependencies));
     }
     return ListView(key: const Key('history_list'), children: children);
   }
 }
 
 class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({required this.entry});
+  const _HistoryRow({required this.entry, required this.dependencies});
 
   final HistoryEntry entry;
+  final ReadingDependencies dependencies;
 
   @override
   Widget build(BuildContext context) {
@@ -200,6 +231,15 @@ class _HistoryRow extends StatelessWidget {
     final mode = fromEngineMode(reading.mode);
     final period = fromEnginePeriod(reading.period);
     return GlassCard(
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ResultPage(
+            reading: reading,
+            dependencies: dependencies,
+            autoSave: false,
+          ),
+        ),
+      ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
       child: Row(
         children: [

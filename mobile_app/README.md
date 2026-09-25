@@ -6,7 +6,7 @@ data, no server and no HTTP call.
 
 ## Included flow
 
-- Location permission explainer and birth-profile onboarding
+- Device-timezone explainer and explicit birth-profile onboarding
 - Daily signals and all seven decision modes
 - NOW/Morning/Midday/Afternoon/Evening selector
 - One-tap ritual
@@ -16,7 +16,7 @@ data, no server and no HTTP call.
 - Subtle breathing pulse on the Reveal button
 - Responsive checks for compact phones, standard phones and 800dp large windows
 - Result, Top 2 lucky windows and responsible-use footer
-- Placeholder history screen (not yet backed by saved readings)
+- Saved reading history with replay, retry-on-error and result sharing
 
 ## Run
 
@@ -134,11 +134,10 @@ a port defect by definition.
 
 Coordinate-to-timezone geometry. The dataset is 30 MB and ODbL share-alike, so
 shipping it is a product and legal decision rather than an implementation
-detail. A valid position fix therefore reports
-`locationStatus: "zone_lookup_unavailable"` and falls back to the device
-timezone, with the warning `location_zone_lookup_unavailable_using_device`.
-Nothing is guessed. See `lib/local_engine/LICENSES.md` for the full reasoning,
-the attribution table and how to install the dataset later.
+detail. Until that geometry ships, the app never asks for a position fix; it
+uses the device's IANA timezone for each reading. The dormant calculation
+adapter still has an explicit `zone_lookup_unavailable` fallback for tests and
+future integration. See `lib/local_engine/LICENSES.md` for the full reasoning.
 
 ### Development-only HTTP transport
 
@@ -162,29 +161,14 @@ non-retryable `rejectedRequest`; anything unexpected becomes a retryable
 `server` failure. Neither carries the input value, a coordinate, a stack trace
 or a formula -- only an app-owned code and sentence.
 
-## Location: explicit opt-in
+## Current time and birth country
 
-The explainer screen is the only place location is ever requested, and the
-answer is stored as an immutable `useCurrentLocation` flag on the session
-profile:
-
-- **Allow Current Location** — sets the flag true, then asks the OS for
-  *foreground* permission. A reading may then include a one-shot fix
-  (latitude, longitude, accuracy, capture time) describing the **current**
-  position only.
-- **Use Device Time Zone Instead** — sets the flag false and requests nothing.
-  The reading resolves the IANA device timezone and sends `location: null`.
-
-The flag, not the OS permission state, gates the lookup. When it is false the
-location plugin is not consulted at all — not even to read a permission granted
-in an earlier session — so opting out cannot be overridden by old consent.
-Returning to the explainer and choosing again overwrites the flag, and the last
-choice wins. A denied, disabled, timed-out or stale fix degrades to
-`location: null` and never blocks a reading. Birth country and birth timezone
-are never derived from location.
-
-Only `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` are declared; there is
-no `ACCESS_BACKGROUND_LOCATION`.
+The app reads the device's IANA timezone at Reveal, without requesting GPS.
+`location: null` is sent to the engine even if a legacy profile stored an old
+location opt-in. The Android main manifest declares no location permissions.
+The user must explicitly choose a birth date and a searchable country of birth;
+neither is inferred from current time or location. The birth-country picker is
+limited to country codes supported by the bundled timezone database.
 
 ## Android network policy
 
@@ -209,16 +193,12 @@ Then open the app and take a reading. No `adb reverse`, no server and no
 
 ## Remaining work
 
-- Profile and reading-history persistence (a restart returns to onboarding)
-- Real history list/detail from saved snapshots
+- Profile editing and export/delete controls for local data
 - Monetization: rewarded ads, entitlement, paywall and subscriptions
 - Analytics, crash reporting and remote config
 - Internationalization, RTL QA and locale formatting
 - Store release work: icons, screenshots, signing, privacy documents
 - Traditional profile/convention is still not collected (sent as null; the
   engine reduces coverage rather than guessing)
-- Coordinate-to-timezone geometry is not bundled, so a position fix narrows
-  nothing and the reading keeps the device timezone (see
-  `lib/local_engine/LICENSES.md`)
-- iOS: no `NSLocationWhenInUseUsageDescription` yet, so an iOS location request
-  will not succeed. iOS location support is **not** complete.
+- Coordinate-to-timezone geometry remains out of scope; device timezone is
+  used without requesting location (see `lib/local_engine/LICENSES.md`)

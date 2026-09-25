@@ -24,7 +24,7 @@ void main() {
       expect(find.byKey(const Key('reveal_button')), findsOneWidget);
       expect(
         find.text(
-          'For everyday reflection only • Never for medical, financial, political, or harmful choices.',
+          'For everyday reflection only • Never for medical, investing, borrowing, political, or harmful choices.',
         ),
         findsOneWidget,
       );

@@ -337,8 +337,8 @@ class _RitualPageState extends State<RitualPage>
             ),
             SizedBox(height: compact ? 10 : 14),
             Text(
-              'For everyday reflection only • Never for medical, financial, '
-              'political, or harmful choices.',
+              'For everyday reflection only • Never for medical, investing, '
+              'borrowing, political, or harmful choices.',
               key: const Key('ritual_responsible_use_note'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../category_presentation.dart';
 import '../data/history_entry.dart';
@@ -14,6 +15,7 @@ import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_info.dart';
 import '../widgets/responsible_use_sheet.dart';
+import 'history_page.dart';
 
 /// Renders a real engine reading. Nothing here invents a direction: every
 /// status the contract defines gets its own explicit presentation.
@@ -26,10 +28,14 @@ class ResultPage extends StatefulWidget {
     super.key,
     required this.reading,
     required this.dependencies,
+    this.autoSave = true,
   });
 
   final engine.ReadingResponse reading;
   final ReadingDependencies dependencies;
+
+  /// False when reopening an immutable snapshot from History.
+  final bool autoSave;
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -43,6 +49,9 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   /// mark has to go with it.
   late String _today;
   Timer? _dayChangeTimer;
+  bool _saving = false;
+  bool _saved = false;
+  bool _saveFailed = false;
 
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
@@ -76,7 +85,12 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     WidgetsBinding.instance.addObserver(this);
     _today = dailyEnergyDayKey(widget.dependencies.nowLocal());
     _scheduleDayChange();
-    unawaited(_saveToHistory());
+    if (widget.autoSave) {
+      _saving = true;
+      unawaited(_saveToHistory());
+    } else {
+      _saved = true;
+    }
   }
 
   @override
@@ -119,12 +133,54 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       '${reading.context.instantUtc}_${reading.mode.toJson()}_'
           '${reading.period.toJson()}_${reading.category.toJson()}';
 
-  Future<void> _saveToHistory() {
-    return widget.dependencies.historyRepository.save(
-      HistoryEntry(
-        id: _historyId,
-        reading: reading,
-        savedAtUtc: DateTime.parse(reading.context.instantUtc),
+  Future<void> _saveToHistory() async {
+    if (!_saving)
+      setState(() {
+        _saving = true;
+        _saveFailed = false;
+      });
+    try {
+      await widget.dependencies.historyRepository.save(
+        HistoryEntry(
+          id: _historyId,
+          reading: reading,
+          savedAtUtc: DateTime.parse(reading.context.instantUtc),
+        ),
+      );
+      if (mounted)
+        setState(() {
+          _saving = false;
+          _saved = true;
+          _saveFailed = false;
+        });
+    } catch (_) {
+      if (mounted)
+        setState(() {
+          _saving = false;
+          _saved = false;
+          _saveFailed = true;
+        });
+    }
+  }
+
+  Future<void> _shareReading() async {
+    try {
+      await SharePlus.instance.share(
+        ShareParams(text: shareTextForReading(reading)),
+      );
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Sharing is unavailable right now.')),
+        );
+      }
+    }
+  }
+
+  void _openHistory() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => HistoryPage(dependencies: widget.dependencies),
       ),
     );
   }
@@ -157,7 +213,13 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   ),
                 ),
                 IconButton(
-                  onPressed: () {},
+                  key: const Key('result_share'),
+                  tooltip: 'Share this reading',
+                  onPressed:
+                      reading.status == engine.ReadingStatus.ready ||
+                          reading.status == engine.ReadingStatus.balanced
+                      ? _shareReading
+                      : null,
                   icon: const Icon(Icons.ios_share_rounded),
                 ),
               ],
@@ -245,7 +307,14 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
-              onPressed: () {},
+              key: const Key('result_history_action'),
+              onPressed: !widget.autoSave
+                  ? () => Navigator.of(context).pop()
+                  : _saveFailed
+                  ? _saveToHistory
+                  : _saved
+                  ? _openHistory
+                  : null,
               style: OutlinedButton.styleFrom(
                 minimumSize: const Size.fromHeight(52),
                 side: const BorderSide(color: Colors.white30),
@@ -253,8 +322,20 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   borderRadius: BorderRadius.circular(18),
                 ),
               ),
-              icon: const Icon(Icons.bookmark_added_rounded),
-              label: const Text('Saved to History'),
+              icon: Icon(
+                _saveFailed
+                    ? Icons.refresh_rounded
+                    : Icons.bookmark_added_rounded,
+              ),
+              label: Text(
+                !widget.autoSave
+                    ? 'Back to History'
+                    : _saveFailed
+                    ? 'Couldn’t save · Retry'
+                    : _saving
+                    ? 'Saving to History…'
+                    : 'View in History',
+              ),
             ),
             const SizedBox(height: 18),
             InkWell(
@@ -291,6 +372,22 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       ),
     );
   }
+}
+
+/// Share only the result the user chose to disclose, never birth details,
+/// location, input snapshots or diagnostics.
+String shareTextForReading(engine.ReadingResponse reading) {
+  final mode = fromEngineMode(reading.mode);
+  final winner = reading.winner;
+  final percent = winner == null ? null : reading.percentages?[winner];
+  final direction = winner == null
+      ? 'Balanced'
+      : percent == null
+      ? winner
+      : '$winner · ${percent.toStringAsFixed(1)}%';
+  return 'AstraCue · ${categoryLabel(reading.category)} · ${mode.label}\n'
+      '$direction\n'
+      'A symbolic perspective for everyday reflection, not a prediction or probability.';
 }
 
 class _Direction extends StatelessWidget {
@@ -362,6 +459,13 @@ class _Direction extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium
               ?.copyWith(color: Colors.white70),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          'Percentages show symbolic alignment, not a real-world probability.',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: Colors.white60),
         ),
       ],
     );

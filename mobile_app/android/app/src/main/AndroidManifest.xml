@@ -5,13 +5,6 @@
          analytics, store services). Drop it if those are dropped. -->
     <uses-permission android:name="android.permission.INTERNET"/>
 
-    <!-- Foreground location only, used solely to resolve the CURRENT timezone
-         and region for a reading. Never the birthplace, and deliberately no
-         ACCESS_BACKGROUND_LOCATION. A denied permission degrades to the device
-         timezone instead of blocking the reading. -->
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-
     <application
         android:label="AstraCue"
         android:name="${applicationName}"

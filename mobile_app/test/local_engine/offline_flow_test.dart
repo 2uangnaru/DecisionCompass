@@ -88,7 +88,7 @@ void main() {
 
   testWidgets('declining location still produces a reading', (tester) async {
     await tester.pumpWidget(buildApp());
-    await completeOnboarding(tester, allowLocation: false);
+    await completeOnboarding(tester);
     await revealReading(tester);
     await pumpPastRitual(tester);
 

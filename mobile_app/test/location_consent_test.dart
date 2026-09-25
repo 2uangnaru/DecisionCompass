@@ -175,10 +175,8 @@ void main() {
     });
   });
 
-  group('the explainer choice reaches the request', () {
-    testWidgets('"Use Device Time Zone Instead" asks for no permission', (
-      tester,
-    ) async {
+  group('the production flow uses device time zone without GPS', () {
+    testWidgets('onboarding asks for no location permission', (tester) async {
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
         location: const CurrentLocation(
@@ -189,7 +187,7 @@ void main() {
         ),
       );
       await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester, allowLocation: false);
+      await completeOnboarding(tester);
       await revealReading(tester);
       await tester.pump();
 
@@ -203,81 +201,7 @@ void main() {
       await tester.pumpAndSettle();
     });
 
-    testWidgets('"Allow Current Location" requests permission exactly once', (
-      tester,
-    ) async {
-      const fix = CurrentLocation(
-        latitude: 10.7769,
-        longitude: 106.7009,
-        accuracyMeters: 42,
-        capturedAtUtc: '2026-09-18T08:29:45.000Z',
-      );
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        location: fix,
-      );
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await revealReading(tester);
-      await tester.pump();
-
-      expect(rig.contextProvider.locationAccessRequests, 1);
-      expect(rig.contextProvider.captures.single.includeLocation, isTrue);
-      final sent = rig.sentRequest!.context.location!;
-      expect(sent.latitude, fix.latitude);
-      expect(sent.longitude, fix.longitude);
-      expect(sent.accuracyMeters, fix.accuracyMeters);
-      expect(sent.capturedAtUtc, fix.capturedAtUtc);
-
-      await tester.pump(const Duration(milliseconds: 5400));
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('going back and choosing device timezone wins', (tester) async {
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        location: const CurrentLocation(
-          latitude: 10.7769,
-          longitude: 106.7009,
-          accuracyMeters: 42,
-          capturedAtUtc: '2026-09-18T08:29:45.000Z',
-        ),
-      );
-      await tester.pumpWidget(rig.app);
-      await tester.pump(); // let the startup profile-load future settle
-
-      // Opt in first...
-      await tester.tap(find.byKey(const Key('allow_location')));
-      await tester.pumpAndSettle();
-      expect(rig.contextProvider.locationAccessRequests, 1);
-
-      // ...then go back and change the answer. The explainer's orbit animates
-      // forever, so this steps the clock instead of settling.
-      await tester.tap(find.byIcon(Icons.arrow_back_rounded));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-      expect(find.byKey(const Key('skip_location')), findsOneWidget);
-
-      await tester.tap(find.byKey(const Key('skip_location')));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
-
-      await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-      await tester.tap(find.byKey(const Key('complete_profile')));
-      await tester.pumpAndSettle();
-      await revealReading(tester);
-      await tester.pump();
-
-      expect(rig.contextProvider.captures.single.includeLocation, isFalse);
-      expect(rig.sentRequest!.context.location, isNull);
-      // No second permission prompt came from opting out.
-      expect(rig.contextProvider.locationAccessRequests, 1);
-
-      await tester.pump(const Duration(milliseconds: 5400));
-      await tester.pumpAndSettle();
-    });
-
-    testWidgets('a retry reuses the request and captures location once', (
+    testWidgets('a retry reuses the request without capturing location', (
       tester,
     ) async {
       final rig = ReadingTestRig(
@@ -313,10 +237,8 @@ void main() {
       expect(rig.repository.requests, hasLength(2));
       // One capture only: the retry reused the original request.
       expect(rig.contextProvider.captures, hasLength(1));
-      expect(
-        rig.repository.requests.first.context.location!.capturedAtUtc,
-        rig.repository.requests.last.context.location!.capturedAtUtc,
-      );
+      expect(rig.repository.requests.first.context.location, isNull);
+      expect(rig.repository.requests.last.context.location, isNull);
     });
   });
 }

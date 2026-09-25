@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:country_picker/country_picker.dart';
 
 import '../app_profile.dart';
+import '../local_engine/time/tzdb.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
@@ -22,17 +24,13 @@ class OnboardingPage extends StatefulWidget {
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final _nameController = TextEditingController(text: 'Alex');
+  final _nameController = TextEditingController();
   var _step = 0;
-  var _birthDate = DateTime(1998, 6, 21);
+  DateTime? _birthDate;
   var _birthTimeUnknown = true;
   var _birthTime = const TimeOfDay(hour: 14, minute: 30);
-  var _countryCode = 'US';
-
-  /// The user's latest explicit answer on the explainer screen. Returning to
-  /// that screen and choosing differently overwrites it, so the last choice
-  /// always wins.
-  var _useCurrentLocation = false;
+  Country? _birthCountry;
+  var _showRequiredErrors = false;
 
   @override
   void dispose() {
@@ -43,9 +41,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Future<void> _pickBirthDate() async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _birthDate,
+      initialDate: _birthDate ?? DateTime(2000, 1, 1),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      initialDatePickerMode: DatePickerMode.year,
       // Flutter's own typed-entry field dismisses the keyboard the instant
       // it's cleared to empty (a framework quirk, not something this app
       // controls), so the dialog opens on the calendar/year-grid by default.
@@ -53,6 +52,27 @@ class _OnboardingPageState extends State<OnboardingPage> {
       // wants to type the date instead.
     );
     if (picked != null && mounted) setState(() => _birthDate = picked);
+  }
+
+  void _pickBirthCountry() {
+    showCountryPicker(
+      context: context,
+      showPhoneCode: false,
+      showSearch: true,
+      searchAutofocus: true,
+      // The picker includes a few territories absent from the bundled time
+      // database. Offer only codes the calculation engine can resolve.
+      countryFilter: tzdbCountries(),
+      countryListTheme: const CountryListThemeData(
+        backgroundColor: CompassColors.raised,
+        textStyle: TextStyle(color: CompassColors.text),
+        inputDecoration: InputDecoration(
+          labelText: 'Search countries',
+          prefixIcon: Icon(Icons.search_rounded),
+        ),
+      ),
+      onSelect: (country) => setState(() => _birthCountry = country),
+    );
   }
 
   Future<void> _pickBirthTime() async {
@@ -67,34 +87,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
       '${_birthTime.hour.toString().padLeft(2, '0')}:'
       '${_birthTime.minute.toString().padLeft(2, '0')}';
 
-  /// Location permission is requested only here, right after the explainer the
-  /// user just read, and never for the birthplace.
-  Future<void> _continueWithLocation() async {
-    setState(() => _useCurrentLocation = true);
-    await widget.dependencies.contextProvider.requestLocationAccess();
-    if (!mounted) return;
-    setState(() => _step = 1);
-  }
-
-  /// Opting out never touches the permission flow.
-  void _continueWithDeviceTimezone() {
-    setState(() {
-      _useCurrentLocation = false;
-      _step = 1;
-    });
-  }
+  void _continueToProfile() => setState(() => _step = 1);
 
   Future<void> _finish() async {
+    final birthDate = _birthDate;
+    final birthCountry = _birthCountry;
+    if (birthDate == null || birthCountry == null) {
+      setState(() => _showRequiredErrors = true);
+      return;
+    }
     final name = _nameController.text.trim().isEmpty
         ? 'Explorer'
         : _nameController.text.trim();
     final profile = AppProfile(
       userName: name,
-      birthDate: _birthDate,
+      birthDate: birthDate,
       birthTime: _birthTimeUnknown ? null : _birthTimeValue,
-      birthCountryCode: _countryCode,
-      zodiacSign: zodiacForDate(_birthDate),
-      useCurrentLocation: _useCurrentLocation,
+      birthCountryCode: birthCountry.countryCode,
+      zodiacSign: zodiacForDate(birthDate),
+      useCurrentLocation: false,
       safetyAcknowledged: widget.initialSafetyAcknowledged,
     );
     await widget.dependencies.profileRepository.save(profile);
@@ -155,7 +166,6 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           'BALANCE',
                           'CAN CHI',
                         ],
-                        sign: zodiacForDate(_birthDate),
                       ),
                       SizedBox(height: compact ? 14 : 28),
                       Text(
@@ -165,7 +175,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Your location is used only to resolve local time, timezone and today’s celestial timing.',
+                        'Readings use your device time zone for today’s timing. No location permission is needed.',
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
@@ -174,17 +184,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   Column(
                     children: [
                       FilledButton.icon(
-                        key: const Key('allow_location'),
-                        onPressed: _continueWithLocation,
-                        icon: const Icon(Icons.near_me_rounded),
-                        label: const Text('Allow Current Location'),
-                      ),
-                      const SizedBox(height: 4),
-                      TextButton(
-                        // Deliberately does not ask for permission.
-                        key: const Key('skip_location'),
-                        onPressed: _continueWithDeviceTimezone,
-                        child: const Text('Use Device Time Zone Instead'),
+                        key: const Key('continue_to_profile'),
+                        onPressed: _continueToProfile,
+                        icon: const Icon(Icons.arrow_forward_rounded),
+                        label: const Text('Continue'),
                       ),
                     ],
                   ),
@@ -222,16 +225,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
           const SizedBox(height: 28),
           Center(
-            child: ZodiacAvatar(
-              size: 92,
-              glow: true,
-              sign: zodiacForDate(_birthDate),
-            ),
+            child: _birthDate == null
+                ? const Icon(
+                    Icons.auto_awesome_rounded,
+                    size: 72,
+                    color: CompassColors.gold,
+                  )
+                : ZodiacAvatar(
+                    size: 92,
+                    glow: true,
+                    sign: zodiacForDate(_birthDate!),
+                  ),
           ),
           const SizedBox(height: 8),
           Center(
             child: Text(
-              zodiacForDate(_birthDate).label.toUpperCase(),
+              _birthDate == null
+                  ? 'YOUR SIGN APPEARS AFTER YOUR BIRTH DATE'
+                  : zodiacForDate(_birthDate!).label.toUpperCase(),
               style: Theme.of(context).textTheme.labelSmall
                   ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
             ),
@@ -274,7 +285,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${_birthDate.month}/${_birthDate.day}/${_birthDate.year}',
+                        _birthDate == null
+                            ? 'Select your date of birth'
+                            : '${_birthDate!.month}/${_birthDate!.day}/${_birthDate!.year}',
+                        key: const Key('birth_date_value'),
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
                     ],
@@ -284,6 +298,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ],
             ),
           ),
+          if (_showRequiredErrors && _birthDate == null)
+            const Padding(
+              padding: EdgeInsets.only(top: 6, left: 12),
+              child: Text(
+                'Select your birth date to continue.',
+                style: TextStyle(color: CompassColors.coral),
+              ),
+            ),
           const SizedBox(height: 14),
           GlassCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
@@ -330,23 +352,43 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ],
           const SizedBox(height: 14),
-          DropdownButtonFormField<String>(
+          GlassCard(
             key: const Key('birth_country'),
-            // The value is the ISO-3166 alpha-2 code the engine expects; only
-            // the label is a display name.
-            initialValue: _countryCode,
-            decoration: const InputDecoration(labelText: 'Country of birth'),
-            items: birthCountryChoices
-                .map(
-                  (choice) => DropdownMenuItem(
-                    value: choice.code,
-                    child: Text(choice.label),
+            onTap: _pickBirthCountry,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+            child: Row(
+              children: [
+                const Icon(Icons.public_rounded, color: CompassColors.gold),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Country of birth',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _birthCountry?.name ?? 'Search and select a country',
+                        key: const Key('birth_country_value'),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                    ],
                   ),
-                )
-                .toList(),
-            onChanged: (value) =>
-                setState(() => _countryCode = value ?? _countryCode),
+                ),
+                const Icon(Icons.chevron_right_rounded),
+              ],
+            ),
           ),
+          if (_showRequiredErrors && _birthCountry == null)
+            const Padding(
+              padding: EdgeInsets.only(top: 6, left: 12),
+              child: Text(
+                'Select your country of birth to continue.',
+                style: TextStyle(color: CompassColors.coral),
+              ),
+            ),
           const SizedBox(height: 28),
           FilledButton(
             key: const Key('complete_profile'),

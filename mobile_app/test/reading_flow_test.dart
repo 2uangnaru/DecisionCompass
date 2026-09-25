@@ -27,7 +27,7 @@ void main() {
       await tester.pump();
 
       final profile = rig.sentRequest!.profile;
-      expect(profile.birthDate, '1998-06-21');
+      expect(profile.birthDate, '2000-01-01');
       // The ISO code, not the display name the dropdown showed.
       expect(profile.birthCountry, 'US');
       expect(profile.birthTimezone, isNull);
@@ -56,9 +56,7 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
       );
       await tester.pumpWidget(rig.app);
-      await tester.pump(); // let the startup profile-load future settle
-      await tester.tap(find.byKey(const Key('allow_location')));
-      await tester.pumpAndSettle();
+      await fillOnboardingProfile(tester);
 
       // Turning the switch off reveals the time picker card.
       expect(find.byKey(const Key('birth_time_picker')), findsNothing);
