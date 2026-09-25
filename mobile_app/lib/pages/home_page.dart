@@ -625,49 +625,50 @@ class _ModeCard extends StatelessWidget {
     return GlassCard(
       selected: selected,
       onTap: onTap,
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Flexible(
-            child: Text(
-              mode.first,
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-              style: TextStyle(
-                color: selected ? CompassColors.blueLight : CompassColors.text,
-                fontWeight: FontWeight.w700,
-                fontSize:
-                    mode == DecisionMode.advanceRetreat ||
-                        mode == DecisionMode.forwardBackward
-                    ? 10
-                    : 13,
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                mode.first,
+                maxLines: 1,
+                style: TextStyle(
+                  color: selected ? CompassColors.blueLight : CompassColors.text,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 0.2,
+                ),
               ),
-            ),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 7),
-            child: Text('/', style: TextStyle(color: CompassColors.muted)),
-          ),
-          Flexible(
-            child: Text(
-              mode.second,
-              maxLines: 1,
-              overflow: TextOverflow.fade,
-              style: TextStyle(
-                color: selected
-                    ? CompassColors.blueLight
-                    : CompassColors.secondary,
-                fontWeight: FontWeight.w700,
-                fontSize:
-                    mode == DecisionMode.advanceRetreat ||
-                        mode == DecisionMode.forwardBackward
-                    ? 10
-                    : 13,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Text(
+                  '/',
+                  style: TextStyle(
+                    color: CompassColors.muted.withValues(alpha: 0.7),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               ),
-            ),
+              Text(
+                mode.second,
+                maxLines: 1,
+                style: TextStyle(
+                  color: selected
+                      ? CompassColors.blueLight
+                      : CompassColors.secondary,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 12,
+                  letterSpacing: 0.2,
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
