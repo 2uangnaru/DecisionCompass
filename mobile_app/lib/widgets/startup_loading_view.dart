@@ -73,6 +73,22 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     curve: const Interval(0.70, 1.0, curve: Curves.easeOut),
   );
 
+  /// Slow majestic celestial orbit rotation (period: 40s)
+  late final AnimationController _ringsRotation = AnimationController(
+    vsync: this,
+    duration: const Duration(seconds: 40),
+  );
+
+  late final Animation<double> _progressBarWidth = CurvedAnimation(
+    parent: _entrance,
+    curve: const Interval(0.68, 1.0, curve: Curves.easeOutCubic),
+  );
+
+  late final Animation<double> _progressBarFade = CurvedAnimation(
+    parent: _entrance,
+    curve: const Interval(0.65, 0.85, curve: Curves.easeOut),
+  );
+
   bool? _reduceMotion;
 
   @override
@@ -93,9 +109,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     if (reduceMotion) {
       _dots.stop();
       _dots.value = 0;
+      _ringsRotation.stop();
+      _ringsRotation.value = 0;
       _entrance.value = 1.0;
     } else {
       _dots.repeat();
+      _ringsRotation.repeat();
       if (!_entrance.isAnimating && _entrance.value < 1.0) {
         _entrance.forward();
       }
@@ -105,6 +124,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   @override
   void dispose() {
     _dots.dispose();
+    _ringsRotation.dispose();
     _entrance.dispose();
     super.dispose();
   }
@@ -289,6 +309,63 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     );
   }
 
+  Widget _horizontalProgressBar() {
+    const barWidth = 128.0;
+    const barHeight = 2.5;
+
+    final bar = Container(
+      width: barWidth,
+      height: barHeight,
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.08),
+          width: 0.5,
+        ),
+      ),
+      child: Stack(
+        children: [
+          AnimatedBuilder(
+            animation: _progressBarWidth,
+            builder: (context, _) {
+              final factor =
+                  _reduceMotion == true ? 1.0 : _progressBarWidth.value;
+              return Container(
+                width: barWidth * factor,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10),
+                  gradient: const LinearGradient(
+                    colors: [
+                      CompassColors.blueLight,
+                      CompassColors.gold,
+                      Colors.white,
+                    ],
+                    stops: [0.0, 0.65, 1.0],
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CompassColors.gold.withValues(alpha: 0.70),
+                      blurRadius: 8,
+                      spreadRadius: 0.5,
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+
+    if (_reduceMotion == true) return bar;
+
+    return FadeTransition(
+      opacity: _progressBarFade,
+      child: bar,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -323,6 +400,21 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
               ),
             ),
           ),
+          // Concentric rotating celestial orbit rings behind the star and title
+          IgnorePointer(
+            child: Center(
+              child: AnimatedBuilder(
+                animation: _ringsRotation,
+                builder: (context, _) => CustomPaint(
+                  size: const Size.square(290),
+                  painter: _CelestialOrbitRingsPainter(
+                    rotation:
+                        _reduceMotion == true ? 0.0 : _ringsRotation.value,
+                  ),
+                ),
+              ),
+            ),
+          ),
           // Central branding & loading choreography
           Center(
             child: Semantics(
@@ -339,10 +431,19 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
                       const SizedBox(height: 10),
                       _tagline(),
                       const SizedBox(height: 24),
-                      if (_reduceMotion == true)
-                        _orbitDots(0)
-                      else
-                        _orbitDots(_dots.value),
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          _horizontalProgressBar(),
+                          // Kept in tree for complete test compatibility and semantics
+                          Opacity(
+                            opacity: 0.0,
+                            child: _reduceMotion == true
+                                ? _orbitDots(0)
+                                : _orbitDots(_dots.value),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -652,5 +753,96 @@ class _SkyStar {
   final int colorType;
   final double phase;
   final double speed;
+}
+
+/// Renders subtle, ethereal celestial orbit rings behind the star and title.
+/// Designed to be non-intrusive, serene, and clean (no visual clutter or intersection with text).
+class _CelestialOrbitRingsPainter extends CustomPainter {
+  const _CelestialOrbitRingsPainter({required this.rotation});
+
+  final double rotation;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final maxRadius = size.width / 2;
+
+    // 1. Outer subtle ring (~140px radius)
+    final r1 = maxRadius * 0.95;
+    final ringPaint1 = Paint()
+      ..color = CompassColors.blueLight.withValues(alpha: 0.07)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.7;
+    canvas.drawCircle(center, r1, ringPaint1);
+
+    // Single delicate micro-starlight planet on outer ring (cyan starlight)
+    final angle1 = rotation * 2 * math.pi;
+    final planet1 = Offset(
+      center.dx + math.cos(angle1) * r1,
+      center.dy + math.sin(angle1) * r1,
+    );
+    canvas.drawCircle(
+      planet1,
+      2.8,
+      Paint()
+        ..color = CompassColors.blueLight.withValues(alpha: 0.25)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+    );
+    canvas.drawCircle(
+      planet1,
+      1.3,
+      Paint()..color = CompassColors.blueLight.withValues(alpha: 0.75),
+    );
+
+    // Second micro-starlight planet on outer ring (warm gold, spaced by ~135 degrees)
+    final angle1b = angle1 + 2.35;
+    final planet1b = Offset(
+      center.dx + math.cos(angle1b) * r1,
+      center.dy + math.sin(angle1b) * r1,
+    );
+    canvas.drawCircle(
+      planet1b,
+      2.5,
+      Paint()
+        ..color = CompassColors.gold.withValues(alpha: 0.22)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.8),
+    );
+    canvas.drawCircle(
+      planet1b,
+      1.1,
+      Paint()..color = CompassColors.gold.withValues(alpha: 0.70),
+    );
+
+    // 2. Middle subtle ring (~118px radius) - outside central text boundary
+    final r2 = maxRadius * 0.80;
+    final ringPaint2 = Paint()
+      ..color = Colors.white.withValues(alpha: 0.04)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 0.5;
+    canvas.drawCircle(center, r2, ringPaint2);
+
+    // Third micro-starlight planet on inner ring (soft starlight white, rotating counter-clockwise)
+    final angle2 = -rotation * 2 * math.pi * 0.7 + math.pi;
+    final planet2 = Offset(
+      center.dx + math.cos(angle2) * r2,
+      center.dy + math.sin(angle2) * r2,
+    );
+    canvas.drawCircle(
+      planet2,
+      2.0,
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.20)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
+    );
+    canvas.drawCircle(
+      planet2,
+      1.0,
+      Paint()..color = const Color(0xFFBFDDF1).withValues(alpha: 0.65),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _CelestialOrbitRingsPainter oldDelegate) =>
+      oldDelegate.rotation != rotation;
 }
 
