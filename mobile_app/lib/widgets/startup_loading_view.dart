@@ -22,20 +22,20 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     duration: const Duration(milliseconds: 2400),
   );
 
-  /// Staged entrance choreography: Star bloom -> 'A' -> Suffix slide -> Tagline.
+  /// Staged entrance choreography: Star bloom -> 'A' -> Suffix slide -> Tagline -> Progress Bar.
   late final AnimationController _entrance = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 1500),
+    duration: const Duration(milliseconds: 2200),
   );
 
   late final Animation<double> _starScale = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.0, 0.45, curve: Curves.easeOutBack),
+    curve: const Interval(0.0, 0.35, curve: Curves.easeOutBack),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.22, 0.52, curve: Curves.easeOut),
+    curve: const Interval(0.15, 0.40, curve: Curves.easeOut),
   );
 
   late final Animation<double> _leadScale = Tween<double>(
@@ -44,13 +44,13 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.22, 0.52, curve: Curves.easeOutCubic),
+      curve: const Interval(0.15, 0.40, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.42, 0.88, curve: Curves.easeOutCubic),
+    curve: const Interval(0.28, 0.65, curve: Curves.easeOutCubic),
   );
 
   late final Animation<Offset> _suffixSlide = Tween<Offset>(
@@ -59,18 +59,18 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.42, 0.88, curve: Curves.easeOutCubic),
+      curve: const Interval(0.28, 0.65, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.42, 0.72, curve: Curves.easeOut),
+    curve: const Interval(0.28, 0.55, curve: Curves.easeOut),
   );
 
   late final Animation<double> _taglineFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.70, 1.0, curve: Curves.easeOut),
+    curve: const Interval(0.45, 0.75, curve: Curves.easeOut),
   );
 
   /// Slow majestic celestial orbit rotation (period: 40s)
@@ -81,12 +81,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   late final Animation<double> _progressBarWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.68, 1.0, curve: Curves.easeOutCubic),
+    curve: const Interval(0.30, 1.0, curve: Curves.easeInOutCubic),
   );
 
   late final Animation<double> _progressBarFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.65, 0.85, curve: Curves.easeOut),
+    curve: const Interval(0.25, 0.45, curve: Curves.easeOut),
   );
 
   bool? _reduceMotion;
@@ -94,10 +94,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   @override
   void initState() {
     super.initState();
+    _entrance.value = 0.0;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) widget.onFirstFrame?.call();
+      if (!mounted) return;
+      widget.onFirstFrame?.call();
+      _entrance.forward(from: 0.0);
     });
-    _entrance.forward();
   }
 
   @override

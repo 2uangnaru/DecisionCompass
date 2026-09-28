@@ -60,7 +60,7 @@ Future<void> main() async {
 
   runApp(
     DecisionCompassApp(
-      minimumStartupDuration: const Duration(milliseconds: 1800),
+      minimumStartupDuration: const Duration(milliseconds: 2600),
       startupPreparation: startupPreparation,
       onContentReady: () {
         if (defaultTargetPlatform == TargetPlatform.android) {
@@ -96,6 +96,7 @@ void _registerFontLicenses() {
     for (final entry in const {
       'Noto Sans': 'assets/fonts/OFL-NotoSans.txt',
       'Noto Sans CJK': 'assets/fonts/OFL-NotoSansCJK.txt',
+      'Unicode CLDR': 'assets/licenses/UNICODE-LICENSE.txt',
     }.entries) {
       yield LicenseEntryWithLineBreaks([
         entry.key,

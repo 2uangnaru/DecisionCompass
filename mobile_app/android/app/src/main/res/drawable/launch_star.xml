@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="432dp"
+    android:height="432dp"
+    android:viewportWidth="432"
+    android:viewportHeight="432">
+    <!-- Soft starlight halo aura -->
+    <path
+        android:fillColor="#15D8B66A"
+        android:pathData="M216,118 A36,36 0 1,0 216,190 A36,36 0 1,0 216,118 Z" />
+    <path
+        android:fillColor="#2262B7E8"
+        android:pathData="M216,134 A20,20 0 1,0 216,174 A20,20 0 1,0 216,134 Z" />
+    <!-- 4-point celestial star -->
+    <path
+        android:strokeColor="#40D8B66A"
+        android:strokeWidth="1.5"
+        android:pathData="M216,140.1 C218.3,148.725 221.175,151.6 229.8,154.475 C221.175,157.35 218.3,160.225 216,168.85 C213.7,160.225 210.825,157.35 202.2,154.475 C210.825,151.6 213.7,148.725 216,140.1 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="216"
+                android:startY="140"
+                android:endX="216"
+                android:endY="169">
+                <item android:offset="0" android:color="#F1D486" />
+                <item android:offset="1" android:color="#C49B54" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
