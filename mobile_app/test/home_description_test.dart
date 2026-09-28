@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:decision_compass/data/home_description_deck.dart';
 import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/home_descriptions.dart';
+import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -254,6 +255,45 @@ void main() {
   });
 
   group('on the Home screen', () {
+    testWidgets('short descriptions sit close to the choices', (tester) async {
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      addTearDown(
+        tester.binding.platformDispatcher.clearTextScaleFactorTestValue,
+      );
+      tester.binding.platformDispatcher.textScaleFactorTestValue = 0.8;
+      await tester.binding.setSurfaceSize(const Size(600, 900));
+      final shortest = homeDescriptions.reduce(
+        (a, b) => a.length <= b.length ? a : b,
+      );
+      final store = InMemoryHomeDescriptionStore(
+        raw: HomeDescriptionDeckState(
+          deck: [homeDescriptions.indexOf(shortest)],
+          recent: const [],
+          days: const {},
+        ).toJson(),
+      );
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        localNow: DateTime(2026, 9, 18, 7),
+        descriptionStore: store,
+      );
+      await tester.pumpWidget(rig.app);
+      await openHome(tester);
+
+      expect(shownDescription(tester), shortest);
+      final description = find.byKey(const Key('home_description'));
+      final firstChoice = find.ancestor(
+        of: find.text('YES'),
+        matching: find.byType(GlassCard),
+      );
+      expect(tester.getSize(description).height, lessThan(63));
+      expect(
+        tester.getTopLeft(firstChoice).dy -
+            tester.getBottomLeft(description).dy,
+        closeTo(22, 1),
+      );
+    });
+
     testWidgets('shows one approved description and keeps it across rebuilds', (
       tester,
     ) async {
@@ -268,6 +308,8 @@ void main() {
       expect(homeDescriptions, contains(shown));
 
       // Rebuilds, and a round trip through another screen, leave it alone.
+      await tester.ensureVisible(find.byKey(const Key('category_money')));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(const Key('category_money')));
       await tester.pumpAndSettle();
       expect(shownDescription(tester), shown);

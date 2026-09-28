@@ -276,11 +276,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           style: Theme.of(context).textTheme.headlineLarge,
         ),
         const SizedBox(height: 8),
-        // Roughly three lines at this style on a 360dp phone. Holding that
-        // space stops the block from jumping once the saved deck has been
-        // read, without ever rendering the wrong day's line.
+        // Reserve space only while the saved description is loading. Once it
+        // arrives, let short and long lines take their natural height.
         ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 63),
+          constraints: BoxConstraints(minHeight: _description == null ? 63 : 0),
           child: Text(
             _description ?? '',
             key: const Key('home_description'),
@@ -637,7 +636,9 @@ class _ModeCard extends StatelessWidget {
                 mode.first,
                 maxLines: 1,
                 style: TextStyle(
-                  color: selected ? CompassColors.blueLight : CompassColors.text,
+                  color: selected
+                      ? CompassColors.blueLight
+                      : CompassColors.text,
                   fontWeight: FontWeight.w700,
                   fontSize: 12,
                   letterSpacing: 0.2,
