@@ -28,14 +28,29 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     duration: const Duration(milliseconds: 2200),
   );
 
-  late final Animation<double> _starScale = CurvedAnimation(
+  /// Seamless startup ascension: the star begins precisely at the screen's
+  /// geometric center (Y=68) matching the Android 12+ system splash icon,
+  /// then ascends gracefully to rest position (Y=0).
+  late final Animation<Offset> _starAscend = Tween<Offset>(
+    begin: const Offset(0.0, 68.0),
+    end: Offset.zero,
+  ).animate(
+    CurvedAnimation(
+      parent: _entrance,
+      curve: const Interval(0.0, 0.32, curve: Curves.easeOutCubic),
+    ),
+  );
+
+  /// Flanking satellite stars bloom outward as the central star ascends,
+  /// creating a 3-star constellation with organic celestial breathing.
+  late final Animation<double> _subStarsBloom = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.0, 0.35, curve: Curves.easeOutBack),
+    curve: const Interval(0.08, 0.35, curve: Curves.easeOutCubic),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.15, 0.40, curve: Curves.easeOut),
+    curve: const Interval(0.20, 0.45, curve: Curves.easeOut),
   );
 
   late final Animation<double> _leadScale = Tween<double>(
@@ -44,13 +59,13 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.15, 0.40, curve: Curves.easeOutCubic),
+      curve: const Interval(0.20, 0.45, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.28, 0.65, curve: Curves.easeOutCubic),
+    curve: const Interval(0.30, 0.68, curve: Curves.easeOutCubic),
   );
 
   late final Animation<Offset> _suffixSlide = Tween<Offset>(
@@ -59,18 +74,18 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.28, 0.65, curve: Curves.easeOutCubic),
+      curve: const Interval(0.30, 0.68, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.28, 0.55, curve: Curves.easeOut),
+    curve: const Interval(0.30, 0.58, curve: Curves.easeOut),
   );
 
   late final Animation<double> _taglineFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.45, 0.75, curve: Curves.easeOut),
+    curve: const Interval(0.48, 0.78, curve: Curves.easeOut),
   );
 
   /// Slow majestic celestial orbit rotation (period: 40s)
@@ -81,12 +96,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   late final Animation<double> _progressBarWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.30, 1.0, curve: Curves.easeInOutCubic),
+    curve: const Interval(0.35, 1.0, curve: Curves.easeInOutCubic),
   );
 
   late final Animation<double> _progressBarFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.25, 0.45, curve: Curves.easeOut),
+    curve: const Interval(0.30, 0.50, curve: Curves.easeOut),
   );
 
   bool? _reduceMotion;
@@ -182,10 +197,16 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   Widget _star(double progress) {
     final glow = 0.22 + 0.08 * math.sin(progress * 2 * math.pi);
-    final scale = _reduceMotion == true ? 1.0 : _starScale.value;
+    final breath = 1.0 + 0.03 * math.sin(progress * 2 * math.pi);
+    final scale = _reduceMotion == true ? 1.0 : breath;
+    final subScale = _reduceMotion == true ? 1.0 : _subStarsBloom.value;
     return CustomPaint(
       size: const Size.square(52),
-      painter: _LaunchStarPainter(glow: glow, scale: scale),
+      painter: _LaunchStarPainter(
+        glow: glow,
+        scale: scale,
+        subStarScale: subScale,
+      ),
     );
   }
 
@@ -427,7 +448,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
                   builder: (context, _) => Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      _star(_dots.value),
+                      Transform.translate(
+                        offset: _reduceMotion == true
+                            ? Offset.zero
+                            : _starAscend.value,
+                        child: _star(_dots.value),
+                      ),
                       const SizedBox(height: 14),
                       _wordmark(),
                       const SizedBox(height: 10),
@@ -461,10 +487,15 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 /// Paints the in-app celestial 4-pointed diamond star with concave curved rays,
 /// golden aura glow and satellite sparkle stars matching Onboarding's aesthetic.
 class _LaunchStarPainter extends CustomPainter {
-  const _LaunchStarPainter({required this.glow, this.scale = 1.0});
+  const _LaunchStarPainter({
+    required this.glow,
+    this.scale = 1.0,
+    this.subStarScale = 1.0,
+  });
 
   final double glow;
   final double scale;
+  final double subStarScale;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -504,22 +535,30 @@ class _LaunchStarPainter extends CustomPainter {
     final mainSize = size.width * 0.60 * currentScale;
     _drawCurvedStar(canvas, center, mainSize);
 
-    // 4. Flanking satellite stars (matching 3-star configuration)
-    if (scale > 0.3) {
-      final subProgress = ((scale - 0.3) / 0.7).clamp(0.0, 1.0);
-      final sub1 = Offset(
-        center.dx - size.width * 0.34,
-        center.dy - size.height * 0.28,
-      );
-      final sub1Size = size.width * 0.22 * subProgress;
+    // 4. Flanking satellite stars (spawning outward from the central star)
+    final subProgress = subStarScale.clamp(0.0, 1.0);
+    if (subProgress > 0.01) {
+      final sub1 = Offset.lerp(
+        center,
+        Offset(
+          center.dx - size.width * 0.34,
+          center.dy - size.height * 0.28,
+        ),
+        subProgress,
+      )!;
+      final sub1Size = size.width * 0.22 * subProgress * currentScale;
       _drawSatelliteAura(canvas, sub1, sub1Size * 1.5, glow * 0.85);
       _drawCurvedStar(canvas, sub1, sub1Size);
 
-      final sub2 = Offset(
-        center.dx + size.width * 0.34,
-        center.dy + size.height * 0.26,
-      );
-      final sub2Size = size.width * 0.25 * subProgress;
+      final sub2 = Offset.lerp(
+        center,
+        Offset(
+          center.dx + size.width * 0.34,
+          center.dy + size.height * 0.26,
+        ),
+        subProgress,
+      )!;
+      final sub2Size = size.width * 0.25 * subProgress * currentScale;
       _drawSatelliteAura(canvas, sub2, sub2Size * 1.5, glow * 0.85);
       _drawCurvedStar(canvas, sub2, sub2Size);
     }
@@ -609,7 +648,9 @@ class _LaunchStarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _LaunchStarPainter oldDelegate) =>
-      oldDelegate.glow != glow || oldDelegate.scale != scale;
+      oldDelegate.glow != glow ||
+      oldDelegate.scale != scale ||
+      oldDelegate.subStarScale != subStarScale;
 }
 
 /// Renders an organic celestial starry night sky matching in-app CelestialScaffold.
