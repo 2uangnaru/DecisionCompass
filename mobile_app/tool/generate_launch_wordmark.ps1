@@ -20,18 +20,22 @@ try {
         $graphics.PixelOffsetMode = [System.Drawing.Drawing2D.PixelOffsetMode]::HighQuality
 
         $star = [System.Drawing.Drawing2D.GraphicsPath]::new()
-        $star.AddPolygon([System.Drawing.PointF[]]@(
-            [System.Drawing.PointF]::new(300, 23),
-            [System.Drawing.PointF]::new(304, 39),
-            [System.Drawing.PointF]::new(319, 43),
-            [System.Drawing.PointF]::new(304, 47),
-            [System.Drawing.PointF]::new(300, 63),
-            [System.Drawing.PointF]::new(296, 47),
-            [System.Drawing.PointF]::new(281, 43),
-            [System.Drawing.PointF]::new(296, 39)
-        ))
-        $starGlow = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(35, 216, 182, 106), 10)
-        $starFill = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(216, 182, 106))
+        $star.StartFigure()
+        $star.AddBezier([System.Drawing.PointF]::new(300, 18), [System.Drawing.PointF]::new(304, 33),
+            [System.Drawing.PointF]::new(309, 38), [System.Drawing.PointF]::new(324, 43))
+        $star.AddBezier([System.Drawing.PointF]::new(324, 43), [System.Drawing.PointF]::new(309, 48),
+            [System.Drawing.PointF]::new(304, 53), [System.Drawing.PointF]::new(300, 68))
+        $star.AddBezier([System.Drawing.PointF]::new(300, 68), [System.Drawing.PointF]::new(296, 53),
+            [System.Drawing.PointF]::new(291, 48), [System.Drawing.PointF]::new(276, 43))
+        $star.AddBezier([System.Drawing.PointF]::new(276, 43), [System.Drawing.PointF]::new(291, 38),
+            [System.Drawing.PointF]::new(296, 33), [System.Drawing.PointF]::new(300, 18))
+        $star.CloseFigure()
+        $starGlow = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(30, 216, 182, 106), 4)
+        $starFill = [System.Drawing.Drawing2D.LinearGradientBrush]::new(
+            [System.Drawing.RectangleF]::new(276, 18, 48, 50),
+            [System.Drawing.Color]::FromArgb(241, 212, 134),
+            [System.Drawing.Color]::FromArgb(196, 155, 84), 90
+        )
         $path = [System.Drawing.Drawing2D.GraphicsPath]::new()
         $format = [System.Drawing.StringFormat]::GenericDefault.Clone()
         try {
@@ -76,24 +80,6 @@ try {
                 $blueGlow.Dispose()
             }
 
-            $ringPen = [System.Drawing.Pen]::new([System.Drawing.Color]::FromArgb(72, 98, 183, 232), 2)
-            $goldDot = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(216, 182, 106))
-            $blueDot = [System.Drawing.SolidBrush]::new([System.Drawing.Color]::FromArgb(98, 183, 232))
-            try {
-                $graphics.DrawEllipse($ringPen, 267, 222, 66, 66)
-                foreach ($index in 0..2) {
-                    $angle = $index * [math]::PI * 2 / 3
-                    $x = 300 + [math]::Cos($angle) * 33
-                    $y = 255 + [math]::Sin($angle) * 33
-                    $radius = if ($index -eq 0) { 7 } else { 6 }
-                    $brush = if ($index -eq 0) { $goldDot } else { $blueDot }
-                    $graphics.FillEllipse($brush, $x - $radius, $y - $radius, 2 * $radius, 2 * $radius)
-                }
-            } finally {
-                $blueDot.Dispose()
-                $goldDot.Dispose()
-                $ringPen.Dispose()
-            }
         } finally {
             $format.Dispose()
             $path.Dispose()

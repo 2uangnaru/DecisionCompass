@@ -69,17 +69,22 @@ try {
     $fonts.Dispose()
 }
 
-$star = @(
-    [System.Drawing.PointF]::new(300, 23),
-    [System.Drawing.PointF]::new(304, 39),
-    [System.Drawing.PointF]::new(319, 43),
-    [System.Drawing.PointF]::new(304, 47),
-    [System.Drawing.PointF]::new(300, 63),
-    [System.Drawing.PointF]::new(296, 47),
-    [System.Drawing.PointF]::new(281, 43),
-    [System.Drawing.PointF]::new(296, 39)
-)
-$starData = 'M' + (Point $star[0]) + ' ' + (($star[1..7] | ForEach-Object { 'L' + (Point $_) }) -join ' ') + ' Z'
+$starShape = [System.Drawing.Drawing2D.GraphicsPath]::new()
+try {
+    $starShape.StartFigure()
+    $starShape.AddBezier([System.Drawing.PointF]::new(300, 18), [System.Drawing.PointF]::new(304, 33),
+        [System.Drawing.PointF]::new(309, 38), [System.Drawing.PointF]::new(324, 43))
+    $starShape.AddBezier([System.Drawing.PointF]::new(324, 43), [System.Drawing.PointF]::new(309, 48),
+        [System.Drawing.PointF]::new(304, 53), [System.Drawing.PointF]::new(300, 68))
+    $starShape.AddBezier([System.Drawing.PointF]::new(300, 68), [System.Drawing.PointF]::new(296, 53),
+        [System.Drawing.PointF]::new(291, 48), [System.Drawing.PointF]::new(276, 43))
+    $starShape.AddBezier([System.Drawing.PointF]::new(276, 43), [System.Drawing.PointF]::new(291, 38),
+        [System.Drawing.PointF]::new(296, 33), [System.Drawing.PointF]::new(300, 18))
+    $starShape.CloseFigure()
+    $starData = PathData $starShape
+} finally {
+    $starShape.Dispose()
+}
 
 function CircleData([double]$centerX, [double]$centerY, [double]$radius) {
     $diameter = 2 * $radius
@@ -118,15 +123,17 @@ $vector = @"
             </gradient>
         </aapt:attr>
     </path>
-    <path android:fillColor="#D8B66A" android:strokeColor="#44D8B66A"
-        android:strokeWidth="5" android:pathData="$starData" />
-    <path android:fillColor="#00000000" android:strokeColor="#5062B7E8"
-        android:strokeWidth="1.5" android:pathData="$orbitRing" />
-    <group android:name="orbit_dots" android:pivotX="216" android:pivotY="277">
-        <path android:fillColor="#D8B66A" android:pathData="$($orbitDots[0])" />
-        <path android:fillColor="#62B7E8" android:pathData="$($orbitDots[1])" />
-        <path android:fillColor="#62B7E8" android:pathData="$($orbitDots[2])" />
-    </group>
+    <path android:strokeColor="#30D8B66A" android:strokeWidth="1.5"
+        android:pathData="$starData">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="216" android:startY="140"
+                android:endX="216" android:endY="169">
+                <item android:offset="0" android:color="#F1D486" />
+                <item android:offset="1" android:color="#C49B54" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <group android:name="orbit_dots" />
 </vector>
 "@
 
