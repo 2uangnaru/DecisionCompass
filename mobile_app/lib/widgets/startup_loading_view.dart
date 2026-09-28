@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -29,15 +30,15 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   );
 
   /// Seamless startup ascension: the star begins precisely at the screen's
-  /// geometric center (Y=68) matching the Android 12+ system splash icon,
+  /// geometric center (Y=50) matching the Android 12+ system splash icon,
   /// then ascends gracefully to rest position (Y=0).
   late final Animation<Offset> _starAscend = Tween<Offset>(
-    begin: const Offset(0.0, 68.0),
+    begin: const Offset(0.0, 50.0),
     end: Offset.zero,
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.0, 0.32, curve: Curves.easeOutCubic),
+      curve: const Interval(0.0, 0.30, curve: Curves.easeOutCubic),
     ),
   );
 
@@ -45,7 +46,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   /// creating a 3-star constellation with organic celestial breathing.
   late final Animation<double> _subStarsBloom = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.08, 0.35, curve: Curves.easeOutCubic),
+    curve: const Interval(0.04, 0.30, curve: Curves.easeOutCubic),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
@@ -105,6 +106,8 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   );
 
   bool? _reduceMotion;
+  bool _hasStartedEntrance = false;
+  Timer? _entranceTimer;
 
   @override
   void initState() {
@@ -113,7 +116,15 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       widget.onFirstFrame?.call();
-      _entrance.forward(from: 0.0);
+      // Allow a brief, imperceptible pause (80ms) for the native splash
+      // dismissal to finish and the user's display to present the first frame,
+      // so the star is visibly observed resting at center before it ascends
+      // and spawns the companion stars.
+      _entranceTimer = Timer(const Duration(milliseconds: 80), () {
+        if (!mounted || _hasStartedEntrance) return;
+        _hasStartedEntrance = true;
+        _entrance.forward(from: 0.0);
+      });
     });
   }
 
@@ -132,7 +143,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     } else {
       _dots.repeat();
       _ringsRotation.repeat();
-      if (!_entrance.isAnimating && _entrance.value < 1.0) {
+      if (_hasStartedEntrance && !_entrance.isAnimating && _entrance.value < 1.0) {
         _entrance.forward();
       }
     }
@@ -140,6 +151,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   @override
   void dispose() {
+    _entranceTimer?.cancel();
     _dots.dispose();
     _ringsRotation.dispose();
     _entrance.dispose();
@@ -454,11 +466,11 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
                             : _starAscend.value,
                         child: _star(_dots.value),
                       ),
-                      const SizedBox(height: 14),
+                      const SizedBox(height: 12),
                       _wordmark(),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       _tagline(),
-                      const SizedBox(height: 24),
+                      const SizedBox(height: 16),
                       Stack(
                         alignment: Alignment.center,
                         children: [

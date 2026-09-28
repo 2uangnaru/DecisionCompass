@@ -14,9 +14,8 @@ try {
         throw 'Launcher icon source must be square.'
     }
 
-    # The original image has a transparent 4px fringe at its top and left.
-    # A tiny even crop removes it without changing the artwork composition.
-    $edgeCrop = 5
+    # The selected artwork is opaque to every edge; keep its framing intact.
+    $edgeCrop = 0
     $cropSize = $source.Width - 2 * $edgeCrop
     $background = [System.Drawing.Color]::FromArgb(2, 3, 9)
 
