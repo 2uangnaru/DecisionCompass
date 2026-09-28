@@ -159,10 +159,10 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   }
 
   Widget _star(double progress) {
-    final glow = 0.20 + 0.10 * math.sin(progress * 2 * math.pi);
+    final glow = 0.22 + 0.08 * math.sin(progress * 2 * math.pi);
     final scale = _reduceMotion == true ? 1.0 : _starScale.value;
     return CustomPaint(
-      size: const Size.square(46),
+      size: const Size.square(52),
       painter: _LaunchStarPainter(glow: glow, scale: scale),
     );
   }
@@ -370,55 +370,72 @@ class _LaunchStarPainter extends CustomPainter {
     final center = size.center(Offset.zero);
     final currentScale = scale.clamp(0.0, 1.2);
 
-    // Radiant soft ambient halo
-    final haloPaint = Paint()
+    // 1. Broad soft circular ambient aura (100% spherical starlight falloff, no square artifacts)
+    final auraRadius = size.width * 0.85;
+    final auraPaint = Paint()
       ..shader = RadialGradient(
         colors: [
-          CompassColors.gold.withValues(alpha: 0.55 * glow * currentScale),
-          CompassColors.blueLight.withValues(alpha: 0.16 * glow * currentScale),
+          CompassColors.gold.withValues(alpha: 0.38 * glow * currentScale),
+          CompassColors.gold.withValues(alpha: 0.18 * glow * currentScale),
+          CompassColors.blueLight.withValues(alpha: 0.05 * glow * currentScale),
           Colors.transparent,
         ],
-        stops: const [0.0, 0.58, 1.0],
-      ).createShader(Rect.fromCircle(center: center, radius: size.width * 0.6));
-    canvas.drawCircle(center, size.width * 0.6, haloPaint);
+        stops: const [0.0, 0.35, 0.70, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: auraRadius));
+    canvas.drawCircle(center, auraRadius, auraPaint);
 
-    // Main 4-pointed curved star
-    final mainSize = size.width * 0.64 * currentScale;
-    _drawCurvedStar(canvas, center, mainSize, glow);
+    // 2. Warm inner core circular glow
+    final coreGlowRadius = size.width * 0.42 * currentScale;
+    final coreGlowPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          const Color(0xFFFFEAB0).withValues(alpha: 0.55 * glow * currentScale),
+          const Color(0xFFF5D386).withValues(alpha: 0.22 * glow * currentScale),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 0.50, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: coreGlowRadius));
+    canvas.drawCircle(center, coreGlowRadius, coreGlowPaint);
 
-    // Flanking satellite stars (echoing in-app auto_awesome_rounded)
+    // 3. Main 4-pointed curved star
+    final mainSize = size.width * 0.60 * currentScale;
+    _drawCurvedStar(canvas, center, mainSize);
+
+    // 4. Flanking satellite stars (matching 3-star configuration)
     if (scale > 0.3) {
       final subProgress = ((scale - 0.3) / 0.7).clamp(0.0, 1.0);
       final sub1 = Offset(
         center.dx - size.width * 0.34,
         center.dy - size.height * 0.28,
       );
-      _drawCurvedStar(
-        canvas,
-        sub1,
-        size.width * 0.22 * subProgress,
-        glow * 0.85,
-      );
+      final sub1Size = size.width * 0.22 * subProgress;
+      _drawSatelliteAura(canvas, sub1, sub1Size * 1.5, glow * 0.85);
+      _drawCurvedStar(canvas, sub1, sub1Size);
 
       final sub2 = Offset(
         center.dx + size.width * 0.34,
         center.dy + size.height * 0.26,
       );
-      _drawCurvedStar(
-        canvas,
-        sub2,
-        size.width * 0.25 * subProgress,
-        glow * 0.85,
-      );
+      final sub2Size = size.width * 0.25 * subProgress;
+      _drawSatelliteAura(canvas, sub2, sub2Size * 1.5, glow * 0.85);
+      _drawCurvedStar(canvas, sub2, sub2Size);
     }
   }
 
-  void _drawCurvedStar(
-    Canvas canvas,
-    Offset center,
-    double starSize,
-    double glowFactor,
-  ) {
+  void _drawSatelliteAura(Canvas canvas, Offset center, double radius, double glowFactor) {
+    if (radius <= 1.0) return;
+    final paint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          CompassColors.gold.withValues(alpha: 0.40 * glowFactor),
+          Colors.transparent,
+        ],
+        stops: const [0.0, 1.0],
+      ).createShader(Rect.fromCircle(center: center, radius: radius));
+    canvas.drawCircle(center, radius, paint);
+  }
+
+  void _drawCurvedStar(Canvas canvas, Offset center, double starSize) {
     if (starSize <= 0.5) return;
     final half = starSize / 2;
 
@@ -463,15 +480,7 @@ class _LaunchStarPainter extends CustomPainter {
       )
       ..close();
 
-    // Outer blur bloom
-    canvas.drawPath(
-      path,
-      Paint()
-        ..color = CompassColors.gold.withValues(alpha: 0.52 * glowFactor)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
-    );
-
-    // Warm gold-amber radiant gradient body
+    // Warm gold-amber radiant gradient body (clean, crisp, no square blur distortion)
     canvas.drawPath(
       path,
       Paint()
