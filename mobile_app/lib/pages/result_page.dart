@@ -3,10 +3,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-import '../category_presentation.dart';
 import '../data/history_entry.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
@@ -57,24 +58,38 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
 
-  /// Label/percentage pairs straight from the response, winner first.
-  List<({String label, String percent})> get _splits {
+  /// Label/percentage pairs from the response, winner first.
+  ///
+  /// The label is translated from the side of the pair the engine named, not
+  /// from the English word it sent, so a reading reopened from History after a
+  /// language switch still shows the same side. The number is unchanged: only
+  /// its decimal separator follows the language.
+  List<({String label, String percent})> _splits(AppLocalizations l10n) {
     final values = reading.percentages?.values;
     if (values == null) return const [];
+    final localeName = intlLocaleOf(context);
     // One decimal, formatted once here: the two sides are integer tenths in
     // the DTO, so they always read as adding to 100.0.
     final entries = values.entries
         .map(
-          (entry) =>
-              (label: entry.key, percent: entry.value.toStringAsFixed(1)),
+          (entry) => (
+            label: localizedChoice(l10n, _mode, entry.key),
+            percent: formatScore(localeName, entry.value),
+            isWinner: entry.key == (reading.winner ?? _englishFirst),
+          ),
         )
         .toList();
-    final leading = reading.winner ?? _mode.first;
     return [
-      ...entries.where((entry) => entry.label == leading),
-      ...entries.where((entry) => entry.label != leading),
+      for (final entry in entries)
+        if (entry.isWinner) (label: entry.label, percent: entry.percent),
+      for (final entry in entries)
+        if (!entry.isWinner) (label: entry.label, percent: entry.percent),
     ];
   }
+
+  /// The engine's own word for the first side of this mode's pair. Never
+  /// shown — only matched against, when a response omits `winner`.
+  String get _englishFirst => englishChoiceLabels[_mode]!.first;
 
   @override
   void initState() {
@@ -161,15 +176,17 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   Future<void> _shareReading() async {
+    final l10n = AppLocalizations.of(context);
     try {
       await SharePlus.instance.share(
-        ShareParams(text: shareTextForReading(reading)),
+        ShareParams(
+          text: shareTextForReading(l10n, intlLocaleOf(context), reading),
+        ),
       );
     } catch (_) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Sharing is unavailable right now.')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(l10n.shareUnavailable)));
       }
     }
   }
@@ -184,6 +201,9 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final splits = _splits(l10n);
+    final category = categoryLabel(l10n, reading.category);
     final palette = resultPaletteFor(
       mode: _mode,
       status: reading.status,
@@ -204,17 +224,17 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                 ),
                 Expanded(
                   child: Text(
-                    _mode.label,
+                    modeLabel(l10n, _mode),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: CompassColors.gold,
-                      letterSpacing: 1.7,
+                      letterSpacing: trackingFor(context, 1.7),
                     ),
                   ),
                 ),
                 IconButton(
                   key: const Key('result_share'),
-                  tooltip: 'Share this reading',
+                  tooltip: l10n.shareTooltip,
                   onPressed:
                       reading.status == engine.ReadingStatus.ready ||
                           reading.status == engine.ReadingStatus.balanced
@@ -228,7 +248,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
             // Sourced from the response, so a server that evaluated a
             // different legal category is shown truthfully.
             Semantics(
-              label: 'Reading area: ${categoryLabel(reading.category)}',
+              label: l10n.readingAreaSemantics(category),
               child: Container(
                 key: const Key('result_category_badge'),
                 padding: const EdgeInsets.symmetric(
@@ -241,48 +261,54 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   border: Border.all(color: Colors.white24),
                 ),
                 child: Text(
-                  categoryLabel(reading.category),
-                  style: Theme.of(context).textTheme.labelSmall
-                      ?.copyWith(color: Colors.white, letterSpacing: 0.9),
+                  category,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: Colors.white,
+                    letterSpacing: trackingFor(context, 0.9),
+                  ),
                 ),
               ),
             ),
             const SizedBox(height: 18),
             switch (reading.status) {
               engine.ReadingStatus.ready => _Direction(
-                reading: reading,
-                splits: _splits,
+                winnerLabel: splits.isEmpty
+                    ? ''
+                    : localizedChoice(
+                        l10n,
+                        _mode,
+                        reading.winner ?? _englishFirst,
+                      ),
+                splits: splits,
                 accent: palette.accent,
               ),
-              engine.ReadingStatus.balanced => _Balanced(splits: _splits),
-              engine.ReadingStatus.insufficientData => const _Explanation(
-                key: Key('result_insufficient_data'),
-                headline: 'NOT ENOUGH TO READ',
-                body:
-                    'Your profile does not yet contain enough detail for a '
-                    'direction on this one. Adding your birth time and '
-                    'country of birth gives the cycles more to work with.',
+              engine.ReadingStatus.balanced => _Balanced(splits: splits),
+              engine.ReadingStatus.insufficientData => _Explanation(
+                key: const Key('result_insufficient_data'),
+                headline: l10n.insufficientHeading,
+                body: l10n.insufficientBody,
               ),
+              // The heading and body are complete sentences that do not name
+              // the period: dropping a translated chip label into a sentence
+              // frame is ungrammatical in several of these languages, and the
+              // period is already on the badge above.
               engine.ReadingStatus.periodElapsed => _Explanation(
                 key: const Key('result_period_elapsed'),
-                headline: 'THAT PERIOD HAS PASSED',
-                body:
-                    '${_period.label} is already over where you are, so there '
-                    'is no window left to read. Pick a later period, or read '
-                    'your current moment instead — today’s reading is not '
-                    'rolled into tomorrow.',
+                headline: l10n.periodElapsedHeading,
+                body: l10n.periodElapsedBody,
               ),
             },
             const SizedBox(height: 30),
             if (_period == TimePeriod.now)
-              const GlassCard(
+              GlassCard(
                 child: Row(
                   children: [
-                    Icon(Icons.schedule_rounded, color: CompassColors.gold),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text('This reading reflects your current moment.'),
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: CompassColors.gold,
                     ),
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(l10n.currentMoment)),
                   ],
                 ),
               )
@@ -304,7 +330,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
             FilledButton.icon(
               onPressed: () => Navigator.of(context).pop(),
               icon: const Icon(Icons.explore_rounded),
-              label: const Text('Try Another Direction'),
+              label: Text(l10n.tryAnotherDirection),
             ),
             const SizedBox(height: 10),
             OutlinedButton.icon(
@@ -330,12 +356,13 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
               ),
               label: Text(
                 !widget.autoSave
-                    ? 'Back to History'
+                    ? l10n.backToHistory
                     : _saveFailed
-                    ? 'Couldn’t save · Retry'
+                    ? l10n.saveFailedRetry
                     : _saving
-                    ? 'Saving to History…'
-                    : 'View in History',
+                    ? l10n.savingToHistory
+                    : l10n.viewHistory,
+                textAlign: TextAlign.center,
               ),
             ),
             const SizedBox(height: 18),
@@ -350,13 +377,13 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                 ),
                 child: Text.rich(
                   TextSpan(
-                    text: 'For everyday reflection only. Important decisions need real information and qualified help.\n',
+                    text: '${l10n.everydayReflection}\n',
                     style: Theme.of(context).textTheme.bodySmall
                         ?.copyWith(color: Colors.white60, height: 1.45),
-                    children: const [
+                    children: [
                       TextSpan(
-                        text: 'Responsible Use & Safety Policy',
-                        style: TextStyle(
+                        text: l10n.responsibleUseLink,
+                        style: const TextStyle(
                           color: CompassColors.gold,
                           fontWeight: FontWeight.w600,
                           decoration: TextDecoration.underline,
@@ -377,98 +404,196 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
 /// Share only the result the user chose to disclose, never birth details,
 /// location, input snapshots or diagnostics.
-String shareTextForReading(engine.ReadingResponse reading) {
+///
+/// Written in the language the reader is using, from the same keys the screen
+/// renders — the engine's English winner token is translated, never pasted.
+String shareTextForReading(
+  AppLocalizations l10n,
+  String localeName,
+  engine.ReadingResponse reading,
+) {
   final mode = fromEngineMode(reading.mode);
   final winner = reading.winner;
   final percent = winner == null ? null : reading.percentages?[winner];
   final direction = winner == null
-      ? 'Balanced'
+      ? l10n.balancedResult
       : percent == null
-      ? winner
-      : '$winner · ${percent.toStringAsFixed(1)}%';
-  return 'AstraCue · ${categoryLabel(reading.category)} · ${mode.label}\n'
+      ? localizedChoice(l10n, mode, winner)
+      : '${localizedChoice(l10n, mode, winner)} · '
+            '${formatScore(localeName, percent)}%';
+  return '${l10n.appName} · ${categoryLabel(l10n, reading.category)} · '
+      '${modeLabel(l10n, mode)}\n'
       '$direction\n'
-      'A symbolic perspective for everyday reflection, not a prediction or probability.';
+      '${l10n.shareDisclaimer}';
 }
 
 class _Direction extends StatelessWidget {
   const _Direction({
-    required this.reading,
+    required this.winnerLabel,
     required this.splits,
     required this.accent,
   });
 
-  final engine.ReadingResponse reading;
+  /// Already translated by the mode it belongs to.
+  final String winnerLabel;
   final List<({String label, String percent})> splits;
   final Color accent;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final winner = splits.isEmpty ? null : splits.first;
     final counterpart = splits.length < 2 ? null : splits[1];
     return Column(
       key: const Key('result_ready'),
       children: [
         Text(
-          'YOUR DIRECTION',
+          l10n.yourDirection,
           key: const Key('result_direction_heading'),
-          style: Theme.of(context).textTheme.labelLarge
-              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Colors.white70,
+            letterSpacing: trackingFor(context, 2.4),
+          ),
         ),
         const SizedBox(height: 14),
-        SizedBox(
-          width: double.infinity,
-          child: FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              reading.winner ?? winner?.label ?? '',
-              key: const Key('result_winner_label'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                color: accent,
-                fontSize: 114,
-                height: 1,
-                fontWeight: FontWeight.w900,
-                letterSpacing: -2,
-                shadows: [
-                  Shadow(color: accent.withValues(alpha: 0.28), blurRadius: 24),
-                ],
-              ),
-            ),
-          ),
+        _WinnerHeadline(
+          label: winnerLabel,
+          percent: winner?.percent,
+          accent: accent,
         ),
-        if (winner != null) ...[
-          const SizedBox(height: 8),
-          Text(
-            '${winner.percent}%',
-            style: Theme.of(context).textTheme.headlineLarge
-                ?.copyWith(color: accent, fontSize: 38),
-          ),
-        ],
         if (counterpart != null) ...[
           const SizedBox(height: 14),
           Text(
             '${counterpart.label}  ${counterpart.percent}%',
+            textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineMedium
                 ?.copyWith(color: Colors.white70),
           ),
         ],
         const SizedBox(height: 18),
         Text(
-          'Based on your personal cycles and this moment.',
+          l10n.resultBasis,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium
               ?.copyWith(color: Colors.white70),
         ),
         const SizedBox(height: 6),
+        // Kept right under the numbers, never behind an info icon: a symbolic
+        // alignment score is not a probability, in any language.
         Text(
-          'Percentages show symbolic alignment, not a real-world probability.',
+          l10n.percentageCaveat,
+          key: const Key('result_percentage_caveat'),
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodySmall
               ?.copyWith(color: Colors.white60),
         ),
       ],
     );
+  }
+}
+
+/// The winning choice, and its percentage beneath it.
+///
+/// They are sized together rather than independently. `HACIA DELANTE` and
+/// `VỀ PHÍA TRƯỚC` are three times the length of `YES`, and a shrink-to-fit
+/// box on its own would quietly reduce the choice until a fixed-size
+/// percentage was the biggest thing on the screen — which inverts what the
+/// result is saying. Here the choice takes the largest size that fits in at
+/// most two lines, and the percentage is always a third of whatever that
+/// turned out to be.
+class _WinnerHeadline extends StatelessWidget {
+  const _WinnerHeadline({
+    required this.label,
+    required this.percent,
+    required this.accent,
+  });
+
+  final String label;
+  final String? percent;
+  final Color accent;
+
+  /// The English treatment, unchanged: `YES` still renders at 114.
+  static const _maxSize = 114.0;
+
+  /// Below this the choice stops being the headline and starts being a
+  /// caption, so it wraps to a second line instead of shrinking further.
+  static const _minSize = 34.0;
+
+  /// What the percentage is worth relative to the choice. 114 × this is 38,
+  /// which is the size the English result has always used.
+  static const _percentRatio = 1 / 3;
+
+  @override
+  Widget build(BuildContext context) {
+    final scaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth;
+        var size = _maxSize;
+        while (size > _minSize &&
+            !_fits(label, size, width, scaler, direction)) {
+          size -= 2;
+        }
+        final percentSize = size * _percentRatio;
+        return Column(
+          children: [
+            SizedBox(
+              key: const Key('result_winner_box'),
+              width: double.infinity,
+              child: Text(
+                label,
+                key: const Key('result_winner_label'),
+                textAlign: TextAlign.center,
+                maxLines: 2,
+                style: _style(size),
+              ),
+            ),
+            if (percent != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                '$percent%',
+                key: const Key('result_winner_percent'),
+                style: Theme.of(context).textTheme.headlineLarge
+                    ?.copyWith(color: accent, fontSize: percentSize),
+              ),
+            ],
+          ],
+        );
+      },
+    );
+  }
+
+  TextStyle _style(double size) => TextStyle(
+    color: accent,
+    fontSize: size,
+    height: 1,
+    fontWeight: FontWeight.w900,
+    // Negative tracking tightens Latin capitals; it would collide glyphs in
+    // the scripts that do not use it.
+    letterSpacing: size >= 60 ? -2 : 0,
+    shadows: [Shadow(color: accent.withValues(alpha: 0.28), blurRadius: 24)],
+  );
+
+  /// Whether [label] lays out inside [width] in no more than two lines.
+  bool _fits(
+    String label,
+    double size,
+    double width,
+    TextScaler scaler,
+    TextDirection direction,
+  ) {
+    final painter = TextPainter(
+      text: TextSpan(text: label, style: _style(size)),
+      textAlign: TextAlign.center,
+      textDirection: direction,
+      textScaler: scaler,
+      maxLines: 2,
+    )..layout(maxWidth: width);
+    final fits = !painter.didExceedMaxLines && painter.width <= width;
+    painter.dispose();
+    return fits;
   }
 }
 
@@ -479,19 +604,26 @@ class _Balanced extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       key: const Key('result_balanced'),
       children: [
         Text(
-          'EVENLY BALANCED',
-          style: Theme.of(context).textTheme.labelLarge
-              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+          l10n.balancedHeading,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Colors.white70,
+            letterSpacing: trackingFor(context, 2.4),
+          ),
         ),
         const SizedBox(height: 20),
-        Text(
-          'BALANCED',
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.displayLarge,
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            l10n.balancedResult,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.displayLarge,
+          ),
         ),
         const SizedBox(height: 14),
         Wrap(
@@ -509,11 +641,18 @@ class _Balanced extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         Text(
-          'Neither side leads right now. This is a reading of balance, not a '
-          'hidden answer.',
+          l10n.balancedExplanation,
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium
               ?.copyWith(color: Colors.white70),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          l10n.percentageCaveat,
+          key: const Key('result_percentage_caveat'),
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall
+              ?.copyWith(color: Colors.white60),
         ),
       ],
     );
@@ -533,8 +672,10 @@ class _Explanation extends StatelessWidget {
         Text(
           headline,
           textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.labelLarge
-              ?.copyWith(color: Colors.white70, letterSpacing: 2.4),
+          style: Theme.of(context).textTheme.labelLarge?.copyWith(
+            color: Colors.white70,
+            letterSpacing: trackingFor(context, 2.4),
+          ),
         ),
         const SizedBox(height: 18),
         const Icon(Icons.blur_on_rounded, size: 58, color: CompassColors.gold),
@@ -565,12 +706,16 @@ class _DailyBrief extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final colors = brief.colors;
     final colourDescription = colors == null
-        ? 'Colour to keep near you: '
-              '${titleCaseWords(brief.legacyColorInspiration!)}'
-        : 'Colours to keep near you: ${colors.lead.name} '
-              'and ${colors.supporting.name}';
+        // An older saved snapshot kept a single free-text colour. There is no
+        // key to translate it by, so it is shown as it was saved.
+        ? l10n.colorToKeepNear(titleCaseWords(brief.legacyColorInspiration!))
+        : l10n.colorsToKeepNear(
+            dailyColorName(l10n, colors.lead),
+            dailyColorName(l10n, colors.supporting),
+          );
     return GlassCard(
       key: const Key('result_daily_brief'),
       child: Column(
@@ -582,7 +727,7 @@ class _DailyBrief extends StatelessWidget {
               Expanded(child: Text(colourDescription)),
               const SizedBox(width: 10),
               Text(
-                '${brief.luckyNumber}',
+                formatWholeNumber(intlLocaleOf(context), brief.luckyNumber),
                 style: const TextStyle(
                   color: CompassColors.blueLight,
                   fontWeight: FontWeight.w700,
@@ -599,17 +744,17 @@ class _DailyBrief extends StatelessWidget {
                 // Flexible so the ⓘ can never push the row past the card, at
                 // a large text scale or in a language with a longer word for
                 // this than English has.
-                const Expanded(child: Text('Daily energy')),
+                Expanded(child: Text(l10n.dailyEnergy)),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      brief.energy!.displayLabel,
+                      energyLevelLabel(l10n, brief.energy!.level) ?? '—',
                       key: const Key('result_daily_energy_label'),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: CompassColors.teal,
                         fontWeight: FontWeight.w700,
-                        letterSpacing: 1.2,
+                        letterSpacing: trackingFor(context, 1.2),
                       ),
                     ),
                     const SizedBox(width: 2),
@@ -636,30 +781,35 @@ class _LuckyWindows extends StatelessWidget {
   final engine.ReadingResponse reading;
   final TimePeriod period;
 
-  /// Reads the wall clock the engine already resolved for the user's zone.
-  /// The offset is intentionally ignored rather than re-applied through the
-  /// device timezone, which would shift the window.
-  static String _clock(String localIso) {
+  /// Reads the wall clock the engine already resolved for the user's zone,
+  /// then prints it in the reader's own clock convention. The offset is
+  /// intentionally ignored rather than re-applied through the device
+  /// timezone, which would shift the window.
+  static String _clock(String localeName, String localIso) {
     final match = RegExp(r'T(\d{2}):(\d{2})').firstMatch(localIso);
     if (match == null) return '';
-    final hour24 = int.parse(match.group(1)!);
-    final minute = match.group(2)!;
-    final suffix = hour24 >= 12 && hour24 < 24 ? 'PM' : 'AM';
-    final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
-    return '$hour12:$minute $suffix';
+    return formatClock(
+      localeName,
+      int.parse(match.group(1)!),
+      int.parse(match.group(2)!),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeName = intlLocaleOf(context);
+    // One complete heading per period. A translated chip label dropped into
+    // an English frame ("in Morning") is ungrammatical in several of these
+    // languages, so there is no interpolation here at all.
+    final heading = luckyTimesHeading(l10n, period);
     return GlassCard(
       key: const Key('result_lucky_windows'),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Your Luckiest Times This ${period.label}',
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          if (heading != null)
+            Text(heading, style: Theme.of(context).textTheme.headlineMedium),
           const SizedBox(height: 16),
           ...reading.luckyWindows
               .take(2)
@@ -686,11 +836,12 @@ class _LuckyWindows extends StatelessWidget {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            '${_clock(window.startLocal)} – ${_clock(window.endLocal)}',
+                            '${_clock(localeName, window.startLocal)} – '
+                            '${_clock(localeName, window.endLocal)}',
                           ),
                         ),
                         Text(
-                          '${window.score.round()}%',
+                          '${formatWholeNumber(localeName, window.score.round())}%',
                           style: const TextStyle(
                             color: CompassColors.blueLight,
                             fontWeight: FontWeight.w700,
@@ -701,10 +852,10 @@ class _LuckyWindows extends StatelessWidget {
                   ),
                 ),
               ),
+          // Immediately under the windows, on the same view as the numbers.
           Text(
-            'Each percentage is a symbolic timing alignment score, not a '
-            'probability and not a chance of success. Windows are scored '
-            'independently, so they do not add up to 100%.',
+            l10n.luckyTimesCaveat,
+            key: const Key('result_lucky_times_caveat'),
             style: Theme.of(context).textTheme.bodySmall
                 ?.copyWith(color: CompassColors.muted),
           ),

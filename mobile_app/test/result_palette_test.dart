@@ -7,23 +7,26 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('each mode gives its two directions distinct, legible tones', () {
     for (final mode in DecisionMode.values) {
+      // The palette keys off the engine's own wire tokens, never a translated
+      // label, so a reading keeps its colours in every language.
+      final pair = englishChoiceLabels[mode]!;
       final first = resultPaletteFor(
         mode: mode,
         status: ReadingStatus.ready,
-        winner: mode.first,
+        winner: pair.first,
       );
       final second = resultPaletteFor(
         mode: mode,
         status: ReadingStatus.ready,
-        winner: mode.second,
+        winner: pair.second,
       );
 
-      expect(first.accent, isNot(second.accent), reason: mode.label);
-      expect(first.bottom, isNot(second.bottom), reason: mode.label);
+      expect(first.accent, isNot(second.accent), reason: mode.name);
+      expect(first.bottom, isNot(second.bottom), reason: mode.name);
       for (final palette in [first, second]) {
         final light = palette.accent.computeLuminance() + 0.05;
         final dark = palette.bottom.computeLuminance() + 0.05;
-        expect(light / dark, greaterThan(3), reason: mode.label);
+        expect(light / dark, greaterThan(3), reason: mode.name);
       }
     }
   });

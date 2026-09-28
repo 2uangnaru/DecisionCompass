@@ -68,8 +68,9 @@ void main() {
 
       for (final mode in DecisionMode.values) {
         final labels = engineLabels[toEngineMode(mode)]!;
-        expect(mode.first, labels.$1);
-        expect(mode.second, labels.$2);
+        final pair = englishChoiceLabels[mode]!;
+        expect(pair.first, labels.$1);
+        expect(pair.second, labels.$2);
       }
     });
   });

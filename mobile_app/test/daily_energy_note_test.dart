@@ -1,5 +1,5 @@
+import 'package:decision_compass/daily_energy_messages.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
-import 'package:decision_compass/widgets/daily_energy_info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -61,7 +61,10 @@ void main() {
         'focused',
         'flowing',
       ];
-      final sentences = levels.map(dailyEnergyMessage).toList();
+      // The first of each pool is the sentence that tone shipped with.
+      final sentences = levels
+          .map((level) => dailyEnergyMessagePools[level]?.first)
+          .toList();
       for (var i = 0; i < levels.length; i++) {
         expect(sentences[i], isNotNull, reason: '${levels[i]} has no sentence');
       }
@@ -71,9 +74,10 @@ void main() {
         reason: 'two tones share a sentence',
       );
       // Nothing to explain, so nothing offers to explain it.
-      expect(dailyEnergyMessage('unavailable'), isNull);
-      expect(dailyEnergyMessage(null), isNull);
-      expect(dailyEnergyMessage('not_a_level'), isNull);
+      expect(dailyEnergyMessagePools['unavailable'], isNull);
+      expect(dailyEnergyMessagePools['not_a_level'], isNull);
+      expect(hasDailyEnergyInsight('unavailable'), isFalse);
+      expect(hasDailyEnergyInsight(null), isFalse);
     });
   });
 

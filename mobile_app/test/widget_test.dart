@@ -19,8 +19,8 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const MaterialApp(
-        home: Scaffold(body: ZodiacAvatar(sign: ZodiacSign.capricorn)),
+      localizedApp(
+        home: const Scaffold(body: ZodiacAvatar(sign: ZodiacSign.capricorn)),
       ),
     );
 
@@ -50,7 +50,7 @@ void main() {
     );
     await tester.pumpWidget(rig.app);
     await tester.pump(); // let the startup profile-load future settle
-    expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
+    expect(find.text('Read the moment where you are.'), findsOneWidget);
 
     await completeOnboarding(tester);
     expect(find.text('Caught between choices?'), findsOneWidget);
@@ -108,7 +108,7 @@ void main() {
       await tester.pumpWidget(rig.app);
       await tester.pump();
       expect(tester.takeException(), isNull, reason: 'Failed at $size');
-      expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
+      expect(find.text('Read the moment where you are.'), findsOneWidget);
 
       await completeOnboarding(tester);
       await tester.ensureVisible(find.byKey(const Key('find_direction')));

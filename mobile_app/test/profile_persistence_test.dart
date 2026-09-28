@@ -70,7 +70,7 @@ void main() {
       await tester.pump();
 
       expect(find.text('Caught between choices?'), findsOneWidget);
-      expect(find.text('Read the moment\nwhere you are.'), findsNothing);
+      expect(find.text('Read the moment where you are.'), findsNothing);
     },
   );
 
@@ -81,6 +81,6 @@ void main() {
     await tester.pumpWidget(rig.app);
     await tester.pump();
 
-    expect(find.text('Read the moment\nwhere you are.'), findsOneWidget);
+    expect(find.text('Read the moment where you are.'), findsOneWidget);
   });
 }

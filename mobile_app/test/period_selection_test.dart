@@ -1,9 +1,16 @@
+import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
+import 'package:decision_compass/localized_presentation.dart';
 import 'package:decision_compass/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'reading_test_rig.dart';
+
+/// A period's English chip label. The enum carries no display text any more:
+/// the words come from the active language, and these tests run in English.
+String label(TimePeriod period) =>
+    periodLabel(stringsFor(AppLocale.english), period);
 
 /// The ritual floor is 4.2–5.2s, so this clears any draw of the jitter.
 Future<void> pumpPastRitual(WidgetTester tester) async {
@@ -42,7 +49,7 @@ void main() {
         expect(
           find.byKey(Key('period_${period.name}')),
           findsNothing,
-          reason: '${period.label} must not be selectable on Home',
+          reason: '${label(period)} must not be selectable on Home',
         );
         expect(periodChip(period), findsNothing);
       }
@@ -68,7 +75,7 @@ void main() {
         expect(
           periodChip(period),
           findsOneWidget,
-          reason: '${period.label} chip is missing',
+          reason: '${label(period)} chip is missing',
         );
       }
 
@@ -77,7 +84,7 @@ void main() {
         expect(
           chipFor(tester, period).selected,
           isFalse,
-          reason: '${period.label} must not start selected',
+          reason: '${label(period)} must not start selected',
         );
       }
       // The old footer repeated the badge and the chips; the hierarchy above
@@ -95,22 +102,21 @@ void main() {
 
       final handle = tester.ensureSemantics();
       expect(
-        tester
-            .getSemantics(find.byKey(const Key('reveal_button')))
-            .label
-            .contains('Reveal my direction for now'),
-        isTrue,
+        tester.getSemantics(find.byKey(const Key('reveal_button'))).label,
+        contains(label(TimePeriod.now)),
       );
 
       await tester.tap(periodChip(TimePeriod.evening));
       await tester.pump();
 
       expect(
-        tester
-            .getSemantics(find.byKey(const Key('reveal_button')))
-            .label
-            .contains('Reveal my direction for this evening'),
-        isTrue,
+        tester.getSemantics(find.byKey(const Key('reveal_button'))).label,
+        contains(label(TimePeriod.evening)),
+      );
+      // …and stops naming the one it was opened on.
+      expect(
+        tester.getSemantics(find.byKey(const Key('reveal_button'))).label,
+        isNot(contains(label(TimePeriod.now))),
       );
       expect(find.byKey(const Key('ritual_reading_summary')), findsNothing);
       handle.dispose();
@@ -148,7 +154,7 @@ void main() {
         expect(
           rig.sentRequest!.period,
           entry.value,
-          reason: '${entry.key.label} must not be sent as another period',
+          reason: '${label(entry.key)} must not be sent as another period',
         );
         await pumpPastRitual(tester);
       });
@@ -168,13 +174,16 @@ void main() {
       expect(find.byKey(const Key('loading_period_label')), findsOneWidget);
       expect(
         tester.widget<Text>(find.byKey(const Key('loading_period_label'))).data,
-        'This Evening',
+        label(TimePeriod.evening),
       );
 
       await pumpPastRitual(tester);
 
       // The result reads the response's period, not the ritual selection.
-      expect(find.text('Your Luckiest Times This Evening'), findsOneWidget);
+      expect(
+        find.text(stringsFor(AppLocale.english).luckyTimesEvening),
+        findsOneWidget,
+      );
       expect(find.byKey(const Key('result_lucky_windows')), findsOneWidget);
     });
 
@@ -189,7 +198,7 @@ void main() {
       await revealReading(tester);
 
       expect(rig.sentRequest!.period, engine.TimePeriod.now);
-      expect(find.text('Now'), findsOneWidget);
+      expect(find.text(label(TimePeriod.now)), findsWidgets);
 
       await pumpPastRitual(tester);
       expect(
@@ -276,9 +285,9 @@ void main() {
         expect(
           chipFor(tester, period).onSelected,
           isNull,
-          reason: '${period.label} must be disabled once it is over',
+          reason: '${label(period)} must be disabled once it is over',
         );
-        expect(find.text('${period.label} · Passed'), findsOneWidget);
+        expect(find.text('${label(period)} · Passed'), findsOneWidget);
       }
       for (final period in [
         TimePeriod.now,
@@ -288,9 +297,9 @@ void main() {
         expect(
           chipFor(tester, period).onSelected,
           isNotNull,
-          reason: '${period.label} is not over yet',
+          reason: '${label(period)} is not over yet',
         );
-        expect(find.text('${period.label} · Passed'), findsNothing);
+        expect(find.text('${label(period)} · Passed'), findsNothing);
       }
 
       // Tapping an elapsed chip changes nothing at all.
@@ -371,7 +380,7 @@ void main() {
         expect(
           period.hasElapsedAt(midnight),
           isFalse,
-          reason: '${period.label} cannot be over before the day starts',
+          reason: '${label(period)} cannot be over before the day starts',
         );
       }
     });

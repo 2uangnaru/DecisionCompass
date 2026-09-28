@@ -6,38 +6,27 @@ import '../app_profile.dart';
 import '../category_presentation.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
+import '../localized_rotation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_info.dart';
+import '../widgets/language_selector.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 import 'ritual_page.dart';
 
-const _shortMonths = <String>[
-  'JAN',
-  'FEB',
-  'MAR',
-  'APR',
-  'MAY',
-  'JUN',
-  'JUL',
-  'AUG',
-  'SEP',
-  'OCT',
-  'NOV',
-  'DEC',
-];
-
 /// Buckets a real wall-clock hour into the three greetings the design uses.
 /// There is no "good night" bucket: the app's own copy never implies the user
 /// should be asleep.
-String _greeting(DateTime local) {
+String _greeting(AppLocalizations l10n, DateTime local) {
   final hour = local.hour;
-  if (hour < 12) return 'Good morning,';
-  if (hour < 18) return 'Good afternoon,';
-  return 'Good evening,';
+  if (hour < 12) return l10n.greetingMorning;
+  if (hour < 18) return l10n.greetingAfternoon;
+  return l10n.greetingEvening;
 }
 
 class HomePage extends StatefulWidget {
@@ -70,10 +59,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   late String _briefLocalDay;
   Timer? _dayChangeTimer;
 
-  /// Today's rotating description, once the saved deck has been read. Null
-  /// means "not resolved yet"; the copy block holds its space rather than
-  /// showing another day's line for a frame.
-  String? _description;
+  /// The index of today's rotating description, once the saved deck has been
+  /// read. Null means "not resolved yet"; the copy block holds its space
+  /// rather than showing another day's line for a frame.
+  ///
+  /// An index rather than the sentence: the language is resolved at build
+  /// time, so switching language shows the translation of the same line
+  /// without re-reading or advancing the deck.
+  int? _description;
 
   /// The local day [_description] belongs to. A load that started on an
   /// earlier day is discarded when it lands, so a slow store cannot drop
@@ -105,8 +98,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       if (_description != null) setState(() => _description = null);
     }
 
-    final description = await widget.dependencies.homeDescriptionDeck
-        .descriptionFor(local);
+    final description = await widget.dependencies.homeDescriptionDeck.indexFor(
+      local,
+    );
     if (!mounted || _descriptionDay != day) return;
     setState(() => _description = description);
   }
@@ -173,42 +167,47 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
       child: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _header(),
+            _header(l10n),
             const SizedBox(height: 24),
-            _dailySignals(),
+            _dailySignals(l10n),
             const SizedBox(height: 28),
-            _positioning(),
+            _positioning(l10n),
             const SizedBox(height: 22),
             // No heading here: the positioning copy above already asks for
             // this, and a second one made the screen read as a wall of
             // headings.
-            _modeGrid(),
+            _modeGrid(l10n),
             const SizedBox(height: 28),
             Text(
-              'What area is this about?',
+              l10n.areaQuestion,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 14),
-            _categorySelector(),
+            _categorySelector(l10n),
             const SizedBox(height: 28),
             FilledButton.icon(
               key: const Key('find_direction'),
               onPressed: _beginReading,
               icon: const Icon(Icons.auto_awesome_rounded),
-              label: const Text('Find My Direction'),
+              label: Text(l10n.findDirection),
             ),
             const SizedBox(height: 12),
             Center(
               child: Text(
-                '${categoryLabel(_category)}  •  ${_mode.label}',
-                style: Theme.of(context).textTheme.labelSmall
-                    ?.copyWith(color: CompassColors.muted, letterSpacing: 0.8),
+                '${categoryLabel(l10n, _category)}  •  '
+                '${modeLabel(l10n, _mode)}',
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: CompassColors.muted,
+                  letterSpacing: trackingFor(context, 0.8),
+                ),
               ),
             ),
           ],
@@ -217,7 +216,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  Widget _header() {
+  Widget _header(AppLocalizations l10n) {
     return Row(
       children: [
         ZodiacAvatar(size: 52, sign: widget.profile.zodiacSign),
@@ -227,7 +226,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _greeting(widget.dependencies.nowLocal()),
+                _greeting(l10n, widget.dependencies.nowLocal()),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
@@ -239,15 +238,22 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ],
           ),
         ),
+        // The same language control the welcome screen offers, so the choice
+        // stays changeable after onboarding.
+        LanguageButton(
+          controller: widget.dependencies.localeController,
+          compact: true,
+        ),
+        const SizedBox(width: 2),
         IconButton.filledTonal(
           key: const Key('home_responsible_use_button'),
-          tooltip: 'Responsible Use',
+          tooltip: l10n.responsibleUse,
           onPressed: () => showResponsibleUseSheet(context),
           icon: const Icon(Icons.shield_outlined, size: 20),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: 2),
         IconButton.filledTonal(
-          tooltip: 'History',
+          tooltip: l10n.history,
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => HistoryPage(dependencies: widget.dependencies),
@@ -260,28 +266,31 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   /// Says plainly what the app is for, without promising certainty.
-  Widget _positioning() {
+  Widget _positioning(AppLocalizations l10n) {
+    final description = _description;
     return Column(
       key: const Key('home_positioning'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'A compass for uncertain moments'.toUpperCase(),
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: CompassColors.gold, letterSpacing: 1.6),
+          l10n.homeEyebrow,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: CompassColors.gold,
+            letterSpacing: trackingFor(context, 1.6),
+          ),
         ),
         const SizedBox(height: 10),
-        Text(
-          'Caught between choices?',
-          style: Theme.of(context).textTheme.headlineLarge,
-        ),
+        Text(l10n.homeTitle, style: Theme.of(context).textTheme.headlineLarge),
         const SizedBox(height: 8),
         // Reserve space only while the saved description is loading. Once it
         // arrives, let short and long lines take their natural height.
         ConstrainedBox(
-          constraints: BoxConstraints(minHeight: _description == null ? 63 : 0),
+          constraints: BoxConstraints(minHeight: description == null ? 63 : 0),
           child: Text(
-            _description ?? '',
+            // The index is what the deck saved; the sentence is resolved here,
+            // so a language switch re-reads the same line in the new language
+            // and consumes nothing.
+            description == null ? '' : homeDescriptionAt(l10n, description),
             key: const Key('home_description'),
             style: Theme.of(context).textTheme.bodyMedium
                 ?.copyWith(height: 1.5),
@@ -298,17 +307,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   /// Wrapping compact cards: seven choices stay reachable on a 360dp phone
   /// without pushing the decision modes off the first screenful.
-  Widget _categorySelector() {
+  Widget _categorySelector(AppLocalizations l10n) {
     return Wrap(
       key: const Key('category_selector'),
       spacing: 8,
       runSpacing: 8,
       children: categoryChoices.map((choice) {
         final selected = choice.category == _category;
+        final label = categoryLabel(l10n, choice.category);
         return Semantics(
           button: true,
           selected: selected,
-          label: choice.label,
+          label: label,
           child: ConstrainedBox(
             // The constraint reaches Material and InkWell unchanged, so the
             // whole tappable area is 48dp tall, not just the painted box.
@@ -329,14 +339,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         : CompassColors.gold,
                   ),
                   const SizedBox(width: 8),
-                  Text(
-                    choice.label,
-                    style: TextStyle(
-                      color: selected
-                          ? CompassColors.blueLight
-                          : CompassColors.text,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 13,
+                  // Flexible so a longer translation wraps inside the chip
+                  // instead of pushing the row past a 360dp screen.
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: TextStyle(
+                        color: selected
+                            ? CompassColors.blueLight
+                            : CompassColors.text,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
                     ),
                   ),
                 ],
@@ -348,8 +362,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  Widget _dailySignals() {
+  Widget _dailySignals(AppLocalizations l10n) {
     final today = widget.dependencies.nowLocal();
+    final localeName = intlLocaleOf(context);
     return GlassCard(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Column(
@@ -359,16 +374,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             children: [
               Expanded(
                 child: Text(
-                  'TODAY’S SIGNALS',
+                  l10n.todaySignals,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: CompassColors.gold,
                     fontWeight: FontWeight.w700,
-                    letterSpacing: 1.6,
+                    letterSpacing: trackingFor(context, 1.6),
                   ),
                 ),
               ),
               Text(
-                '${_shortMonths[today.month - 1]} ${today.day}',
+                formatShortDate(localeName, today),
                 style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: CompassColors.muted,
                   fontWeight: FontWeight.w600,
@@ -403,7 +418,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Daily energy',
+                              l10n.dailyEnergy,
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
                                     color: CompassColors.secondary,
@@ -415,7 +430,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                               children: [
                                 Flexible(
                                   child: Text(
-                                    energy?.displayLabel ?? '—',
+                                    energyLevelLabel(l10n, energy?.level) ??
+                                        '—',
                                     key: const Key('daily_energy_label'),
                                     overflow: TextOverflow.ellipsis,
                                     style: Theme.of(context)
@@ -425,7 +441,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                           color: CompassColors.text,
                                           fontSize: 22,
                                           fontWeight: FontWeight.w700,
-                                          letterSpacing: 1.2,
+                                          letterSpacing: trackingFor(
+                                            context,
+                                            1.2,
+                                          ),
                                         ),
                                   ),
                                 ),
@@ -471,7 +490,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                       children: [
                         Expanded(
                           child: _TodaySignalTile(
-                            label: 'Your colors today:',
+                            label: l10n.yourColorsToday,
                             // Equal-width columns keep both colours on one
                             // baseline, even in the half-width signal tile.
                             value: Row(
@@ -479,7 +498,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 Expanded(
                                   child: _Swatch(
                                     color: colors?.lead,
-                                    role: 'Lead',
+                                    role: l10n.colorRoleLead,
                                     testKey: 'daily_color_lead',
                                   ),
                                 ),
@@ -487,7 +506,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 Expanded(
                                   child: _Swatch(
                                     color: colors?.supporting,
-                                    role: 'Supporting',
+                                    role: l10n.colorRoleSupporting,
                                     testKey: 'daily_color_supporting',
                                   ),
                                 ),
@@ -498,9 +517,14 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                         const SizedBox(width: 8),
                         Expanded(
                           child: _TodaySignalTile(
-                            label: 'Lucky number today:',
+                            label: l10n.luckyNumberToday,
                             value: Text(
-                              brief?.luckyNumber.toString() ?? '—',
+                              brief == null
+                                  ? '—'
+                                  : formatWholeNumber(
+                                      localeName,
+                                      brief.luckyNumber,
+                                    ),
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: brief == null
@@ -534,9 +558,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     );
   }
 
-  Widget _modeGrid() {
+  Widget _modeGrid(AppLocalizations l10n) {
     Widget card(DecisionMode mode) => _ModeCard(
-      mode: mode,
+      first: modeFirstLabel(l10n, mode),
+      second: modeSecondLabel(l10n, mode),
       selected: _mode == mode,
       onTap: () => setState(() => _mode = mode),
     );
@@ -610,12 +635,16 @@ class _TodaySignalTile extends StatelessWidget {
 
 class _ModeCard extends StatelessWidget {
   const _ModeCard({
-    required this.mode,
+    required this.first,
+    required this.second,
     required this.selected,
     required this.onTap,
   });
 
-  final DecisionMode mode;
+  /// Two already-localized tokens and a separator, never an English label to
+  /// be split on punctuation.
+  final String first;
+  final String second;
   final bool selected;
   final VoidCallback onTap;
 
@@ -633,7 +662,7 @@ class _ModeCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                mode.first,
+                first,
                 maxLines: 1,
                 style: TextStyle(
                   color: selected
@@ -656,7 +685,7 @@ class _ModeCard extends StatelessWidget {
                 ),
               ),
               Text(
-                mode.second,
+                second,
                 maxLines: 1,
                 style: TextStyle(
                   color: selected
@@ -691,10 +720,11 @@ class _Swatch extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final swatch = color == null ? CompassColors.line : Color(color!.argb);
+    final l10n = AppLocalizations.of(context);
     return Semantics(
       label: color == null
-          ? '$role colour not available yet'
-          : '$role colour, ${color!.name}',
+          ? l10n.colorRoleUnavailableSemantics(role)
+          : l10n.colorRoleSemantics(role, dailyColorName(l10n, color!)),
       child: Column(
         key: Key(testKey),
         mainAxisSize: MainAxisSize.min,
@@ -720,7 +750,7 @@ class _Swatch extends StatelessWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            color?.name ?? '—',
+            color == null ? '—' : dailyColorName(l10n, color!),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,

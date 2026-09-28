@@ -1,58 +1,56 @@
+/// The seven symbolic pairs, as identity only.
+///
+/// The words a reader sees live in `lib/l10n/` and are resolved through
+/// `localized_presentation.dart`: a mode carries no English text, so no screen
+/// can accidentally show an untranslated label. `LEFT / RIGHT` and
+/// `FORWARD / BACKWARD` remain symbolic polarity, never physical navigation.
 enum DecisionMode {
-  yesNo('YES / NO', 'YES', 'NO', 'Testing openness against resistance'),
-  actWait('ACT / WAIT', 'ACT', 'WAIT', 'Balancing momentum against patience'),
-  advanceRetreat(
-    'ADVANCE / RETREAT',
-    'ADVANCE',
-    'RETREAT',
-    'Reading expansion against withdrawal',
-  ),
-  stayGo('STAY / GO', 'STAY', 'GO', 'Comparing roots with movement'),
-  keepLetGo(
-    'KEEP / LET GO',
-    'KEEP',
-    'LET GO',
-    'Weighing continuity against release',
-  ),
-  forwardBackward(
-    'FORWARD / BACKWARD',
-    'FORWARD',
-    'BACKWARD',
-    'Tracing forward motion against returning energy',
-  ),
-  leftRight(
-    'LEFT / RIGHT',
-    'LEFT',
-    'RIGHT',
-    'Balancing receptive and expressive polarity',
-  );
-
-  const DecisionMode(this.label, this.first, this.second, this.ritualCopy);
-
-  final String label;
-  final String first;
-  final String second;
-  final String ritualCopy;
+  yesNo,
+  actWait,
+  advanceRetreat,
+  stayGo,
+  keepLetGo,
+  forwardBackward,
+  leftRight,
 }
 
-enum ZodiacSign {
-  aries('♈', 'Aries', 'assets/zodiac/zodiac_01_aries.png'),
-  taurus('♉', 'Taurus', 'assets/zodiac/zodiac_02_taurus.png'),
-  gemini('♊', 'Gemini', 'assets/zodiac/zodiac_03_gemini.png'),
-  cancer('♋', 'Cancer', 'assets/zodiac/zodiac_04_cancer.png'),
-  leo('♌', 'Leo', 'assets/zodiac/zodiac_05_leo.png'),
-  virgo('♍', 'Virgo', 'assets/zodiac/zodiac_06_virgo.png'),
-  libra('♎', 'Libra', 'assets/zodiac/zodiac_07_libra.png'),
-  scorpio('♏', 'Scorpio', 'assets/zodiac/zodiac_08_scorpio.png'),
-  sagittarius('♐', 'Sagittarius', 'assets/zodiac/zodiac_09_sagittarius.png'),
-  capricorn('♑', 'Capricorn', 'assets/zodiac/zodiac_10_capricorn.png'),
-  aquarius('♒', 'Aquarius', 'assets/zodiac/zodiac_11_aquarius.png'),
-  pisces('♓', 'Pisces', 'assets/zodiac/zodiac_12_pisces.png');
+/// The engine's own English spelling of each pair.
+///
+/// Not display text: it is the wire vocabulary a `ReadingResponse` uses for
+/// `winner` and for the keys of `percentages`, and the only way to tell which
+/// side of a pair a saved reading named. Screens translate through it rather
+/// than printing it, so changing a value here would break saved readings, not
+/// just copy.
+const englishChoiceLabels = <DecisionMode, ({String first, String second})>{
+  DecisionMode.yesNo: (first: 'YES', second: 'NO'),
+  DecisionMode.actWait: (first: 'ACT', second: 'WAIT'),
+  DecisionMode.advanceRetreat: (first: 'ADVANCE', second: 'RETREAT'),
+  DecisionMode.stayGo: (first: 'STAY', second: 'GO'),
+  DecisionMode.keepLetGo: (first: 'KEEP', second: 'LET GO'),
+  DecisionMode.forwardBackward: (first: 'FORWARD', second: 'BACKWARD'),
+  DecisionMode.leftRight: (first: 'LEFT', second: 'RIGHT'),
+};
 
-  const ZodiacSign(this.glyph, this.label, this.assetPath);
+/// The Western Sun sign derived from the birth date — not a Chinese zodiac
+/// animal and not a Vedic moon sign. The visible name is localized; only the
+/// glyph and the artwork live here.
+enum ZodiacSign {
+  aries('♈', 'assets/zodiac/zodiac_01_aries.png'),
+  taurus('♉', 'assets/zodiac/zodiac_02_taurus.png'),
+  gemini('♊', 'assets/zodiac/zodiac_03_gemini.png'),
+  cancer('♋', 'assets/zodiac/zodiac_04_cancer.png'),
+  leo('♌', 'assets/zodiac/zodiac_05_leo.png'),
+  virgo('♍', 'assets/zodiac/zodiac_06_virgo.png'),
+  libra('♎', 'assets/zodiac/zodiac_07_libra.png'),
+  scorpio('♏', 'assets/zodiac/zodiac_08_scorpio.png'),
+  sagittarius('♐', 'assets/zodiac/zodiac_09_sagittarius.png'),
+  capricorn('♑', 'assets/zodiac/zodiac_10_capricorn.png'),
+  aquarius('♒', 'assets/zodiac/zodiac_11_aquarius.png'),
+  pisces('♓', 'assets/zodiac/zodiac_12_pisces.png');
+
+  const ZodiacSign(this.glyph, this.assetPath);
 
   final String glyph;
-  final String label;
   final String assetPath;
 }
 
@@ -75,19 +73,13 @@ ZodiacSign zodiacForDate(DateTime date) {
 }
 
 enum TimePeriod {
-  now('NOW', 'Now', null),
-  morning('Morning', 'This Morning', (6, 12)),
-  midday('Midday', 'Midday', (12, 14)),
-  afternoon('Afternoon', 'This Afternoon', (14, 18)),
-  evening('Evening', 'This Evening', (18, 24));
+  now(null),
+  morning((6, 12)),
+  midday((12, 14)),
+  afternoon((14, 18)),
+  evening((18, 24));
 
-  const TimePeriod(this.label, this.whenPhrase, this.localHours);
-
-  /// Chip/selector label.
-  final String label;
-
-  /// Sentence form, for copy such as "Reveal my direction for this evening".
-  final String whenPhrase;
+  const TimePeriod(this.localHours);
 
   /// Local-hour bounds `[start, end)`, mirroring the engine's `PERIODS` table
   /// in `calculation-engine/src/time.js`. NOW has none: it is the instant of

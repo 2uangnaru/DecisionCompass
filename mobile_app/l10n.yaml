@@ -1,0 +1,12 @@
+# Flutter's own gen_l10n. No third-party localization package, and no runtime
+# translation service: every string is compiled in from `lib/l10n/*.arb`.
+#
+# A key absent from a locale falls back to the English template and is listed
+# in `untranslated.json`, which is where `handoff/localization/MISSING_KEYS.md`
+# comes from. That fallback is a development aid, not a release signal.
+arb-dir: lib/l10n
+template-arb-file: app_en.arb
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+nullable-getter: false
+untranslated-messages-file: untranslated.json

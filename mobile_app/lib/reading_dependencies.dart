@@ -3,6 +3,7 @@ import 'data/daily_brief_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
 import 'data/home_description_deck.dart';
 import 'data/history_repository.dart';
+import 'data/locale_controller.dart';
 import 'data/profile_repository.dart';
 import 'data/reading_repository.dart';
 
@@ -18,6 +19,7 @@ class ReadingDependencies {
     required this.dailyBriefProvider,
     required this.homeDescriptionDeck,
     required this.dailyEnergyInsights,
+    required this.localeController,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -35,6 +37,11 @@ class ReadingDependencies {
   /// which have been read. Shared by Home and Result so opening one clears
   /// the unread mark on the other.
   final DailyEnergyInsightController dailyEnergyInsights;
+
+  /// The language every screen renders in. A [ChangeNotifier] so a switch on
+  /// the welcome screen re-renders the whole flow at once, with no screen left
+  /// behind in the previous language.
+  final LocaleController localeController;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

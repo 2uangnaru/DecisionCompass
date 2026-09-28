@@ -129,18 +129,22 @@ class HomeDescriptionDeck {
   /// reshuffled once a month.
   final Random? random;
 
-  /// The description for the day [local] falls on.
+  /// The index of the description for the day [local] falls on.
   ///
-  /// A day already assigned returns its saved description and consumes
-  /// nothing, so revisiting a date — or simply reopening Home — never advances
-  /// the deck. A day that is never asked about is never dealt, so a stretch of
-  /// days with the app unopened does not burn through the deck.
-  Future<String> descriptionFor(DateTime local) async {
+  /// An index, not a sentence: the reader's language is resolved at display
+  /// time, so switching language shows the translation of the *same* line
+  /// without reshuffling or consuming anything.
+  ///
+  /// A day already assigned returns its saved index and consumes nothing, so
+  /// revisiting a date — or simply reopening Home — never advances the deck. A
+  /// day that is never asked about is never dealt, so a stretch of days with
+  /// the app unopened does not burn through the deck.
+  Future<int> indexFor(DateTime local) async {
     final day = homeDayKey(local);
     final stored = await store.load() ?? const HomeDescriptionDeckState.empty();
 
     final assigned = stored.days[day];
-    if (assigned != null) return homeDescriptions[assigned];
+    if (assigned != null) return assigned;
 
     final deck = [...stored.deck];
     final recent = [...stored.recent];
@@ -156,7 +160,7 @@ class HomeDescriptionDeck {
     await store.save(
       HomeDescriptionDeckState(deck: deck, recent: recent, days: _pruned(days)),
     );
-    return homeDescriptions[index];
+    return index;
   }
 
   /// A fresh deck whose opening hand avoids everything in [recent], so the

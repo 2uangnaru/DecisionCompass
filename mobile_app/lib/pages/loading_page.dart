@@ -4,9 +4,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
-import '../category_presentation.dart';
 import '../data/models/models.dart' as engine;
 import '../data/reading_api_exception.dart';
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
@@ -40,15 +41,16 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  static const _reassurance =
-      'Give me a moment — I’m still bringing your cosmic signals into focus.';
+  /// How many narration lines the ritual steps through. The text itself is
+  /// resolved at build time from the active language, so only the position in
+  /// the sequence is state.
+  static const _phraseCount = 7;
 
   /// The ritual is never shorter than this, even when the API answers at once.
   static const _minimumRitual = Duration(milliseconds: 5040);
   static const _ritualJitterMs = 250;
 
   final List<Timer> _timers = [];
-  late final List<String> _phrases;
   late final int _durationMs;
   var _phraseIndex = 0;
   var _showingReassurance = false;
@@ -66,15 +68,6 @@ class _LoadingPageState extends State<LoadingPage> {
     super.initState();
     _durationMs =
         _minimumRitual.inMilliseconds + Random().nextInt(_ritualJitterMs);
-    _phrases = [
-      'Synchronizing with your local time and hour',
-      'Reading your BaZi elemental balance',
-      'Mapping Zi Wei cycles around this moment',
-      'Aligning Vedic Nakshatras and lunar mansions',
-      'Tracing numerology, lunar and planetary rhythms',
-      widget.mode.ritualCopy,
-      'Balancing Yin and Yang signals into one direction',
-    ];
     _startPhraseCycle();
     _runAttempt();
   }
@@ -97,7 +90,7 @@ class _LoadingPageState extends State<LoadingPage> {
     _timers.add(
       Timer.periodic(const Duration(milliseconds: 720), (timer) {
         if (!mounted || _showingReassurance) return;
-        if (_phraseIndex < _phrases.length - 1) {
+        if (_phraseIndex < _phraseCount - 1) {
           setState(() => _phraseIndex++);
         }
       }),
@@ -132,6 +125,8 @@ class _LoadingPageState extends State<LoadingPage> {
         const ReadingApiException(
           kind: ReadingApiFailureKind.invalidResponse,
           safeCode: 'unexpected_reading_failure',
+          // Developer-facing only: the reader sees `_ReadingErrorView`'s own
+          // localized copy, never this string.
           safeMessage: 'The reading could not be read by this app version.',
         ),
       );
@@ -196,7 +191,7 @@ class _LoadingPageState extends State<LoadingPage> {
         if (!mounted) return;
         setState(() {
           _showingReassurance = false;
-          if (_phraseIndex < _phrases.length - 1) _phraseIndex++;
+          if (_phraseIndex < _phraseCount - 1) _phraseIndex++;
         });
       }),
     );
@@ -229,6 +224,10 @@ class _LoadingPageState extends State<LoadingPage> {
     if (failure != null)
       return _ReadingErrorView(failure: failure, onRetry: _retry);
 
+    final l10n = AppLocalizations.of(context);
+    final phrases = loadingPhrases(l10n, widget.mode);
+    assert(phrases.length == _phraseCount);
+    final category = categoryLabel(l10n, widget.category);
     final compact = MediaQuery.sizeOf(context).height < 700;
     return CelestialScaffold(
       child: Listener(
@@ -240,45 +239,41 @@ class _LoadingPageState extends State<LoadingPage> {
           child: Column(
             children: [
               Text(
-                widget.mode.label,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: CompassColors.gold, letterSpacing: 1.8),
+                modeLabel(l10n, widget.mode),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: CompassColors.gold,
+                  letterSpacing: trackingFor(context, 1.8),
+                ),
               ),
               const SizedBox(height: 8),
               Semantics(
-                label: 'Reading area: ${categoryLabel(widget.category)}',
+                label: l10n.readingAreaSemantics(category),
                 child: Text(
                   key: const Key('loading_category_label'),
-                  'Reading for ${categoryLabel(widget.category)}',
+                  l10n.readingForCategory(category),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: CompassColors.blueLight,
-                    letterSpacing: 1,
+                    letterSpacing: trackingFor(context, 1),
                   ),
                 ),
               ),
               const SizedBox(height: 4),
               Text(
                 key: const Key('loading_period_label'),
-                widget.period.whenPhrase,
+                periodLabel(l10n, widget.period),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall
-                    ?.copyWith(color: CompassColors.muted, letterSpacing: 1.1),
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: CompassColors.muted,
+                  letterSpacing: trackingFor(context, 1.1),
+                ),
               ),
               const Spacer(),
               OrbitVisual(
                 size: compact ? 220 : 300,
                 sign: widget.profile.zodiacSign,
-                labels: const [
-                  'BAZI',
-                  'ZI WEI',
-                  'ALMANAC',
-                  'VEDIC JYOTISH',
-                  'NUMEROLOGY',
-                  'LUNAR PHASE',
-                  'PLANETARY',
-                  'YIN / YANG',
-                ],
+                labels: loadingOrbitLabels(l10n),
               ),
               SizedBox(height: compact ? 22 : 38),
               SizedBox(
@@ -286,7 +281,9 @@ class _LoadingPageState extends State<LoadingPage> {
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 150),
                   child: Text(
-                    _showingReassurance ? _reassurance : _phrases[_phraseIndex],
+                    _showingReassurance
+                        ? l10n.loadingReassurance
+                        : phrases[_phraseIndex],
                     key: ValueKey('${_showingReassurance}_$_phraseIndex'),
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
@@ -301,7 +298,7 @@ class _LoadingPageState extends State<LoadingPage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: List.generate(
-                  _phrases.length,
+                  _phraseCount,
                   (index) => AnimatedContainer(
                     duration: const Duration(milliseconds: 180),
                     width: index == _phraseIndex ? 20 : 5,
@@ -318,9 +315,12 @@ class _LoadingPageState extends State<LoadingPage> {
               ),
               const Spacer(),
               Text(
-                'READING YOUR LOCAL MOMENT',
-                style: Theme.of(context).textTheme.labelSmall
-                    ?.copyWith(color: CompassColors.muted, letterSpacing: 1.3),
+                l10n.loadingLocalMoment,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: CompassColors.muted,
+                  letterSpacing: trackingFor(context, 1.3),
+                ),
               ),
             ],
           ),
@@ -338,31 +338,22 @@ class _ReadingErrorView extends StatelessWidget {
   final ReadingApiException failure;
   final VoidCallback onRetry;
 
-  String get _headline => switch (failure.kind) {
+  String _headline(AppLocalizations l10n) => switch (failure.kind) {
     ReadingApiFailureKind.timeout ||
-    ReadingApiFailureKind.network => 'The connection slipped out of alignment.',
-    ReadingApiFailureKind.server =>
-      'The reading could not be completed right now.',
-    ReadingApiFailureKind.rejectedRequest =>
-      'Some profile details need attention.',
-    ReadingApiFailureKind.invalidResponse =>
-      'This app version could not read the result.',
-    ReadingApiFailureKind.configuration =>
-      'This build has no reading service configured.',
+    ReadingApiFailureKind.network => l10n.errorNetworkHeadline,
+    ReadingApiFailureKind.server => l10n.errorServerHeadline,
+    ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedHeadline,
+    ReadingApiFailureKind.invalidResponse => l10n.errorInvalidHeadline,
+    ReadingApiFailureKind.configuration => l10n.errorConfigurationHeadline,
   };
 
-  String get _detail => switch (failure.kind) {
-    ReadingApiFailureKind.timeout || ReadingApiFailureKind.network =>
-      'Check your connection, then try the reading again.',
-    ReadingApiFailureKind.server =>
-      'The service is there but could not finish. Try again in a moment.',
-    ReadingApiFailureKind.rejectedRequest =>
-      'Revisit your birth details, then start a new reading.',
-    ReadingApiFailureKind.invalidResponse =>
-      'Updating the app should restore readings.',
-    ReadingApiFailureKind.configuration =>
-      'Developer build: pass --dart-define=DECISION_API_BASE_URL to point at '
-          'the calculation API.',
+  String _detail(AppLocalizations l10n) => switch (failure.kind) {
+    ReadingApiFailureKind.timeout ||
+    ReadingApiFailureKind.network => l10n.errorNetworkDetail,
+    ReadingApiFailureKind.server => l10n.errorServerDetail,
+    ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedDetail,
+    ReadingApiFailureKind.invalidResponse => l10n.errorInvalidDetail,
+    ReadingApiFailureKind.configuration => l10n.errorConfigurationDetail,
   };
 
   /// Only the transient kinds can be retried; a rejected request or a contract
@@ -378,6 +369,7 @@ class _ReadingErrorView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
       child: SingleChildScrollView(
         key: const Key('reading_error'),
@@ -395,13 +387,13 @@ class _ReadingErrorView extends StatelessWidget {
             ),
             const SizedBox(height: 26),
             Text(
-              _headline,
+              _headline(l10n),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
             const SizedBox(height: 12),
             Text(
-              _detail,
+              _detail(l10n),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
@@ -411,7 +403,7 @@ class _ReadingErrorView extends StatelessWidget {
                 key: const Key('retry_reading'),
                 onPressed: onRetry,
                 icon: const Icon(Icons.refresh_rounded),
-                label: const Text('Try Again'),
+                label: Text(l10n.tryAgain),
               ),
               const SizedBox(height: 10),
             ],
@@ -426,11 +418,11 @@ class _ReadingErrorView extends StatelessWidget {
                 ),
               ),
               icon: const Icon(Icons.arrow_back_rounded),
-              label: const Text('Back'),
+              label: Text(l10n.backAction),
             ),
             const SizedBox(height: 24),
             Text(
-              'No reading was recorded for this attempt.',
+              l10n.errorNothingRecorded,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(color: CompassColors.muted),

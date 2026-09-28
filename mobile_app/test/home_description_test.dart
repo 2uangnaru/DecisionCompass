@@ -9,6 +9,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'reading_test_rig.dart';
 
+/// The sentence the deck dealt for a day.
+///
+/// The deck answers with an index now, because the reader's language is
+/// resolved at display time; these tests are about which line comes up, so
+/// they read the English list at the index it gave.
+Future<String> dealt(HomeDescriptionDeck deck, DateTime day) async =>
+    homeDescriptions[await deck.indexFor(day)];
+
 /// The description Home is currently showing.
 String? shownDescription(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(const Key('home_description'))).data;
@@ -58,7 +66,7 @@ void main() {
     });
 
     Future<String> on(int year, int month, int day) =>
-        deck.descriptionFor(DateTime(year, month, day));
+        dealt(deck, DateTime(year, month, day));
 
     test('deals every description once before repeating any', () async {
       final seen = <String>[];
@@ -88,7 +96,7 @@ void main() {
       );
       final otherSeen = <String>[];
       for (var day = 1; day <= 30; day++) {
-        otherSeen.add(await other.descriptionFor(DateTime(2026, 1, day)));
+        otherSeen.add(await dealt(other, DateTime(2026, 1, day)));
       }
       expect(otherSeen, isNot(orderedEquals(seen)));
     });
@@ -156,22 +164,17 @@ void main() {
       final restarted = HomeDescriptionDeck(store: store, random: Random(1));
       final after = <String>[];
       for (var day = 6; day <= 30; day++) {
-        after.add(await restarted.descriptionFor(DateTime(2026, 2, day)));
+        after.add(await dealt(restarted, DateTime(2026, 2, day)));
       }
 
       expect([...before, ...after].toSet(), hasLength(30));
       // Days dealt before the restart still read back the same.
-      expect(
-        await restarted.descriptionFor(DateTime(2026, 2, 1)),
-        before.first,
-      );
+      expect(await dealt(restarted, DateTime(2026, 2, 1)), before.first);
     });
 
     test('remembered days stay bounded', () async {
       for (var day = 1; day <= 80; day++) {
-        await deck.descriptionFor(
-          DateTime(2026, 1, 1).add(Duration(days: day)),
-        );
+        await dealt(deck, DateTime(2026, 1, 1).add(Duration(days: day)));
       }
       final state = await store.load();
       expect(
@@ -235,7 +238,7 @@ void main() {
     test('a rejected record starts a fresh deck instead of crashing', () async {
       final store = InMemoryHomeDescriptionStore(raw: 'nonsense');
       final deck = HomeDescriptionDeck(store: store, random: Random(3));
-      final description = await deck.descriptionFor(DateTime(2026, 4, 9));
+      final description = await dealt(deck, DateTime(2026, 4, 9));
       expect(homeDescriptions, contains(description));
       // And the damaged record was replaced by a valid one.
       expect(await store.load(), isNotNull);

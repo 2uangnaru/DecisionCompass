@@ -6,15 +6,9 @@ import 'package:flutter/scheduler.dart';
 
 import '../daily_energy_messages.dart';
 import '../data/daily_energy_insight_deck.dart';
+import '../l10n/app_localizations.dart';
+import '../localized_rotation.dart';
 import '../theme.dart';
-
-/// The insight a tone shipped with, before the rotation existed.
-///
-/// Kept as the plain "does this level say anything at all" answer for callers
-/// that only need to know whether an ⓘ is worth offering. Which of the eight
-/// a reader actually sees is [DailyEnergyInsightController]'s decision.
-String? dailyEnergyMessage(String? level) =>
-    level == null ? null : dailyEnergyMessagePools[level]?.first;
 
 /// The grey ⓘ beside the energy label, the small tab it opens next to itself,
 /// and the quiet marks that say today's insight has not been read yet.
@@ -79,9 +73,12 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
   var _open = false;
   var _coachOpen = false;
 
-  /// The sentence the reader opened. Dealt on the first open of this date and
-  /// level, then fixed.
-  String? _message;
+  /// The index, within the tone's pool, of the insight the reader opened.
+  /// Dealt on the first open of this date and level, then fixed.
+  ///
+  /// An index rather than the sentence: switching language while the tab is
+  /// open re-reads the same insight in the new language, and consumes nothing.
+  int? _message;
 
   @override
   void initState() {
@@ -220,10 +217,20 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     _setOpen(true);
   }
 
+  /// The opened insight in the active language, or an empty tab if the tone
+  /// and index no longer resolve to anything this build knows.
+  String _messageText(AppLocalizations l10n) {
+    final index = _message;
+    final level = widget.level;
+    if (index == null || level == null) return '';
+    return dailyEnergyInsightAt(l10n, level, index) ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!_available) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context);
     final unread = _unread;
 
     return OverlayPortal(
@@ -235,7 +242,7 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
         onBarrierTap: _dismissCoachMark,
         build: (placement, pointerOffset) => _InfoTab(
           onTap: _dismissCoachMark,
-          message: 'A new energy insight awaits here each day.',
+          message: l10n.energyInsightCoachMark,
           placement: placement,
           pointerOffset: pointerOffset,
           textKey: const Key('daily_energy_coach_mark'),
@@ -247,7 +254,7 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
         overlayChildBuilder: (_) => _anchoredOverlay(
           onBarrierTap: _close,
           build: (placement, pointerOffset) => _InfoTab(
-            message: _message ?? '',
+            message: _messageText(l10n),
             placement: placement,
             pointerOffset: pointerOffset,
             textKey: const Key('daily_energy_note'),
@@ -259,10 +266,10 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
         child: IconButton(
           key: const Key('daily_energy_info_button'),
           tooltip: _open
-              ? 'Hide what today’s energy means'
+              ? l10n.energyInsightHideTooltip
               : (unread
-                    ? 'New energy insight today'
-                    : 'Read today’s energy insight'),
+                    ? l10n.energyInsightNewTooltip
+                    : l10n.energyInsightReadTooltip),
           onPressed: _toggle,
           icon: _Glyph(open: _open, unread: unread, orbit: _orbit),
           padding: EdgeInsets.zero,

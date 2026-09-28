@@ -34,7 +34,7 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         theme: buildCompassTheme(),
         home: RitualPage(
           mode: DecisionMode.yesNo,

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../category_presentation.dart';
 import '../data/history_entry.dart';
 import '../data/models/models.dart' as engine;
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
 import '../theme.dart';
@@ -35,6 +36,7 @@ class _HistoryPageState extends State<HistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(20, 12, 20, 28),
@@ -46,11 +48,14 @@ class _HistoryPageState extends State<HistoryPage> {
                 IconButton(
                   onPressed: () => Navigator.of(context).pop(),
                   icon: const Icon(Icons.arrow_back_rounded),
+                  tooltip: l10n.backAction,
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  'Your readings',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                Expanded(
+                  child: Text(
+                    l10n.yourReadings,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
                 ),
               ],
             ),
@@ -73,11 +78,14 @@ class _HistoryPageState extends State<HistoryPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Text('Your readings could not be opened.'),
+                          Text(
+                            l10n.historyCouldNotOpen,
+                            textAlign: TextAlign.center,
+                          ),
                           const SizedBox(height: 10),
                           TextButton(
                             onPressed: _retry,
-                            child: const Text('Try Again'),
+                            child: Text(l10n.tryAgain),
                           ),
                         ],
                       ),
@@ -98,7 +106,7 @@ class _HistoryPageState extends State<HistoryPage> {
             const SizedBox(height: 12),
             Center(
               child: Text(
-                'Results are saved as snapshots and never rerolled.',
+                l10n.historySnapshot,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodySmall
                     ?.copyWith(color: CompassColors.muted),
@@ -118,33 +126,42 @@ String _isoDate(DateTime date) =>
 
 /// Local wall-clock hour/minute, derived the same way the engine resolved
 /// them, so it matches what the user actually saw at Reveal regardless of
-/// the reading device's current timezone.
-String _timeOfDay(engine.ReadingResponse reading) {
+/// the reading device's current timezone. Printed in the reader's own clock
+/// convention.
+String _timeOfDay(String localeName, engine.ReadingResponse reading) {
   final localMs =
       reading.context.instantMs + reading.context.offsetSeconds * 1000;
   final local = DateTime.fromMillisecondsSinceEpoch(localMs, isUtc: true);
-  final hour24 = local.hour;
-  final minute = local.minute.toString().padLeft(2, '0');
-  final suffix = hour24 >= 12 ? 'PM' : 'AM';
-  final hour12 = hour24 % 12 == 0 ? 12 : hour24 % 12;
-  return '$hour12:$minute $suffix';
+  return formatClock(localeName, local.hour, local.minute);
 }
 
 /// The result column's text for every status the contract defines, not just
 /// `ready` — a balanced or elapsed reading is still a real saved entry.
-String _resultLabel(engine.ReadingResponse reading) {
+///
+/// Rebuilt from the mode and the side of the pair the engine named, never
+/// from the English word it stored, so an old snapshot reads correctly after
+/// a language switch.
+String _resultLabel(
+  AppLocalizations l10n,
+  String localeName,
+  engine.ReadingResponse reading,
+) {
   switch (reading.status) {
     case engine.ReadingStatus.ready:
       final winner = reading.winner;
       if (winner == null) return '';
+      final mode = fromEngineMode(reading.mode);
+      final label = localizedChoice(l10n, mode, winner);
       final percent = reading.percentages?[winner];
-      return percent == null ? winner : '$winner $percent%';
+      return percent == null
+          ? label
+          : '$label ${formatScore(localeName, percent)}%';
     case engine.ReadingStatus.balanced:
-      return 'BALANCED';
+      return l10n.balancedResult;
     case engine.ReadingStatus.insufficientData:
-      return 'NOT ENOUGH DATA';
+      return l10n.historyNotEnoughData;
     case engine.ReadingStatus.periodElapsed:
-      return 'PERIOD PASSED';
+      return l10n.historyPeriodPassed;
   }
 }
 
@@ -153,6 +170,7 @@ class _EmptyHistory extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Center(
       key: const Key('history_empty'),
       child: Padding(
@@ -167,8 +185,7 @@ class _EmptyHistory extends StatelessWidget {
             ),
             const SizedBox(height: 14),
             Text(
-              'No readings yet. Reveal your first direction to start your '
-              'history.',
+              l10n.noReadings,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(color: CompassColors.muted),
@@ -195,6 +212,8 @@ class _HistoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeName = intlLocaleOf(context);
     final children = <Widget>[];
     String? openGroup;
     for (final entry in entries) {
@@ -204,9 +223,15 @@ class _HistoryList extends StatelessWidget {
         openGroup = group;
         children.add(
           Text(
-            group == today ? 'TODAY' : group,
-            style: Theme.of(context).textTheme.labelMedium
-                ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
+            // The engine's `localDate` is an ISO wire value; the heading is
+            // the same day written the way this language writes a date.
+            group == today
+                ? l10n.historyToday
+                : formatDate(localeName, DateTime.parse(group)),
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
+              color: CompassColors.gold,
+              letterSpacing: trackingFor(context, 1.7),
+            ),
           ),
         );
         children.add(const SizedBox(height: 12));
@@ -227,6 +252,8 @@ class _HistoryRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeName = intlLocaleOf(context);
     final reading = entry.reading;
     final mode = fromEngineMode(reading.mode);
     final period = fromEnginePeriod(reading.period);
@@ -248,25 +275,30 @@ class _HistoryRow extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  mode.label,
+                  modeLabel(l10n, mode),
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${categoryLabel(reading.category)}  •  '
-                  '${period.label.toUpperCase()}  •  ${_timeOfDay(reading)}',
+                  '${categoryLabel(l10n, reading.category)}  •  '
+                  '${periodLabel(l10n, period)}  •  '
+                  '${_timeOfDay(localeName, reading)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
             ),
           ),
-          Text(
-            _resultLabel(reading),
-            textAlign: TextAlign.right,
-            style: const TextStyle(
-              color: CompassColors.blueLight,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
+          // Flexible so a longer translated choice wraps instead of pushing
+          // the row past a 360dp screen.
+          Flexible(
+            child: Text(
+              _resultLabel(l10n, localeName, reading),
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                color: CompassColors.blueLight,
+                fontSize: 17,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           const SizedBox(width: 4),

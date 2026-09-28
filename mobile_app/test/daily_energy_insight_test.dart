@@ -4,10 +4,25 @@ import 'package:decision_compass/daily_energy_messages.dart';
 import 'package:decision_compass/data/daily_energy_insight_deck.dart';
 import 'package:decision_compass/data/in_memory_daily_energy_insight_store.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
+import 'package:decision_compass/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'reading_test_rig.dart';
+
+/// The sentence a controller dealt.
+///
+/// The controller answers with an index now, because the reader's language is
+/// resolved at display time; these tests are about which sentence came up, so
+/// they read the English pool at the index it gave.
+Future<String?> opened(
+  DailyEnergyInsightController controller,
+  String day,
+  String level,
+) async {
+  final index = await controller.open(day, level);
+  return index == null ? null : dailyEnergyMessagePools[level]?[index];
+}
 
 const levels = [
   'quiet',
@@ -148,7 +163,7 @@ void main() {
     test('only ever draws from the level the engine named', () async {
       for (final level in levels) {
         for (var day = 1; day <= 8; day++) {
-          final message = await controller.open('2026-01-0$day', level);
+          final message = await opened(controller, '2026-01-0$day', level);
           expect(
             dailyEnergyMessagePools[level],
             contains(message),
@@ -161,7 +176,7 @@ void main() {
     test('shows all eight of a level before repeating one', () async {
       final seen = <String>[];
       for (var day = 1; day <= 8; day++) {
-        seen.add((await controller.open('2026-02-0$day', 'bright'))!);
+        seen.add((await opened(controller, '2026-02-0$day', 'bright'))!);
       }
       expect(seen.toSet(), hasLength(8));
       expect(seen.toSet(), dailyEnergyMessagePools['bright']!.toSet());
@@ -171,7 +186,7 @@ void main() {
       final seen = <String>[];
       for (var day = 1; day <= 11; day++) {
         final key = '2026-03-${day.toString().padLeft(2, '0')}';
-        seen.add((await controller.open(key, 'steady'))!);
+        seen.add((await opened(controller, key, 'steady'))!);
       }
       final closing = seen.sublist(5, 8);
       final opening = seen.sublist(8, 11);
@@ -186,8 +201,8 @@ void main() {
     });
 
     test('each level keeps its own deck', () async {
-      await controller.open('2026-04-01', 'quiet');
-      await controller.open('2026-04-01', 'radiant');
+      await opened(controller, '2026-04-01', 'quiet');
+      await opened(controller, '2026-04-01', 'radiant');
       final state = (await store.load())!;
       expect(state.decks['quiet'], hasLength(7));
       expect(state.decks['radiant'], hasLength(7));
@@ -195,26 +210,26 @@ void main() {
     });
 
     test('the same date and level is stable and consumes nothing', () async {
-      final first = await controller.open('2026-05-02', 'lively');
+      final first = await opened(controller, '2026-05-02', 'lively');
       final saves = store.saves;
-      expect(await controller.open('2026-05-02', 'lively'), first);
-      expect(await controller.open('2026-05-02', 'lively'), first);
+      expect(await opened(controller, '2026-05-02', 'lively'), first);
+      expect(await opened(controller, '2026-05-02', 'lively'), first);
       expect(store.saves, saves, reason: 'a reopen dealt another card');
     });
 
     test('a level change on one date gets its own assignment', () async {
-      final focused = await controller.open('2026-06-01', 'focused');
-      final flowing = await controller.open('2026-06-01', 'flowing');
+      final focused = await opened(controller, '2026-06-01', 'focused');
+      final flowing = await opened(controller, '2026-06-01', 'flowing');
       expect(dailyEnergyMessagePools['focused'], contains(focused));
       expect(dailyEnergyMessagePools['flowing'], contains(flowing));
 
       // The first level coming back reuses what that date already had.
-      expect(await controller.open('2026-06-01', 'focused'), focused);
+      expect(await opened(controller, '2026-06-01', 'focused'), focused);
     });
 
     test('dates a level is never viewed on consume nothing', () async {
-      final first = await controller.open('2026-07-01', 'soft');
-      final later = await controller.open('2026-09-01', 'soft');
+      final first = await opened(controller, '2026-07-01', 'soft');
+      final later = await opened(controller, '2026-09-01', 'soft');
       expect(first, isNot(later));
       final state = (await store.load())!;
       expect(state.decks['soft'], hasLength(6));
@@ -223,7 +238,7 @@ void main() {
     test('survives a restart and keeps its place', () async {
       final before = <String>[];
       for (var day = 1; day <= 3; day++) {
-        before.add((await controller.open('2026-08-0$day', 'quiet'))!);
+        before.add((await opened(controller, '2026-08-0$day', 'quiet'))!);
       }
 
       final restarted = DailyEnergyInsightController(
@@ -232,11 +247,11 @@ void main() {
       );
       await restarted.ensureLoaded();
       // A date already assigned reads back the same.
-      expect(await restarted.open('2026-08-01', 'quiet'), before.first);
+      expect(await opened(restarted, '2026-08-01', 'quiet'), before.first);
 
       final after = <String>[];
       for (var day = 4; day <= 8; day++) {
-        after.add((await restarted.open('2026-08-0$day', 'quiet'))!);
+        after.add((await opened(restarted, '2026-08-0$day', 'quiet'))!);
       }
       expect([...before, ...after].toSet(), hasLength(8));
     });
@@ -246,9 +261,15 @@ void main() {
       expect(controller.isUnread('2026-09-18', 'bright'), isTrue);
       expect(controller.peek('2026-09-18', 'bright'), isNull);
 
-      final message = await controller.open('2026-09-18', 'bright');
+      final message = await opened(controller, '2026-09-18', 'bright');
       expect(controller.isUnread('2026-09-18', 'bright'), isFalse);
-      expect(controller.peek('2026-09-18', 'bright'), message);
+      expect(
+        dailyEnergyMessagePools['bright']![controller.peek(
+          '2026-09-18',
+          'bright',
+        )!],
+        message,
+      );
       // Another date, and another level on the same date, are still unread.
       expect(controller.isUnread('2026-09-19', 'bright'), isTrue);
       expect(controller.isUnread('2026-09-18', 'quiet'), isTrue);
@@ -259,8 +280,8 @@ void main() {
       () async {
         await controller.ensureLoaded();
         expect(controller.isUnread('2026-09-18', 'unavailable'), isFalse);
-        expect(await controller.open('2026-09-18', 'unavailable'), isNull);
-        expect(await controller.open('2026-09-18', 'not_a_level'), isNull);
+        expect(await opened(controller, '2026-09-18', 'unavailable'), isNull);
+        expect(await opened(controller, '2026-09-18', 'not_a_level'), isNull);
         expect(store.saves, 0);
       },
     );
@@ -276,7 +297,7 @@ void main() {
     test('assignments stay bounded', () async {
       for (var day = 1; day <= 90; day++) {
         final date = DateTime(2026, 1, 1).add(Duration(days: day));
-        await controller.open(dailyEnergyDayKey(date), 'steady');
+        await opened(controller, dailyEnergyDayKey(date), 'steady');
       }
       final state = (await store.load())!;
       expect(
@@ -371,7 +392,7 @@ void main() {
         store: store,
         random: Random(2),
       );
-      final message = await controller.open('2026-09-18', 'radiant');
+      final message = await opened(controller, '2026-09-18', 'radiant');
       expect(dailyEnergyMessagePools['radiant'], contains(message));
       expect(await store.load(), isNotNull);
     });
@@ -590,7 +611,10 @@ void main() {
       await tester.ensureVisible(find.byKey(const Key('category_money')));
       await tester.tap(find.byKey(const Key('category_money')));
       await tester.pumpAndSettle();
-      expect(find.textContaining('Money'), findsWidgets);
+      expect(
+        find.textContaining(stringsFor(AppLocale.english).categoryMoney),
+        findsWidgets,
+      );
     });
 
     testWidgets('never appears when the day has no energy', (tester) async {

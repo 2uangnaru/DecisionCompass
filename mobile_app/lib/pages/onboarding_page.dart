@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 
 import '../app_profile.dart';
+import '../l10n/app_localizations.dart';
 import '../local_engine/time/tzdb.dart';
+import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/language_selector.dart';
 import 'home_page.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -50,11 +53,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
       // controls), so the dialog opens on the calendar/year-grid by default.
       // Its own keyboard icon still switches to typed entry for anyone who
       // wants to type the date instead.
+      //
+      // The dialog's own chrome follows the app locale through
+      // `GlobalMaterialLocalizations`, so month names, weekday initials and
+      // the entry format are the reader's, not English.
     );
     if (picked != null && mounted) setState(() => _birthDate = picked);
   }
 
   void _pickBirthCountry() {
+    final l10n = AppLocalizations.of(context);
     showCountryPicker(
       context: context,
       showPhoneCode: false,
@@ -63,12 +71,12 @@ class _OnboardingPageState extends State<OnboardingPage> {
       // The picker includes a few territories absent from the bundled time
       // database. Offer only codes the calculation engine can resolve.
       countryFilter: tzdbCountries(),
-      countryListTheme: const CountryListThemeData(
+      countryListTheme: CountryListThemeData(
         backgroundColor: CompassColors.raised,
-        textStyle: TextStyle(color: CompassColors.text),
+        textStyle: const TextStyle(color: CompassColors.text),
         inputDecoration: InputDecoration(
-          labelText: 'Search countries',
-          prefixIcon: Icon(Icons.search_rounded),
+          labelText: l10n.searchCountries,
+          prefixIcon: const Icon(Icons.search_rounded),
         ),
       ),
       onSelect: (country) => setState(() => _birthCountry = country),
@@ -83,13 +91,20 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (picked != null && mounted) setState(() => _birthTime = picked);
   }
 
+  /// The engine's `HH:mm`, always 24-hour and never localized: it is a wire
+  /// value, not something the reader reads.
   String get _birthTimeValue =>
       '${_birthTime.hour.toString().padLeft(2, '0')}:'
       '${_birthTime.minute.toString().padLeft(2, '0')}';
 
+  /// What the reader sees instead, in their own clock convention.
+  String _birthTimeDisplay(String localeName) =>
+      formatClock(localeName, _birthTime.hour, _birthTime.minute);
+
   void _continueToProfile() => setState(() => _step = 1);
 
   Future<void> _finish() async {
+    final l10n = AppLocalizations.of(context);
     final birthDate = _birthDate;
     final birthCountry = _birthCountry;
     if (birthDate == null || birthCountry == null) {
@@ -97,7 +112,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       return;
     }
     final name = _nameController.text.trim().isEmpty
-        ? 'Explorer'
+        ? l10n.defaultUserName
         : _nameController.text.trim();
     final profile = AppProfile(
       userName: name,
@@ -129,6 +144,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _locationStep() {
+    final l10n = AppLocalizations.of(context);
     return LayoutBuilder(
       key: const ValueKey('location'),
       builder: (context, constraints) {
@@ -146,36 +162,41 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      'ASTRACUE',
-                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                        color: CompassColors.gold,
-                        letterSpacing: 2.2,
+                  Row(
+                    children: [
+                      Text(
+                        'ASTRACUE',
+                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                          color: CompassColors.gold,
+                          letterSpacing: 2.2,
+                        ),
                       ),
-                    ),
+                      const Spacer(),
+                      // On the welcome screen itself, above the profile step:
+                      // an obvious globe and the current language, never an
+                      // unsolicited popup and never an extra required screen.
+                      LanguageButton(
+                        controller: widget.dependencies.localeController,
+                      ),
+                    ],
                   ),
                   Column(
                     children: [
                       OrbitVisual(
                         size: compact ? 170 : 230,
-                        labels: const [
-                          'MOMENT',
-                          'RHYTHM',
-                          'BALANCE',
-                          'ALMANAC',
-                        ],
+                        labels: welcomeOrbitLabels(l10n),
                       ),
                       SizedBox(height: compact ? 14 : 28),
                       Text(
-                        'Read the moment\nwhere you are.',
+                        l10n.onboardingTitle,
+                        key: const Key('onboarding_title'),
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
                       const SizedBox(height: 10),
                       Text(
-                        'Readings use your device time zone for today’s timing. No location permission is needed.',
+                        l10n.onboardingLanguageHint,
+                        key: const Key('onboarding_language_hint'),
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
@@ -187,7 +208,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         key: const Key('continue_to_profile'),
                         onPressed: _continueToProfile,
                         icon: const Icon(Icons.arrow_forward_rounded),
-                        label: const Text('Continue'),
+                        label: Text(l10n.continueAction),
                       ),
                     ],
                   ),
@@ -201,6 +222,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Widget _profileStep() {
+    final l10n = AppLocalizations.of(context);
+    final localeName = intlLocaleOf(context);
     return SingleChildScrollView(
       key: const ValueKey('profile'),
       padding: const EdgeInsets.fromLTRB(24, 26, 24, 32),
@@ -212,15 +235,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
               IconButton(
                 onPressed: () => setState(() => _step = 0),
                 icon: const Icon(Icons.arrow_back_rounded),
+                tooltip: l10n.backAction,
               ),
-              const Spacer(),
-              Text(
-                'YOUR PROFILE',
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: CompassColors.gold, letterSpacing: 1.8),
+              // Expanded rather than a pair of Spacers: the eyebrow is a
+              // single word in English and four in Japanese, and at a large
+              // text scale the fixed-width version pushed the language
+              // control off the right edge.
+              Expanded(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    l10n.yourProfile,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: CompassColors.gold,
+                      letterSpacing: trackingFor(context, 1.8),
+                    ),
+                  ),
+                ),
               ),
-              const Spacer(),
-              const SizedBox(width: 48),
+              // Still reachable while entering a profile: a reader who only
+              // now realises the app speaks their language should not have to
+              // back out to change it.
+              LanguageButton(
+                controller: widget.dependencies.localeController,
+                compact: true,
+              ),
             ],
           ),
           const SizedBox(height: 28),
@@ -241,20 +281,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
           Center(
             child: Text(
               _birthDate == null
-                  ? 'YOUR SIGN APPEARS AFTER YOUR BIRTH DATE'
-                  : zodiacForDate(_birthDate!).label.toUpperCase(),
+                  ? l10n.signAfterBirthDate
+                  : zodiacLabel(l10n, zodiacForDate(_birthDate!)),
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.labelSmall
                   ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
             ),
           ),
           const SizedBox(height: 20),
           Text(
-            'Build your personal pattern.',
+            l10n.buildPattern,
             style: Theme.of(context).textTheme.headlineLarge,
           ),
           const SizedBox(height: 10),
           Text(
-            'These details shape the cycles used in every reading.',
+            l10n.profileExplainer,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 26),
@@ -262,7 +303,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
             key: const Key('name_field'),
             controller: _nameController,
             textInputAction: TextInputAction.next,
-            decoration: const InputDecoration(labelText: 'Name'),
+            decoration: InputDecoration(labelText: l10n.nameField),
           ),
           const SizedBox(height: 14),
           GlassCard(
@@ -280,14 +321,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Date of birth',
+                        l10n.dateOfBirth,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 2),
                       Text(
                         _birthDate == null
-                            ? 'Select your date of birth'
-                            : '${_birthDate!.month}/${_birthDate!.day}/${_birthDate!.year}',
+                            ? l10n.selectBirthDate
+                            : formatDate(localeName, _birthDate!),
                         key: const Key('birth_date_value'),
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
@@ -299,11 +340,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ),
           if (_showRequiredErrors && _birthDate == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 6, left: 12),
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 12),
               child: Text(
-                'Select your birth date to continue.',
-                style: TextStyle(color: CompassColors.coral),
+                l10n.birthDateRequired,
+                style: const TextStyle(color: CompassColors.coral),
               ),
             ),
           const SizedBox(height: 14),
@@ -312,10 +353,8 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: SwitchListTile.adaptive(
               key: const Key('birth_time_unknown'),
               contentPadding: EdgeInsets.zero,
-              title: const Text('Birth time unknown'),
-              subtitle: const Text(
-                'We will compare possible birth-hour patterns.',
-              ),
+              title: Text(l10n.birthTimeUnknown),
+              subtitle: Text(l10n.birthTimeUnknownDetail),
               value: _birthTimeUnknown,
               onChanged: (value) => setState(() => _birthTimeUnknown = value),
             ),
@@ -335,12 +374,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Time of birth',
+                          l10n.timeOfBirth,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          _birthTimeValue,
+                          _birthTimeDisplay(localeName),
+                          key: const Key('birth_time_value'),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -365,12 +405,17 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Country of birth',
+                        l10n.countryOfBirth,
                         style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _birthCountry?.name ?? 'Search and select a country',
+                        // The picker's own localized name where it has one,
+                        // which is why this reads the country through the
+                        // delegate rather than its English `name`.
+                        _birthCountry?.getTranslatedName(context) ??
+                            _birthCountry?.name ??
+                            l10n.selectBirthCountry,
                         key: const Key('birth_country_value'),
                         style: Theme.of(context).textTheme.bodyLarge,
                       ),
@@ -382,23 +427,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
             ),
           ),
           if (_showRequiredErrors && _birthCountry == null)
-            const Padding(
-              padding: EdgeInsets.only(top: 6, left: 12),
+            Padding(
+              padding: const EdgeInsets.only(top: 6, left: 12),
               child: Text(
-                'Select your country of birth to continue.',
-                style: TextStyle(color: CompassColors.coral),
+                l10n.birthCountryRequired,
+                style: const TextStyle(color: CompassColors.coral),
               ),
             ),
           const SizedBox(height: 28),
           FilledButton(
             key: const Key('complete_profile'),
             onPressed: _finish,
-            child: const Text('Create My Compass'),
+            child: Text(l10n.createCompass),
           ),
           const SizedBox(height: 12),
           Center(
             child: Text(
-              'Your birth details remain private in this prototype.',
+              l10n.birthPrivacyPrototype,
+              textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall
                   ?.copyWith(color: CompassColors.muted),
             ),

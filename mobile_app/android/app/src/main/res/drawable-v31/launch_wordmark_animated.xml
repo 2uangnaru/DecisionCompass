@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/launch_wordmark_vector">
+    <target android:name="orbit_dots" android:animation="@animator/launch_orbit" />
+</animated-vector>

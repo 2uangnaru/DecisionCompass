@@ -40,7 +40,11 @@ void main() {
 
       // Sheet opens in reference mode (has Close button and Crisis Support)
       expect(find.byKey(const Key('close_safety_sheet')), findsOneWidget);
-      expect(find.textContaining('Crisis Support:'), findsOneWidget);
+      expect(find.byKey(const Key('crisis_support')), findsOneWidget);
+      // Country-neutral: no telephone number belongs in copy shown in seven
+      // languages across many more countries than that.
+      expect(find.textContaining('113'), findsNothing);
+      expect(find.textContaining('911'), findsNothing);
       await tester.tap(find.byKey(const Key('close_safety_sheet')));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
@@ -66,14 +70,20 @@ void main() {
       expect(find.text('Financial Investments & Gambling'), findsOneWidget);
       expect(find.text('Consent, Minors & Relationships'), findsOneWidget);
 
-      // Check legal disclaimers
-      expect(find.text('LEGAL DISCLAIMER & AGE NOTICE'), findsOneWidget);
+      // The important-limits notice replaced the old legal/age box. The two
+      // claims it used to make are gone on purpose: the age threshold is a
+      // jurisdictional question this prototype has not answered, and "you
+      // assume 100% personal responsibility" is a legal assertion this copy
+      // is in no position to make.
+      expect(find.byKey(const Key('important_limits')), findsOneWidget);
+      expect(find.text('IMPORTANT LIMITS'), findsOneWidget);
       expect(
-        find.textContaining('Age Requirement: You must be at least 13'),
+        find.textContaining('does not provide medical, legal, or financial'),
         findsOneWidget,
       );
-      expect(find.textContaining('No Professional Advice'), findsOneWidget);
-      expect(find.textContaining('Assumption of Risk'), findsOneWidget);
+      expect(find.textContaining('at least 13'), findsNothing);
+      expect(find.textContaining('100%'), findsNothing);
+      expect(find.text('LEGAL DISCLAIMER & AGE NOTICE'), findsNothing);
 
       // Accept agreement
       final agreeButton = find.byKey(const Key('agree_safety_boundaries'));

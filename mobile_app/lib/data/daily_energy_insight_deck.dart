@@ -227,21 +227,22 @@ class DailyEnergyInsightController extends ChangeNotifier {
     return entry == null || !entry.read;
   }
 
-  /// The insight already chosen for [day] and [level], or null when the reader
-  /// has not opened it yet. Nothing is dealt here.
-  String? peek(String day, String level) {
-    final entry = _state.entries[_entryKey(day, level)];
-    if (entry == null) return null;
-    return dailyEnergyMessagePools[level]?[entry.message];
-  }
+  /// The index already chosen for [day] and [level] within that tone's pool,
+  /// or null when the reader has not opened it yet. Nothing is dealt here.
+  int? peek(String day, String level) =>
+      _state.entries[_entryKey(day, level)]?.message;
 
   /// Opens [day]'s insight for [level]: deals one if this is the first time,
-  /// marks it read, and returns it.
+  /// marks it read, and returns its index within the tone's pool.
   ///
-  /// Reopening the same date and level returns the same sentence and consumes
+  /// An index, not a sentence, so the reader's language is resolved at display
+  /// time: switching language shows the translation of the *same* insight and
+  /// consumes nothing.
+  ///
+  /// Reopening the same date and level returns the same index and consumes
   /// nothing further, so a day's insight is fixed once it has been seen — on
   /// Home, on a Result from that day, and after a restart.
-  Future<String?> open(String day, String level) async {
+  Future<int?> open(String day, String level) async {
     final pool = dailyEnergyMessagePools[level];
     if (pool == null) return null;
     await ensureLoaded();
@@ -258,7 +259,7 @@ class DailyEnergyInsightController extends ChangeNotifier {
         );
         await _persist();
       }
-      return pool[existing.message];
+      return existing.message;
     }
 
     final decks = {..._state.decks};
@@ -283,7 +284,7 @@ class DailyEnergyInsightController extends ChangeNotifier {
       }),
     );
     await _persist();
-    return pool[index];
+    return index;
   }
 
   /// Whether the one-shot discovery orbit should run for [day].

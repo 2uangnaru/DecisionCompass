@@ -7,6 +7,7 @@ import 'package:decision_compass/data/shared_preferences_history_repository.dart
 import 'package:decision_compass/pages/history_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/reading_dependencies.dart';
+import 'package:decision_compass/app_locale.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +22,11 @@ Future<void> pumpPastRitual(WidgetTester tester) async {
 
 void main() {
   test('shared text includes only the chosen symbolic result', () {
-    final text = shareTextForReading(fixtureResponse('ready_yes_no_now.json'));
+    final text = shareTextForReading(
+      stringsFor(AppLocale.english),
+      AppLocale.english.intlName,
+      fixtureResponse('ready_yes_no_now.json'),
+    );
     expect(text, contains('YES'));
     expect(text, contains('symbolic'));
     expect(text, isNot(contains('1998-06-21')));
@@ -37,7 +42,7 @@ void main() {
     final history = _UnreliableHistoryRepository()..failSave = true;
     final dependencies = _withHistory(rig, history);
     await tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         home: ResultPage(
           reading: fixtureResponse('ready_yes_no_now.json'),
           dependencies: dependencies,
@@ -67,7 +72,7 @@ void main() {
     final history = _UnreliableHistoryRepository()..failList = true;
     final dependencies = _withHistory(rig, history);
     await tester.pumpWidget(
-      MaterialApp(home: HistoryPage(dependencies: dependencies)),
+      localizedApp(home: HistoryPage(dependencies: dependencies)),
     );
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('history_error')), findsOneWidget);
@@ -89,7 +94,7 @@ void main() {
       ),
     );
     await tester.pumpWidget(
-      MaterialApp(home: HistoryPage(dependencies: rig.dependencies)),
+      localizedApp(home: HistoryPage(dependencies: rig.dependencies)),
     );
     await tester.pumpAndSettle();
     await tester.tap(find.text('YES / NO'));
@@ -161,7 +166,7 @@ void main() {
     final rig = ReadingTestRig();
 
     await tester.pumpWidget(
-      MaterialApp(
+      localizedApp(
         home: ResultPage(
           reading: engine.ReadingResponse.fromJson(json),
           dependencies: rig.dependencies,
@@ -248,14 +253,14 @@ void main() {
       );
 
       await tester.pumpWidget(
-        MaterialApp(home: HistoryPage(dependencies: rig.dependencies)),
+        localizedApp(home: HistoryPage(dependencies: rig.dependencies)),
       );
       await tester.pumpAndSettle();
 
       expect(find.byKey(const Key('history_empty')), findsNothing);
       expect(find.textContaining('Love'), findsOneWidget);
       expect(find.textContaining('Career'), findsOneWidget);
-      expect(find.textContaining('EVENING'), findsOneWidget);
+      expect(find.textContaining('Evening'), findsOneWidget);
       expect(find.textContaining('NOW'), findsOneWidget);
     },
   );
@@ -266,7 +271,7 @@ void main() {
     final rig = ReadingTestRig();
 
     await tester.pumpWidget(
-      MaterialApp(home: HistoryPage(dependencies: rig.dependencies)),
+      localizedApp(home: HistoryPage(dependencies: rig.dependencies)),
     );
     await tester.pumpAndSettle();
 
@@ -287,6 +292,7 @@ ReadingDependencies _withHistory(
   dailyBriefProvider: rig.dailyBriefProvider,
   homeDescriptionDeck: rig.dependencies.homeDescriptionDeck,
   dailyEnergyInsights: rig.dailyEnergyInsights,
+  localeController: rig.localeController,
   nowUtc: rig.dependencies.nowUtc,
   nowLocal: rig.dependencies.nowLocal,
 );

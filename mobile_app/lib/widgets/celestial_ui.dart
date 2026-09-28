@@ -1,7 +1,10 @@
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../models.dart';
 import '../theme.dart';
 
@@ -103,9 +106,10 @@ class ZodiacAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Semantics(
       image: true,
-      label: '${sign.label} zodiac avatar',
+      label: l10n.zodiacAvatarSemantics(zodiacLabel(l10n, sign)),
       child: AnimatedSwitcher(
         duration: const Duration(milliseconds: 420),
         switchInCurve: Curves.easeOutBack,
@@ -185,20 +189,27 @@ class OrbitVisual extends StatefulWidget {
 
 class _OrbitVisualState extends State<OrbitVisual>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _controller;
+  static const _orbitDuration = Duration(seconds: 14);
+
+  final ValueNotifier<double> _progress = ValueNotifier(0);
+  late final Ticker _ticker;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 14),
-    )..repeat();
+    // A 0..1 repeating controller jumps at each boundary because the rings
+    // travel fractional turns per 14 seconds. Elapsed time never wraps, so
+    // their angles and the orbit labels stay continuous at that boundary.
+    _ticker = createTicker((elapsed) {
+      _progress.value =
+          elapsed.inMicroseconds / _orbitDuration.inMicroseconds;
+    })..start();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _ticker.dispose();
+    _progress.dispose();
     super.dispose();
   }
 
@@ -212,10 +223,10 @@ class _OrbitVisualState extends State<OrbitVisual>
     return SizedBox.square(
       dimension: dimension,
       child: AnimatedBuilder(
-        animation: _controller,
+        animation: _progress,
         builder: (context, child) => CustomPaint(
           painter: _OrbitPainter(
-            progress: reduceMotion ? 0.1 : _controller.value,
+            progress: reduceMotion ? 0.1 : _progress.value,
             labels: widget.labels,
           ),
           child: child,

@@ -7,6 +7,8 @@ import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/data/fixed_daily_brief_provider.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
+import 'package:decision_compass/data/locale_controller.dart';
+import 'package:decision_compass/data/locale_store.dart';
 import 'package:decision_compass/local_engine/local_reading_repository.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +52,7 @@ void main() {
         dailyEnergyInsights: DailyEnergyInsightController(
           store: InMemoryDailyEnergyInsightStore.ordered(),
         ),
+        localeController: LocaleController(store: InMemoryLocaleStore()),
         nowUtc: () => DateTime.utc(2026, 9, 18, 8, 30),
       ),
     );

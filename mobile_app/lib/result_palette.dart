@@ -39,9 +39,12 @@ ResultPalette resultPaletteFor({
 }) {
   if (status == ReadingStatus.balanced) return _balanced;
   if (status != ReadingStatus.ready || winner == null) return _neutral;
-  if (winner != mode.first && winner != mode.second) return _neutral;
+  // `winner` is the engine's own wire token, never a translated label, so the
+  // palette is the same colour in every language.
+  final pair = englishChoiceLabels[mode]!;
+  if (winner != pair.first && winner != pair.second) return _neutral;
 
-  final first = winner == mode.first;
+  final first = winner == pair.first;
   if (mode == DecisionMode.yesNo) {
     return first
         ? const ResultPalette(

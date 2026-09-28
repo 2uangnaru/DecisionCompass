@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../theme.dart';
 
 /// Shows the Responsible Use & Safety boundaries modal.
@@ -20,6 +22,19 @@ Future<bool> showResponsibleUseSheet(
   return result ?? false;
 }
 
+/// The safety boundaries, and the one-time acknowledgement before a first
+/// reading.
+///
+/// Country-neutral by design. There are no telephone numbers here: an
+/// emergency number that is right in one country is dangerously wrong in
+/// another, and this app is used in seven languages across many more countries
+/// than that. It points at local emergency services and a local helpline
+/// instead, and names neither.
+///
+/// It also makes no age or liability claim. "You must be at least 13" and "you
+/// assume 100% personal responsibility" were removed rather than translated:
+/// the first is a jurisdictional question this prototype has not answered, and
+/// the second is a legal assertion no copy here is in a position to make.
 class ResponsibleUseSheet extends StatelessWidget {
   const ResponsibleUseSheet({
     super.key,
@@ -30,10 +45,12 @@ class ResponsibleUseSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final maxHeight = mediaQuery.size.height * 0.88;
 
     return Container(
+      key: const Key('responsible_use_sheet'),
       constraints: BoxConstraints(maxHeight: maxHeight),
       decoration: BoxDecoration(
         color: CompassColors.raised,
@@ -85,25 +102,23 @@ class ResponsibleUseSheet extends StatelessWidget {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'BOUNDARIES & RESPONSIBLE USE',
+                    l10n.safetyHeading,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: CompassColors.gold,
-                      letterSpacing: 2.0,
+                      letterSpacing: trackingFor(context, 2.0),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    'A Mirror for Everyday Moments',
+                    l10n.safetyTitle,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.headlineMedium,
                   ),
                   const SizedBox(height: 10),
                   Text(
-                    'AstraCue provides symbolic perspectives derived from astronomical rhythms and personal cycles. '
-                    'It is strictly provided for everyday self-reflection and entertainment. '
-                    'Never use this app as a command, prophecy, or factual certainty.',
+                    l10n.safetyIntro,
                     textAlign: TextAlign.center,
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                       color: CompassColors.secondary,
@@ -114,56 +129,58 @@ class ResponsibleUseSheet extends StatelessWidget {
 
                   // Guardrails header
                   Text(
-                    'PROHIBITED USES',
+                    l10n.prohibitedUses,
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
                       color: CompassColors.coral,
-                      letterSpacing: 1.5,
+                      letterSpacing: trackingFor(context, 1.5),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   const SizedBox(height: 10),
 
-                  // 7 Guardrail tiles
-                  const _GuardrailTile(
+                  // The seven boundaries. The order is fixed so a reader who
+                  // has seen this before finds the same one in the same place
+                  // whatever language they are reading it in.
+                  _GuardrailTile(
                     icon: Icons.dangerous_rounded,
-                    title: 'Harm & Self-Violence',
-                    detail: 'Never use for self-harm, suicide, physical violence, or endangering yourself or anyone else.',
+                    title: l10n.harmTitle,
+                    detail: l10n.harmDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.directions_car_rounded,
-                    title: 'Driving & Physical Navigation',
-                    detail: 'Directions like LEFT / RIGHT and FORWARD / BACKWARD are symbolic polarities only. Never use them for traffic, driving, route-finding, or physical safety.',
+                    title: l10n.navigationTitle,
+                    detail: l10n.navigationDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.balance_rounded,
-                    title: 'Politics & Social Conflicts',
-                    detail: 'Never use for political campaigning, electoral decisions, civil unrest, or extremist activities.',
+                    title: l10n.politicsTitle,
+                    detail: l10n.politicsDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.local_hospital_rounded,
-                    title: 'Health, Medical & Emergencies',
-                    detail: 'Not a substitute for licensed physicians, prescription medicine, mental health therapy, or acute emergency response.',
+                    title: l10n.medicalTitle,
+                    detail: l10n.medicalDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.gavel_rounded,
-                    title: 'Legal, Criminal & High-Stakes Contracts',
-                    detail: 'Never use for criminal conduct, court litigation, testimony, or binding high-stakes legal contracts.',
+                    title: l10n.legalTitle,
+                    detail: l10n.legalDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.trending_down_rounded,
-                    title: 'Financial Investments & Gambling',
-                    detail: 'The Everyday Money area is for low-stakes spending reflection only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.',
+                    title: l10n.financeTitle,
+                    detail: l10n.financeDetail,
                   ),
-                  const _GuardrailTile(
+                  _GuardrailTile(
                     icon: Icons.people_outline_rounded,
-                    title: 'Consent, Minors & Relationships',
-                    detail: 'Never use to override another person’s consent or autonomy, or for child custody and minor guardianship decisions.',
+                    title: l10n.consentTitle,
+                    detail: l10n.consentDetail,
                   ),
 
                   const SizedBox(height: 16),
 
-                  // Legal Notice Box
                   Container(
+                    key: const Key('important_limits'),
                     padding: const EdgeInsets.all(14),
                     decoration: BoxDecoration(
                       color: Colors.white.withValues(alpha: 0.04),
@@ -183,11 +200,11 @@ class ResponsibleUseSheet extends StatelessWidget {
                             const SizedBox(width: 8),
                             Expanded(
                               child: Text(
-                                'LEGAL DISCLAIMER & AGE NOTICE',
+                                l10n.importantLimitsHeading,
                                 style: Theme.of(context).textTheme.labelSmall
                                     ?.copyWith(
                                       color: CompassColors.gold,
-                                      letterSpacing: 1.2,
+                                      letterSpacing: trackingFor(context, 1.2),
                                       fontWeight: FontWeight.w700,
                                     ),
                               ),
@@ -196,16 +213,15 @@ class ResponsibleUseSheet extends StatelessWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '• Age Requirement: You must be at least 13 years of age (or the minimum legal age in your jurisdiction) to use this application.\n'
-                          '• No Professional Advice: Content does not constitute medical, legal, or financial counsel.\n'
-                          '• Assumption of Risk: You assume 100% personal responsibility for all actions and choices you make.',
+                          l10n.importantLimitsBody,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(color: Colors.white70, height: 1.5),
                         ),
                         if (!isFirstTimeAcknowledgement) ...[
                           const Divider(height: 18, color: Colors.white12),
                           Text(
-                            'Crisis Support: If you or someone you know is in immediate emotional distress, contact emergency services (113/115 in Vietnam, 911/988 in the US) or a trusted helpline right away.',
+                            l10n.crisisSupport,
+                            key: const Key('crisis_support'),
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
                                   color: CompassColors.blueLight,
@@ -236,13 +252,15 @@ class ResponsibleUseSheet extends StatelessWidget {
                         FilledButton(
                           key: const Key('agree_safety_boundaries'),
                           onPressed: () => Navigator.of(context).pop(true),
-                          child: const Text(
-                            'I Understand & Agree to Boundaries',
+                          child: Text(
+                            l10n.acknowledge,
+                            textAlign: TextAlign.center,
                           ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          'This acknowledgement appears once before your first reading.',
+                          l10n.acknowledgementOnce,
+                          textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall
                               ?.copyWith(
                                 color: CompassColors.muted,
@@ -261,7 +279,7 @@ class ResponsibleUseSheet extends StatelessWidget {
                           borderRadius: BorderRadius.circular(16),
                         ),
                       ),
-                      child: const Text('Close'),
+                      child: Text(l10n.closeAction),
                     ),
             ),
           ),
@@ -309,6 +327,9 @@ class _GuardrailTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Safety copy wraps rather than truncating, at any text
+                  // scale and in any language: a boundary the reader cannot
+                  // finish reading is not a boundary.
                   Text(
                     title,
                     style: const TextStyle(

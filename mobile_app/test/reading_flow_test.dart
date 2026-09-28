@@ -1,9 +1,16 @@
+import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/reading_api_exception.dart';
+import 'package:decision_compass/localized_presentation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'reading_test_rig.dart';
+
+/// A wall-clock time as the app prints it, so an assertion about a lucky
+/// window is about the engine's hour rather than about which space character
+/// CLDR puts before AM/PM.
+String clock(int hour) => formatClock(AppLocale.english.intlName, hour, 0);
 
 /// The ritual floor is 4.2–5.2s, so this clears any draw of the jitter.
 Future<void> pumpPastRitual(WidgetTester tester) async {
@@ -274,15 +281,28 @@ void main() {
       expect(windowCard, findsOneWidget);
       // The engine's own local wall clock (18:00–19:00 and 19:00–21:00 in
       // +07:00), rendered without a second timezone conversion.
-      expect(find.text('6:00 PM – 7:00 PM'), findsOneWidget);
-      expect(find.text('7:00 PM – 9:00 PM'), findsOneWidget);
+      String window(int fromHour, int toHour) =>
+          '${clock(fromHour)} \u2013 ${clock(toHour)}';
+      expect(find.text(window(18, 19)), findsOneWidget);
+      expect(find.text(window(19, 21)), findsOneWidget);
       // Scores read as percentages; both windows scored 61 in this fixture.
       expect(
         find.descendant(of: windowCard, matching: find.text('61%')),
         findsNWidgets(2),
       );
-      expect(find.text('Your Luckiest Times This Evening'), findsOneWidget);
-      expect(find.textContaining('not a chance of success'), findsOneWidget);
+      expect(
+        find.text(stringsFor(AppLocale.english).luckyTimesEvening),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const Key('result_lucky_times_caveat')),
+        findsOneWidget,
+      );
+      // The caveat sits with the numbers, not behind an info icon.
+      expect(
+        find.textContaining('not a probability or chance of success'),
+        findsOneWidget,
+      );
       expect(find.textContaining('do not add up to 100%'), findsOneWidget);
       expect(find.textContaining('symbolic timing alignment'), findsOneWidget);
     });
@@ -353,8 +373,14 @@ void main() {
 
       expect(find.byKey(const Key('result_period_elapsed')), findsOneWidget);
       expect(find.text('THAT PERIOD HAS PASSED'), findsOneWidget);
-      // Names the period from the response and refuses to roll it forward.
-      expect(find.textContaining('Morning'), findsWidgets);
+      // The period itself comes from the response, on the badge above: the
+      // explanation is a complete sentence that does not name it, because
+      // dropping a translated chip label into a sentence frame is
+      // ungrammatical in several of the supported languages.
+      expect(
+        find.text(stringsFor(AppLocale.english).periodElapsedBody),
+        findsOneWidget,
+      );
       expect(find.textContaining('not rolled into tomorrow'), findsOneWidget);
       expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
       expect(find.text('YOUR DIRECTION'), findsNothing);
@@ -471,7 +497,10 @@ void main() {
           find.text('This build has no reading service configured.'),
           findsOneWidget,
         );
-        expect(find.textContaining('DECISION_API_BASE_URL'), findsOneWidget);
+        expect(
+          find.text(stringsFor(AppLocale.english).errorConfigurationDetail),
+          findsOneWidget,
+        );
         expect(retryButton, findsNothing);
       },
     );

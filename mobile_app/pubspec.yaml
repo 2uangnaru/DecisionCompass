@@ -9,6 +9,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Flutter's own localization delegates and gen_l10n runtime. Both ship with
+  # the SDK, so no third-party or network translation service is involved.
+  flutter_localizations:
+    sdk: flutter
+  intl: any
   http: ^1.6.0
   # Device IANA timezone id (not a DateTime.timeZoneName abbreviation).
   flutter_timezone: ^5.1.0
@@ -25,5 +30,39 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/zodiac/
+    # The SIL OFL text for the bundled Noto families, registered at startup so
+    # it shows up in the standard Flutter licence list.
+    - assets/fonts/OFL-NotoSans.txt
+    - assets/fonts/OFL-NotoSansCJK.txt
+  # Bundled so Vietnamese diacritics, Thai marks, Devanagari conjuncts, kana,
+  # kanji and Simplified Chinese do not depend on what a device happens to
+  # have installed. SIL Open Font License 1.1; the licences ship beside them.
+  fonts:
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Regular.ttf
+        - asset: assets/fonts/NotoSans-Bold.ttf
+          weight: 700
+    - family: NotoSansThai
+      fonts:
+        - asset: assets/fonts/NotoSansThai-Regular.ttf
+        - asset: assets/fonts/NotoSansThai-Bold.ttf
+          weight: 700
+    - family: NotoSansDevanagari
+      fonts:
+        - asset: assets/fonts/NotoSansDevanagari-Regular.ttf
+        - asset: assets/fonts/NotoSansDevanagari-Bold.ttf
+          weight: 700
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Regular.otf
+        - asset: assets/fonts/NotoSansJP-Bold.otf
+          weight: 700
+    - family: NotoSansSC
+      fonts:
+        - asset: assets/fonts/NotoSansSC-Regular.otf
+        - asset: assets/fonts/NotoSansSC-Bold.otf
+          weight: 700

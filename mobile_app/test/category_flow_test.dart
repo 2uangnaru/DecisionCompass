@@ -1,4 +1,5 @@
 import 'package:decision_compass/category_presentation.dart';
+import 'package:decision_compass/localized_presentation.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/home_descriptions.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,10 @@ void main() {
       for (final choice in categoryChoices) {
         await tester.ensureVisible(find.byKey(Key(choice.testKey)));
         expect(find.byKey(Key(choice.testKey)), findsOneWidget);
-        expect(find.text(choice.label), findsWidgets);
+        expect(
+          find.text(categoryLabel(rig.strings, choice.category)),
+          findsWidgets,
+        );
       }
 
       // Default selection is visible in the summary line.
@@ -264,7 +268,9 @@ void main() {
         expect(
           height,
           greaterThanOrEqualTo(48.0),
-          reason: '${choice.label} target is only ${height}dp tall',
+          reason:
+              '${categoryLabel(rig.strings, choice.category)} target is only '
+              '${height}dp tall',
         );
       }
 

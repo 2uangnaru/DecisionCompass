@@ -4,8 +4,9 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
-import '../category_presentation.dart';
 import '../data/models/models.dart' as engine;
+import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
@@ -84,11 +85,10 @@ class _RitualPageState extends State<RitualPage>
 
   bool _rejectElapsedPeriod() {
     if (!_period.hasElapsedAt(widget.dependencies.nowLocal())) return false;
+    final l10n = AppLocalizations.of(context);
     setState(() {});
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${_period.label} has passed. Choose another time.'),
-      ),
+      SnackBar(content: Text(l10n.periodHasPassed(periodLabel(l10n, _period)))),
     );
     return true;
   }
@@ -169,6 +169,7 @@ class _RitualPageState extends State<RitualPage>
     double buttonSize,
     bool reduceMotion,
   ) {
+    final l10n = AppLocalizations.of(context);
     final selectedPeriodElapsed = _period.hasElapsedAt(
       widget.dependencies.nowLocal(),
     );
@@ -182,15 +183,17 @@ class _RitualPageState extends State<RitualPage>
             ),
             Expanded(
               child: Text(
-                widget.mode.label,
+                modeLabel(l10n, widget.mode),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelLarge
-                    ?.copyWith(color: CompassColors.gold, letterSpacing: 1.8),
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: CompassColors.gold,
+                  letterSpacing: trackingFor(context, 1.8),
+                ),
               ),
             ),
             IconButton(
               key: const Key('ritual_responsible_use_button'),
-              tooltip: 'Responsible Use',
+              tooltip: l10n.responsibleUse,
               onPressed: _locked
                   ? null
                   : () => showResponsibleUseSheet(context),
@@ -201,10 +204,13 @@ class _RitualPageState extends State<RitualPage>
         const SizedBox(height: 10),
         _CategoryBadge(
           key: const Key('ritual_category_badge'),
-          label: categoryLabel(widget.category),
+          label: categoryLabel(l10n, widget.category),
+          semanticsLabel: l10n.readingAreaSemantics(
+            categoryLabel(l10n, widget.category),
+          ),
         ),
         SizedBox(height: compact ? 10 : 18),
-        _periodSelector(),
+        _periodSelector(l10n),
         SizedBox(height: compact ? 28 : 48),
         // The hero follows the chips directly. Centring it in all remaining
         // height used to create the large empty band above the circle.
@@ -214,9 +220,13 @@ class _RitualPageState extends State<RitualPage>
             Semantics(
               button: true,
               enabled: !_locked && !selectedPeriodElapsed,
+              // A list of three complete labels, not a sentence with the
+              // period dropped into it: "for Morning" is ungrammatical in
+              // several of these languages, and a screen reader reads a
+              // comma-separated list perfectly well.
               label:
-                  'Reveal my direction for ${_period.whenPhrase.toLowerCase()}, '
-                  '${widget.mode.label}',
+                  '${l10n.reveal}, ${periodLabel(l10n, _period)}, '
+                  '${modeLabel(l10n, widget.mode)}',
               child: GestureDetector(
                 key: const Key('reveal_button'),
                 onTap: _locked || selectedPeriodElapsed ? null : _reveal,
@@ -297,13 +307,18 @@ class _RitualPageState extends State<RitualPage>
                                   const SizedBox(height: 10),
                                   Text(
                                     _locked
-                                        ? 'ALIGNING'
+                                        ? l10n.aligning
                                         : selectedPeriodElapsed
-                                        ? 'PASSED'
-                                        : 'REVEAL',
-                                    style: const TextStyle(
+                                        ? l10n.periodPassedShort
+                                        : l10n.reveal,
+                                    textAlign: TextAlign.center,
+                                    // Two lines, because several languages
+                                    // need more than one word where English
+                                    // needs one; the circle keeps its size.
+                                    maxLines: 2,
+                                    style: TextStyle(
                                       fontSize: 12,
-                                      letterSpacing: 2,
+                                      letterSpacing: trackingFor(context, 2),
                                       fontWeight: FontWeight.w700,
                                     ),
                                   ),
@@ -321,24 +336,23 @@ class _RitualPageState extends State<RitualPage>
             SizedBox(height: compact ? 18 : 24),
             Text(
               _locked
-                  ? 'Your moment is locked.'
+                  ? l10n.ritualLocked
                   : selectedPeriodElapsed
-                  ? '${_period.label} has passed. Choose another time.'
-                  : 'Tap when you’re ready',
+                  ? l10n.periodHasPassed(periodLabel(l10n, _period))
+                  : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 10),
             Text(
-              'Keep the choice clearly in your mind.',
+              l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             SizedBox(height: compact ? 10 : 14),
             Text(
-              'For everyday reflection only • Never for medical, investing, '
-              'borrowing, political, or harmful choices.',
+              l10n.ritualSafety,
               key: const Key('ritual_responsible_use_note'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
@@ -355,7 +369,7 @@ class _RitualPageState extends State<RitualPage>
 
   /// Compact chips, wrapped and centred so all five fit a 360dp phone without
   /// overflow and without competing with the reveal circle for attention.
-  Widget _periodSelector() {
+  Widget _periodSelector(AppLocalizations l10n) {
     // Read on every build so a period that ends while the screen is open stops
     // being offered. The engine's own `period_elapsed` answer stays the
     // authority if the clock crosses the boundary after the tap.
@@ -363,9 +377,12 @@ class _RitualPageState extends State<RitualPage>
     return Column(
       children: [
         Text(
-          'When are you considering it?',
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: CompassColors.secondary, letterSpacing: 0.7),
+          l10n.periodQuestion,
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: CompassColors.secondary,
+            letterSpacing: trackingFor(context, 0.7),
+          ),
         ),
         const SizedBox(height: 8),
         Wrap(
@@ -376,9 +393,12 @@ class _RitualPageState extends State<RitualPage>
           children: TimePeriod.values.map((period) {
             final elapsed = period.hasElapsedAt(localNow);
             final selected = period == _period;
+            final label = periodLabel(l10n, period);
             return ChoiceChip(
               key: Key('ritual_period_${period.name}'),
-              label: Text(elapsed ? '${period.label} · Passed' : period.label),
+              // Two complete labels joined by a separator, so no language has
+              // to fit "Passed" into an English sentence frame.
+              label: Text(elapsed ? '$label · ${l10n.periodPassed}' : label),
               selected: selected,
               showCheckmark: false,
               visualDensity: VisualDensity.compact,
@@ -423,14 +443,19 @@ class _RitualPageState extends State<RitualPage>
 
 /// Compact, calm badge naming the area the reading concerns.
 class _CategoryBadge extends StatelessWidget {
-  const _CategoryBadge({super.key, required this.label});
+  const _CategoryBadge({
+    super.key,
+    required this.label,
+    required this.semanticsLabel,
+  });
 
   final String label;
+  final String semanticsLabel;
 
   @override
   Widget build(BuildContext context) {
     return Semantics(
-      label: 'Reading area: $label',
+      label: semanticsLabel,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
@@ -440,8 +465,10 @@ class _CategoryBadge extends StatelessWidget {
         ),
         child: Text(
           label,
-          style: Theme.of(context).textTheme.labelSmall
-              ?.copyWith(color: CompassColors.blueLight, letterSpacing: 0.9),
+          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+            color: CompassColors.blueLight,
+            letterSpacing: trackingFor(context, 0.9),
+          ),
         ),
       ),
     );

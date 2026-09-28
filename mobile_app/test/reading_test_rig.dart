@@ -1,18 +1,24 @@
 import 'dart:math';
 
 import 'package:decision_compass/app.dart';
+import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
+import 'package:decision_compass/data/locale_controller.dart';
+import 'package:decision_compass/data/locale_store.dart';
 import 'package:decision_compass/data/fake_reading_repository.dart';
 import 'package:decision_compass/data/daily_energy_insight_deck.dart';
 import 'package:decision_compass/data/fixed_daily_brief_provider.dart';
 import 'package:decision_compass/data/in_memory_daily_energy_insight_store.dart';
 import 'package:decision_compass/data/home_description_deck.dart';
 import 'package:decision_compass/data/in_memory_home_description_store.dart';
+import 'package:decision_compass/data/history_entry.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
+import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/reading_dependencies.dart';
+import 'package:decision_compass/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +42,11 @@ class ReadingTestRig {
     Random? descriptionRandom,
     InMemoryDailyEnergyInsightStore? insightStore,
     Random? insightRandom,
-  }) : descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
+    AppLocale? locale,
+    InMemoryLocaleStore? localeStore,
+  }) : localeStore = localeStore ?? InMemoryLocaleStore(),
+       startingLocale = locale,
+       descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
        insightStore = insightStore ?? InMemoryDailyEnergyInsightStore.ordered(),
        insightRandom = insightRandom,
        descriptionRandom = descriptionRandom,
@@ -79,6 +89,14 @@ class ReadingTestRig {
   final InMemoryDailyEnergyInsightStore insightStore;
   final Random? insightRandom;
 
+  /// The language the app starts in. Null means "whatever the store holds",
+  /// which for a fresh store is the English default.
+  final AppLocale? startingLocale;
+
+  /// Survives a rig swap when a test passes its own, so a "restart" comes
+  /// back in the language the previous run chose.
+  final InMemoryLocaleStore localeStore;
+
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
 
@@ -96,6 +114,7 @@ class ReadingTestRig {
       random: descriptionRandom,
     ),
     dailyEnergyInsights: dailyEnergyInsights,
+    localeController: localeController,
     nowUtc: () {
       clockReads++;
       return revealInstant;
@@ -106,6 +125,17 @@ class ReadingTestRig {
   late final DailyEnergyInsightController dailyEnergyInsights =
       DailyEnergyInsightController(store: insightStore, random: insightRandom);
 
+  /// Loaded synchronously when a test names a language, so the very first
+  /// frame is already in it — the same guarantee `main` gives a real reader.
+  late final LocaleController localeController = LocaleController(
+    store: localeStore,
+    initial: startingLocale,
+  );
+
+  /// The strings the app is currently rendering.
+  AppLocalizations get strings =>
+      stringsFor(startingLocale ?? AppLocale.english);
+
   late final Widget app = DecisionCompassApp(
     dependencies: dependencies,
     initialSafetyAcknowledged: safetyAcknowledged,
@@ -114,6 +144,67 @@ class ReadingTestRig {
   /// The single request the flow sent, or null when it sent none.
   ReadingRequest? get sentRequest =>
       repository.requests.isEmpty ? null : repository.requests.single;
+}
+
+/// A `MaterialApp` carrying the app's own localizations and theme, for tests
+/// that mount one page instead of the whole app.
+/// Takes the same named arguments a bare `MaterialApp` would, so a call site
+/// only has to change the constructor name.
+Widget localizedApp({
+  required Widget home,
+  ThemeData? theme,
+  AppLocale locale = AppLocale.english,
+}) => MaterialApp(
+  theme: theme ?? buildCompassTheme(locale),
+  locale: locale.locale,
+  localizationsDelegates: compassLocalizationsDelegates,
+  supportedLocales: compassSupportedLocales,
+  home: home,
+);
+
+/// The strings a locale actually renders, without pumping a widget.
+///
+/// `lookupAppLocalizations` is the function the delegate itself calls, so a
+/// test reading a key through this sees exactly what a screen would.
+AppLocalizations stringsFor(AppLocale locale) =>
+    lookupAppLocalizations(locale.locale);
+
+/// Taps the globe and chooses [locale] from the bottom sheet, the way a reader
+/// would. Returns once the whole app has re-rendered.
+Future<void> switchLanguage(WidgetTester tester, AppLocale locale) async {
+  await openLanguageSheet(tester);
+  await tester.tap(find.byKey(Key('language_option_${locale.tag}')));
+  // Fixed steps rather than a settle: the welcome screen's orbit and the
+  // ritual's reveal pulse both animate forever, so nothing on those screens
+  // ever reaches a quiet frame.
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
+  allowCountryNameGap(tester);
+}
+
+/// Consumes the framework's debug warning that `CountryLocalizations` does
+/// not cover every supported locale.
+///
+/// It is true, and deliberate: `country_picker` has no Vietnamese or Thai
+/// list, and answers Hindi with its Nepali one, so those three are left to
+/// fall back to English country names rather than shown something wrong. The
+/// gap is recorded in `handoff/localization/MISSING_KEYS.md`. Anything else
+/// thrown here still fails the test.
+void allowCountryNameGap(WidgetTester tester) {
+  final thrown = tester.takeException();
+  if (thrown == null) return;
+  expect(
+    '$thrown',
+    contains('is not supported by all of its localization delegates'),
+  );
+}
+
+/// Opens the language bottom sheet and lets it finish sliding in.
+Future<void> openLanguageSheet(WidgetTester tester) async {
+  await tester.ensureVisible(find.byKey(const Key('language_button')).first);
+  await tester.tap(find.byKey(const Key('language_button')).first);
+  await tester.pump();
+  await tester.pump(const Duration(milliseconds: 400));
 }
 
 ReadingResponse fixtureResponse(String name) =>
@@ -130,18 +221,29 @@ Future<void> fillOnboardingProfile(WidgetTester tester) async {
   await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
   await tester.tap(find.byKey(const Key('birth_date_value')));
   await tester.pumpAndSettle();
-  await tester.tap(find.text('2000').last);
+  // The dialog writes its years, days and buttons the way this language
+  // writes them — Japanese and Chinese label the year "2000年", not "2000" —
+  // so every label here is read back from the same localizations the dialog
+  // used rather than assumed to be English.
+  final dialog = MaterialLocalizations.of(
+    tester.element(find.byType(DatePickerDialog)),
+  );
+  await tester.tap(find.text(dialog.formatYear(DateTime(2000))).last);
   await tester.pumpAndSettle();
-  await tester.tap(find.text('1').last);
+  await tester.tap(find.text(dialog.formatDecimal(1)).last);
   await tester.pumpAndSettle();
-  await tester.tap(find.text('OK'));
+  await tester.tap(find.text(dialog.okButtonLabel));
   await tester.pumpAndSettle();
   await tester.ensureVisible(find.byKey(const Key('birth_country')));
   await tester.tap(find.byKey(const Key('birth_country')));
   await tester.pumpAndSettle();
-  await tester.enterText(find.byType(TextField).last, 'United States');
+  // Searching by ISO code rather than by name: the picker matches the code in
+  // every language, and the row's own text is localized.
+  await tester.enterText(find.byType(TextField).last, 'US');
   await tester.pumpAndSettle();
-  await tester.tap(find.text('United States').last);
+  // The flag is the one cell of that row that reads the same in every
+  // language, so the tap does not depend on the country's localized name.
+  await tester.tap(find.text('\u{1F1FA}\u{1F1F8}').last);
   await tester.pumpAndSettle();
 }
 
@@ -204,6 +306,13 @@ Future<void> revealReading(
     await tester.pump();
   }
 }
+
+/// A saved entry for [reading], keyed the way `ResultPage` keys one.
+HistoryEntry historyEntryFor(ReadingResponse reading) => HistoryEntry(
+  id: reading.readingKey ?? reading.context.instantUtc,
+  reading: reading,
+  savedAtUtc: DateTime.parse(reading.context.instantUtc),
+);
 
 /// A valid [DailyColors] pair for tests that only need the brief to exist.
 /// Two different element families, as the engine always produces.
