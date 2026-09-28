@@ -7,7 +7,7 @@ import 'models.dart';
 /// fields must never reach a log line.
 class AppProfile {
   const AppProfile({
-    required this.userName,
+    this.userName,
     required this.birthDate,
     required this.birthCountryCode,
     required this.zodiacSign,
@@ -17,8 +17,20 @@ class AppProfile {
     this.safetyAcknowledged = false,
   });
 
-  /// Display name only; never sent to the engine.
-  final String userName;
+  /// The name the reader typed, or null when they left it blank.
+  ///
+  /// Null is a *state*, not a word: it means "no name given", and the greeting
+  /// resolves it to `Explorer` — or that word's translation — at display time,
+  /// through `profileDisplayName`. Storing the translated word instead would
+  /// freeze whichever language happened to be active when the profile was
+  /// created, so a reader who signed up in Thai and later switched to English
+  /// would keep being greeted in Thai.
+  ///
+  /// Display only; never sent to the engine.
+  final String? userName;
+
+  /// Whether the greeting will use the default name.
+  bool get hasDefaultName => userName == null;
 
   final DateTime birthDate;
 
@@ -47,6 +59,10 @@ class AppProfile {
   /// Required before the first reading is revealed.
   final bool safetyAcknowledged;
 
+  /// [userName] cannot be *cleared* through this, only replaced: a null
+  /// argument means "leave it alone", which is the usual `copyWith`
+  /// convention. Nothing needs to clear a name, and a `copyWith` that could
+  /// would make it easy to erase one by accident.
   AppProfile copyWith({
     String? userName,
     DateTime? birthDate,
@@ -88,7 +104,9 @@ class AppProfile {
   /// engine or to analytics. [zodiacSign] is not stored: it is re-derived from
   /// [birthDate] on load, so the two can never disagree.
   Map<String, dynamic> toJson() => {
-    'userName': userName,
+    // Omitted entirely when the reader gave no name, so the stored record
+    // says "default" rather than naming a language's word for it.
+    if (userName != null) 'userName': userName,
     'birthDate': formattedBirthDate,
     if (birthTime != null) 'birthTime': birthTime,
     'birthCountryCode': birthCountryCode,
@@ -101,8 +119,13 @@ class AppProfile {
   factory AppProfile.fromJson(Map<String, dynamic> json) {
     final birthDate = DateTime.parse(json['birthDate'] as String);
     final rawTraditionalProfile = json['traditionalProfile'] as String?;
+    // A record written before the default-name state existed always has this
+    // key, so it is read as a name the reader chose — including the literal
+    // string `Explorer`, which such a reader may well have typed. Guessing
+    // that a stored `Explorer` was really a default would silently rename
+    // anyone who had entered it on purpose.
     return AppProfile(
-      userName: json['userName'] as String,
+      userName: json['userName'] as String?,
       birthDate: birthDate,
       birthTime: json['birthTime'] as String?,
       birthCountryCode: json['birthCountryCode'] as String,

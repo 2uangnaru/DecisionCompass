@@ -28,7 +28,7 @@ void main() {
     required Size size,
     double textScale = 1.0,
   }) async {
-    await tester.binding.setSurfaceSize(size);
+    useScreen(tester, size: size);
     tester.platformDispatcher.textScaleFactorTestValue = textScale;
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
@@ -57,7 +57,6 @@ void main() {
       testWidgets('holds together at $size at text scale $scale', (
         tester,
       ) async {
-        addTearDown(() => tester.binding.setSurfaceSize(null));
         addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
         await pumpRitual(tester, size: size, textScale: scale);
 
@@ -80,7 +79,6 @@ void main() {
   testWidgets('the circle is not marooned behind a large empty gap', (
     tester,
   ) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     // The tall screen the gap was worst on.
     const size = Size(505, 897);
@@ -124,7 +122,6 @@ void main() {
   testWidgets('the circle grows with the screen rather than jumping', (
     tester,
   ) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     final widths = <double>[];
     for (final size in sizes) {
@@ -144,7 +141,6 @@ void main() {
   testWidgets('it scrolls rather than overflowing when it cannot fit', (
     tester,
   ) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await pumpRitual(tester, size: const Size(320, 480), textScale: 1.3);
 
@@ -160,7 +156,6 @@ void main() {
   });
 
   testWidgets('the disclaimer is readable, not fine print', (tester) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await pumpRitual(tester, size: const Size(393, 873));
 
@@ -175,7 +170,6 @@ void main() {
   testWidgets('one tap still reveals, and NOW is still the default', (
     tester,
   ) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await pumpRitual(tester, size: const Size(393, 873));
 

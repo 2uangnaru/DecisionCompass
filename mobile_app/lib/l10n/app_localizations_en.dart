@@ -406,6 +406,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'This acknowledgement appears once before your first reading.';
 
   @override
+  String get knowBirthTime => 'I know my birth time';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'An exact time sharpens the hour-based cycles.';
+
+  @override
+  String get selectBirthTime => 'Select your time of birth';
+
+  @override
+  String get birthTimeRequired =>
+      'Select your time of birth to continue, or turn this off if you do not know it.';
+
+  @override
   String get languageSetting => 'Language';
 
   @override

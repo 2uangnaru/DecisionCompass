@@ -109,8 +109,7 @@ void main() {
     testWidgets('the tab fills the empty band to the right of the icon', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(720, 900));
+      useScreen(tester, size: const Size(720, 900));
       await pumpHome(tester, level: 'quiet');
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
@@ -141,8 +140,7 @@ void main() {
     testWidgets('the open tab leaves the signal tiles uncovered', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(720, 900));
+      useScreen(tester, size: const Size(720, 900));
       await pumpHome(tester, level: 'focused'); // the longest sentence
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
@@ -160,8 +158,7 @@ void main() {
     testWidgets('it drops under the icon when the band is too narrow', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       await pumpHome(tester, level: 'quiet');
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
@@ -179,8 +176,7 @@ void main() {
     });
 
     testWidgets('tapping outside the tab closes it', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       await pumpHome(tester, level: 'quiet');
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
@@ -372,11 +368,10 @@ void main() {
     ];
 
     testWidgets('Home fits with the sentence open', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       for (final size in sizes) {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pump();
-        await tester.binding.setSurfaceSize(size);
+        useScreen(tester, size: size);
         // FOCUSED carries the longest sentence of the eight.
         await pumpHome(tester, level: 'focused');
         expect(tester.takeException(), isNull, reason: 'Home failed at $size');
@@ -393,7 +388,6 @@ void main() {
     });
 
     testWidgets('the result card fits with the sentence open', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       final inBrief = find.descendant(
         of: find.byKey(const Key('result_daily_brief')),
         matching: infoButton,
@@ -402,7 +396,7 @@ void main() {
       for (final size in sizes) {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pump();
-        await tester.binding.setSurfaceSize(size);
+        useScreen(tester, size: size);
         final rig = ReadingTestRig(
           response: fixtureResponse('ready_yes_no_now.json'),
         );

@@ -37,6 +37,9 @@ flutter:
     # it shows up in the standard Flutter licence list.
     - assets/fonts/OFL-NotoSans.txt
     - assets/fonts/OFL-NotoSansCJK.txt
+    # Unicode CLDR supplies the Vietnamese, Thai and Hindi country names in
+    # lib/data/country_names_data.dart; its licence ships with them.
+    - assets/licenses/UNICODE-LICENSE.txt
   # Bundled so Vietnamese diacritics, Thai marks, Devanagari conjuncts, kana,
   # kanji and Simplified Chinese do not depend on what a device happens to
   # have installed. SIL Open Font License 1.1; the licences ship beside them.

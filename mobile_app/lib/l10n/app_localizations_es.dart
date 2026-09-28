@@ -408,6 +408,20 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esta confirmación aparece una sola vez antes de tu primera lectura.';
 
   @override
+  String get knowBirthTime => 'Sé mi hora de nacimiento';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'Una hora exacta afina los ciclos basados en la hora.';
+
+  @override
+  String get selectBirthTime => 'Selecciona tu hora de nacimiento';
+
+  @override
+  String get birthTimeRequired =>
+      'Selecciona tu hora de nacimiento para continuar, o desactiva esta opción si no la sabes.';
+
+  @override
   String get languageSetting => 'Idioma';
 
   @override

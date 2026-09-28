@@ -435,7 +435,6 @@ void main() {
     testWidgets('the ritual selector fits common Android window sizes', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       const sizes = [
         Size(360, 640),
         Size(390, 844),
@@ -452,7 +451,7 @@ void main() {
         );
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pump();
-        await tester.binding.setSurfaceSize(size);
+        useScreen(tester, size: size);
         await tester.pumpWidget(rig.app);
         await tester.pump();
         await openRitual(tester);

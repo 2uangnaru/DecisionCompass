@@ -411,6 +411,20 @@ class AppLocalizationsHi extends AppLocalizations {
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
 
   @override
+  String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'सटीक समय से घंटे पर आधारित चक्र और स्पष्ट होते हैं।';
+
+  @override
+  String get selectBirthTime => 'अपना जन्म समय चुनें';
+
+  @override
+  String get birthTimeRequired =>
+      'आगे बढ़ने के लिए जन्म समय चुनें, या यदि आपको पता नहीं है तो इसे बंद कर दें।';
+
+  @override
   String get languageSetting => 'भाषा';
 
   @override
@@ -1519,6 +1533,20 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get acknowledgementOnce =>
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
+
+  @override
+  String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'सटीक समय से घंटे पर आधारित चक्र और स्पष्ट होते हैं।';
+
+  @override
+  String get selectBirthTime => 'अपना जन्म समय चुनें';
+
+  @override
+  String get birthTimeRequired =>
+      'आगे बढ़ने के लिए जन्म समय चुनें, या यदि आपको पता नहीं है तो इसे बंद कर दें।';
 
   @override
   String get languageSetting => 'भाषा';

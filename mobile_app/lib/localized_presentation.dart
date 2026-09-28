@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'app_locale.dart';
+import 'app_profile.dart';
 import 'data/models/models.dart' as engine;
 import 'l10n/app_localizations.dart';
 import 'models.dart';
@@ -40,6 +41,19 @@ double trackingFor(BuildContext context, double latin) =>
       AppLocale.simplifiedChinese => 0,
       AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => latin,
     };
+
+// ---------------------------------------------------------------------------
+// The reader
+// ---------------------------------------------------------------------------
+
+/// What to call the reader.
+///
+/// A profile with no name carries null rather than a word, so the greeting is
+/// resolved here, in whatever language is active now. Switching language
+/// changes the default greeting immediately and permanently; it never touches
+/// a name the reader typed.
+String profileDisplayName(AppLocalizations l10n, AppProfile profile) =>
+    profile.userName ?? l10n.defaultUserName;
 
 // ---------------------------------------------------------------------------
 // Categories

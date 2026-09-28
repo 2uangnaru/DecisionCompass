@@ -11,6 +11,19 @@ missing in `es`, `hi`, `hi-IN`, `ja`, `th`, `vi`, `zh`, `zh-Hans`, and `zh-Hans-
 The translated values now live in the corresponding `mobile_app/lib/l10n/app_*.arb`
 files. This list records the original English source and call site only.
 
+## Four keys added since, drafted by Claude
+
+The birth-time control changed shape on 2026-09-28 — it is now
+`I know my birth time`, on by default, instead of the inverted
+`Birth time unknown` switch — and the pack had no wording for it. Claude wrote
+`knowBirthTime`, `knowBirthTimeDetail`, `selectBirthTime` and
+`birthTimeRequired` in all seven languages so the screen would not be
+half-English. **They are unreviewed**: they are Claude's drafts, not Codex's
+copy. They live in `CLAUDE_DRAFT_ONBOARDING.md`, in the same table format as
+the rest of the handoff, with a note on what to check and what each one was
+modelled on. Replacing a value there and re-running
+`mobile_app/tool/l10n/generate.py` is all that is needed to adopt a revision.
+
 | Key | English source | First call site | Screen |
 |---|---|---|---|
 | `historyToday` | TODAY | `lib/pages/history_page.dart:229` | History — date group heading |

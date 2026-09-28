@@ -79,8 +79,7 @@ void main() {
   testWidgets('centres the colour and lucky number in their tiles', (
     tester,
   ) async {
-    addTearDown(() => tester.binding.setSurfaceSize(null));
-    await tester.binding.setSurfaceSize(const Size(360, 640));
+    useScreen(tester, size: const Size(360, 640));
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
       localNow: DateTime(2026, 9, 18, 7),

@@ -1,6 +1,3 @@
-import 'dart:io';
-import 'dart:typed_data';
-
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
@@ -10,7 +7,6 @@ import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
 import 'package:decision_compass/widgets/responsible_use_sheet.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show FontLoader;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'reading_test_rig.dart';
@@ -25,29 +21,7 @@ import 'reading_test_rig.dart';
 /// establish is what the pixels look like — whether a tone mark collides with
 /// a descender is a question for a screen, and is called out in the report.
 void main() {
-  setUpAll(() async {
-    TestWidgetsFlutterBinding.ensureInitialized();
-    for (final entry in const {
-      'NotoSans': ['NotoSans-Regular.ttf', 'NotoSans-Bold.ttf'],
-      'NotoSansThai': ['NotoSansThai-Regular.ttf', 'NotoSansThai-Bold.ttf'],
-      'NotoSansDevanagari': [
-        'NotoSansDevanagari-Regular.ttf',
-        'NotoSansDevanagari-Bold.ttf',
-      ],
-      'NotoSansJP': ['NotoSansJP-Regular.otf', 'NotoSansJP-Bold.otf'],
-      'NotoSansSC': ['NotoSansSC-Regular.otf', 'NotoSansSC-Bold.otf'],
-    }.entries) {
-      final loader = FontLoader(entry.key);
-      for (final file in entry.value) {
-        loader.addFont(
-          Future.value(
-            ByteData.sublistView(File('assets/fonts/$file').readAsBytesSync()),
-          ),
-        );
-      }
-      await loader.load();
-    }
-  });
+  setUpAll(loadBundledFonts);
 
   final profile = AppProfile(
     userName: 'Alex',
@@ -78,12 +52,7 @@ void main() {
     double scale,
     Future<void> Function() body,
   ) async {
-    await tester.binding.setSurfaceSize(narrow);
-    tester.platformDispatcher.textScaleFactorTestValue = scale;
-    addTearDown(() {
-      tester.binding.setSurfaceSize(null);
-      tester.platformDispatcher.clearTextScaleFactorTestValue();
-    });
+    useScreen(tester, size: narrow, textScale: scale);
     await body();
   }
 

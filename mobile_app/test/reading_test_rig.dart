@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/app_locale.dart';
@@ -20,6 +22,7 @@ import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:decision_compass/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show FontLoader;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'data/fixture_loader.dart';
@@ -162,6 +165,57 @@ Widget localizedApp({
   home: home,
 );
 
+/// Lays the app out on a phone-sized screen at a given text scale.
+///
+/// Through `tester.view`, not `binding.setSurfaceSize`: the latter resizes the
+/// surface without changing `MediaQuery.sizeOf`, so a test that used it was
+/// measuring the default 800x600 desktop window while claiming to measure a
+/// 360dp phone.
+void useScreen(
+  WidgetTester tester, {
+  Size size = const Size(360, 640),
+  double textScale = 1.0,
+}) {
+  tester.view.devicePixelRatio = 1.0;
+  tester.view.physicalSize = size;
+  tester.platformDispatcher.textScaleFactorTestValue = textScale;
+  addTearDown(() {
+    tester.view.resetPhysicalSize();
+    tester.view.resetDevicePixelRatio();
+    tester.platformDispatcher.clearTextScaleFactorTestValue();
+  });
+}
+
+/// Registers the app's bundled fonts with the test engine.
+///
+/// Without this, `flutter test` measures every glyph with its placeholder
+/// font, which is about one em wide whatever the character is — far wider
+/// than real Latin text and a different shape from real Thai or Han. Any test
+/// that asserts something fits has to use the fonts the app actually ships.
+Future<void> loadBundledFonts() async {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  for (final entry in const {
+    'NotoSans': ['NotoSans-Regular.ttf', 'NotoSans-Bold.ttf'],
+    'NotoSansThai': ['NotoSansThai-Regular.ttf', 'NotoSansThai-Bold.ttf'],
+    'NotoSansDevanagari': [
+      'NotoSansDevanagari-Regular.ttf',
+      'NotoSansDevanagari-Bold.ttf',
+    ],
+    'NotoSansJP': ['NotoSansJP-Regular.otf', 'NotoSansJP-Bold.otf'],
+    'NotoSansSC': ['NotoSansSC-Regular.otf', 'NotoSansSC-Bold.otf'],
+  }.entries) {
+    final loader = FontLoader(entry.key);
+    for (final file in entry.value) {
+      loader.addFont(
+        Future.value(
+          ByteData.sublistView(File('assets/fonts/$file').readAsBytesSync()),
+        ),
+      );
+    }
+    await loader.load();
+  }
+}
+
 /// The strings a locale actually renders, without pumping a widget.
 ///
 /// `lookupAppLocalizations` is the function the delegate itself calls, so a
@@ -210,14 +264,82 @@ Future<void> openLanguageSheet(WidgetTester tester) async {
 ReadingResponse fixtureResponse(String name) =>
     ReadingResponse.fromJson(readFixture(name));
 
+/// Picks a birth time the way a reader does: hour, minute, then AM or PM.
+///
+/// Every part of the dial is a real button, so this taps them rather than
+/// aiming at painted numbers. The minute ring offers multiples of five;
+/// [pickBirthTimeByTyping] covers the rest.
+Future<void> pickBirthTime(WidgetTester tester, TimeOfDay time) async {
+  await tester.ensureVisible(find.byKey(const Key('birth_time_picker')));
+  await tester.tap(find.byKey(const Key('birth_time_picker')));
+  await tester.pumpAndSettle();
+  await chooseTimeInDialog(tester, time);
+  await tester.tap(find.byKey(const Key('birth_time_confirm')));
+  await tester.pumpAndSettle();
+}
+
+/// The same, typed into the hour and minute fields instead of tapped.
+Future<void> pickBirthTimeByTyping(WidgetTester tester, TimeOfDay time) async {
+  await tester.ensureVisible(find.byKey(const Key('birth_time_picker')));
+  await tester.tap(find.byKey(const Key('birth_time_picker')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const Key('birth_time_entry_mode')));
+  await tester.pumpAndSettle();
+  await tester.enterText(
+    find.byKey(const Key('birth_time_hour_field')),
+    '${time.hourOfPeriod}',
+  );
+  await tester.enterText(
+    find.byKey(const Key('birth_time_minute_field')),
+    time.minute.toString().padLeft(2, '0'),
+  );
+  await tester.pumpAndSettle();
+  await tapDayPeriod(tester, time.period);
+  await tester.tap(find.byKey(const Key('birth_time_confirm')));
+  await tester.pumpAndSettle();
+}
+
+/// Chooses [time] in an already-open dialog, without confirming it.
+Future<void> chooseTimeInDialog(WidgetTester tester, TimeOfDay time) async {
+  await tester.tap(find.byKey(Key('birth_time_hour_${time.hourOfPeriod}')));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(Key('birth_time_minute_${time.minute}')));
+  await tester.pumpAndSettle();
+  await tapDayPeriod(tester, time.period);
+}
+
+/// Taps AM or PM.
+Future<void> tapDayPeriod(WidgetTester tester, DayPeriod period) async {
+  await tester.tap(
+    find.byKey(Key(period == DayPeriod.am ? 'birth_time_am' : 'birth_time_pm')),
+  );
+  await tester.pumpAndSettle();
+}
+
 /// Walks the explainer and profile steps to Home.
-Future<void> fillOnboardingProfile(WidgetTester tester) async {
+///
+/// [birthTime] null is the "I do not know my birth time" answer, which is what
+/// most of these tests want: it turns the control off and sends null to the
+/// engine. Passing a time turns the control on and picks it.
+Future<void> fillOnboardingProfile(
+  WidgetTester tester, {
+  TimeOfDay? birthTime,
+}) async {
   // The app's startup gate reads the saved profile before choosing between
   // Onboarding and Home; this lets that (already-resolved, in-memory) future
   // settle before the first interaction.
   await tester.pump();
   await tester.tap(find.byKey(const Key('continue_to_profile')));
   await tester.pumpAndSettle();
+
+  await fillDateAndCountry(tester);
+  await answerBirthTime(tester, birthTime);
+}
+
+/// The birth date and country, on whatever screen is already showing the
+/// profile step. Split out so a test can mount that step directly and answer
+/// the birth-time control itself.
+Future<void> fillDateAndCountry(WidgetTester tester) async {
   await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
   await tester.tap(find.byKey(const Key('birth_date_value')));
   await tester.pumpAndSettle();
@@ -234,6 +356,7 @@ Future<void> fillOnboardingProfile(WidgetTester tester) async {
   await tester.pumpAndSettle();
   await tester.tap(find.text(dialog.okButtonLabel));
   await tester.pumpAndSettle();
+
   await tester.ensureVisible(find.byKey(const Key('birth_country')));
   await tester.tap(find.byKey(const Key('birth_country')));
   await tester.pumpAndSettle();
@@ -247,11 +370,35 @@ Future<void> fillOnboardingProfile(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// Answers the birth-time control.
+///
+/// It is on for a new profile, so a test that does not care about the birth
+/// time still has to answer it one way or the other; nothing is filled in on
+/// the reader's behalf. Null is the "I do not know" answer, which turns the
+/// control off and sends null to the engine.
+Future<void> answerBirthTime(WidgetTester tester, TimeOfDay? time) async {
+  if (time == null) {
+    await tester.ensureVisible(find.byKey(const Key('knows_birth_time')));
+    await tester.tap(find.byKey(const Key('knows_birth_time')));
+    await tester.pumpAndSettle();
+  } else {
+    await pickBirthTime(tester, time);
+  }
+}
+
+/// Submits the profile step and waits for Home.
+Future<void> completeProfileStep(WidgetTester tester) async {
+  await tester.ensureVisible(find.byKey(const Key('complete_profile')));
+  await tester.tap(find.byKey(const Key('complete_profile')));
+  await tester.pumpAndSettle();
+}
+
 Future<void> completeOnboarding(
   WidgetTester tester, {
   bool settleHome = true,
+  TimeOfDay? birthTime,
 }) async {
-  await fillOnboardingProfile(tester);
+  await fillOnboardingProfile(tester, birthTime: birthTime);
   await tester.ensureVisible(find.byKey(const Key('complete_profile')));
   await tester.tap(find.byKey(const Key('complete_profile')));
   if (settleHome) {

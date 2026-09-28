@@ -8,6 +8,7 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
+import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/language_selector.dart';
 import 'home_page.dart';
@@ -17,23 +18,70 @@ class OnboardingPage extends StatefulWidget {
     super.key,
     required this.dependencies,
     this.initialSafetyAcknowledged = false,
+    this.initialProfile,
   });
 
   final ReadingDependencies dependencies;
   final bool initialSafetyAcknowledged;
+
+  /// The profile being edited, or null when creating one.
+  ///
+  /// An existing profile keeps the answers it was saved with — in particular
+  /// whether its birth time was known. Re-opening it must not quietly flip an
+  /// "I do not know my birth time" back to "I do", which would either block
+  /// the reader or invite them to invent an hour.
+  ///
+  /// Nothing routes here yet: there is no profile-editing screen in this
+  /// build. The parameter exists so the behaviour is defined and tested for
+  /// whichever screen adds one.
+  final AppProfile? initialProfile;
 
   @override
   State<OnboardingPage> createState() => _OnboardingPageState();
 }
 
 class _OnboardingPageState extends State<OnboardingPage> {
-  final _nameController = TextEditingController();
+  late final _nameController = TextEditingController(
+    text: widget.initialProfile?.userName ?? '',
+  );
   var _step = 0;
-  DateTime? _birthDate;
-  var _birthTimeUnknown = true;
-  var _birthTime = const TimeOfDay(hour: 14, minute: 30);
+  late DateTime? _birthDate = widget.initialProfile?.birthDate;
+
+  /// On for a new profile: most readers do know their birth time, and the
+  /// hour is what the earthly-branch cycles are built from, so the default
+  /// invites them to give it. An existing profile keeps whatever it was
+  /// saved with.
+  late bool _knowsBirthTime =
+      widget.initialProfile == null || widget.initialProfile!.birthTime != null;
+
+  /// Null until the reader picks one. Never seeded with noon, midnight, the
+  /// current time or any other invented hour: a fabricated birth time is
+  /// indistinguishable from a real one once it reaches the engine, and it
+  /// would silently produce a confident reading from a guess.
+  late TimeOfDay? _birthTime = _parseBirthTime(
+    widget.initialProfile?.birthTime,
+  );
+
   Country? _birthCountry;
   var _showRequiredErrors = false;
+
+  /// Set when the reader closed the time dialog without answering it, as well
+  /// as when they try to continue. Separate from [_showRequiredErrors] so
+  /// dismissing the dialog does not also light up the date and country.
+  var _showBirthTimeError = false;
+
+  /// Reads the stored `HH:mm` back. A record that cannot be parsed is treated
+  /// as no time at all rather than repaired into one.
+  static TimeOfDay? _parseBirthTime(String? stored) {
+    if (stored == null) return null;
+    final parts = stored.split(':');
+    if (parts.length != 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+    return TimeOfDay(hour: hour, minute: minute);
+  }
 
   @override
   void dispose() {
@@ -84,40 +132,83 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _pickBirthTime() async {
-    final picked = await showTimePicker(
+    final l10n = AppLocalizations.of(context);
+    // A twelve-hour dial with an AM/PM selector, whose selection starts empty
+    // — see `showBirthTimePicker`. Null means the reader gave no answer:
+    // cancelled, or closed it without completing a choice. The field stays
+    // unanswered rather than taking an hour nobody picked.
+    final picked = await showBirthTimePicker(
       context: context,
-      initialTime: _birthTime,
+      helpText: l10n.selectBirthTime,
+      current: _birthTime,
     );
-    if (picked != null && mounted) setState(() => _birthTime = picked);
+    if (!mounted) return;
+    setState(() {
+      if (picked != null) {
+        _birthTime = picked;
+      } else if (_birthTime == null) {
+        // Say why nothing happened, rather than leaving the reader to press
+        // Continue to find out.
+        _showBirthTimeError = true;
+      }
+    });
   }
+
+  /// Turning the control off stores "unknown"; turning it back on asks again.
+  ///
+  /// The previously chosen time is dropped rather than held aside, so a
+  /// reader who says they do not know their birth time and then changes their
+  /// mind cannot have an earlier answer restored on their behalf.
+  void _setKnowsBirthTime(bool value) => setState(() {
+    _knowsBirthTime = value;
+    _birthTime = null;
+    _showRequiredErrors = false;
+    _showBirthTimeError = false;
+  });
 
   /// The engine's `HH:mm`, always 24-hour and never localized: it is a wire
   /// value, not something the reader reads.
-  String get _birthTimeValue =>
-      '${_birthTime.hour.toString().padLeft(2, '0')}:'
-      '${_birthTime.minute.toString().padLeft(2, '0')}';
+  ///
+  /// Null whenever the birth time is unknown, which is what puts the reading
+  /// on the engine's unknown-birth-hour path.
+  String? get _birthTimeValue {
+    final time = _knowsBirthTime ? _birthTime : null;
+    if (time == null) return null;
+    return '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+  }
 
   /// What the reader sees instead, in their own clock convention.
-  String _birthTimeDisplay(String localeName) =>
-      formatClock(localeName, _birthTime.hour, _birthTime.minute);
+  String? _birthTimeDisplay(String localeName) {
+    final time = _birthTime;
+    if (time == null) return null;
+    return formatClock(localeName, time.hour, time.minute);
+  }
+
+  /// The control is on, but no time has been chosen yet.
+  bool get _birthTimeMissing => _knowsBirthTime && _birthTime == null;
 
   void _continueToProfile() => setState(() => _step = 1);
 
   Future<void> _finish() async {
-    final l10n = AppLocalizations.of(context);
     final birthDate = _birthDate;
     final birthCountry = _birthCountry;
-    if (birthDate == null || birthCountry == null) {
-      setState(() => _showRequiredErrors = true);
+    // Continuing with the control on but no time chosen is what the
+    // validation message is for: it must not fall through to a default hour.
+    if (birthDate == null || birthCountry == null || _birthTimeMissing) {
+      setState(() {
+        _showRequiredErrors = true;
+        _showBirthTimeError = true;
+      });
       return;
     }
-    final name = _nameController.text.trim().isEmpty
-        ? l10n.defaultUserName
-        : _nameController.text.trim();
+    final typed = _nameController.text.trim();
     final profile = AppProfile(
-      userName: name,
+      // Null, not the word: the greeting picks the default up in whatever
+      // language is active when it is shown.
+      userName: typed.isEmpty ? null : typed,
       birthDate: birthDate,
-      birthTime: _birthTimeUnknown ? null : _birthTimeValue,
+      birthTime: _birthTimeValue,
       birthCountryCode: birthCountry.countryCode,
       zodiacSign: zodiacForDate(birthDate),
       useCurrentLocation: false,
@@ -350,16 +441,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
           const SizedBox(height: 14),
           GlassCard(
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            // Stated the way the reader would state it, and on by default.
+            // The old switch said "Birth time unknown", which made the
+            // affirmative answer the one you had to turn *off* — easy to
+            // misread, and it defaulted every new profile to unknown.
             child: SwitchListTile.adaptive(
-              key: const Key('birth_time_unknown'),
+              key: const Key('knows_birth_time'),
               contentPadding: EdgeInsets.zero,
-              title: Text(l10n.birthTimeUnknown),
-              subtitle: Text(l10n.birthTimeUnknownDetail),
-              value: _birthTimeUnknown,
-              onChanged: (value) => setState(() => _birthTimeUnknown = value),
+              title: Text(l10n.knowBirthTime),
+              subtitle: Text(
+                _knowsBirthTime
+                    ? l10n.knowBirthTimeDetail
+                    : l10n.birthTimeUnknownDetail,
+              ),
+              value: _knowsBirthTime,
+              onChanged: _setKnowsBirthTime,
             ),
           ),
-          if (!_birthTimeUnknown) ...[
+          if (_knowsBirthTime) ...[
             const SizedBox(height: 14),
             GlassCard(
               key: const Key('birth_time_picker'),
@@ -379,7 +478,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          _birthTimeDisplay(localeName),
+                          // A prompt until the reader answers it — never a
+                          // plausible-looking hour they did not choose.
+                          _birthTimeDisplay(localeName) ?? l10n.selectBirthTime,
                           key: const Key('birth_time_value'),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
@@ -390,6 +491,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ],
               ),
             ),
+            if (_showBirthTimeError && _birthTimeMissing)
+              Padding(
+                padding: const EdgeInsets.only(top: 6, left: 12),
+                child: Text(
+                  l10n.birthTimeRequired,
+                  key: const Key('birth_time_required'),
+                  style: const TextStyle(color: CompassColors.coral),
+                ),
+              ),
           ],
           const SizedBox(height: 14),
           GlassCard(

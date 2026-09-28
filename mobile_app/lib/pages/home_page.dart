@@ -230,7 +230,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
               Text(
-                widget.profile.userName,
+                profileDisplayName(l10n, widget.profile),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.headlineMedium,

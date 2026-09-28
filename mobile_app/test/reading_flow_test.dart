@@ -63,13 +63,11 @@ void main() {
         response: fixtureResponse('ready_yes_no_now.json'),
       );
       await tester.pumpWidget(rig.app);
-      await fillOnboardingProfile(tester);
-
-      // Turning the switch off reveals the time picker card.
-      expect(find.byKey(const Key('birth_time_picker')), findsNothing);
-      await tester.ensureVisible(find.byKey(const Key('birth_time_unknown')));
-      await tester.tap(find.byKey(const Key('birth_time_unknown')));
-      await tester.pumpAndSettle();
+      // The control is on for a new profile, so the picker is already there.
+      await fillOnboardingProfile(
+        tester,
+        birthTime: const TimeOfDay(hour: 14, minute: 30),
+      );
       expect(find.byKey(const Key('birth_time_picker')), findsOneWidget);
 
       await tester.ensureVisible(find.byKey(const Key('complete_profile')));
@@ -107,7 +105,6 @@ void main() {
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
       );
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
       await revealReading(tester);
@@ -116,7 +113,7 @@ void main() {
       for (var i = 0; i < 4; i++) {
         await tester.pump(const Duration(milliseconds: 120));
       }
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       await tester.pump();
       await tester.tap(loadingSurface);
       await tester.pump();

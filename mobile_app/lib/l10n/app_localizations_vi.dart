@@ -409,6 +409,20 @@ class AppLocalizationsVi extends AppLocalizations {
       'Xác nhận này chỉ xuất hiện một lần trước lần phân tích đầu tiên.';
 
   @override
+  String get knowBirthTime => 'Tôi biết giờ sinh của mình';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'Giờ chính xác giúp các chu kỳ theo giờ rõ nét hơn.';
+
+  @override
+  String get selectBirthTime => 'Chọn giờ sinh';
+
+  @override
+  String get birthTimeRequired =>
+      'Hãy chọn giờ sinh để tiếp tục, hoặc tắt mục này nếu bạn không biết.';
+
+  @override
   String get languageSetting => 'Ngôn ngữ';
 
   @override

@@ -381,6 +381,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
 
   @override
+  String get knowBirthTime => '我知道自己的出生时间';
+
+  @override
+  String get knowBirthTimeDetail => '越准确的时间，时辰周期越清晰。';
+
+  @override
+  String get selectBirthTime => '选择出生时间';
+
+  @override
+  String get birthTimeRequired => '请选择出生时间后继续；如果不清楚，请关闭此选项。';
+
+  @override
   String get languageSetting => '语言';
 
   @override
@@ -1358,6 +1370,18 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
 
   @override
+  String get knowBirthTime => '我知道自己的出生时间';
+
+  @override
+  String get knowBirthTimeDetail => '越准确的时间，时辰周期越清晰。';
+
+  @override
+  String get selectBirthTime => '选择出生时间';
+
+  @override
+  String get birthTimeRequired => '请选择出生时间后继续；如果不清楚，请关闭此选项。';
+
+  @override
   String get languageSetting => '语言';
 
   @override
@@ -2333,6 +2357,18 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
+
+  @override
+  String get knowBirthTime => '我知道自己的出生时间';
+
+  @override
+  String get knowBirthTimeDetail => '越准确的时间，时辰周期越清晰。';
+
+  @override
+  String get selectBirthTime => '选择出生时间';
+
+  @override
+  String get birthTimeRequired => '请选择出生时间后继续；如果不清楚，请关闭此选项。';
 
   @override
   String get languageSetting => '语言';

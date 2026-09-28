@@ -1,12 +1,11 @@
 import 'dart:async';
 
-import 'package:country_picker/country_picker.dart';
-import 'package:flutter/foundation.dart' show SynchronousFuture;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'app_locale.dart';
 import 'app_profile.dart';
+import 'data/country_names.dart';
 import 'l10n/app_localizations.dart';
 import 'pages/home_page.dart';
 import 'pages/onboarding_page.dart';
@@ -21,7 +20,7 @@ import 'widgets/startup_loading_view.dart';
 /// leave `AppLocalizations` missing.
 const compassLocalizationsDelegates = <LocalizationsDelegate<Object?>>[
   AppLocalizations.delegate,
-  _VerifiedCountryNames(),
+  CompassCountryNamesDelegate(),
   GlobalMaterialLocalizations.delegate,
   GlobalWidgetsLocalizations.delegate,
   GlobalCupertinoLocalizations.delegate,
@@ -169,32 +168,4 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
       },
     );
   }
-}
-
-/// Country names from `country_picker`, but only for the languages it really
-/// carries.
-///
-/// The package answers `hi` with its Nepali list, and has nothing at all for
-/// Vietnamese or Thai. Rather than present Nepali as Hindi, those three fall
-/// through to the package's English names — a visible gap, recorded in
-/// `handoff/localization/MISSING_KEYS.md`, instead of a quiet wrong answer.
-class _VerifiedCountryNames
-    extends LocalizationsDelegate<CountryLocalizations> {
-  const _VerifiedCountryNames();
-
-  static const _verified = {'en', 'es', 'ja', 'zh'};
-
-  @override
-  bool isSupported(Locale locale) => _verified.contains(locale.languageCode);
-
-  /// Synchronous on purpose. The package's own delegate answers with a plain
-  /// `Future`, which makes `Localizations` resolve over a frame and shows the
-  /// app an empty screen before its first real paint. There is nothing to
-  /// wait for here — the country tables are compiled in.
-  @override
-  Future<CountryLocalizations> load(Locale locale) =>
-      SynchronousFuture(CountryLocalizations(locale));
-
-  @override
-  bool shouldReload(LocalizationsDelegate<CountryLocalizations> old) => false;
 }

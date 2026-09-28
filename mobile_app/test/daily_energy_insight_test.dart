@@ -781,8 +781,7 @@ void main() {
     testWidgets('wraps the longest insight without clipping the page', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
 
       final longest = dailyEnergyMessagePools.entries
           .expand((e) => e.value.map((m) => (level: e.key, message: m)))
@@ -816,8 +815,7 @@ void main() {
     });
 
     testWidgets('holds up at a larger text scale', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       final store = InMemoryDailyEnergyInsightStore.ordered();
       await pumpHome(tester, level: 'focused', insightStore: store);

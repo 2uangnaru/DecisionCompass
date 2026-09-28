@@ -841,6 +841,30 @@ abstract class AppLocalizations {
   /// **'This acknowledgement appears once before your first reading.'**
   String get acknowledgementOnce;
 
+  /// No description provided for @knowBirthTime.
+  ///
+  /// In en, this message translates to:
+  /// **'I know my birth time'**
+  String get knowBirthTime;
+
+  /// No description provided for @knowBirthTimeDetail.
+  ///
+  /// In en, this message translates to:
+  /// **'An exact time sharpens the hour-based cycles.'**
+  String get knowBirthTimeDetail;
+
+  /// No description provided for @selectBirthTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your time of birth'**
+  String get selectBirthTime;
+
+  /// No description provided for @birthTimeRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Select your time of birth to continue, or turn this off if you do not know it.'**
+  String get birthTimeRequired;
+
   /// No description provided for @languageSetting.
   ///
   /// In en, this message translates to:

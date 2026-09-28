@@ -406,6 +406,20 @@ class AppLocalizationsTh extends AppLocalizations {
       'การยืนยันนี้จะแสดงเพียงครั้งเดียวก่อนการอ่านครั้งแรก';
 
   @override
+  String get knowBirthTime => 'ฉันทราบเวลาเกิดของฉัน';
+
+  @override
+  String get knowBirthTimeDetail =>
+      'เวลาที่แม่นยำช่วยให้วงจรตามชั่วโมงชัดเจนขึ้น';
+
+  @override
+  String get selectBirthTime => 'เลือกเวลาเกิดของคุณ';
+
+  @override
+  String get birthTimeRequired =>
+      'โปรดเลือกเวลาเกิดก่อนดำเนินต่อ หรือปิดตัวเลือกนี้หากคุณไม่ทราบ';
+
+  @override
   String get languageSetting => 'ภาษา';
 
   @override

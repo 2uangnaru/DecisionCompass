@@ -35,14 +35,27 @@ void main() {
       // Default selection is visible in the summary line.
       expect(find.textContaining('Overall'), findsWidgets);
 
-      // Wire values are never rendered.
-      final rendered = tester
-          .widgetList<Text>(find.byType(Text))
-          .map((text) => text.data ?? '')
-          .join(' | ');
+      // Wire values are never rendered as labels.
+      //
+      // Scoped to the selector and the summary line rather than the whole
+      // screen: a bare substring search over every `Text` also matches the
+      // rotating Home copy, where `other` turns up inside `another`. That
+      // made this assertion depend on which description the deck dealt.
+      final labels = <String>[
+        for (final choice in categoryChoices)
+          tester
+              .widgetList<Text>(
+                find.descendant(
+                  of: find.byKey(Key(choice.testKey)),
+                  matching: find.byType(Text),
+                ),
+              )
+              .map((text) => text.data ?? '')
+              .join(' '),
+      ].join(' | ');
       for (final category in ReadingCategory.values) {
         expect(
-          rendered.contains(category.wireValue),
+          labels.contains(category.wireValue),
           isFalse,
           reason: 'wire value ${category.wireValue} must not be shown',
         );
@@ -253,8 +266,7 @@ void main() {
     testWidgets('every category card meets the 48dp minimum touch target', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
       );
@@ -290,7 +302,6 @@ void main() {
     testWidgets('the selector fits common Android window sizes', (
       tester,
     ) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       const sizes = [
         Size(360, 640),
         Size(390, 844),
@@ -304,7 +315,7 @@ void main() {
         );
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pump();
-        await tester.binding.setSurfaceSize(size);
+        useScreen(tester, size: size);
         await tester.pumpWidget(rig.app);
         await tester.pump();
         await completeOnboarding(tester);

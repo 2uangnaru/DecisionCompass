@@ -28,6 +28,11 @@ Future<void> openHome(WidgetTester tester) async {
 }
 
 void main() {
+  // This file measures how much room a description takes, so it has to
+  // measure it in the fonts the app ships rather than the test placeholder,
+  // which is about one em wide per character whatever the character is.
+  setUpAll(loadBundledFonts);
+
   group('the approved copy', () {
     test('is thirty distinct descriptions, verbatim', () {
       expect(homeDescriptions, hasLength(30));
@@ -259,12 +264,11 @@ void main() {
 
   group('on the Home screen', () {
     testWidgets('short descriptions sit close to the choices', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
       addTearDown(
         tester.binding.platformDispatcher.clearTextScaleFactorTestValue,
       );
       tester.binding.platformDispatcher.textScaleFactorTestValue = 0.8;
-      await tester.binding.setSurfaceSize(const Size(600, 900));
+      useScreen(tester, size: const Size(600, 900));
       final shortest = homeDescriptions.reduce(
         (a, b) => a.length <= b.length ? a : b,
       );
@@ -488,8 +492,7 @@ void main() {
     });
 
     testWidgets('reads on a narrow screen without overflowing', (tester) async {
-      addTearDown(() => tester.binding.setSurfaceSize(null));
-      await tester.binding.setSurfaceSize(const Size(360, 640));
+      useScreen(tester, size: const Size(360, 640));
       // Seeded so the longest description is the one dealt.
       final longest = homeDescriptions.reduce(
         (a, b) => a.length >= b.length ? a : b,

@@ -384,6 +384,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get acknowledgementOnce => 'この確認は、最初のリーディング前に一度だけ表示されます。';
 
   @override
+  String get knowBirthTime => '出生時刻がわかる';
+
+  @override
+  String get knowBirthTimeDetail => '正確な時刻ほど、時辰の周期がはっきりします。';
+
+  @override
+  String get selectBirthTime => '出生時刻を選択';
+
+  @override
+  String get birthTimeRequired => '続けるには出生時刻を選択してください。わからない場合はこの設定をオフにしてください。';
+
+  @override
   String get languageSetting => '言語';
 
   @override
