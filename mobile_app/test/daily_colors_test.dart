@@ -207,73 +207,102 @@ void main() {
   });
 
   group('on Home', () {
-    testWidgets('shows both swatches and names without role captions', (
-      tester,
-    ) async {
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        localNow: DateTime(2026, 9, 18, 7),
-      );
-      rig.dailyBriefProvider.response = engine.DailyBrief(
-        luckyNumber: 4,
-        colors: testDailyColors(),
-        energy: const engine.DailyEnergy(
-          level: 'steady',
-          index: 51,
-          dataCoverage: 1,
-        ),
-      );
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await tester.pump();
+    testWidgets(
+      'shows only the swatches, and tapping one reveals its name',
+      (tester) async {
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          localNow: DateTime(2026, 9, 18, 7),
+        );
+        rig.dailyBriefProvider.response = engine.DailyBrief(
+          luckyNumber: 4,
+          colors: testDailyColors(),
+          energy: const engine.DailyEnergy(
+            level: 'steady',
+            index: 51,
+            dataCoverage: 1,
+          ),
+        );
+        await tester.pumpWidget(rig.app);
+        await completeOnboarding(tester);
+        await tester.pump();
 
-      expect(find.text('Your colors today:'), findsOneWidget);
-      expect(find.byKey(const Key('daily_color_lead')), findsOneWidget);
-      expect(find.byKey(const Key('daily_color_supporting')), findsOneWidget);
-      expect(find.text('Ocean Blue'), findsOneWidget);
-      expect(find.text('Cedar'), findsOneWidget);
-      expect(find.text('Lead'), findsNothing);
-      expect(find.text('Supporting'), findsNothing);
-      expect(tester.takeException(), isNull);
-    });
+        expect(find.text('Your colors today:'), findsOneWidget);
+        final lead = find.byKey(const Key('daily_color_lead'));
+        final supporting = find.byKey(const Key('daily_color_supporting'));
+        expect(lead, findsOneWidget);
+        expect(supporting, findsOneWidget);
+        // Names run long in some languages, so neither prints until asked.
+        expect(find.text('Ocean Blue'), findsNothing);
+        expect(find.text('Cedar'), findsNothing);
+        expect(find.text('Lead'), findsNothing);
+        expect(find.text('Supporting'), findsNothing);
 
-    testWidgets('fits a 360dp phone with both swatches', (tester) async {
-      useScreen(tester, size: const Size(360, 640));
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        localNow: DateTime(2026, 9, 18, 7),
-      );
-      rig.dailyBriefProvider.response = engine.DailyBrief(
-        luckyNumber: 4,
-        // The longest names in the palette.
-        colors: testDailyColors(
-          leadName: 'Solar Coral',
-          supportingName: 'Champagne',
-          supportingHex: '#E4D5B5',
-        ),
-        energy: const engine.DailyEnergy(
-          level: 'steady',
-          index: 51,
-          dataCoverage: 1,
-        ),
-      );
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await tester.pump();
+        await tester.tap(lead);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(find.text('Ocean Blue'), findsOneWidget);
+        expect(find.text('Cedar'), findsNothing);
 
-      expect(tester.takeException(), isNull);
-      final card = tester.getRect(
-        find.byKey(const Key('daily_signals_content')),
-      );
-      expect(card.left, greaterThanOrEqualTo(0));
-      expect(card.right, lessThanOrEqualTo(360));
-      final lead = tester.getRect(find.byKey(const Key('daily_color_lead')));
-      final supporting = tester.getRect(
-        find.byKey(const Key('daily_color_supporting')),
-      );
-      expect((lead.top - supporting.top).abs(), lessThan(2));
-      expect(lead.right, lessThan(supporting.left));
-    });
+        await tester.tap(supporting);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(find.text('Cedar'), findsOneWidget);
+
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'fits a 360dp phone, and a tapped name never runs off the edge',
+      (tester) async {
+        useScreen(tester, size: const Size(360, 640));
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          localNow: DateTime(2026, 9, 18, 7),
+        );
+        rig.dailyBriefProvider.response = engine.DailyBrief(
+          luckyNumber: 4,
+          // The longest names in the palette, standing in for a translation
+          // that runs longer than any English one does.
+          colors: testDailyColors(
+            leadName: 'Solar Coral',
+            supportingName: 'Champagne',
+            supportingHex: '#E4D5B5',
+          ),
+          energy: const engine.DailyEnergy(
+            level: 'steady',
+            index: 51,
+            dataCoverage: 1,
+          ),
+        );
+        await tester.pumpWidget(rig.app);
+        await completeOnboarding(tester);
+        await tester.pump();
+
+        expect(tester.takeException(), isNull);
+        final card = tester.getRect(
+          find.byKey(const Key('daily_signals_content')),
+        );
+        expect(card.left, greaterThanOrEqualTo(0));
+        expect(card.right, lessThanOrEqualTo(360));
+        final lead = find.byKey(const Key('daily_color_lead'));
+        final supporting = find.byKey(const Key('daily_color_supporting'));
+        final leadRect = tester.getRect(lead);
+        final supportingRect = tester.getRect(supporting);
+        expect((leadRect.top - supportingRect.top).abs(), lessThan(2));
+        expect(leadRect.right, lessThan(supportingRect.left));
+
+        await tester.tap(lead);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+        expect(find.text('Solar Coral'), findsOneWidget);
+        final tag = tester.getRect(find.text('Solar Coral'));
+        expect(tag.left, greaterThanOrEqualTo(0));
+        expect(tag.right, lessThanOrEqualTo(360));
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('percentages read to one decimal', () {

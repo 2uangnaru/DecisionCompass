@@ -28,7 +28,9 @@ void main() {
 
     expect(find.text('Good morning,'), findsOneWidget);
     expect(find.text('4'), findsOneWidget);
-    expect(find.text('Ocean Blue'), findsOneWidget);
+    expect(find.byKey(const Key('daily_color_lead')), findsOneWidget);
+    // The name only shows once the swatch is tapped.
+    expect(find.text('Ocean Blue'), findsNothing);
     expect(find.text('Daily energy'), findsOneWidget);
     expect(find.text('STEADY'), findsOneWidget);
     expect(find.text('7'), findsNothing);
@@ -86,7 +88,6 @@ void main() {
     );
     rig.dailyBriefProvider.response = engine.DailyBrief(
       luckyNumber: 2,
-      // The longest swatch name, so the tile is under its worst case.
       colors: testDailyColors(),
       energy: const engine.DailyEnergy(
         level: 'steady',
@@ -124,12 +125,13 @@ void main() {
       tester.getRect(find.text('2')).center.dx,
       moreOrLessEquals(tileOf('Lucky number today:').center.dx, epsilon: 0.5),
     );
-    // The swatch and the name are centred together, so the pair reads as one
-    // block rather than hugging the left edge.
+    // The swatch pair is centred as a block too, not hugging the left edge.
     final colourTile = tileOf('Your colors today:');
-    final name = tester.getRect(find.text('Ocean Blue'));
-    expect(name.left, greaterThan(colourTile.left));
-    expect(name.right, lessThanOrEqualTo(colourTile.right));
+    final swatch = tester.getRect(
+      find.byKey(const Key('daily_color_lead')),
+    );
+    expect(swatch.left, greaterThan(colourTile.left));
+    expect(swatch.right, lessThanOrEqualTo(colourTile.right));
     expect(tester.takeException(), isNull);
   });
 
@@ -215,8 +217,9 @@ void main() {
       await completeOnboarding(tester);
       await tester.pump();
 
-      // Energy, both colour swatches and the lucky number all wait.
-      expect(find.text('—'), findsNWidgets(4));
+      // Energy and the lucky number wait; the (nameless) swatches just show
+      // an empty ring rather than a dash of their own.
+      expect(find.text('—'), findsNWidgets(2));
       expect(find.text('Ocean Blue'), findsNothing);
       expect(find.text('7'), findsNothing);
       expect(find.text('STEADY'), findsNothing);

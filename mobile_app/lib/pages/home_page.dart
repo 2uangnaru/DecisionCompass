@@ -713,7 +713,10 @@ class _ModeCard extends StatelessWidget {
   }
 }
 
-/// One of the day's two colours: the swatch, its name, and the role it plays.
+/// One of the day's two colours: just the swatch. Its name only some
+/// languages' translations run long enough to crowd the narrow column next
+/// to its twin, so it is not printed underneath any more — tapping the
+/// swatch reveals it in a tab instead, the way the daily-energy ⓘ does.
 /// The hex is the engine's; the app only draws it.
 class _Swatch extends StatelessWidget {
   const _Swatch({
@@ -730,47 +733,53 @@ class _Swatch extends StatelessWidget {
   Widget build(BuildContext context) {
     final swatch = color == null ? CompassColors.line : Color(color!.argb);
     final l10n = AppLocalizations.of(context);
+    final circle = Container(
+      width: 20,
+      height: 20,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: swatch,
+        border: Border.all(color: Colors.white54, width: 1.2),
+        boxShadow: color == null
+            ? null
+            : [
+                BoxShadow(
+                  color: swatch.withValues(alpha: 0.5),
+                  blurRadius: 9,
+                  spreadRadius: 0.5,
+                ),
+              ],
+      ),
+    );
+
     return Semantics(
       label: color == null
           ? l10n.colorRoleUnavailableSemantics(role)
           : l10n.colorRoleSemantics(role, dailyColorName(l10n, color!)),
-      child: Column(
+      child: Center(
         key: Key(testKey),
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Container(
-            width: 16,
-            height: 16,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: swatch,
-              border: Border.all(color: Colors.white54, width: 1.2),
-              boxShadow: color == null
-                  ? null
-                  : [
-                      BoxShadow(
-                        color: swatch.withValues(alpha: 0.5),
-                        blurRadius: 9,
-                        spreadRadius: 0.5,
-                      ),
-                    ],
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            color == null ? '—' : dailyColorName(l10n, color!),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            textAlign: TextAlign.center,
-            style: const TextStyle(
-              color: CompassColors.text,
-              fontSize: 11.5,
-              fontWeight: FontWeight.w700,
-              height: 1.15,
-            ),
-          ),
-        ],
+        child: color == null
+            ? circle
+            : Tooltip(
+                message: dailyColorName(l10n, color!),
+                triggerMode: TooltipTriggerMode.tap,
+                showDuration: const Duration(seconds: 4),
+                textStyle: const TextStyle(
+                  color: CompassColors.text,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w600,
+                ),
+                decoration: BoxDecoration(
+                  color: CompassColors.raised,
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: CompassColors.line),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 8,
+                ),
+                child: circle,
+              ),
       ),
     );
   }
