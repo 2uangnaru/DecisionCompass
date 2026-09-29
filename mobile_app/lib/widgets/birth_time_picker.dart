@@ -110,9 +110,10 @@ class _BirthTimePickerDialogState extends State<BirthTimePickerDialog> {
   void _chooseHour(int hour12) => setState(() {
     _hour12 = hour12;
     _hourField.text = '$hour12';
-    // Move on to the minute, the way a clock face does, but only when the
-    // reader has not already answered it.
-    if (_minute == null) _ring = _Ring.minute;
+    // Choosing an hour always moves on to the minute ring next — even when
+    // editing an already-complete answer — without touching whatever minute
+    // was already chosen.
+    _ring = _Ring.minute;
   });
 
   void _chooseMinute(int minute) => setState(() {
@@ -493,6 +494,23 @@ class _Dial extends StatelessWidget {
   /// Android's minimum accessible touch target.
   static const _tile = 48.0;
 
+  /// The clockwise angle (from twelve o'clock) the hour hand should point at,
+  /// or null while no hour has been chosen yet.
+  double? get _hourAngle {
+    if (hour == null) return null;
+    final value = hour == 12 ? 0 : hour!;
+    return value * math.pi / 6;
+  }
+
+  /// The clockwise angle the minute hand should point at, or null while no
+  /// minute has been chosen yet. Continuous rather than snapped to one of the
+  /// twelve markers, so a value typed on the keyboard (e.g. 17) still points
+  /// to a real position between "15" and "20" instead of matching no marker.
+  double? get _minuteAngle {
+    if (minute == null) return null;
+    return minute! * math.pi / 30;
+  }
+
   @override
   Widget build(BuildContext context) {
     final material = MaterialLocalizations.of(context);
@@ -525,6 +543,27 @@ class _Dial extends StatelessWidget {
                 maxScaleFactor: 1.3,
                 child: Stack(
                   children: [
+                    // Under the number buttons, so the filled circle at each
+                    // hand's tip still reads as "this one is selected" rather
+                    // than being covered by the hand itself. Both hands show
+                    // at once, the way a real clock face always has both —
+                    // the ring currently being edited draws in full colour,
+                    // the other stays dim so it reads as "already chosen"
+                    // rather than competing for attention.
+                    Positioned.fill(
+                      child: CustomPaint(
+                        painter: _DialHandPainter(
+                          radius: radius,
+                          hourAngle: _hourAngle,
+                          minuteAngle: _minuteAngle,
+                          activeRing: ring,
+                          activeColor: scheme.primary,
+                          inactiveColor: scheme.primary.withValues(
+                            alpha: 0.35,
+                          ),
+                        ),
+                      ),
+                    ),
                     for (var index = 0; index < 12; index++)
                       _dialButton(
                         context,
@@ -603,4 +642,76 @@ class _Dial extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The pivot dot at the dial's centre, plus both an hour hand and a minute
+/// hand — the way a real clock face always shows both at once, not just
+/// whichever ring is currently being edited. This is the piece Material's
+/// own dial has that a plain filled number alone does not: something to
+/// visually anchor each chosen value to the centre of the clock face.
+class _DialHandPainter extends CustomPainter {
+  const _DialHandPainter({
+    required this.radius,
+    required this.hourAngle,
+    required this.minuteAngle,
+    required this.activeRing,
+    required this.activeColor,
+    required this.inactiveColor,
+  });
+
+  /// Distance from the dial's centre to a number's own centre — the same
+  /// value the number buttons are positioned with, so a hand's tip lands
+  /// exactly under its selected button rather than merely near it.
+  final double radius;
+
+  /// Clockwise from twelve o'clock, or null while that half has no answer
+  /// yet — that hand simply is not drawn then.
+  final double? hourAngle;
+  final double? minuteAngle;
+
+  /// Which ring is currently being edited, so its hand can be drawn in full
+  /// colour while the other stays dim.
+  final _Ring activeRing;
+
+  final Color activeColor;
+  final Color inactiveColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+
+    void drawHand(double? angle, bool active) {
+      if (angle == null) return;
+      final tip =
+          center +
+          Offset(math.sin(angle) * radius, -math.cos(angle) * radius);
+      canvas.drawLine(
+        center,
+        tip,
+        Paint()
+          ..color = active ? activeColor : inactiveColor
+          ..strokeWidth = active ? 2.5 : 1.5
+          ..strokeCap = StrokeCap.round,
+      );
+    }
+
+    // The dim hand first, so the active one always draws on top of it where
+    // the two would otherwise overlap near the centre.
+    drawHand(
+      activeRing == _Ring.hour ? minuteAngle : hourAngle,
+      false,
+    );
+    drawHand(activeRing == _Ring.hour ? hourAngle : minuteAngle, true);
+
+    canvas.drawCircle(center, 4, Paint()..color = activeColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DialHandPainter oldDelegate) =>
+      oldDelegate.radius != radius ||
+      oldDelegate.hourAngle != hourAngle ||
+      oldDelegate.minuteAngle != minuteAngle ||
+      oldDelegate.activeRing != activeRing ||
+      oldDelegate.activeColor != activeColor ||
+      oldDelegate.inactiveColor != inactiveColor;
 }
