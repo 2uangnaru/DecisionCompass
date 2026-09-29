@@ -229,11 +229,20 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                 _greeting(l10n, widget.dependencies.nowLocal()),
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
-              Text(
-                profileDisplayName(l10n, widget.profile),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: Theme.of(context).textTheme.headlineMedium,
+              // Scaled down rather than ellipsized: the default name (no
+              // profile name typed yet) runs long in some languages, and a
+              // mid-word ellipsis next to the header icons read as broken
+              // layout rather than a graceful truncation.
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    profileDisplayName(l10n, widget.profile),
+                    maxLines: 1,
+                    style: Theme.of(context).textTheme.headlineMedium,
+                  ),
+                ),
               ),
             ],
           ),

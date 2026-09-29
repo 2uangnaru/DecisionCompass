@@ -561,7 +561,9 @@ void main() {
   });
 
   group('the first-run coach mark', () {
-    testWidgets('appears once, and never again', (tester) async {
+    testWidgets('times out on its own, and returns on remount while unread', (
+      tester,
+    ) async {
       final store = InMemoryDailyEnergyInsightStore.ordered(
         coachMarkShown: false,
       );
@@ -578,7 +580,18 @@ void main() {
       await tester.pump(const Duration(seconds: 7));
       expect(coachMark, findsNothing);
 
-      // A remount does not bring it back.
+      // Left unread: a remount brings the invitation back, rather than
+      // spending its one showing on a reader who never actually saw it.
+      await tester.pumpWidget(const SizedBox.shrink());
+      await pumpHome(tester, level: 'bright', insightStore: store);
+      await tester.pump();
+      expect(coachMark, findsOneWidget);
+
+      // Reading the insight is what retires it for good.
+      await tester.tap(infoButton);
+      await tester.pumpAndSettle();
+      expect(coachMark, findsNothing);
+
       await tester.pumpWidget(const SizedBox.shrink());
       await pumpHome(tester, level: 'bright', insightStore: store);
       await tester.pump();
@@ -598,6 +611,26 @@ void main() {
       expect(coachMark, findsNothing);
       expect(shownNote(tester), originals['soft']);
     });
+
+    testWidgets(
+      'scrolling the page closes it, instead of leaving it pinned over '
+      'whatever scrolled underneath',
+      (tester) async {
+        final store = InMemoryDailyEnergyInsightStore.ordered(
+          coachMarkShown: false,
+        );
+        await pumpHome(tester, level: 'bright', insightStore: store);
+        await tester.pump();
+        expect(coachMark, findsOneWidget);
+
+        await tester.drag(
+          find.text('Caught between choices?'),
+          const Offset(0, -140),
+        );
+        await tester.pumpAndSettle();
+        expect(coachMark, findsNothing);
+      },
+    );
 
     testWidgets('it blocks nothing behind it', (tester) async {
       final store = InMemoryDailyEnergyInsightStore.ordered(

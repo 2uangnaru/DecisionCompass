@@ -178,7 +178,6 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     if (!controller.coachMarkShown && !_coachOpen) {
       setState(() => _coachOpen = true);
       _coachPortal.show();
-      controller.markCoachMarkShown();
       _coachTimer = Timer(_coachMarkDuration, _dismissCoachMark);
     }
   }
@@ -194,7 +193,12 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     });
   }
 
-  void _close() => _setOpen(false);
+  // A tab pinned to a scrolled-away icon points at nothing once the page has
+  // moved under it, so both the read tab and the coach mark close together.
+  void _close() {
+    _setOpen(false);
+    _dismissCoachMark();
+  }
 
   void _setOpen(bool value) {
     if (_open == value || !mounted) return;
@@ -211,6 +215,9 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
       return;
     }
     _dismissCoachMark();
+    // Retired for good only once actually read — not merely displayed — so a
+    // reader who never opened it still sees the invitation again next visit.
+    widget.controller.markCoachMarkShown();
     final message = await widget.controller.open(widget.day, widget.level!);
     if (!mounted || message == null) return;
     setState(() => _message = message);
