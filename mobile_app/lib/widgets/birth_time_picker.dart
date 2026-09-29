@@ -559,9 +559,12 @@ class _Dial extends StatelessWidget {
                           // than the minute hand, the way an analog clock
                           // draws it — rather than reaching all the way to
                           // the ring, which is where only the minute values
-                          // actually sit.
+                          // actually sit. The minute hand stops at the near
+                          // edge of its target button rather than its centre,
+                          // so it touches the selected number instead of
+                          // spearing through the middle of it.
                           hourLength: radius * 0.55,
-                          minuteLength: radius,
+                          minuteLength: radius - _tile / 2,
                           hourAngle: _hourAngle,
                           minuteAngle: _minuteAngle,
                           activeRing: ring,
