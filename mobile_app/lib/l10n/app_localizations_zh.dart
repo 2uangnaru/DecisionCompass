@@ -34,7 +34,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
-  String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';
+  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
 
   @override
   String get yourProfile => '你的资料';
@@ -1022,7 +1022,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
-  String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';
+  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
 
   @override
   String get yourProfile => '你的资料';
@@ -2010,7 +2010,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
-  String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';
+  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
 
   @override
   String get yourProfile => '你的资料';

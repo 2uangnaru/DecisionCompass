@@ -34,8 +34,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get onboardingTitle => '宇宙のサインと、あなたの直感に耳を澄ます。';
 
   @override
-  String get onboardingLanguageHint =>
-      '別の言語で使いたい方は、上の地球アイコンをタップしてください。言語はいつでも変更できます。';
+  String get onboardingLanguageHint => '言語を変更するには、上の地球アイコンをタップしてください。';
 
   @override
   String get yourProfile => 'あなたのプロフィール';

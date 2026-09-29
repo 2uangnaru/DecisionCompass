@@ -36,7 +36,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get onboardingLanguageHint =>
-      'ऐप को दूसरी भाषा में इस्तेमाल करना चाहते हैं? ऊपर ग्लोब आइकन पर टैप करें। आप भाषा कभी भी बदल सकते हैं।';
+      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';
@@ -1162,7 +1162,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get onboardingLanguageHint =>
-      'ऐप को दूसरी भाषा में इस्तेमाल करना चाहते हैं? ऊपर ग्लोब आइकन पर टैप करें। आप भाषा कभी भी बदल सकते हैं।';
+      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';

@@ -36,7 +36,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingLanguageHint =>
-      '¿Prefieres otro idioma? Toca el icono del globo de arriba. Puedes cambiarlo cuando quieras.';
+      'Toca el icono del globo de arriba para cambiar de idioma.';
 
   @override
   String get yourProfile => 'TU PERFIL';

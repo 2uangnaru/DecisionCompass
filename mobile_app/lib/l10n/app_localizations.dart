@@ -166,7 +166,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingLanguageHint.
   ///
   /// In en, this message translates to:
-  /// **'Prefer another language? Tap the globe above. You can change it anytime.'**
+  /// **'Tap the globe icon above to change language.'**
   String get onboardingLanguageHint;
 
   /// No description provided for @yourProfile.

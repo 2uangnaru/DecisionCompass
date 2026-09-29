@@ -36,7 +36,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get onboardingLanguageHint =>
-      'Muốn dùng ngôn ngữ khác? Nhấn biểu tượng địa cầu phía trên. Bạn có thể đổi bất cứ lúc nào.';
+      'Nhấn biểu tượng địa cầu phía trên để đổi ngôn ngữ.';
 
   @override
   String get yourProfile => 'HỒ SƠ CỦA BẠN';

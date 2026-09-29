@@ -34,8 +34,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get onboardingTitle => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
 
   @override
-  String get onboardingLanguageHint =>
-      'อยากใช้ภาษาอื่นไหม? แตะไอคอนรูปโลกด้านบน คุณเปลี่ยนภาษาได้ทุกเมื่อ';
+  String get onboardingLanguageHint => 'แตะไอคอนรูปโลกด้านบนเพื่อเปลี่ยนภาษา';
 
   @override
   String get yourProfile => 'โปรไฟล์ของคุณ';

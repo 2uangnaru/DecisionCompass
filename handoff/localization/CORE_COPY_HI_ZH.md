@@ -12,7 +12,7 @@ This supplements `CORE_COPY.md`, using **the same keys and placeholders**. `hi-I
 | responsibleUse | ज़िम्मेदार उपयोग | 安全使用说明 |
 | history | इतिहास | 历史记录 |
 | onboardingTitle | ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें। | 聆听宇宙的信号与你的直觉。 |
-| onboardingLanguageHint | ऐप को दूसरी भाषा में इस्तेमाल करना चाहते हैं? ऊपर ग्लोब आइकन पर टैप करें। आप भाषा कभी भी बदल सकते हैं। | 想使用其他语言？点击上方的地球图标，随时可以切换。 |
+| onboardingLanguageHint | भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें। | 点击上方的地球图标以切换语言。 |
 | yourProfile | आपकी प्रोफ़ाइल | 你的资料 |
 | signAfterBirthDate | जन्मतिथि चुनने पर आपकी पश्चिमी सूर्य राशि दिखेगी | 输入出生日期后，将显示你的星座 |
 | buildPattern | अपनी अनूठी ऊर्जा को पहचानें। | 探索属于你的专属能量。 |

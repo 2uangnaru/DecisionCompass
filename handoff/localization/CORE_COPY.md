@@ -14,7 +14,7 @@ This is the **core-screen batch**, not the whole-app translation: the 30 Home de
 | responsibleUse | Responsible Use | 安全な使い方 | Uso responsable | การใช้งานอย่างรับผิดชอบ |
 | history | History | 履歴 | Historial | ประวัติ |
 | onboardingTitle | Listen to the signals of the universe and your intuition. | 宇宙のサインと、あなたの直感に耳を澄ます。 | Escucha las señales del universo y tu intuición. | ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ |
-| onboardingLanguageHint | Prefer another language? Tap the globe above. You can change it anytime. | 別の言語で使いたい方は、上の地球アイコンをタップしてください。言語はいつでも変更できます。 | ¿Prefieres otro idioma? Toca el icono del globo de arriba. Puedes cambiarlo cuando quieras. | อยากใช้ภาษาอื่นไหม? แตะไอคอนรูปโลกด้านบน คุณเปลี่ยนภาษาได้ทุกเมื่อ |
+| onboardingLanguageHint | Tap the globe icon above to change language. | 言語を変更するには、上の地球アイコンをタップしてください。 | Toca el icono del globo de arriba para cambiar de idioma. | แตะไอคอนรูปโลกด้านบนเพื่อเปลี่ยนภาษา |
 | yourProfile | YOUR PROFILE | あなたのプロフィール | TU PERFIL | โปรไฟล์ของคุณ |
 | signAfterBirthDate | YOUR SIGN APPEARS AFTER YOUR BIRTH DATE | 生年月日を入力すると星座が表示されます | TU SIGNO APARECERÁ AL INDICAR TU FECHA DE NACIMIENTO | ใส่วันเกิดเพื่อดูราศีของคุณ |
 | buildPattern | Discover your unique energy. | あなただけのエネルギーを見つけましょう。 | Descubre tu propia energía. | ค้นพบพลังงานเฉพาะตัวของคุณ |
