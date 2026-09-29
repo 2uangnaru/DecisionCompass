@@ -77,9 +77,11 @@ class _BirthTimePickerDialogState extends State<BirthTimePickerDialog> {
     _hour12 = initial?.hourOfPeriod;
     _minute = initial?.minute;
     _period = initial?.period ?? DayPeriod.am;
-    // Editing an answer starts on the minute, which is the part most likely
-    // to be corrected; a fresh one starts on the hour.
-    _ring = initial == null ? _Ring.hour : _Ring.minute;
+    // Always starts on the hour ring, fresh or editing an existing answer —
+    // the existing hour and minute stay exactly as they were, only the ring
+    // shown first changes, so re-opening a saved time still lets the reader
+    // walk through both halves from the top instead of landing mid-edit.
+    _ring = _Ring.hour;
     _hourField = TextEditingController(text: _hour12 == null ? '' : '$_hour12');
     _minuteField = TextEditingController(
       text: _minute == null ? '' : _minute.toString().padLeft(2, '0'),
