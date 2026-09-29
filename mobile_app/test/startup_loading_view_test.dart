@@ -76,7 +76,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 600));
     await tester.pump();
     expect(find.byType(StartupLoadingView), findsNothing);
-    expect(find.text('Read the moment where you are.'), findsOneWidget);
+    expect(find.text(rig.strings.onboardingTitle), findsOneWidget);
     expect(contentReadySignals, 1);
     await tester.pump();
     expect(contentReadySignals, 1);
@@ -98,6 +98,6 @@ void main() {
 
     preparation.complete();
     await tester.pump();
-    expect(find.text('Read the moment where you are.'), findsOneWidget);
+    expect(find.text(rig.strings.onboardingTitle), findsOneWidget);
   });
 }

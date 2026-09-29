@@ -31,7 +31,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '读懂此刻的信号。';
+  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';
@@ -1019,7 +1019,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '读懂此刻的信号。';
+  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';
@@ -2007,7 +2007,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '读懂此刻的信号。';
+  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get onboardingLanguageHint => '想使用其他语言？点击上方的地球图标，随时可以切换。';

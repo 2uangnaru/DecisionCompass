@@ -160,7 +160,7 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Read the moment where you are.'**
+  /// **'Listen to the signals of the universe and your intuition.'**
   String get onboardingTitle;
 
   /// No description provided for @onboardingLanguageHint.

@@ -31,7 +31,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get history => '履歴';
 
   @override
-  String get onboardingTitle => '今この場所、この瞬間を読み解く。';
+  String get onboardingTitle => '宇宙のサインと、あなたの直感に耳を澄ます。';
 
   @override
   String get onboardingLanguageHint =>

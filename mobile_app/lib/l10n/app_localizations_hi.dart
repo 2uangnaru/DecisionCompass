@@ -31,7 +31,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get history => 'इतिहास';
 
   @override
-  String get onboardingTitle => 'इस पल के संकेत समझें।';
+  String get onboardingTitle =>
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get onboardingLanguageHint =>
@@ -1156,7 +1157,8 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get history => 'इतिहास';
 
   @override
-  String get onboardingTitle => 'इस पल के संकेत समझें।';
+  String get onboardingTitle =>
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get onboardingLanguageHint =>

@@ -284,12 +284,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 12),
                       Text(
                         l10n.onboardingLanguageHint,
                         key: const Key('onboarding_language_hint'),
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          fontSize: 12,
+                          fontStyle: FontStyle.italic,
+                          color: CompassColors.muted,
+                        ),
                       ),
                     ],
                   ),

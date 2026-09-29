@@ -31,7 +31,8 @@ class AppLocalizationsVi extends AppLocalizations {
   String get history => 'Lịch sử';
 
   @override
-  String get onboardingTitle => 'Lắng nghe tín hiệu của khoảnh khắc này.';
+  String get onboardingTitle =>
+      'Lắng nghe tín hiệu vũ trụ và trực giác của bạn.';
 
   @override
   String get onboardingLanguageHint =>

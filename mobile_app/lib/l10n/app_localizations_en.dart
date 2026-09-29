@@ -31,7 +31,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get history => 'History';
 
   @override
-  String get onboardingTitle => 'Read the moment where you are.';
+  String get onboardingTitle =>
+      'Listen to the signals of the universe and your intuition.';
 
   @override
   String get onboardingLanguageHint =>

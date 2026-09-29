@@ -31,7 +31,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get history => 'ประวัติ';
 
   @override
-  String get onboardingTitle => 'อ่านสัญญาณของช่วงเวลานี้';
+  String get onboardingTitle => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
 
   @override
   String get onboardingLanguageHint =>

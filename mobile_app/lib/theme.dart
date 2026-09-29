@@ -75,12 +75,46 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
   final fallback = CompassFonts.fallbackFor(locale);
   final family = fallback.first;
   // Thai and Devanagari clip at the tight English line heights; Japanese and
-  // Chinese simply read better with a little more air.
+  // Chinese simply read better with a little more air. Vietnamese has stacked
+  // diacritics and tone marks that need room to prevent lines feeling cramped.
   final lead = switch (locale) {
     AppLocale.thai || AppLocale.hindi => 1.22,
+    AppLocale.vietnamese => 1.18,
     AppLocale.japanese || AppLocale.simplifiedChinese => 1.12,
     _ => 1.0,
   };
+
+  // Flexible optical font sizing and line heights across languages:
+  // - Vietnamese sentences are significantly more verbose (multi-syllable words)
+  //   and contain stacked diacritics; oversized headlines feel overwhelming
+  //   and wrap clumsily into 4 lines. Calibrating headline sizes to 23-24pt
+  //   allows graceful 2-line flow with plenty of breathing room.
+  // - Spanish is naturally 20-30% longer than English, benefiting from ~25pt.
+  // - Japanese and Simplified Chinese use dense, full-em ideographs where 23.5pt
+  //   matches the optical visual weight of 26.5pt Latin.
+  // - Thai and Devanagari have tall vertical glyph components that look heavy
+  //   at Latin 30pt; ~23.5pt keeps them balanced.
+  // - English with our updated, more poetic copy stays comfortable at 26.5pt.
+  final (
+    displayLargeSize,
+    headlineLargeSize,
+    headlineMediumSize,
+    bodyLargeSize,
+    bodyMediumSize,
+  ) = switch (locale) {
+    AppLocale.vietnamese => (44.0, 23.0, 19.5, 15.0, 13.5),
+    AppLocale.thai || AppLocale.hindi => (44.0, 23.5, 20.0, 15.0, 13.5),
+    AppLocale.japanese || AppLocale.simplifiedChinese => (
+      44.0,
+      23.5,
+      20.0,
+      15.0,
+      13.5,
+    ),
+    AppLocale.spanish => (48.0, 25.0, 21.0, 15.5, 13.5),
+    AppLocale.english => (50.0, 26.5, 21.5, 16.0, 14.0),
+  };
+
   final scheme =
       ColorScheme.fromSeed(
         seedColor: CompassColors.violet,
@@ -103,32 +137,37 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
     textTheme: TextTheme(
       displayLarge: TextStyle(
         color: CompassColors.text,
-        fontSize: 56,
+        fontSize: displayLargeSize,
         height: 1.05 * lead,
         fontWeight: FontWeight.w600,
       ),
       headlineLarge: TextStyle(
         color: CompassColors.text,
-        fontSize: 30,
-        height: 1.15 * lead,
+        fontSize: headlineLargeSize,
+        height: 1.22 * lead,
         fontWeight: FontWeight.w600,
       ),
       headlineMedium: TextStyle(
         color: CompassColors.text,
-        fontSize: 23,
+        fontSize: headlineMediumSize,
         // Left to the font's own metrics in the Latin-script languages, as it
         // always has been; only the scripts that clip get an explicit lead.
-        height: lead == 1.0 ? null : 1.2 * lead,
+        height: lead == 1.0 ? null : 1.25 * lead,
         fontWeight: FontWeight.w600,
       ),
       bodyLarge: TextStyle(
         color: CompassColors.text,
-        fontSize: 16,
+        fontSize: bodyLargeSize,
         height: 1.5 * lead,
       ),
       bodyMedium: TextStyle(
         color: CompassColors.secondary,
-        fontSize: 14,
+        fontSize: bodyMediumSize,
+        height: 1.45 * lead,
+      ),
+      bodySmall: TextStyle(
+        color: CompassColors.secondary,
+        fontSize: 12,
         height: 1.45 * lead,
       ),
       labelLarge: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
