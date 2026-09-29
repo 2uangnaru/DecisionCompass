@@ -89,12 +89,6 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     curve: const Interval(0.50, 0.70, curve: Curves.easeOut),
   );
 
-  /// Slow majestic celestial orbit rotation (period: 40s)
-  late final AnimationController _ringsRotation = AnimationController(
-    vsync: this,
-    duration: const Duration(seconds: 40),
-  );
-
   late final Animation<double> _progressBarWidth = CurvedAnimation(
     parent: _entrance,
     curve: const Interval(0.44, 1.0, curve: Curves.easeInOutCubic),
@@ -137,12 +131,9 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     if (reduceMotion) {
       _dots.stop();
       _dots.value = 0;
-      _ringsRotation.stop();
-      _ringsRotation.value = 0;
       _entrance.value = 1.0;
     } else {
       _dots.repeat();
-      _ringsRotation.repeat();
       if (_hasStartedEntrance && !_entrance.isAnimating && _entrance.value < 1.0) {
         _entrance.forward();
       }
@@ -153,7 +144,6 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   void dispose() {
     _entranceTimer?.cancel();
     _dots.dispose();
-    _ringsRotation.dispose();
     _entrance.dispose();
     super.dispose();
   }
@@ -405,92 +395,44 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: CompassColors.deep,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          // Celestial twilight gradient matching in-app CelestialScaffold
-          const DecoratedBox(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  CompassColors.deep,
-                  Color(0xFF141F36),
-                  Color(0xFF18243C),
-                ],
-                stops: [0.0, 0.55, 1.0],
-              ),
-            ),
-          ),
-          // Natural starry sky background with gentle celestial breathing
-          IgnorePointer(
+      body: Center(
+        child: Semantics(
+          label: 'Opening AstraCue',
+          child: ExcludeSemantics(
             child: AnimatedBuilder(
-              animation: _dots,
-              builder: (context, _) => CustomPaint(
-                painter: _NaturalStarrySkyPainter(
-                  progress: _reduceMotion == true ? 0.0 : _dots.value,
-                  reduceMotion: _reduceMotion == true,
-                ),
-              ),
-            ),
-          ),
-          // Concentric rotating celestial orbit rings behind the star and title
-          IgnorePointer(
-            child: Center(
-              child: AnimatedBuilder(
-                animation: _ringsRotation,
-                builder: (context, _) => CustomPaint(
-                  size: const Size.square(290),
-                  painter: _CelestialOrbitRingsPainter(
-                    rotation:
-                        _reduceMotion == true ? 0.0 : _ringsRotation.value,
+              animation: Listenable.merge([_dots, _entrance]),
+              builder: (context, _) => Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Transform.translate(
+                    offset: _reduceMotion == true
+                        ? Offset.zero
+                        : _starAscend.value,
+                    child: _star(_dots.value),
                   ),
-                ),
-              ),
-            ),
-          ),
-          // Central branding & loading choreography
-          Center(
-            child: Semantics(
-              label: 'Opening AstraCue',
-              child: ExcludeSemantics(
-                child: AnimatedBuilder(
-                  animation: Listenable.merge([_dots, _entrance]),
-                  builder: (context, _) => Column(
-                    mainAxisSize: MainAxisSize.min,
+                  const SizedBox(height: 12),
+                  _wordmark(),
+                  const SizedBox(height: 8),
+                  _tagline(),
+                  const SizedBox(height: 16),
+                  Stack(
+                    alignment: Alignment.center,
                     children: [
-                      Transform.translate(
-                        offset: _reduceMotion == true
-                            ? Offset.zero
-                            : _starAscend.value,
-                        child: _star(_dots.value),
-                      ),
-                      const SizedBox(height: 12),
-                      _wordmark(),
-                      const SizedBox(height: 8),
-                      _tagline(),
-                      const SizedBox(height: 16),
-                      Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          _horizontalProgressBar(),
-                          // Kept in tree for complete test compatibility and semantics
-                          Opacity(
-                            opacity: 0.0,
-                            child: _reduceMotion == true
-                                ? _orbitDots(0)
-                                : _orbitDots(_dots.value),
-                          ),
-                        ],
+                      _horizontalProgressBar(),
+                      // Kept in tree for complete test compatibility and semantics
+                      Opacity(
+                        opacity: 0.0,
+                        child: _reduceMotion == true
+                            ? _orbitDots(0)
+                            : _orbitDots(_dots.value),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }
@@ -663,241 +605,5 @@ class _LaunchStarPainter extends CustomPainter {
       oldDelegate.glow != glow ||
       oldDelegate.scale != scale ||
       oldDelegate.subStarScale != subStarScale;
-}
-
-/// Renders an organic celestial starry night sky matching in-app CelestialScaffold.
-/// Stars have natural distribution, varying luminosities, subtle tints,
-/// and calm harmonic twinkling breathing.
-class _NaturalStarrySkyPainter extends CustomPainter {
-  const _NaturalStarrySkyPainter({
-    required this.progress,
-    required this.reduceMotion,
-  });
-
-  final double progress;
-  final bool reduceMotion;
-
-  // 42 deterministic celestial stars scattered across the full screen
-  static final List<_SkyStar> _stars = _generateStars();
-
-  static List<_SkyStar> _generateStars() {
-    // Uses fixed, naturalistic celestial distribution
-    const rawData = <(double, double, double, double, int)>[
-      // (xNorm, yNorm, radius, baseAlpha, colorType: 0=white, 1=gold, 2=blue)
-      (0.12, 0.08, 0.9, 0.40, 0),
-      (0.28, 0.06, 1.4, 0.70, 1),
-      (0.46, 0.09, 0.7, 0.35, 0),
-      (0.68, 0.05, 1.1, 0.50, 2),
-      (0.84, 0.08, 1.6, 0.85, 1),
-      (0.92, 0.14, 0.7, 0.30, 0),
-      (0.06, 0.18, 1.2, 0.55, 0),
-      (0.22, 0.19, 0.8, 0.35, 2),
-      (0.38, 0.16, 1.8, 0.90, 0),
-      (0.74, 0.18, 0.7, 0.30, 0),
-      (0.88, 0.22, 1.3, 0.65, 2),
-      (0.15, 0.28, 0.7, 0.35, 0),
-      (0.82, 0.32, 1.0, 0.45, 1),
-      (0.94, 0.36, 0.8, 0.35, 0),
-      (0.08, 0.42, 1.5, 0.75, 1),
-      (0.18, 0.48, 0.7, 0.28, 0),
-      (0.86, 0.45, 1.2, 0.55, 0),
-      (0.93, 0.52, 0.8, 0.35, 2),
-      (0.05, 0.58, 0.9, 0.42, 0),
-      (0.14, 0.65, 1.3, 0.60, 2),
-      (0.84, 0.62, 0.8, 0.35, 0),
-      (0.92, 0.68, 1.5, 0.75, 1),
-      (0.10, 0.76, 1.1, 0.48, 0),
-      (0.24, 0.74, 0.7, 0.30, 2),
-      (0.36, 0.79, 1.7, 0.85, 1),
-      (0.66, 0.78, 1.2, 0.55, 0),
-      (0.78, 0.82, 0.8, 0.38, 2),
-      (0.90, 0.84, 1.4, 0.68, 0),
-      (0.07, 0.88, 0.8, 0.35, 0),
-      (0.20, 0.92, 1.3, 0.60, 1),
-      (0.42, 0.89, 0.8, 0.35, 0),
-      (0.58, 0.93, 1.5, 0.75, 0),
-      (0.72, 0.91, 0.7, 0.30, 2),
-      (0.86, 0.94, 1.1, 0.50, 1),
-      (0.32, 0.38, 0.6, 0.22, 0),
-      (0.68, 0.36, 0.6, 0.25, 0),
-      (0.30, 0.62, 0.6, 0.20, 0),
-      (0.70, 0.64, 0.6, 0.22, 0),
-      // In-app celestial sequence anchors
-      (0.78, 0.48, 1.1, 0.45, 0),
-      (0.56, 0.42, 0.7, 0.25, 2),
-      (0.44, 0.58, 0.7, 0.25, 1),
-      (0.24, 0.52, 0.8, 0.30, 0),
-    ];
-
-    return List.generate(rawData.length, (i) {
-      final entry = rawData[i];
-      return _SkyStar(
-        x: entry.$1,
-        y: entry.$2,
-        radius: entry.$3,
-        baseAlpha: entry.$4,
-        colorType: entry.$5,
-        phase: (i * 1.618) % (math.pi * 2),
-        speed: (i % 3 == 0) ? 1.0 : (i % 2 == 0 ? 0.7 : 1.3),
-      );
-    });
-  }
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    for (final star in _stars) {
-      final center = Offset(star.x * size.width, star.y * size.height);
-
-      double alpha = star.baseAlpha;
-      if (!reduceMotion) {
-        final twinkle = 0.82 +
-            0.18 * math.sin(progress * 2 * math.pi * star.speed + star.phase);
-        alpha = (alpha * twinkle).clamp(0.05, 1.0);
-      }
-
-      Color color;
-      switch (star.colorType) {
-        case 1:
-          color = CompassColors.gold.withValues(alpha: alpha);
-          break;
-        case 2:
-          color = CompassColors.blueLight.withValues(alpha: alpha);
-          break;
-        case 0:
-        default:
-          color = Colors.white.withValues(alpha: alpha);
-      }
-
-      // Soft halo for bright anchor stars
-      if (star.radius >= 1.4) {
-        canvas.drawCircle(
-          center,
-          star.radius * 2.2,
-          Paint()
-            ..color = color.withValues(alpha: alpha * 0.35)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
-        );
-      }
-
-      // Star point core
-      canvas.drawCircle(center, star.radius, Paint()..color = color);
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant _NaturalStarrySkyPainter oldDelegate) =>
-      oldDelegate.progress != progress ||
-      oldDelegate.reduceMotion != reduceMotion;
-}
-
-class _SkyStar {
-  const _SkyStar({
-    required this.x,
-    required this.y,
-    required this.radius,
-    required this.baseAlpha,
-    required this.colorType,
-    required this.phase,
-    required this.speed,
-  });
-
-  final double x;
-  final double y;
-  final double radius;
-  final double baseAlpha;
-  final int colorType;
-  final double phase;
-  final double speed;
-}
-
-/// Renders subtle, ethereal celestial orbit rings behind the star and title.
-/// Designed to be non-intrusive, serene, and clean (no visual clutter or intersection with text).
-class _CelestialOrbitRingsPainter extends CustomPainter {
-  const _CelestialOrbitRingsPainter({required this.rotation});
-
-  final double rotation;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = size.center(Offset.zero);
-    final maxRadius = size.width / 2;
-
-    // 1. Outer subtle ring (~140px radius)
-    final r1 = maxRadius * 0.95;
-    final ringPaint1 = Paint()
-      ..color = CompassColors.blueLight.withValues(alpha: 0.07)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.7;
-    canvas.drawCircle(center, r1, ringPaint1);
-
-    // Single delicate micro-starlight planet on outer ring (cyan starlight)
-    final angle1 = rotation * 2 * math.pi;
-    final planet1 = Offset(
-      center.dx + math.cos(angle1) * r1,
-      center.dy + math.sin(angle1) * r1,
-    );
-    canvas.drawCircle(
-      planet1,
-      2.8,
-      Paint()
-        ..color = CompassColors.blueLight.withValues(alpha: 0.25)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
-    );
-    canvas.drawCircle(
-      planet1,
-      1.3,
-      Paint()..color = CompassColors.blueLight.withValues(alpha: 0.75),
-    );
-
-    // Second micro-starlight planet on outer ring (warm gold, spaced by ~135 degrees)
-    final angle1b = angle1 + 2.35;
-    final planet1b = Offset(
-      center.dx + math.cos(angle1b) * r1,
-      center.dy + math.sin(angle1b) * r1,
-    );
-    canvas.drawCircle(
-      planet1b,
-      2.5,
-      Paint()
-        ..color = CompassColors.gold.withValues(alpha: 0.22)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.8),
-    );
-    canvas.drawCircle(
-      planet1b,
-      1.1,
-      Paint()..color = CompassColors.gold.withValues(alpha: 0.70),
-    );
-
-    // 2. Middle subtle ring (~118px radius) - outside central text boundary
-    final r2 = maxRadius * 0.80;
-    final ringPaint2 = Paint()
-      ..color = Colors.white.withValues(alpha: 0.04)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.5;
-    canvas.drawCircle(center, r2, ringPaint2);
-
-    // Third micro-starlight planet on inner ring (soft starlight white, rotating counter-clockwise)
-    final angle2 = -rotation * 2 * math.pi * 0.7 + math.pi;
-    final planet2 = Offset(
-      center.dx + math.cos(angle2) * r2,
-      center.dy + math.sin(angle2) * r2,
-    );
-    canvas.drawCircle(
-      planet2,
-      2.0,
-      Paint()
-        ..color = Colors.white.withValues(alpha: 0.20)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
-    );
-    canvas.drawCircle(
-      planet2,
-      1.0,
-      Paint()..color = const Color(0xFFBFDDF1).withValues(alpha: 0.65),
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant _CelestialOrbitRingsPainter oldDelegate) =>
-      oldDelegate.rotation != rotation;
 }
 
