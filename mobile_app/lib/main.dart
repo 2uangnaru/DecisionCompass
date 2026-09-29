@@ -60,7 +60,7 @@ Future<void> main() async {
 
   runApp(
     DecisionCompassApp(
-      minimumStartupDuration: const Duration(milliseconds: 2600),
+      minimumStartupDuration: const Duration(milliseconds: 3000),
       startupPreparation: startupPreparation,
       onContentReady: () {
         if (defaultTargetPlatform == TargetPlatform.android) {

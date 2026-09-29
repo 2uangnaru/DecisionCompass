@@ -26,32 +26,32 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   /// Staged entrance choreography: Star bloom -> 'A' -> Suffix slide -> Tagline -> Progress Bar.
   late final AnimationController _entrance = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2200),
+    duration: const Duration(milliseconds: 2600),
   );
 
   /// Seamless startup ascension: the star begins precisely at the screen's
   /// geometric center (Y=50) matching the Android 12+ system splash icon,
-  /// then ascends gracefully to rest position (Y=0).
+  /// rests gently, then ascends gracefully to rest position (Y=0) reaching completion at 1.0s.
   late final Animation<Offset> _starAscend = Tween<Offset>(
     begin: const Offset(0.0, 50.0),
     end: Offset.zero,
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.0, 0.30, curve: Curves.easeOutCubic),
+      curve: const Interval(0.08, 0.35, curve: Curves.easeInOutCubic),
     ),
   );
 
   /// Flanking satellite stars bloom outward as the central star ascends,
-  /// creating a 3-star constellation with organic celestial breathing.
+  /// creating a 3-star constellation with organic celestial breathing (completing at 1.0s).
   late final Animation<double> _subStarsBloom = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.04, 0.30, curve: Curves.easeOutCubic),
+    curve: const Interval(0.12, 0.36, curve: Curves.easeOutCubic),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.20, 0.45, curve: Curves.easeOut),
+    curve: const Interval(0.32, 0.48, curve: Curves.easeOut),
   );
 
   late final Animation<double> _leadScale = Tween<double>(
@@ -60,13 +60,13 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.20, 0.45, curve: Curves.easeOutCubic),
+      curve: const Interval(0.32, 0.48, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.30, 0.68, curve: Curves.easeOutCubic),
+    curve: const Interval(0.40, 0.65, curve: Curves.easeOutCubic),
   );
 
   late final Animation<Offset> _suffixSlide = Tween<Offset>(
@@ -75,18 +75,18 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.30, 0.68, curve: Curves.easeOutCubic),
+      curve: const Interval(0.40, 0.65, curve: Curves.easeOutCubic),
     ),
   );
 
   late final Animation<double> _suffixFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.30, 0.58, curve: Curves.easeOut),
+    curve: const Interval(0.40, 0.58, curve: Curves.easeOut),
   );
 
   late final Animation<double> _taglineFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.48, 0.78, curve: Curves.easeOut),
+    curve: const Interval(0.50, 0.70, curve: Curves.easeOut),
   );
 
   /// Slow majestic celestial orbit rotation (period: 40s)
@@ -97,12 +97,12 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   late final Animation<double> _progressBarWidth = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.35, 1.0, curve: Curves.easeInOutCubic),
+    curve: const Interval(0.44, 1.0, curve: Curves.easeInOutCubic),
   );
 
   late final Animation<double> _progressBarFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.30, 0.50, curve: Curves.easeOut),
+    curve: const Interval(0.42, 0.55, curve: Curves.easeOut),
   );
 
   bool? _reduceMotion;
@@ -116,11 +116,11 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       widget.onFirstFrame?.call();
-      // Allow a brief, imperceptible pause (80ms) for the native splash
+      // Allow a brief, imperceptible pause (100ms) for the native splash
       // dismissal to finish and the user's display to present the first frame,
       // so the star is visibly observed resting at center before it ascends
       // and spawns the companion stars.
-      _entranceTimer = Timer(const Duration(milliseconds: 80), () {
+      _entranceTimer = Timer(const Duration(milliseconds: 100), () {
         if (!mounted || _hasStartedEntrance) return;
         _hasStartedEntrance = true;
         _entrance.forward(from: 0.0);
