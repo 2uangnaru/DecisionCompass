@@ -438,6 +438,10 @@ class _PeriodSelector extends StatelessWidget {
       );
     }
 
+    final isVi = Localizations.localeOf(context).languageCode == 'vi';
+    final amLabel = isVi ? 'AM' : material.anteMeridiemAbbreviation;
+    final pmLabel = isVi ? 'PM' : material.postMeridiemAbbreviation;
+
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(color: scheme.outline),
@@ -450,13 +454,13 @@ class _PeriodSelector extends StatelessWidget {
           children: [
             half(
               DayPeriod.am,
-              material.anteMeridiemAbbreviation,
+              amLabel,
               const Key('birth_time_am'),
             ),
             Divider(height: 1, color: scheme.outline),
             half(
               DayPeriod.pm,
-              material.postMeridiemAbbreviation,
+              pmLabel,
               const Key('birth_time_pm'),
             ),
           ],

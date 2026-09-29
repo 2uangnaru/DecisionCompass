@@ -478,16 +478,6 @@ class _Direction extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyMedium
               ?.copyWith(color: Colors.white70),
         ),
-        const SizedBox(height: 6),
-        // Kept right under the numbers, never behind an info icon: a symbolic
-        // alignment score is not a probability, in any language.
-        Text(
-          l10n.percentageCaveat,
-          key: const Key('result_percentage_caveat'),
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: Colors.white60),
-        ),
       ],
     );
   }
@@ -645,14 +635,6 @@ class _Balanced extends StatelessWidget {
           textAlign: TextAlign.center,
           style: Theme.of(context).textTheme.bodyMedium
               ?.copyWith(color: Colors.white70),
-        ),
-        const SizedBox(height: 6),
-        Text(
-          l10n.percentageCaveat,
-          key: const Key('result_percentage_caveat'),
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.bodySmall
-              ?.copyWith(color: Colors.white60),
         ),
       ],
     );

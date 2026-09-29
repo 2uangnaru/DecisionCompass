@@ -203,11 +203,6 @@ void main() {
             reason: 'the winning choice is wider than the screen, $at',
           );
 
-          // The symbolic-score caveats stay beside the numbers.
-          expect(
-            find.byKey(const Key('result_percentage_caveat')),
-            findsOneWidget,
-          );
           final caveat = find.byKey(const Key('result_lucky_times_caveat'));
           await tester.ensureVisible(caveat);
           expect(tester.widget<Text>(caveat).maxLines, isNull);

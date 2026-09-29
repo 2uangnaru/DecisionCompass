@@ -28,7 +28,7 @@ when the control is **off**.
 | Key | en | vi | ja | es |
 |---|---|---|---|---|
 | knowBirthTime | I know my birth time | Tôi biết giờ sinh của mình | 出生時刻がわかる | Sé mi hora de nacimiento |
-| knowBirthTimeDetail | An exact time sharpens the hour-based cycles. | Giờ chính xác giúp các chu kỳ theo giờ rõ nét hơn. | 正確な時刻ほど、時辰の周期がはっきりします。 | Una hora exacta afina los ciclos basados en la hora. |
+| knowBirthTimeDetail | An exact time sharpens the hour-based cycles. | Giờ sinh chính xác giúp các chu kỳ theo giờ rõ nét hơn. | 正確な時刻ほど、時辰の周期がはっきりします。 | Una hora exacta afina los ciclos basados en la hora. |
 | selectBirthTime | Select your time of birth | Chọn giờ sinh | 出生時刻を選択 | Selecciona tu hora de nacimiento |
 | birthTimeRequired | Select your time of birth to continue, or turn this off if you do not know it. | Hãy chọn giờ sinh để tiếp tục, hoặc tắt mục này nếu bạn không biết. | 続けるには出生時刻を選択してください。わからない場合はこの設定をオフにしてください。 | Selecciona tu hora de nacimiento para continuar, o desactiva esta opción si no la sabes. |
 

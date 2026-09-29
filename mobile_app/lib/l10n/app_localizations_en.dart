@@ -44,11 +44,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signAfterBirthDate => 'YOUR SIGN APPEARS AFTER YOUR BIRTH DATE';
 
   @override
-  String get buildPattern => 'Build your personal pattern.';
+  String get buildPattern => 'Discover your unique energy.';
 
   @override
-  String get profileExplainer =>
-      'These details shape the cycles used in every reading.';
+  String get profileExplainer => 'Shapes the cycles used during analysis.';
 
   @override
   String get nameField => 'Name';
@@ -67,7 +66,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get birthTimeUnknownDetail =>
-      'We will compare possible birth-hour patterns.';
+      'If you don\'t know your birth time, the algorithm will use the time window closest to your personality.';
 
   @override
   String get timeOfBirth => 'Time of birth';
@@ -90,7 +89,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your birth details remain private in this prototype.';
 
   @override
-  String get homeEyebrow => 'A COMPASS FOR UNCERTAIN MOMENTS';
+  String get homeEyebrow => 'A COMPASS TO GUIDE YOUR PATH';
 
   @override
   String get homeTitle => 'Caught between choices?';
@@ -99,7 +98,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get areaQuestion => 'What area is this about?';
 
   @override
-  String get findDirection => 'Find My Direction';
+  String get findDirection => 'Find Your Path';
 
   @override
   String get todaySignals => 'TODAY’S SIGNALS';
@@ -123,7 +122,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get categoryCareer => 'Career';
 
   @override
-  String get categoryMoney => 'Everyday Spending';
+  String get categoryMoney => 'Finances';
 
   @override
   String get categoryStudy => 'Study & Growth';
@@ -161,7 +160,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get reveal => 'REVEAL';
+  String get reveal => 'ANALYZE';
 
   @override
   String get aligning => 'ALIGNING';
@@ -181,7 +180,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingReassurance =>
-      'Give me a moment — I’m still bringing your cosmic signals into focus.';
+      'Please wait a moment — cosmic signals are coming into focus.';
 
   @override
   String readingForCategory(String category) {
@@ -192,7 +191,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get yourDirection => 'YOUR DIRECTION';
 
   @override
-  String get resultBasis => 'Based on your personal cycles and this moment.';
+  String get resultBasis =>
+      'Based on the cosmic energy and signals aligned with you at this moment.';
 
   @override
   String get percentageCaveat =>
@@ -276,7 +276,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'Reading expansion against withdrawal';
+      'Balancing commitment against withdrawal';
 
   @override
   String get loadingModeStayGo => 'Comparing roots with movement';
@@ -378,7 +378,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      'Everyday Spending is for reflecting on small, routine purchases only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.';
+      'Finances is for reflecting on small, routine purchases only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.';
 
   @override
   String get consentTitle => 'Consent, Minors & Relationships';
@@ -399,7 +399,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'If you or someone else is in immediate danger or emotional crisis, contact local emergency services or a trusted local crisis helpline now.';
 
   @override
-  String get acknowledge => 'I Understand & Agree to Boundaries';
+  String get acknowledge => 'I Understand & Agree';
 
   @override
   String get acknowledgementOnce =>
@@ -441,10 +441,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get choiceWait => 'WAIT';
 
   @override
-  String get choiceAdvance => 'ADVANCE';
+  String get choiceAdvance => 'COMMIT';
 
   @override
-  String get choiceRetreat => 'RETREAT';
+  String get choiceRetreat => 'WITHDRAW';
 
   @override
   String get choiceStay => 'STAY';

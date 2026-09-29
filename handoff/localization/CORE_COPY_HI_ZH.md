@@ -15,24 +15,24 @@ This supplements `CORE_COPY.md`, using **the same keys and placeholders**. `hi-I
 | onboardingLanguageHint | ऐप को दूसरी भाषा में इस्तेमाल करना चाहते हैं? ऊपर ग्लोब आइकन पर टैप करें। आप भाषा कभी भी बदल सकते हैं। | 想使用其他语言？点击上方的地球图标，随时可以切换。 |
 | yourProfile | आपकी प्रोफ़ाइल | 你的资料 |
 | signAfterBirthDate | जन्मतिथि चुनने पर आपकी पश्चिमी सूर्य राशि दिखेगी | 输入出生日期后，将显示你的星座 |
-| buildPattern | अपनी व्यक्तिगत लय को जानें। | 探索属于你的个人节律。 |
-| profileExplainer | इन विवरणों से हर बार पढ़े जाने वाले व्यक्तिगत चक्र तय होते हैं। | 这些信息会用于构建每次解读所参考的个人周期。 |
+| buildPattern | अपनी अनूठी ऊर्जा को पहचानें। | 探索属于你的专属能量。 |
+| profileExplainer | विश्लेषण में उपयोग किए जाने वाले चक्रों को निर्धारित करता है। | 定格分析时所依据的能量周期。 |
 | nameField | नाम | 姓名 |
 | dateOfBirth | जन्मतिथि | 出生日期 |
 | selectBirthDate | अपनी जन्मतिथि चुनें | 选择出生日期 |
 | birthDateRequired | आगे बढ़ने के लिए जन्मतिथि चुनें। | 请选择出生日期后继续。 |
-| birthTimeUnknown | जन्म का समय पता नहीं | 不清楚出生时间 |
-| birthTimeUnknownDetail | हम जन्म के अलग-अलग संभावित घंटों के पैटर्न की तुलना करेंगे। | 我们会比较可能的出生时辰模式。 |
+| birthTimeUnknown | जन्म का समय पता नहीं | 出生时间未知 |
+| birthTimeUnknownDetail | यदि आपको अपना जन्म समय नहीं पता, तो एल्गोरिदम आपके व्यक्तित्व के सबसे करीब के समय का उपयोग करेगा। | 若不知出生时间，算法将采用与你性格最契合的时段进行测算。 |
 | timeOfBirth | जन्म का समय | 出生时间 |
 | countryOfBirth | जन्म का देश | 出生国家 |
 | selectBirthCountry | देश खोजें और चुनें | 搜索并选择国家 |
 | birthCountryRequired | आगे बढ़ने के लिए जन्म का देश चुनें। | 请选择出生国家后继续。 |
 | createCompass | मेरा दिशासूचक बनाएँ | 创建我的指引罗盘 |
 | birthPrivacyPrototype | इस प्रोटोटाइप में आपके जन्म से जुड़े विवरण निजी रहते हैं। | 在此原型版本中，你的出生信息将保持私密。 |
-| homeEyebrow | उलझन के पलों में एक दिशासूचक | 犹豫时刻的指引罗盘 |
+| homeEyebrow | आपका मार्गदर्शन करने वाला दिशासूचक | 指引方向的专属罗盘 |
 | homeTitle | दो विकल्पों के बीच उलझे हैं? | 正在选择之间犹豫吗？ |
 | areaQuestion | यह किस विषय से जुड़ा है? | 这与哪方面有关？ |
-| findDirection | अपनी दिशा देखें | 探索我的方向 |
+| findDirection | अपनी दिशा खोजें | 寻找你的专属方向 |
 | todaySignals | आज के संकेत | 今日信号 |
 | dailyEnergy | आज की ऊर्जा | 今日能量 |
 | yourColorsToday | आज आपके रंग: | 今日属于你的颜色： |
@@ -40,7 +40,7 @@ This supplements `CORE_COPY.md`, using **the same keys and placeholders**. `hi-I
 | categoryOverall | समग्र | 综合 |
 | categoryLove | प्यार और रिश्ते | 爱情与人际关系 |
 | categoryCareer | करियर | 事业 |
-| categoryMoney | रोज़मर्रा के खर्च | 日常开销 |
+| categoryMoney | वित्त | 财务 |
 | categoryStudy | पढ़ाई और विकास | 学习与成长 |
 | categoryFriends | दोस्त | 朋友 |
 | categoryOther | कुछ और | 其他事情 |
@@ -52,16 +52,16 @@ This supplements `CORE_COPY.md`, using **the same keys and placeholders**. `hi-I
 | periodEvening | शाम | 晚间 |
 | periodPassed | बीत चुका | 已过 |
 | periodHasPassed | {period} का समय बीत चुका है। कोई दूसरा समय चुनें। | {period}已经过去，请选择其他时段。 |
-| reveal | परिणाम देखें | 查看指引 |
+| reveal | विश्लेषण करें | 开始分析 |
 | aligning | संकेत मिला रहे हैं | 正在对齐信号 |
 | tapWhenReady | तैयार हों तो टैप करें | 准备好后轻点 |
 | keepChoiceInMind | जिस विकल्प को लेकर उलझन है, उसे मन में स्पष्ट रखें। | 请在心中明确你正在考虑的选择。 |
 | ritualSafety | सिर्फ़ रोज़मर्रा के आत्मचिंतन के लिए • चिकित्सा, निवेश, कर्ज़, राजनीति या नुकसान पहुँचा सकने वाले फैसलों के लिए कभी नहीं। | 仅供日常自我反思使用 • 不可用于医疗、投资、借贷、政治或可能造成伤害的决定。 |
 | loadingLocalMoment | इस पल के संकेत पढ़े जा रहे हैं | 正在解读你此刻的信号 |
-| loadingReassurance | बस एक पल — मैं इस समय के ब्रह्मांडीय संकेतों को और स्पष्ट कर रहा हूँ। | 请稍等片刻——我正在梳理此刻的宇宙信号。 |
+| loadingReassurance | कृपया थोड़ा इंतज़ार करें — इस समय के ब्रह्मांडीय संकेत संरेखित हो रहे हैं। | 请稍候片刻——当下的宇宙信号正在汇聚。 |
 | readingForCategory | {category} से जुड़ा विश्लेषण | 正在解读{category} |
 | yourDirection | आपकी दिशा | 给你的方向 |
-| resultBasis | आपके व्यक्तिगत चक्रों और इस पल के आधार पर। | 基于你的个人周期与此刻的信号。 |
+| resultBasis | इस समय आपके लिए संरेखित ऊर्जा और ब्रह्मांडीय संकेतों के आधार पर। | 基于此刻属于你的能量与宇宙信号。 |
 | percentageCaveat | प्रतिशत केवल प्रतीकात्मक मेल दिखाते हैं, वास्तविक दुनिया की संभावना नहीं। | 百分比表示象征性的契合度，并非现实中的概率。 |
 | balancedHeading | दोनों ओर बराबर संकेत | 两边势均力敌 |
 | balancedResult | संतुलित | 平衡 |

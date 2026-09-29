@@ -45,11 +45,11 @@ class AppLocalizationsVi extends AppLocalizations {
       'CUNG HOÀNG ĐẠO SẼ HIỆN SAU KHI BẠN CHỌN NGÀY SINH';
 
   @override
-  String get buildPattern => 'Khám phá nhịp điệu riêng của bạn.';
+  String get buildPattern => 'Khám phá năng lượng riêng của bạn.';
 
   @override
   String get profileExplainer =>
-      'Những thông tin này định hình các chu kỳ được dùng trong mỗi lần phân tích.';
+      'Định hình các chu kỳ được dùng khi phân tích.';
 
   @override
   String get nameField => 'Tên';
@@ -68,7 +68,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get birthTimeUnknownDetail =>
-      'Chúng tôi sẽ so sánh các khả năng về khung giờ sinh.';
+      'Nếu bạn không nhớ giờ sinh, thuật toán sẽ dùng khung giờ gần với tính cách bạn nhất để tính toán.';
 
   @override
   String get timeOfBirth => 'Giờ sinh';
@@ -87,10 +87,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'Trong bản thử nghiệm này, thông tin sinh của bạn được giữ riêng tư.';
+      'Trong bản thử nghiệm này, thông tin ngày giờ sinh của bạn được giữ riêng tư.';
 
   @override
-  String get homeEyebrow => 'LA BÀN CHO NHỮNG LÚC PHÂN VÂN';
+  String get homeEyebrow => 'LA BÀN CHỈ HƯỚNG GIÚP BẠN';
 
   @override
   String get homeTitle => 'Bạn đang phân vân giữa những lựa chọn?';
@@ -99,7 +99,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get areaQuestion => 'Điều bạn đang nghĩ đến thuộc lĩnh vực nào?';
 
   @override
-  String get findDirection => 'Khám phá hướng đi';
+  String get findDirection => 'Tìm hướng đi của bạn';
 
   @override
   String get todaySignals => 'TÍN HIỆU HÔM NAY';
@@ -123,7 +123,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get categoryCareer => 'Công việc';
 
   @override
-  String get categoryMoney => 'Chi tiêu hằng ngày';
+  String get categoryMoney => 'Tài chính';
 
   @override
   String get categoryStudy => 'Học tập & Phát triển';
@@ -161,7 +161,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String get reveal => 'XEM KẾT QUẢ';
+  String get reveal => 'PHÂN TÍCH';
 
   @override
   String get aligning => 'ĐANG KẾT NỐI TÍN HIỆU';
@@ -181,7 +181,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadingReassurance =>
-      'Đợi tôi một chút nhé — tôi đang làm rõ các tín hiệu vũ trụ của khoảnh khắc này.';
+      'Vui lòng đợi một lát — các tín hiệu vũ trụ đang dần hội tụ.';
 
   @override
   String readingForCategory(String category) {
@@ -193,7 +193,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get resultBasis =>
-      'Dựa trên các chu kỳ cá nhân của bạn và khoảnh khắc này.';
+      'Dựa trên năng lượng và tín hiệu vũ trụ dành cho bạn tại thời điểm này.';
 
   @override
   String get percentageCaveat =>
@@ -207,7 +207,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get balancedExplanation =>
-      'Hiện chưa có phía nào nổi trội. Kết quả này thể hiện sự cân bằng, không phải một đáp án bị che giấu.';
+      'Hiện chưa có phía nào nổi trội. Kết quả này thể hiện sự cân bằng, không phải một câu trả lời bị che giấu.';
 
   @override
   String get currentMoment =>
@@ -218,7 +218,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Mỗi tỷ lệ phần trăm là điểm tương hợp mang tính biểu tượng của một khung giờ, không phải xác suất hay cơ hội thành công. Các khung giờ được tính riêng nên tổng không nhất thiết bằng 100%.';
 
   @override
-  String get tryAnotherDirection => 'Khám phá hướng đi khác';
+  String get tryAnotherDirection => 'Tìm hướng đi khác';
 
   @override
   String get viewHistory => 'Xem trong lịch sử';
@@ -280,7 +280,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'Đối chiếu xu hướng mở rộng và thu mình';
+      'Đối chiếu xu hướng gắn bó và chấm dứt';
 
   @override
   String get loadingModeStayGo => 'Đối chiếu sự gắn bó và chuyển động';
@@ -290,7 +290,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadingModeForwardBackward =>
-      'Đối chiếu xu hướng tiến lên và quay lại';
+      'Đối chiếu xu hướng tiến lên và lùi lại';
 
   @override
   String get loadingModeLeftRight => 'Cân bằng xu hướng tiếp nhận và thể hiện';
@@ -381,7 +381,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      'Mục Chi tiêu hằng ngày chỉ để suy ngẫm về khoản chi nhỏ. Không dùng kết quả để đầu tư, vay nợ, đặt cược tiền mã hóa, cờ bạc hoặc quyết định tài chính lớn.';
+      'Mục Tài chính chỉ để suy ngẫm về các khoản chi tiêu nhỏ thường ngày. Không dùng kết quả để đầu tư, vay nợ, đặt cược tiền mã hóa, cờ bạc hoặc quyết định tài chính lớn.';
 
   @override
   String get consentTitle => 'Sự đồng thuận, Trẻ vị thành niên & Mối quan hệ';
@@ -402,7 +402,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Nếu bạn hoặc người khác đang gặp nguy hiểm tức thời hay khủng hoảng tinh thần, hãy liên hệ ngay dịch vụ khẩn cấp hoặc đường dây hỗ trợ khủng hoảng đáng tin cậy tại nơi bạn sống.';
 
   @override
-  String get acknowledge => 'Tôi hiểu và đồng ý với các giới hạn';
+  String get acknowledge => 'Tôi hiểu và đồng ý';
 
   @override
   String get acknowledgementOnce =>
@@ -413,7 +413,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get knowBirthTimeDetail =>
-      'Giờ chính xác giúp các chu kỳ theo giờ rõ nét hơn.';
+      'Giờ sinh chính xác giúp các chu kỳ theo giờ rõ nét hơn.';
 
   @override
   String get selectBirthTime => 'Chọn giờ sinh';
@@ -444,10 +444,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get choiceWait => 'CHỜ ĐỢI';
 
   @override
-  String get choiceAdvance => 'TIẾN TỚI';
+  String get choiceAdvance => 'GẮN BÓ';
 
   @override
-  String get choiceRetreat => 'LÙI LẠI';
+  String get choiceRetreat => 'CHẤM DỨT';
 
   @override
   String get choiceStay => 'Ở LẠI';
@@ -462,16 +462,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get choiceLetGo => 'BUÔNG BỎ';
 
   @override
-  String get choiceForward => 'VỀ PHÍA TRƯỚC';
+  String get choiceForward => 'TIẾN LÊN';
 
   @override
-  String get choiceBackward => 'VỀ PHÍA SAU';
+  String get choiceBackward => 'LÙI LẠI';
 
   @override
-  String get choiceLeft => 'BÊN TRÁI';
+  String get choiceLeft => 'TRÁI';
 
   @override
-  String get choiceRight => 'BÊN PHẢI';
+  String get choiceRight => 'PHẢI';
 
   @override
   String get energyLevelQuiet => 'TĨNH LẶNG';
@@ -504,7 +504,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get colorJade => 'Ngọc bích';
 
   @override
-  String get colorSage => 'Xanh xô thơm';
+  String get colorSage => 'Xanh sage';
 
   @override
   String get colorMint => 'Xanh bạc hà';
@@ -528,7 +528,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get colorAmber => 'Hổ phách';
 
   @override
-  String get colorSand => 'Cát';
+  String get colorSand => 'Màu cát';
 
   @override
   String get colorClay => 'Đất nung';
@@ -537,7 +537,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get colorSilver => 'Bạc';
 
   @override
-  String get colorSteel => 'Thép';
+  String get colorSteel => 'Xám thép';
 
   @override
   String get colorPearl => 'Ngọc trai';
@@ -563,7 +563,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription01 =>
-      'Cảm thấy bị kéo về hai hướng? Hãy để những tín hiệu vũ trụ hôm nay gợi cho bạn một góc nhìn mới.';
+      'Đang phân vân giữa hai ngả đường? Hãy để những tín hiệu vũ trụ hôm nay gợi cho bạn một góc nhìn mới.';
 
   @override
   String get homeDescription02 =>
@@ -599,7 +599,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription10 =>
-      'Bạn vẫn đang nghĩ đi nghĩ lại về cùng một lựa chọn? Xem năng lượng hôm nay giúp bạn chú ý đến điều gì.';
+      'Bạn vẫn đang nghĩ đi nghĩ lại về cùng một lựa chọn? Hãy xem nguồn năng lượng hôm nay soi chiếu điều gì.';
 
   @override
   String get homeDescription11 =>
@@ -607,7 +607,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription12 =>
-      'Chưa biết nên tiến lên hay tạm dừng? Hãy để nhịp điệu của ngày hôm nay cho bạn một điểm bắt đầu bình tĩnh hơn.';
+      'Chưa biết nên tiến lên hay tạm dừng? Hãy để nhịp điệu của ngày hôm nay mang lại một điểm tựa bình tâm hơn.';
 
   @override
   String get homeDescription13 =>
@@ -619,7 +619,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription15 =>
-      'Có những lựa chọn bỗng nặng lòng hơn vào một thời điểm nhất định. Hãy cảm nhận năng lượng của khoảnh khắc này trước khi quyết định.';
+      'Có những lựa chọn bỗng khó nghĩ hơn vào một thời điểm nào đó. Hãy cảm nhận nguồn năng lượng quanh lựa chọn ấy trước khi quyết định.';
 
   @override
   String get homeDescription16 =>
@@ -627,7 +627,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription17 =>
-      'Trước khi làm theo một thôi thúc bất chợt, hãy hít thở và xem những dấu hiệu vũ trụ hôm nay gợi điều gì.';
+      'Trước khi làm theo một thôi thúc bất chợt, hãy hít một hơi thật sâu và xem những dấu hiệu vũ trụ hôm nay gợi điều gì.';
 
   @override
   String get homeDescription18 =>
@@ -651,7 +651,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription23 =>
-      'Có lẽ bạn không cần một câu trả lời vang hơn, chỉ cần một khoảnh khắc yên tĩnh bên những biểu tượng của hôm nay.';
+      'Có lẽ bạn không cần một câu trả lời đao to búa lớn — chỉ cần một phút lắng đọng bên những biểu tượng của hôm nay.';
 
   @override
   String get homeDescription24 =>
@@ -691,7 +691,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyQuiet03 =>
-      'Một dòng năng lượng nhẹ và yên chạy qua ngày hôm nay, mời bạn quan sát thay vì vội vàng.';
+      'Một dòng chảy nhẹ nhàng và tĩnh lặng đi qua hôm nay, nhắc bạn lắng lại quan sát thay vì vội vã.';
 
   @override
   String get energyQuiet04 =>
@@ -703,7 +703,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyQuiet06 =>
-      'Năng lượng hôm nay cho bạn khoảng trống để lắng nghe trước khi gọi tên câu trả lời.';
+      'Năng lượng hôm nay cho bạn khoảng trống để lắng nghe trước khi vội đưa ra câu trả lời.';
 
   @override
   String get energyQuiet07 =>
@@ -711,11 +711,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energySoft00 =>
-      'Năng lượng biểu tượng hôm nay chuyển động dịu dàng, phù hợp với sự quan tâm và những bước nhỏ.';
+      'Năng lượng biểu tượng hôm nay chuyển động dịu dàng, phù hợp cho sự cẩn trọng và từng bước đi nhỏ.';
 
   @override
   String get energySoft01 =>
-      'Một dòng chảy vũ trụ nhẹ nhàng đi qua hôm nay; bước nhỏ có thể tự nhiên hơn một cú nhảy lớn.';
+      'Một dòng chảy vũ trụ nhẹ nhàng đi qua hôm nay; bước nhỏ có thể tự nhiên hơn một bước nhảy vọt.';
 
   @override
   String get energySoft02 =>
@@ -787,7 +787,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyLively03 =>
-      'Nhịp điệu vũ trụ hôm nay mời bạn khám phá nhưng vẫn giữ sự sáng suốt.';
+      'Nhịp điệu vũ trụ hôm nay khơi mở bạn khám phá nhưng vẫn giữ sự sáng suốt.';
 
   @override
   String get energyLively04 =>
@@ -795,7 +795,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyLively05 =>
-      'Sự tò mò có thể là tín hiệu hữu ích; hãy xem nó dẫn về đâu trước khi cam kết.';
+      'Sự tò mò có thể là tín hiệu hữu ích; hãy xem nó dẫn về đâu trước khi đưa ra quyết định sau cùng.';
 
   @override
   String get energyLively06 =>
@@ -831,11 +831,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyBright06 =>
-      'Năng lượng hôm nay hướng ra bên ngoài; hãy nhận ra điều bạn đã sẵn sàng đưa ra ánh sáng.';
+      'Năng lượng hôm nay hướng ra bên ngoài; hãy nhận ra điều bạn đã sẵn sàng bộc lộ và thể hiện.';
 
   @override
   String get energyBright07 =>
-      'Một chút tươi sáng có thể đổi góc nhìn; những chuyển động hôm nay mời bạn nhìn về phía trước.';
+      'Một chút tươi sáng có thể đổi góc nhìn; những chuyển động hôm nay khích lệ bạn hướng về phía trước.';
 
   @override
   String get energyRadiant00 =>
@@ -843,7 +843,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyRadiant01 =>
-      'Năng lượng biểu tượng hôm nay mở rộng, mời bạn nhìn thấy nhiều hơn một con đường khả dĩ.';
+      'Năng lượng biểu tượng hôm nay mở rộng, mở ra cho bạn nhiều hơn một hướng đi triển vọng.';
 
   @override
   String get energyRadiant02 =>
@@ -855,7 +855,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyRadiant04 =>
-      'Ánh sáng đầy đặn hơn nhuộm màu năng lượng hôm nay, giúp bạn nhìn các khả năng rộng hơn.';
+      'Nguồn năng lượng hôm nay rạng rỡ và tràn đầy hơn, giúp bạn mở rộng tầm nhìn về những triển vọng phía trước.';
 
   @override
   String get energyRadiant05 =>
@@ -887,7 +887,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyFocused04 =>
-      'Khi nhiều lựa chọn cùng xuất hiện, những dấu hiệu hôm nay mời bạn tập trung vào một bước thực tế.';
+      'Khi nhiều lựa chọn cùng xuất hiện, những dấu hiệu hôm nay hướng bạn tập trung vào một bước đi thực tế.';
 
   @override
   String get energyFocused05 =>
@@ -934,7 +934,7 @@ class AppLocalizationsVi extends AppLocalizations {
       'Dòng chảy biểu tượng hôm nay nghiêng về chuyển tiếp; bạn vẫn có thể đi theo nhịp của riêng mình.';
 
   @override
-  String get defaultUserName => 'Người khám phá';
+  String get defaultUserName => 'Nhà thám hiểm';
 
   @override
   String get searchCountries => 'Tìm quốc gia';
@@ -966,7 +966,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String readingAreaSemantics(String category) {
-    return 'Lĩnh vực xem chỉ dẫn: $category';
+    return 'Lĩnh vực phân tích: $category';
   }
 
   @override
@@ -995,7 +995,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get errorNetworkDetail => 'Hãy kiểm tra kết nối rồi thử lại.';
 
   @override
-  String get errorServerHeadline => 'Hiện chưa thể hoàn tất lần xem chỉ dẫn.';
+  String get errorServerHeadline => 'Hiện chưa thể hoàn tất phân tích kết quả.';
 
   @override
   String get errorServerDetail =>
@@ -1007,7 +1007,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get errorRejectedDetail =>
-      'Hãy kiểm tra lại thông tin sinh rồi bắt đầu lần xem mới.';
+      'Hãy kiểm tra lại ngày giờ sinh rồi bắt đầu lần phân tích mới.';
 
   @override
   String get errorInvalidHeadline =>
@@ -1015,11 +1015,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get errorInvalidDetail =>
-      'Cập nhật ứng dụng có thể giúp xem chỉ dẫn trở lại.';
+      'Cập nhật ứng dụng để khôi phục tính năng phân tích kết quả.';
 
   @override
   String get errorConfigurationHeadline =>
-      'Bản ứng dụng này chưa được cấu hình dịch vụ xem chỉ dẫn.';
+      'Bản ứng dụng này chưa được cấu hình dịch vụ phân tích.';
 
   @override
   String get errorConfigurationDetail =>
@@ -1027,14 +1027,14 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get errorNothingRecorded =>
-      'Lần thử này chưa được lưu thành một lần xem chỉ dẫn.';
+      'Chưa có kết quả phân tích nào được ghi nhận cho lần này.';
 
   @override
   String get insufficientHeading => 'CHƯA ĐỦ THÔNG TIN';
 
   @override
   String get insufficientBody =>
-      'Hồ sơ của bạn chưa đủ thông tin để đưa ra một hướng cho lần này. Thêm giờ sinh và quốc gia sinh sẽ giúp phân tích chu kỳ có thêm cơ sở.';
+      'Hồ sơ của bạn chưa đủ thông tin để đưa ra định hướng cho lần này. Thêm giờ sinh và quốc gia nơi sinh sẽ giúp các chu kỳ phân tích có thêm cơ sở.';
 
   @override
   String get periodElapsedHeading => 'THỜI ĐIỂM ĐÓ ĐÃ QUA';
@@ -1045,12 +1045,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String colorsToKeepNear(String first, String second) {
-    return 'Hai màu nên ở gần bạn: $first và $second';
+    return 'Hai màu sắc may mắn bên bạn: $first và $second';
   }
 
   @override
   String colorToKeepNear(String name) {
-    return 'Màu nên ở gần bạn: $name';
+    return 'Màu sắc may mắn bên bạn: $name';
   }
 
   @override
@@ -1073,13 +1073,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get savingToHistory => 'Đang lưu vào lịch sử…';
 
   @override
-  String get responsibleUseLink => 'Sử dụng có trách nhiệm & An toàn';
+  String get responsibleUseLink =>
+      'Chính sách an toàn & sử dụng có trách nhiệm';
 
   @override
   String get historyToday => 'HÔM NAY';
 
   @override
-  String get historyCouldNotOpen => 'Không thể mở các lần xem chỉ dẫn của bạn.';
+  String get historyCouldNotOpen => 'Không thể mở lịch sử phân tích của bạn.';
 
   @override
   String get historyNotEnoughData => 'CHƯA ĐỦ DỮ LIỆU';

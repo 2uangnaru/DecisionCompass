@@ -44,11 +44,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String get signAfterBirthDate => 'ใส่วันเกิดเพื่อดูราศีของคุณ';
 
   @override
-  String get buildPattern => 'เริ่มดูรูปแบบเฉพาะตัวของคุณ';
+  String get buildPattern => 'ค้นพบพลังงานเฉพาะตัวของคุณ';
 
   @override
-  String get profileExplainer =>
-      'ข้อมูลนี้ช่วยกำหนดวงจรที่ใช้ในการอ่านแต่ละครั้ง';
+  String get profileExplainer => 'กำหนดรอบเวลาที่ใช้ในการวิเคราะห์';
 
   @override
   String get nameField => 'ชื่อ';
@@ -67,7 +66,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get birthTimeUnknownDetail =>
-      'เราจะเปรียบเทียบรูปแบบของชั่วโมงเกิดที่เป็นไปได้';
+      'หากคุณไม่ทราบเวลาเกิด ระบบจะใช้ช่วงเวลาที่ใกล้เคียงกับบุคลิกของคุณมากที่สุดในการคำนวณ';
 
   @override
   String get timeOfBirth => 'เวลาเกิด';
@@ -89,7 +88,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'ในต้นแบบนี้ ข้อมูลการเกิดของคุณจะยังเป็นส่วนตัว';
 
   @override
-  String get homeEyebrow => 'เข็มทิศในยามลังเล';
+  String get homeEyebrow => 'เข็มทิศนำทางเพื่อช่วยคุณ';
 
   @override
   String get homeTitle => 'กำลังลังเลระหว่างตัวเลือกใช่ไหม';
@@ -98,7 +97,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get areaQuestion => 'เรื่องที่คุณกำลังคิดอยู่เกี่ยวกับอะไร';
 
   @override
-  String get findDirection => 'ดูแนวทางของฉัน';
+  String get findDirection => 'ค้นหาเส้นทางของคุณ';
 
   @override
   String get todaySignals => 'สัญญาณวันนี้';
@@ -122,7 +121,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get categoryCareer => 'การงาน';
 
   @override
-  String get categoryMoney => 'รายจ่ายประจำวัน';
+  String get categoryMoney => 'การเงิน';
 
   @override
   String get categoryStudy => 'การเรียนรู้และเติบโต';
@@ -160,7 +159,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get reveal => 'ดูผล';
+  String get reveal => 'วิเคราะห์';
 
   @override
   String get aligning => 'กำลังปรับสัญญาณ';
@@ -180,7 +179,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get loadingReassurance =>
-      'รอสักครู่นะ ฉันกำลังรวบรวมสัญญาณจากจักรวาลให้ชัดเจนขึ้น';
+      'โปรดรอสักครู่ สัญญาณจากจักรวาลกำลังรวมตัวกัน';
 
   @override
   String readingForCategory(String category) {
@@ -191,7 +190,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get yourDirection => 'แนวทางของคุณ';
 
   @override
-  String get resultBasis => 'อ้างอิงจากวงจรเฉพาะตัวของคุณและช่วงเวลานี้';
+  String get resultBasis =>
+      'อิงตามพลังงานและสัญญาณจักรวาลที่สอดคล้องกับคุณในขณะนี้';
 
   @override
   String get percentageCaveat =>
@@ -276,8 +276,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get loadingModeActWait => 'กำลังชั่งแรงขับกับความอดทน';
 
   @override
-  String get loadingModeAdvanceRetreat =>
-      'กำลังอ่านการขยายตัวเทียบกับการถอยกลับ';
+  String get loadingModeAdvanceRetreat => 'กำลังเทียบความผูกพันกับการยุติ';
 
   @override
   String get loadingModeStayGo => 'กำลังเทียบความผูกพันกับการเคลื่อนไหว';
@@ -378,7 +377,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      'หมวดรายจ่ายประจำวันมีไว้ทบทวนรายจ่ายเล็กน้อยเท่านั้น ห้ามใช้ผลการอ่านเพื่อลงทุน กู้ยืม เดิมพันคริปโต เล่นพนัน หรือตัดสินใจทางการเงินเรื่องใหญ่';
+      'หมวดการเงินมีไว้ทบทวนรายจ่ายเล็กน้อยเท่านั้น ห้ามใช้ผลการอ่านเพื่อลงทุน กู้ยืม เดิมพันคริปโต เล่นพนัน หรือตัดสินใจทางการเงินเรื่องใหญ่';
 
   @override
   String get consentTitle => 'ความยินยอม ผู้เยาว์ และความสัมพันธ์';
@@ -399,7 +398,7 @@ class AppLocalizationsTh extends AppLocalizations {
       'หากคุณหรือผู้อื่นกำลังตกอยู่ในอันตรายทันทีหรือภาวะวิกฤตทางใจ ให้ติดต่อบริการฉุกเฉินหรือสายด่วนช่วยเหลือในพื้นที่ที่เชื่อถือได้ทันที';
 
   @override
-  String get acknowledge => 'ฉันเข้าใจและยอมรับขอบเขตการใช้งาน';
+  String get acknowledge => 'ฉันเข้าใจและยอมรับ';
 
   @override
   String get acknowledgementOnce =>
@@ -441,7 +440,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get choiceWait => 'รอ';
 
   @override
-  String get choiceAdvance => 'รุก';
+  String get choiceAdvance => 'ผูกพัน';
 
   @override
   String get choiceRetreat => 'ถอย';

@@ -45,11 +45,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'TU SIGNO APARECERÁ AL INDICAR TU FECHA DE NACIMIENTO';
 
   @override
-  String get buildPattern => 'Descubre tus patrones personales.';
+  String get buildPattern => 'Descubre tu propia energía.';
 
   @override
-  String get profileExplainer =>
-      'Estos datos dan forma a los ciclos que usamos en cada lectura.';
+  String get profileExplainer => 'Define los ciclos utilizados en el análisis.';
 
   @override
   String get nameField => 'Nombre';
@@ -69,7 +68,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get birthTimeUnknownDetail =>
-      'Compararemos los patrones posibles de la hora de nacimiento.';
+      'Si no sabes tu hora de nacimiento, el algoritmo usará el horario más cercano a tu personalidad.';
 
   @override
   String get timeOfBirth => 'Hora de nacimiento';
@@ -92,7 +91,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'En este prototipo, tus datos de nacimiento se mantienen privados.';
 
   @override
-  String get homeEyebrow => 'UNA BRÚJULA PARA LOS MOMENTOS DE DUDA';
+  String get homeEyebrow => 'UNA BRÚJULA QUE GUÍA TU CAMINO';
 
   @override
   String get homeTitle => '¿No sabes qué camino elegir?';
@@ -101,7 +100,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get areaQuestion => '¿Sobre qué tema?';
 
   @override
-  String get findDirection => 'Explorar mi dirección';
+  String get findDirection => 'Encuentra tu camino';
 
   @override
   String get todaySignals => 'SEÑALES DE HOY';
@@ -125,7 +124,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get categoryCareer => 'Trabajo';
 
   @override
-  String get categoryMoney => 'Gastos cotidianos';
+  String get categoryMoney => 'Finanzas';
 
   @override
   String get categoryStudy => 'Estudios y crecimiento';
@@ -163,7 +162,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get reveal => 'REVELAR';
+  String get reveal => 'ANALIZAR';
 
   @override
   String get aligning => 'ALINEANDO';
@@ -184,7 +183,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get loadingReassurance =>
-      'Dame un momento: estoy enfocando las señales cósmicas de este instante.';
+      'Un momento, por favor: las señales cósmicas se están alineando.';
 
   @override
   String readingForCategory(String category) {
@@ -195,7 +194,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get yourDirection => 'TU DIRECCIÓN';
 
   @override
-  String get resultBasis => 'Basado en tus ciclos personales y este momento.';
+  String get resultBasis =>
+      'Basado en la energía y las señales cósmicas para ti en este momento.';
 
   @override
   String get percentageCaveat =>
@@ -279,7 +279,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get loadingModeActWait => 'Equilibrando impulso y paciencia';
 
   @override
-  String get loadingModeAdvanceRetreat => 'Leyendo expansión y repliegue';
+  String get loadingModeAdvanceRetreat => 'Equilibrando compromiso y retirada';
 
   @override
   String get loadingModeStayGo => 'Comparando arraigo y movimiento';
@@ -380,7 +380,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      'La sección Gastos cotidianos solo sirve para reflexionar sobre compras pequeñas y habituales. Nunca uses una lectura para invertir, pedir préstamos, apostar con criptoactivos, jugar dinero ni tomar decisiones financieras importantes.';
+      'La sección Finanzas solo sirve para reflexionar sobre compras pequeñas y habituales. Nunca uses una lectura para invertir, pedir préstamos, apostar con criptoactivos, jugar dinero ni tomar decisiones financieras importantes.';
 
   @override
   String get consentTitle => 'Consentimiento, menores y relaciones';
@@ -401,7 +401,7 @@ class AppLocalizationsEs extends AppLocalizations {
       'Si tú u otra persona están en peligro inmediato o en una crisis emocional, contacta ahora a los servicios de emergencia locales o a una línea de ayuda de confianza de tu zona.';
 
   @override
-  String get acknowledge => 'Entiendo y acepto estos límites';
+  String get acknowledge => 'Entiendo y acepto';
 
   @override
   String get acknowledgementOnce =>
@@ -443,7 +443,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get choiceWait => 'ESPERAR';
 
   @override
-  String get choiceAdvance => 'AVANZAR';
+  String get choiceAdvance => 'COMPROMETERSE';
 
   @override
   String get choiceRetreat => 'RETIRARSE';
