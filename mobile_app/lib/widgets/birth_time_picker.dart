@@ -553,7 +553,13 @@ class _Dial extends StatelessWidget {
                     Positioned.fill(
                       child: CustomPaint(
                         painter: _DialHandPainter(
-                          radius: radius,
+                          // The hour hand reads as an hour hand — shorter
+                          // than the minute hand, the way an analog clock
+                          // draws it — rather than reaching all the way to
+                          // the ring, which is where only the minute values
+                          // actually sit.
+                          hourLength: radius * 0.55,
+                          minuteLength: radius,
                           hourAngle: _hourAngle,
                           minuteAngle: _minuteAngle,
                           activeRing: ring,
@@ -651,7 +657,8 @@ class _Dial extends StatelessWidget {
 /// visually anchor each chosen value to the centre of the clock face.
 class _DialHandPainter extends CustomPainter {
   const _DialHandPainter({
-    required this.radius,
+    required this.hourLength,
+    required this.minuteLength,
     required this.hourAngle,
     required this.minuteAngle,
     required this.activeRing,
@@ -659,10 +666,11 @@ class _DialHandPainter extends CustomPainter {
     required this.inactiveColor,
   });
 
-  /// Distance from the dial's centre to a number's own centre — the same
-  /// value the number buttons are positioned with, so a hand's tip lands
-  /// exactly under its selected button rather than merely near it.
-  final double radius;
+  /// How far each hand reaches from the centre. The minute hand matches the
+  /// ring's own radius, so its tip lands exactly under the selected minute's
+  /// button; the hour hand is shorter, the way an analog clock draws it.
+  final double hourLength;
+  final double minuteLength;
 
   /// Clockwise from twelve o'clock, or null while that half has no answer
   /// yet — that hand simply is not drawn then.
@@ -680,11 +688,10 @@ class _DialHandPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
-    void drawHand(double? angle, bool active) {
+    void drawHand(double? angle, double length, bool active) {
       if (angle == null) return;
       final tip =
-          center +
-          Offset(math.sin(angle) * radius, -math.cos(angle) * radius);
+          center + Offset(math.sin(angle) * length, -math.cos(angle) * length);
       canvas.drawLine(
         center,
         tip,
@@ -699,16 +706,22 @@ class _DialHandPainter extends CustomPainter {
     // the two would otherwise overlap near the centre.
     drawHand(
       activeRing == _Ring.hour ? minuteAngle : hourAngle,
+      activeRing == _Ring.hour ? minuteLength : hourLength,
       false,
     );
-    drawHand(activeRing == _Ring.hour ? hourAngle : minuteAngle, true);
+    drawHand(
+      activeRing == _Ring.hour ? hourAngle : minuteAngle,
+      activeRing == _Ring.hour ? hourLength : minuteLength,
+      true,
+    );
 
     canvas.drawCircle(center, 4, Paint()..color = activeColor);
   }
 
   @override
   bool shouldRepaint(covariant _DialHandPainter oldDelegate) =>
-      oldDelegate.radius != radius ||
+      oldDelegate.hourLength != hourLength ||
+      oldDelegate.minuteLength != minuteLength ||
       oldDelegate.hourAngle != hourAngle ||
       oldDelegate.minuteAngle != minuteAngle ||
       oldDelegate.activeRing != activeRing ||
