@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -30,23 +29,23 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   );
 
   /// Seamless startup ascension: the star begins precisely at the screen's
-  /// geometric center (Y=50) matching the Android 12+ system splash icon,
-  /// rests gently, then ascends gracefully to rest position (Y=0) reaching completion at 1.0s.
+  /// geometric center (Y=89 matching the Android 12+ system splash icon exactly 1:1),
+  /// then ascends gracefully with natural momentum to rest position (Y=0) reaching completion at 1.0s.
   late final Animation<Offset> _starAscend = Tween<Offset>(
-    begin: const Offset(0.0, 50.0),
+    begin: const Offset(0.0, 89.0),
     end: Offset.zero,
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.08, 0.35, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
     ),
   );
 
-  /// Flanking satellite stars bloom outward as the central star ascends,
+  /// Flanking satellite stars bloom outward simultaneously as the central star ascends,
   /// creating a 3-star constellation with organic celestial breathing (completing at 1.0s).
   late final Animation<double> _subStarsBloom = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.12, 0.36, curve: Curves.easeOutCubic),
+    curve: const Interval(0.0, 0.35, curve: Curves.easeOutCubic),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
@@ -94,7 +93,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   /// and softly illuminates to 1.0 as the star ascends and spawns the companion stars (0.3s -> 1.0s).
   late final Animation<double> _backgroundFade = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.10, 0.38, curve: Curves.easeOutCubic),
+    curve: const Interval(0.0, 0.38, curve: Curves.easeOutCubic),
   );
 
   /// Slow majestic celestial orbit rotation (period: 40s)
@@ -115,7 +114,6 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   bool? _reduceMotion;
   bool _hasStartedEntrance = false;
-  Timer? _entranceTimer;
 
   @override
   void initState() {
@@ -124,15 +122,10 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       widget.onFirstFrame?.call();
-      // Allow a brief, imperceptible pause (100ms) for the native splash
-      // dismissal to finish and the user's display to present the first frame,
-      // so the star is visibly observed resting at center before it ascends
-      // and spawns the companion stars.
-      _entranceTimer = Timer(const Duration(milliseconds: 100), () {
-        if (!mounted || _hasStartedEntrance) return;
+      if (!_hasStartedEntrance) {
         _hasStartedEntrance = true;
         _entrance.forward(from: 0.0);
-      });
+      }
     });
   }
 
@@ -159,7 +152,6 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
   @override
   void dispose() {
-    _entranceTimer?.cancel();
     _dots.dispose();
     _ringsRotation.dispose();
     _entrance.dispose();

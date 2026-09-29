@@ -5,13 +5,22 @@
     android:height="432dp"
     android:viewportWidth="432"
     android:viewportHeight="432">
-    <!-- Soft starlight halo aura (centered at 216, 216) -->
+    <!-- Soft starlight halo aura with smooth radial falloff (centered at 216, 216) -->
     <path
-        android:fillColor="#1CD8B66A"
-        android:pathData="M216,162 A54,54 0 1,0 216,270 A54,54 0 1,0 216,162 Z" />
-    <path
-        android:fillColor="#2C62B7E8"
-        android:pathData="M216,184 A32,32 0 1,0 216,248 A32,32 0 1,0 216,184 Z" />
+        android:pathData="M216,156 A60,60 0 1,0 216,276 A60,60 0 1,0 216,156 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="216"
+                android:centerY="216"
+                android:gradientRadius="60">
+                <item android:offset="0" android:color="#30FFEAB0" />
+                <item android:offset="0.45" android:color="#18D8B66A" />
+                <item android:offset="0.80" android:color="#0862B7E8" />
+                <item android:offset="1.0" android:color="#00000000" />
+            </gradient>
+        </aapt:attr>
+    </path>
     <!-- 4-point celestial star (centered at 216, 216) -->
     <path
         android:strokeColor="#50D8B66A"
