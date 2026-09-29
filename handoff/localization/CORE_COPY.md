@@ -17,24 +17,24 @@ This is the **core-screen batch**, not the whole-app translation: the 30 Home de
 | onboardingLanguageHint | Prefer another language? Tap the globe above. You can change it anytime. | 別の言語で使いたい方は、上の地球アイコンをタップしてください。言語はいつでも変更できます。 | ¿Prefieres otro idioma? Toca el icono del globo de arriba. Puedes cambiarlo cuando quieras. | อยากใช้ภาษาอื่นไหม? แตะไอคอนรูปโลกด้านบน คุณเปลี่ยนภาษาได้ทุกเมื่อ |
 | yourProfile | YOUR PROFILE | あなたのプロフィール | TU PERFIL | โปรไฟล์ของคุณ |
 | signAfterBirthDate | YOUR SIGN APPEARS AFTER YOUR BIRTH DATE | 生年月日を入力すると星座が表示されます | TU SIGNO APARECERÁ AL INDICAR TU FECHA DE NACIMIENTO | ใส่วันเกิดเพื่อดูราศีของคุณ |
-| buildPattern | Build your personal pattern. | あなた自身のパターンを描きましょう。 | Descubre tus patrones personales. | เริ่มดูรูปแบบเฉพาะตัวของคุณ |
-| profileExplainer | These details shape the cycles used in every reading. | 入力した情報をもとに、毎回のリーディングで使う周期を組み立てます。 | Estos datos dan forma a los ciclos que usamos en cada lectura. | ข้อมูลนี้ช่วยกำหนดวงจรที่ใช้ในการอ่านแต่ละครั้ง |
+| buildPattern | Discover your unique energy. | あなただけのエネルギーを見つけましょう。 | Descubre tu propia energía. | ค้นพบพลังงานเฉพาะตัวของคุณ |
+| profileExplainer | Shapes the cycles used during analysis. | 分析時に用いる周期を導き出します。 | Define los ciclos utilizados en el análisis. | กำหนดรอบเวลาที่ใช้ในการวิเคราะห์ |
 | nameField | Name | 名前 | Nombre | ชื่อ |
 | dateOfBirth | Date of birth | 生年月日 | Fecha de nacimiento | วันเกิด |
 | selectBirthDate | Select your date of birth | 生年月日を選択 | Selecciona tu fecha de nacimiento | เลือกวันเกิดของคุณ |
 | birthDateRequired | Select your birth date to continue. | 続けるには生年月日を選択してください。 | Selecciona tu fecha de nacimiento para continuar. | โปรดเลือกวันเกิดก่อนดำเนินต่อ |
 | birthTimeUnknown | Birth time unknown | 出生時刻が不明 | No sé mi hora de nacimiento | ไม่ทราบเวลาเกิด |
-| birthTimeUnknownDetail | We will compare possible birth-hour patterns. | 複数の出生時刻のパターンを比較します。 | Compararemos los patrones posibles de la hora de nacimiento. | เราจะเปรียบเทียบรูปแบบของชั่วโมงเกิดที่เป็นไปได้ |
+| birthTimeUnknownDetail | If you don't know your birth time, the algorithm will use the time window closest to your personality. | 出生時刻が分からない場合、あなたの性格に最も近い時間帯を用いて算出します。 | Si no sabes tu hora de nacimiento, el algoritmo usará el horario más cercano a tu personalidad. | หากคุณไม่ทราบเวลาเกิด ระบบจะใช้ช่วงเวลาที่ใกล้เคียงกับบุคลิกของคุณมากที่สุดในการคำนวณ |
 | timeOfBirth | Time of birth | 出生時刻 | Hora de nacimiento | เวลาเกิด |
 | countryOfBirth | Country of birth | 出生国 | País de nacimiento | ประเทศที่เกิด |
 | selectBirthCountry | Search and select a country | 国を検索して選択 | Busca y selecciona un país | ค้นหาและเลือกประเทศ |
 | birthCountryRequired | Select your country of birth to continue. | 続けるには出生国を選択してください。 | Selecciona tu país de nacimiento para continuar. | โปรดเลือกประเทศที่เกิดก่อนดำเนินต่อ |
 | createCompass | Create My Compass | 私のコンパスを作る | Crear mi brújula | สร้างเข็มทิศของฉัน |
 | birthPrivacyPrototype | Your birth details remain private in this prototype. | この試作版では、出生情報は非公開のまま保たれます。 | En este prototipo, tus datos de nacimiento se mantienen privados. | ในต้นแบบนี้ ข้อมูลการเกิดของคุณจะยังเป็นส่วนตัว |
-| homeEyebrow | A COMPASS FOR UNCERTAIN MOMENTS | 迷いの瞬間に寄り添うコンパス | UNA BRÚJULA PARA LOS MOMENTOS DE DUDA | เข็มทิศในยามลังเล |
+| homeEyebrow | A COMPASS TO GUIDE YOUR PATH | あなたを導く、心の羅針盤 | UNA BRÚJULA QUE GUÍA TU CAMINO | เข็มทิศนำทางเพื่อช่วยคุณ |
 | homeTitle | Caught between choices? | 選択肢の間で迷っていますか？ | ¿No sabes qué camino elegir? | กำลังลังเลระหว่างตัวเลือกใช่ไหม |
 | areaQuestion | What area is this about? | どんなことについてですか？ | ¿Sobre qué tema? | เรื่องที่คุณกำลังคิดอยู่เกี่ยวกับอะไร |
-| findDirection | Find My Direction | 方向性を見てみる | Explorar mi dirección | ดูแนวทางของฉัน |
+| findDirection | Find Your Path | 進むべき道を見つける | Encuentra tu camino | ค้นหาเส้นทางของคุณ |
 | todaySignals | TODAY’S SIGNALS | 今日のサイン | SEÑALES DE HOY | สัญญาณวันนี้ |
 | dailyEnergy | Daily energy | 今日のエネルギー | Energía de hoy | พลังงานวันนี้ |
 | yourColorsToday | Your colors today: | 今日の色： | Tus colores de hoy: | สีของคุณวันนี้: |
@@ -42,7 +42,7 @@ This is the **core-screen batch**, not the whole-app translation: the 30 Home de
 | categoryOverall | Overall | 全体 | General | ภาพรวม |
 | categoryLove | Love & Relationships | 恋愛・人間関係 | Amor y relaciones | ความรักและความสัมพันธ์ |
 | categoryCareer | Career | 仕事 | Trabajo | การงาน |
-| categoryMoney | Everyday Spending | 日々の支出 | Gastos cotidianos | รายจ่ายประจำวัน |
+| categoryMoney | Finances | 財務 | Finanzas | การเงิน |
 | categoryStudy | Study & Growth | 学び・成長 | Estudios y crecimiento | การเรียนรู้และเติบโต |
 | categoryFriends | Friends | 友人 | Amistades | เพื่อน |
 | categoryOther | Something Else | その他 | Otro tema | เรื่องอื่น ๆ |
@@ -54,16 +54,16 @@ This is the **core-screen batch**, not the whole-app translation: the 30 Home de
 | periodEvening | Evening | 夜 | Noche | ช่วงเย็น |
 | periodPassed | Passed | 終了 | Pasado | ผ่านไปแล้ว |
 | periodHasPassed | {period} has passed. Choose another time. | {period}は過ぎました。別の時間帯を選んでください。 | {period} ya pasó. Elige otro momento. | ช่วง{period}ผ่านไปแล้ว โปรดเลือกช่วงเวลาอื่น |
-| reveal | REVEAL | 見てみる | REVELAR | ดูผล |
+| reveal | ANALYZE | 分析する | ANALIZAR | วิเคราะห์ |
 | aligning | ALIGNING | 調整中 | ALINEANDO | กำลังปรับสัญญาณ |
 | tapWhenReady | Tap when you’re ready | 準備ができたらタップ | Toca cuando estés listo | แตะเมื่อคุณพร้อม |
 | keepChoiceInMind | Keep the choice clearly in your mind. | 迷っていることを心に思い浮かべてください。 | Ten presente la decisión que estás considerando. | นึกถึงสิ่งที่คุณกำลังลังเลให้ชัดเจน |
 | ritualSafety | For everyday reflection only • Never for medical, investing, borrowing, political, or harmful choices. | 日常の振り返り専用です。医療・投資・借入・政治・危険な判断には使わないでください。 | Solo para reflexionar sobre asuntos cotidianos. Nunca para decisiones médicas, de inversión, de préstamos, políticas o que puedan causar daño. | ใช้เพื่อทบทวนเรื่องทั่วไปในชีวิตประจำวันเท่านั้น ห้ามใช้ตัดสินใจเรื่องการแพทย์ การลงทุน การกู้ยืม การเมือง หรือสิ่งที่อาจก่ออันตราย |
 | loadingLocalMoment | READING YOUR LOCAL MOMENT | 今この場所の瞬間を読み解いています | LEYENDO TU MOMENTO LOCAL | กำลังอ่านสัญญาณ ณ เวลาของคุณ |
-| loadingReassurance | Give me a moment — I’m still bringing your cosmic signals into focus. | もう少しお待ちください。宇宙のサインを整理しています。 | Dame un momento: estoy enfocando las señales cósmicas de este instante. | รอสักครู่นะ ฉันกำลังรวบรวมสัญญาณจากจักรวาลให้ชัดเจนขึ้น |
+| loadingReassurance | Please wait a moment — cosmic signals are coming into focus. | 少々お待ちください。宇宙のサインを整えています。 | Un momento, por favor: las señales cósmicas se están alineando. | โปรดรอสักครู่ สัญญาณจากจักรวาลกำลังรวมตัวกัน |
 | readingForCategory | Reading for {category} | {category}について読み解いています | Lectura sobre {category} | กำลังอ่านเรื่อง{category} |
 | yourDirection | YOUR DIRECTION | あなたへの方向性 | TU DIRECCIÓN | แนวทางของคุณ |
-| resultBasis | Based on your personal cycles and this moment. | あなた自身の周期と、この瞬間をもとにしています。 | Basado en tus ciclos personales y este momento. | อ้างอิงจากวงจรเฉพาะตัวของคุณและช่วงเวลานี้ |
+| resultBasis | Based on the cosmic energy and signals aligned with you at this moment. | この瞬間のあなたに寄り添うエネルギーと宇宙のサインに基づいて。 | Basado en la energía y las señales cósmicas para ti en este momento. | อิงตามพลังงานและสัญญาณจักรวาลที่สอดคล้องกับคุณในขณะนี้ |
 | percentageCaveat | Percentages show symbolic alignment, not a real-world probability. | パーセンテージは象徴的な一致度であり、現実の確率ではありません。 | Los porcentajes muestran una afinidad simbólica, no una probabilidad real. | เปอร์เซ็นต์แสดงความสอดคล้องเชิงสัญลักษณ์ ไม่ใช่ความน่าจะเป็นจริง |
 | balancedHeading | EVENLY BALANCED | どちらも均衡 | EQUILIBRIO | สมดุลทั้งสองด้าน |
 | balancedResult | BALANCED | 均衡 | EQUILIBRADO | สมดุล |

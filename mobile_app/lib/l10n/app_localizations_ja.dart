@@ -44,10 +44,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get signAfterBirthDate => '生年月日を入力すると星座が表示されます';
 
   @override
-  String get buildPattern => 'あなた自身のパターンを描きましょう。';
+  String get buildPattern => 'あなただけのエネルギーを見つけましょう。';
 
   @override
-  String get profileExplainer => '入力した情報をもとに、毎回のリーディングで使う周期を組み立てます。';
+  String get profileExplainer => '分析時に用いる周期を導き出します。';
 
   @override
   String get nameField => '名前';
@@ -65,7 +65,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthTimeUnknown => '出生時刻が不明';
 
   @override
-  String get birthTimeUnknownDetail => '複数の出生時刻のパターンを比較します。';
+  String get birthTimeUnknownDetail => '出生時刻が分からない場合、あなたの性格に最も近い時間帯を用いて算出します。';
 
   @override
   String get timeOfBirth => '出生時刻';
@@ -86,7 +86,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthPrivacyPrototype => 'この試作版では、出生情報は非公開のまま保たれます。';
 
   @override
-  String get homeEyebrow => '迷いの瞬間に寄り添うコンパス';
+  String get homeEyebrow => 'あなたを導く、心の羅針盤';
 
   @override
   String get homeTitle => '選択肢の間で迷っていますか？';
@@ -95,7 +95,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get areaQuestion => 'どんなことについてですか？';
 
   @override
-  String get findDirection => '方向性を見てみる';
+  String get findDirection => '進むべき道を見つける';
 
   @override
   String get todaySignals => '今日のサイン';
@@ -119,7 +119,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get categoryCareer => '仕事';
 
   @override
-  String get categoryMoney => '日々の支出';
+  String get categoryMoney => '財務';
 
   @override
   String get categoryStudy => '学び・成長';
@@ -157,7 +157,7 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
-  String get reveal => '見てみる';
+  String get reveal => '分析する';
 
   @override
   String get aligning => '調整中';
@@ -175,7 +175,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get loadingLocalMoment => '今この場所の瞬間を読み解いています';
 
   @override
-  String get loadingReassurance => 'もう少しお待ちください。宇宙のサインを整理しています。';
+  String get loadingReassurance => '少々お待ちください。宇宙のサインを整えています。';
 
   @override
   String readingForCategory(String category) {
@@ -186,7 +186,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get yourDirection => 'あなたへの方向性';
 
   @override
-  String get resultBasis => 'あなた自身の周期と、この瞬間をもとにしています。';
+  String get resultBasis => 'この瞬間のあなたに寄り添うエネルギーと宇宙のサインに基づいて。';
 
   @override
   String get percentageCaveat => 'パーセンテージは象徴的な一致度であり、現実の確率ではありません。';
@@ -262,7 +262,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get loadingModeActWait => '行動の勢いと待つ余地を比べています';
 
   @override
-  String get loadingModeAdvanceRetreat => '広がる動きと引く動きを読み解いています';
+  String get loadingModeAdvanceRetreat => 'コミットする動きと身を引く動きを読み解いています';
 
   @override
   String get loadingModeStayGo => '根づくことと動くことを比べています';
@@ -358,7 +358,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      '「日々の支出」は少額の支出を振り返るためだけの項目です。投資、借入、暗号資産への投機、ギャンブル、重大な金銭判断には使わないでください。';
+      '「財務」は少額の支出を振り返るためだけの項目です。投資、借入、暗号資産への投機、ギャンブル、重大な金銭判断には使わないでください。';
 
   @override
   String get consentTitle => '同意・未成年者・人間関係';
@@ -378,7 +378,7 @@ class AppLocalizationsJa extends AppLocalizations {
       'あなたや周囲の人が差し迫った危険や心の危機にある場合は、地域の緊急サービスまたは信頼できる相談窓口にすぐ連絡してください。';
 
   @override
-  String get acknowledge => '注意事項を理解し、同意する';
+  String get acknowledge => '理解して同意する';
 
   @override
   String get acknowledgementOnce => 'この確認は、最初のリーディング前に一度だけ表示されます。';

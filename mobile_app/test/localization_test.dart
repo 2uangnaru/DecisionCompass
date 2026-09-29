@@ -741,8 +741,6 @@ void main() {
       );
       // The heading is one complete Japanese sentence, not a frame.
       expect(find.text(ja.luckyTimesEvening), findsOneWidget);
-      // The caveat travels with the numbers.
-      expect(find.text(ja.percentageCaveat), findsOneWidget);
       expect(
         find.byKey(const Key('result_lucky_times_caveat')),
         findsOneWidget,

@@ -362,22 +362,23 @@ class _OnboardingPageState extends State<OnboardingPage> {
                     size: 72,
                     color: CompassColors.gold,
                   )
-                : ZodiacAvatar(
-                    size: 92,
-                    glow: true,
-                    sign: zodiacForDate(_birthDate!),
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ZodiacAvatar(
+                        size: 92,
+                        glow: true,
+                        sign: zodiacForDate(_birthDate!),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        zodiacLabel(l10n, zodiacForDate(_birthDate!)),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.labelSmall
+                            ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
+                      ),
+                    ],
                   ),
-          ),
-          const SizedBox(height: 8),
-          Center(
-            child: Text(
-              _birthDate == null
-                  ? l10n.signAfterBirthDate
-                  : zodiacLabel(l10n, zodiacForDate(_birthDate!)),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.labelSmall
-                  ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
-            ),
           ),
           const SizedBox(height: 20),
           Text(

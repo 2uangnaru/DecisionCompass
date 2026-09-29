@@ -45,11 +45,11 @@ class AppLocalizationsHi extends AppLocalizations {
       'जन्मतिथि चुनने पर आपकी पश्चिमी सूर्य राशि दिखेगी';
 
   @override
-  String get buildPattern => 'अपनी व्यक्तिगत लय को जानें।';
+  String get buildPattern => 'अपनी अनूठी ऊर्जा को पहचानें।';
 
   @override
   String get profileExplainer =>
-      'इन विवरणों से हर बार पढ़े जाने वाले व्यक्तिगत चक्र तय होते हैं।';
+      'विश्लेषण में उपयोग किए जाने वाले चक्रों को निर्धारित करता है।';
 
   @override
   String get nameField => 'नाम';
@@ -68,7 +68,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get birthTimeUnknownDetail =>
-      'हम जन्म के अलग-अलग संभावित घंटों के पैटर्न की तुलना करेंगे।';
+      'यदि आपको अपना जन्म समय नहीं पता, तो एल्गोरिदम आपके व्यक्तित्व के सबसे करीब के समय का उपयोग करेगा।';
 
   @override
   String get timeOfBirth => 'जन्म का समय';
@@ -90,7 +90,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'इस प्रोटोटाइप में आपके जन्म से जुड़े विवरण निजी रहते हैं।';
 
   @override
-  String get homeEyebrow => 'उलझन के पलों में एक दिशासूचक';
+  String get homeEyebrow => 'आपका मार्गदर्शन करने वाला दिशासूचक';
 
   @override
   String get homeTitle => 'दो विकल्पों के बीच उलझे हैं?';
@@ -99,7 +99,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get areaQuestion => 'यह किस विषय से जुड़ा है?';
 
   @override
-  String get findDirection => 'अपनी दिशा देखें';
+  String get findDirection => 'अपनी दिशा खोजें';
 
   @override
   String get todaySignals => 'आज के संकेत';
@@ -123,7 +123,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get categoryCareer => 'करियर';
 
   @override
-  String get categoryMoney => 'रोज़मर्रा के खर्च';
+  String get categoryMoney => 'वित्त';
 
   @override
   String get categoryStudy => 'पढ़ाई और विकास';
@@ -161,7 +161,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String get reveal => 'परिणाम देखें';
+  String get reveal => 'विश्लेषण करें';
 
   @override
   String get aligning => 'संकेत मिला रहे हैं';
@@ -182,7 +182,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loadingReassurance =>
-      'बस एक पल — मैं इस समय के ब्रह्मांडीय संकेतों को और स्पष्ट कर रहा हूँ।';
+      'कृपया थोड़ा इंतज़ार करें — इस समय के ब्रह्मांडीय संकेत संरेखित हो रहे हैं।';
 
   @override
   String readingForCategory(String category) {
@@ -193,7 +193,8 @@ class AppLocalizationsHi extends AppLocalizations {
   String get yourDirection => 'आपकी दिशा';
 
   @override
-  String get resultBasis => 'आपके व्यक्तिगत चक्रों और इस पल के आधार पर।';
+  String get resultBasis =>
+      'इस समय आपके लिए संरेखित ऊर्जा और ब्रह्मांडीय संकेतों के आधार पर।';
 
   @override
   String get percentageCaveat =>
@@ -279,7 +280,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'विस्तार और पीछे हटने की प्रवृत्ति देख रहे हैं';
+      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
 
   @override
   String get loadingModeStayGo =>
@@ -383,7 +384,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get financeDetail =>
-      'रोज़मर्रा के खर्च वाला विषय केवल छोटे खर्चों पर सोचने के लिए है। निवेश, उधार, क्रिप्टो पर दाँव, जुए या बड़े आर्थिक फैसलों के लिए किसी विश्लेषण का उपयोग न करें।';
+      'वित्त वाला विषय केवल छोटे खर्चों पर सोचने के लिए है। निवेश, उधार, क्रिप्टो पर दाँव, जुए या बड़े आर्थिक फैसलों के लिए किसी विश्लेषण का उपयोग न करें।';
 
   @override
   String get consentTitle => 'सहमति, नाबालिग और रिश्ते';
@@ -404,7 +405,7 @@ class AppLocalizationsHi extends AppLocalizations {
       'यदि आप या कोई और तत्काल खतरे या भावनात्मक संकट में हैं, तो अभी स्थानीय आपात सेवा या भरोसेमंद स्थानीय संकट हेल्पलाइन से संपर्क करें।';
 
   @override
-  String get acknowledge => 'मैं सीमाएँ समझता/समझती हूँ और सहमत हूँ';
+  String get acknowledge => 'मैं समझता हूँ और सहमत हूँ';
 
   @override
   String get acknowledgementOnce =>
@@ -446,7 +447,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get choiceWait => 'प्रतीक्षा करें';
 
   @override
-  String get choiceAdvance => 'आगे बढ़ें';
+  String get choiceAdvance => 'प्रतिबद्ध हों';
 
   @override
   String get choiceRetreat => 'पीछे हटें';
@@ -1169,11 +1170,11 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
       'जन्मतिथि चुनने पर आपकी पश्चिमी सूर्य राशि दिखेगी';
 
   @override
-  String get buildPattern => 'अपनी व्यक्तिगत लय को जानें।';
+  String get buildPattern => 'अपनी अनूठी ऊर्जा को पहचानें।';
 
   @override
   String get profileExplainer =>
-      'इन विवरणों से हर बार पढ़े जाने वाले व्यक्तिगत चक्र तय होते हैं।';
+      'विश्लेषण में उपयोग किए जाने वाले चक्रों को निर्धारित करता है।';
 
   @override
   String get nameField => 'नाम';
@@ -1192,7 +1193,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get birthTimeUnknownDetail =>
-      'हम जन्म के अलग-अलग संभावित घंटों के पैटर्न की तुलना करेंगे।';
+      'यदि आपको अपना जन्म समय नहीं पता, तो एल्गोरिदम आपके व्यक्तित्व के सबसे करीब के समय का उपयोग करेगा।';
 
   @override
   String get timeOfBirth => 'जन्म का समय';
@@ -1214,7 +1215,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
       'इस प्रोटोटाइप में आपके जन्म से जुड़े विवरण निजी रहते हैं।';
 
   @override
-  String get homeEyebrow => 'उलझन के पलों में एक दिशासूचक';
+  String get homeEyebrow => 'आपका मार्गदर्शन करने वाला दिशासूचक';
 
   @override
   String get homeTitle => 'दो विकल्पों के बीच उलझे हैं?';
@@ -1223,7 +1224,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get areaQuestion => 'यह किस विषय से जुड़ा है?';
 
   @override
-  String get findDirection => 'अपनी दिशा देखें';
+  String get findDirection => 'अपनी दिशा खोजें';
 
   @override
   String get todaySignals => 'आज के संकेत';
@@ -1247,7 +1248,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get categoryCareer => 'करियर';
 
   @override
-  String get categoryMoney => 'रोज़मर्रा के खर्च';
+  String get categoryMoney => 'वित्त';
 
   @override
   String get categoryStudy => 'पढ़ाई और विकास';
@@ -1285,7 +1286,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   }
 
   @override
-  String get reveal => 'परिणाम देखें';
+  String get reveal => 'विश्लेषण करें';
 
   @override
   String get aligning => 'संकेत मिला रहे हैं';
@@ -1306,7 +1307,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get loadingReassurance =>
-      'बस एक पल — मैं इस समय के ब्रह्मांडीय संकेतों को और स्पष्ट कर रहा हूँ।';
+      'कृपया थोड़ा इंतज़ार करें — इस समय के ब्रह्मांडीय संकेत संरेखित हो रहे हैं।';
 
   @override
   String readingForCategory(String category) {
@@ -1317,7 +1318,8 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get yourDirection => 'आपकी दिशा';
 
   @override
-  String get resultBasis => 'आपके व्यक्तिगत चक्रों और इस पल के आधार पर।';
+  String get resultBasis =>
+      'इस समय आपके लिए संरेखित ऊर्जा और ब्रह्मांडीय संकेतों के आधार पर।';
 
   @override
   String get percentageCaveat =>
@@ -1403,7 +1405,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'विस्तार और पीछे हटने की प्रवृत्ति देख रहे हैं';
+      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
 
   @override
   String get loadingModeStayGo =>
@@ -1507,7 +1509,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get financeDetail =>
-      'रोज़मर्रा के खर्च वाला विषय केवल छोटे खर्चों पर सोचने के लिए है। निवेश, उधार, क्रिप्टो पर दाँव, जुए या बड़े आर्थिक फैसलों के लिए किसी विश्लेषण का उपयोग न करें।';
+      'वित्त वाला विषय केवल छोटे खर्चों पर सोचने के लिए है। निवेश, उधार, क्रिप्टो पर दाँव, जुए या बड़े आर्थिक फैसलों के लिए किसी विश्लेषण का उपयोग न करें।';
 
   @override
   String get consentTitle => 'सहमति, नाबालिग और रिश्ते';
@@ -1528,7 +1530,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
       'यदि आप या कोई और तत्काल खतरे या भावनात्मक संकट में हैं, तो अभी स्थानीय आपात सेवा या भरोसेमंद स्थानीय संकट हेल्पलाइन से संपर्क करें।';
 
   @override
-  String get acknowledge => 'मैं सीमाएँ समझता/समझती हूँ और सहमत हूँ';
+  String get acknowledge => 'मैं समझता हूँ और सहमत हूँ';
 
   @override
   String get acknowledgementOnce =>
@@ -1570,7 +1572,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get choiceWait => 'प्रतीक्षा करें';
 
   @override
-  String get choiceAdvance => 'आगे बढ़ें';
+  String get choiceAdvance => 'प्रतिबद्ध हों';
 
   @override
   String get choiceRetreat => 'पीछे हटें';

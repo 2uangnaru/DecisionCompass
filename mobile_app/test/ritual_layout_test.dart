@@ -162,7 +162,8 @@ void main() {
     final note = tester.widget<Text>(
       find.byKey(const Key('ritual_responsible_use_note')),
     );
-    expect(note.style!.fontSize, greaterThanOrEqualTo(12));
+    expect(note.style!.fontSize, greaterThanOrEqualTo(11));
+    expect(note.style!.fontStyle, FontStyle.italic);
     expect(note.data, contains('everyday reflection only'));
     expect(note.data, contains('Never for medical'));
   });

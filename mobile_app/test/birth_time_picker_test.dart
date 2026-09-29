@@ -118,13 +118,21 @@ void main() {
         final material = MaterialLocalizations.of(
           tester.element(find.byKey(const Key('birth_time_dialog'))),
         );
+        final amExpected =
+            locale == AppLocale.vietnamese
+                ? 'AM'
+                : material.anteMeridiemAbbreviation;
+        final pmExpected =
+            locale == AppLocale.vietnamese
+                ? 'PM'
+                : material.postMeridiemAbbreviation;
         expect(
-          find.text(material.anteMeridiemAbbreviation),
+          find.text(amExpected),
           findsOneWidget,
           reason: locale.tag,
         );
         expect(
-          find.text(material.postMeridiemAbbreviation),
+          find.text(pmExpected),
           findsOneWidget,
           reason: locale.tag,
         );

@@ -12,10 +12,10 @@ The phrase order is stable; `loadingMode*` is the phrase inserted for the select
 | loadingYinYang | Balancing Yin and Yang signals into one direction | Cân bằng tín hiệu Âm và Dương để gợi một hướng đi | 陰と陽のサインを一つの方向にまとめています | Equilibrando las señales del Yin y el Yang para sugerir una dirección |
 | loadingModeYesNo | Testing openness against resistance | Đối chiếu tín hiệu cởi mở và lực cản | 開放と抵抗のサインを比べています | Comparando apertura y resistencia |
 | loadingModeActWait | Balancing momentum against patience | Cân bằng động lực hành động và sự kiên nhẫn | 行動の勢いと待つ余地を比べています | Equilibrando impulso y paciencia |
-| loadingModeAdvanceRetreat | Reading expansion against withdrawal | Đối chiếu xu hướng mở rộng và thu mình | 広がる動きと引く動きを読み解いています | Leyendo expansión y repliegue |
+| loadingModeAdvanceRetreat | Balancing commitment against withdrawal | Đối chiếu xu hướng gắn bó và chấm dứt | コミットする動きと身を引く動きを読み解いています | Equilibrando compromiso y retirada |
 | loadingModeStayGo | Comparing roots with movement | Đối chiếu sự gắn bó và chuyển động | 根づくことと動くことを比べています | Comparando arraigo y movimiento |
 | loadingModeKeepLetGo | Weighing continuity against release | Cân nhắc sự tiếp nối và buông bỏ | 続けることと手放すことを見比べています | Sopesando continuidad y desprendimiento |
-| loadingModeForwardBackward | Tracing forward motion against returning energy | Đối chiếu xu hướng tiến lên và quay lại | 前へ進む流れと戻る流れをたどっています | Trazando avance y retorno |
+| loadingModeForwardBackward | Tracing forward motion against returning energy | Đối chiếu xu hướng tiến lên và lùi lại | 前へ進む流れと戻る流れをたどっています | Trazando avance y retorno |
 | loadingModeLeftRight | Balancing receptive and expressive polarity | Cân bằng xu hướng tiếp nhận và thể hiện | 受け取ることと表すことの両極を比べています | Equilibrando los polos receptivo y expresivo |
 
 | Key | th | hi-IN | zh-Hans-CN |
@@ -28,7 +28,7 @@ The phrase order is stable; `loadingMode*` is the phrase inserted for the select
 | loadingYinYang | กำลังปรับสัญญาณหยินและหยางให้เห็นแนวทางหนึ่ง | यिन और यांग के संकेतों को एक दिशा में संतुलित कर रहे हैं | 正在平衡阴阳信号，形成一个参考方向 |
 | loadingModeYesNo | กำลังเทียบความเปิดรับกับแรงต้าน | खुलेपन और रुकावट के संकेतों की तुलना कर रहे हैं | 正在比较开放与阻力的信号 |
 | loadingModeActWait | กำลังชั่งแรงขับกับความอดทน | गति और धैर्य को संतुलित कर रहे हैं | 正在权衡行动的动力与耐心 |
-| loadingModeAdvanceRetreat | กำลังอ่านการขยายตัวเทียบกับการถอยกลับ | विस्तार और पीछे हटने की प्रवृत्ति देख रहे हैं | 正在对照扩展与收敛的趋势 |
+| loadingModeAdvanceRetreat | กำลังเทียบความผูกพันกับการยุติ | प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं | 正在权衡深度投入与适时抽离 |
 | loadingModeStayGo | กำลังเทียบความผูกพันกับการเคลื่อนไหว | जुड़ाव और आगे बढ़ने की प्रवृत्ति की तुलना कर रहे हैं | 正在比较扎根与流动的信号 |
 | loadingModeKeepLetGo | กำลังชั่งความต่อเนื่องกับการปล่อยวาง | जारी रखने और छोड़ने की प्रवृत्ति तौल रहे हैं | 正在权衡延续与放下 |
 | loadingModeForwardBackward | กำลังดูแรงไปข้างหน้ากับพลังที่หวนกลับ | आगे की गति और लौटने की ऊर्जा देख रहे हैं | 正在追踪向前与回返的节律 |

@@ -184,13 +184,13 @@ abstract class AppLocalizations {
   /// No description provided for @buildPattern.
   ///
   /// In en, this message translates to:
-  /// **'Build your personal pattern.'**
+  /// **'Discover your unique energy.'**
   String get buildPattern;
 
   /// No description provided for @profileExplainer.
   ///
   /// In en, this message translates to:
-  /// **'These details shape the cycles used in every reading.'**
+  /// **'Shapes the cycles used during analysis.'**
   String get profileExplainer;
 
   /// No description provided for @nameField.
@@ -226,7 +226,7 @@ abstract class AppLocalizations {
   /// No description provided for @birthTimeUnknownDetail.
   ///
   /// In en, this message translates to:
-  /// **'We will compare possible birth-hour patterns.'**
+  /// **'If you don\'t know your birth time, the algorithm will use the time window closest to your personality.'**
   String get birthTimeUnknownDetail;
 
   /// No description provided for @timeOfBirth.
@@ -268,7 +268,7 @@ abstract class AppLocalizations {
   /// No description provided for @homeEyebrow.
   ///
   /// In en, this message translates to:
-  /// **'A COMPASS FOR UNCERTAIN MOMENTS'**
+  /// **'A COMPASS TO GUIDE YOUR PATH'**
   String get homeEyebrow;
 
   /// No description provided for @homeTitle.
@@ -286,7 +286,7 @@ abstract class AppLocalizations {
   /// No description provided for @findDirection.
   ///
   /// In en, this message translates to:
-  /// **'Find My Direction'**
+  /// **'Find Your Path'**
   String get findDirection;
 
   /// No description provided for @todaySignals.
@@ -334,7 +334,7 @@ abstract class AppLocalizations {
   /// No description provided for @categoryMoney.
   ///
   /// In en, this message translates to:
-  /// **'Everyday Spending'**
+  /// **'Finances'**
   String get categoryMoney;
 
   /// No description provided for @categoryStudy.
@@ -406,7 +406,7 @@ abstract class AppLocalizations {
   /// No description provided for @reveal.
   ///
   /// In en, this message translates to:
-  /// **'REVEAL'**
+  /// **'ANALYZE'**
   String get reveal;
 
   /// No description provided for @aligning.
@@ -442,7 +442,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadingReassurance.
   ///
   /// In en, this message translates to:
-  /// **'Give me a moment — I’m still bringing your cosmic signals into focus.'**
+  /// **'Please wait a moment — cosmic signals are coming into focus.'**
   String get loadingReassurance;
 
   /// No description provided for @readingForCategory.
@@ -460,7 +460,7 @@ abstract class AppLocalizations {
   /// No description provided for @resultBasis.
   ///
   /// In en, this message translates to:
-  /// **'Based on your personal cycles and this moment.'**
+  /// **'Based on the cosmic energy and signals aligned with you at this moment.'**
   String get resultBasis;
 
   /// No description provided for @percentageCaveat.
@@ -610,7 +610,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadingModeAdvanceRetreat.
   ///
   /// In en, this message translates to:
-  /// **'Reading expansion against withdrawal'**
+  /// **'Balancing commitment against withdrawal'**
   String get loadingModeAdvanceRetreat;
 
   /// No description provided for @loadingModeStayGo.
@@ -796,7 +796,7 @@ abstract class AppLocalizations {
   /// No description provided for @financeDetail.
   ///
   /// In en, this message translates to:
-  /// **'Everyday Spending is for reflecting on small, routine purchases only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.'**
+  /// **'Finances is for reflecting on small, routine purchases only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.'**
   String get financeDetail;
 
   /// No description provided for @consentTitle.
@@ -832,7 +832,7 @@ abstract class AppLocalizations {
   /// No description provided for @acknowledge.
   ///
   /// In en, this message translates to:
-  /// **'I Understand & Agree to Boundaries'**
+  /// **'I Understand & Agree'**
   String get acknowledge;
 
   /// No description provided for @acknowledgementOnce.
@@ -910,13 +910,13 @@ abstract class AppLocalizations {
   /// No description provided for @choiceAdvance.
   ///
   /// In en, this message translates to:
-  /// **'ADVANCE'**
+  /// **'COMMIT'**
   String get choiceAdvance;
 
   /// No description provided for @choiceRetreat.
   ///
   /// In en, this message translates to:
-  /// **'RETREAT'**
+  /// **'WITHDRAW'**
   String get choiceRetreat;
 
   /// No description provided for @choiceStay.

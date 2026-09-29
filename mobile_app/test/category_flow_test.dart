@@ -72,7 +72,7 @@ void main() {
       await completeOnboarding(tester);
 
       expect(find.byKey(const Key('home_positioning')), findsOneWidget);
-      expect(find.text('A COMPASS FOR UNCERTAIN MOMENTS'), findsOneWidget);
+      expect(find.text('A COMPASS TO GUIDE YOUR PATH'), findsOneWidget);
       expect(find.text('Caught between choices?'), findsOneWidget);
       // The description below rotates daily; whichever one landed must be one
       // of the approved thirty.

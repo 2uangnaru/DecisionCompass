@@ -34,16 +34,16 @@ Use one localized token for a choice everywhere, including Result and History. `
 | no | NO | KHÔNG | いいえ | NO | ไม่ | नहीं | 否 |
 | act | ACT | HÀNH ĐỘNG | 行動する | ACTUAR | ลงมือ | कदम उठाएँ | 行动 |
 | wait | WAIT | CHỜ ĐỢI | 待つ | ESPERAR | รอ | प्रतीक्षा करें | 等待 |
-| advance | ADVANCE | TIẾN TỚI | 踏み込む | AVANZAR | รุก | आगे बढ़ें | 推进 |
-| retreat | RETREAT | LÙI LẠI | 引く | RETIRARSE | ถอย | पीछे हटें | 退守 |
+| advance | COMMIT | GẮN BÓ | 踏み込む | COMPROMETERSE | ผูกพัน | प्रतिबद्ध हों | 投入 |
+| retreat | WITHDRAW | CHẤM DỨT | 引く | RETIRARSE | ถอย | पीछे हटें | 抽离 |
 | stay | STAY | Ở LẠI | とどまる | QUEDARSE | อยู่ต่อ | रुकें | 留下 |
 | go | GO | RỜI ĐI | 離れる | IRSE | ออกไป | चले जाएँ | 离开 |
 | keep | KEEP | GIỮ LẠI | 持ち続ける | CONSERVAR | เก็บไว้ | रखें | 保留 |
 | letGo | LET GO | BUÔNG BỎ | 手放す | SOLTAR | ปล่อยวาง | छोड़ दें | 放下 |
-| forward | FORWARD | VỀ PHÍA TRƯỚC | 前へ | HACIA DELANTE | ไปข้างหน้า | आगे की ओर | 向前 |
-| backward | BACKWARD | VỀ PHÍA SAU | 後ろへ | HACIA ATRÁS | ย้อนกลับ | पीछे की ओर | 向后 |
-| left | LEFT | BÊN TRÁI | 左 | IZQUIERDA | ซ้าย | बाएँ | 左 |
-| right | RIGHT | BÊN PHẢI | 右 | DERECHA | ขวา | दाएँ | 右 |
+| forward | FORWARD | TIẾN LÊN | 前へ | HACIA DELANTE | ไปข้างหน้า | आगे की ओर | 向前 |
+| backward | BACKWARD | LÙI LẠI | 後ろへ | HACIA ATRÁS | ย้อนกลับ | पीछे की ओर | 向后 |
+| left | LEFT | TRÁI | 左 | IZQUIERDA | ซ้าย | बाएँ | 左 |
+| right | RIGHT | PHẢI | 右 | DERECHA | ขวา | दाएँ | 右 |
 
 Do not reconstruct a mode label by English punctuation. Display localized first + localized slash + localized second; let the layout wrap or scale moderately on narrow screens. Keep the winning choice more prominent than its percent. The safety sheet must explain that LEFT/RIGHT and FORWARD/BACKWARD never direct driving or physical movement.
 
@@ -68,7 +68,7 @@ Do not reconstruct a mode label by English punctuation. Display localized first 
 |---|---|---|---|---|---|---|---|
 | cedar | Cedar | Tuyết tùng | シダー | Cedro | ซีดาร์ | देवदार | 雪松 |
 | jade | Jade | Ngọc bích | 翡翠 | Jade | หยก | जेड | 翡翠 |
-| sage | Sage | Xanh xô thơm | セージ | Salvia | เขียวเสจ | सेज | 鼠尾草绿 |
+| sage | Sage | Xanh sage | セージ | Salvia | เขียวเสจ | सेज | 鼠尾草绿 |
 | mint | Mint | Xanh bạc hà | ミント | Menta | เขียวมิ้นต์ | पुदीना | 薄荷绿 |
 | ember | Ember | Than hồng | 残り火 | Brasa | ถ่านแดง | अंगारा | 余烬 |
 | solar_coral | Solar Coral | San hô nắng | サンコーラル | Coral solar | ปะการังแดด | धूपिया मूँगा | 阳光珊瑚 |
@@ -76,10 +76,10 @@ Do not reconstruct a mode label by English punctuation. Display localized first 
 | blossom | Blossom | Hồng cánh hoa | ブロッサムピンク | Floración | ชมพูดอกไม้ | फूलों सा गुलाबी | 花瓣粉 |
 | ochre | Ochre | Đất son | オーカー | Ocre | เหลืองดิน | गेरू | 赭石 |
 | amber | Amber | Hổ phách | 琥珀 | Ámbar | อำพัน | अंबर | 琥珀 |
-| sand | Sand | Cát | サンド | Arena | ทราย | रेत | 沙色 |
+| sand | Sand | Màu cát | サンド | Arena | ทราย | रेत | 沙色 |
 | clay | Clay | Đất nung | クレイ | Arcilla | ดินเผา | चिकनी मिट्टी | 陶土色 |
 | silver | Silver | Bạc | シルバー | Plata | เงิน | चाँदी | 银色 |
-| steel | Steel | Thép | スチール | Acero | เหล็ก | इस्पात | 钢蓝 |
+| steel | Steel | Xám thép | スチール | Acero | เหล็ก | इस्पात | 钢蓝 |
 | pearl | Pearl | Ngọc trai | パール | Perla | ไข่มุก | मोती | 珍珠白 |
 | champagne | Champagne | Sâm panh | シャンパン | Champán | แชมเปญ | शैम्पेन | 香槟色 |
 | ocean_blue | Ocean Blue | Xanh đại dương | オーシャンブルー | Azul océano | ฟ้าน้ำทะเล | समुद्री नीला | 海洋蓝 |

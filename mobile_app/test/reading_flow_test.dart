@@ -129,7 +129,7 @@ void main() {
       const cases = {
         'YES': engine.DecisionMode.yesNo,
         'ACT': engine.DecisionMode.actWait,
-        'ADVANCE': engine.DecisionMode.advanceRetreat,
+        'COMMIT': engine.DecisionMode.advanceRetreat,
         'STAY': engine.DecisionMode.stayGo,
         'KEEP': engine.DecisionMode.keepLetGo,
         'FORWARD': engine.DecisionMode.forwardBackward,

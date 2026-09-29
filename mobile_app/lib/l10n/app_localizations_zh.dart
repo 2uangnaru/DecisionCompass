@@ -43,10 +43,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get signAfterBirthDate => '输入出生日期后，将显示你的星座';
 
   @override
-  String get buildPattern => '探索属于你的个人节律。';
+  String get buildPattern => '探索属于你的专属能量。';
 
   @override
-  String get profileExplainer => '这些信息会用于构建每次解读所参考的个人周期。';
+  String get profileExplainer => '定格分析时所依据的能量周期。';
 
   @override
   String get nameField => '姓名';
@@ -61,10 +61,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
-  String get birthTimeUnknown => '不清楚出生时间';
+  String get birthTimeUnknown => '出生时间未知';
 
   @override
-  String get birthTimeUnknownDetail => '我们会比较可能的出生时辰模式。';
+  String get birthTimeUnknownDetail => '若不知出生时间，算法将采用与你性格最契合的时段进行测算。';
 
   @override
   String get timeOfBirth => '出生时间';
@@ -85,7 +85,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
 
   @override
-  String get homeEyebrow => '犹豫时刻的指引罗盘';
+  String get homeEyebrow => '指引方向的专属罗盘';
 
   @override
   String get homeTitle => '正在选择之间犹豫吗？';
@@ -94,7 +94,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get areaQuestion => '这与哪方面有关？';
 
   @override
-  String get findDirection => '探索我的方向';
+  String get findDirection => '寻找你的专属方向';
 
   @override
   String get todaySignals => '今日信号';
@@ -118,7 +118,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get categoryCareer => '事业';
 
   @override
-  String get categoryMoney => '日常开销';
+  String get categoryMoney => '财务';
 
   @override
   String get categoryStudy => '学习与成长';
@@ -156,7 +156,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get reveal => '查看指引';
+  String get reveal => '开始分析';
 
   @override
   String get aligning => '正在对齐信号';
@@ -174,7 +174,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loadingLocalMoment => '正在解读你此刻的信号';
 
   @override
-  String get loadingReassurance => '请稍等片刻——我正在梳理此刻的宇宙信号。';
+  String get loadingReassurance => '请稍候片刻——当下的宇宙信号正在汇聚。';
 
   @override
   String readingForCategory(String category) {
@@ -185,7 +185,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get yourDirection => '给你的方向';
 
   @override
-  String get resultBasis => '基于你的个人周期与此刻的信号。';
+  String get resultBasis => '基于此刻属于你的能量与宇宙信号。';
 
   @override
   String get percentageCaveat => '百分比表示象征性的契合度，并非现实中的概率。';
@@ -261,7 +261,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在对照扩展与收敛的趋势';
+  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -355,8 +355,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get financeTitle => '投资与赌博';
 
   @override
-  String get financeDetail =>
-      '“日常开销”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
+  String get financeDetail => '“财务”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
 
   @override
   String get consentTitle => '同意、未成年人及关系';
@@ -375,7 +374,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get crisisSupport => '如果你或他人正面临迫在眉睫的危险或心理危机，请立即联系当地紧急服务或可信赖的本地危机援助热线。';
 
   @override
-  String get acknowledge => '我已理解并同意使用边界';
+  String get acknowledge => '我已了解并同意';
 
   @override
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
@@ -414,10 +413,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '推进';
+  String get choiceAdvance => '投入';
 
   @override
-  String get choiceRetreat => '退守';
+  String get choiceRetreat => '抽离';
 
   @override
   String get choiceStay => '留下';
@@ -1032,10 +1031,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get signAfterBirthDate => '输入出生日期后，将显示你的星座';
 
   @override
-  String get buildPattern => '探索属于你的个人节律。';
+  String get buildPattern => '探索属于你的专属能量。';
 
   @override
-  String get profileExplainer => '这些信息会用于构建每次解读所参考的个人周期。';
+  String get profileExplainer => '定格分析时所依据的能量周期。';
 
   @override
   String get nameField => '姓名';
@@ -1050,10 +1049,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
-  String get birthTimeUnknown => '不清楚出生时间';
+  String get birthTimeUnknown => '出生时间未知';
 
   @override
-  String get birthTimeUnknownDetail => '我们会比较可能的出生时辰模式。';
+  String get birthTimeUnknownDetail => '若不知出生时间，算法将采用与你性格最契合的时段进行测算。';
 
   @override
   String get timeOfBirth => '出生时间';
@@ -1074,7 +1073,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
 
   @override
-  String get homeEyebrow => '犹豫时刻的指引罗盘';
+  String get homeEyebrow => '指引方向的专属罗盘';
 
   @override
   String get homeTitle => '正在选择之间犹豫吗？';
@@ -1083,7 +1082,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get areaQuestion => '这与哪方面有关？';
 
   @override
-  String get findDirection => '探索我的方向';
+  String get findDirection => '寻找你的专属方向';
 
   @override
   String get todaySignals => '今日信号';
@@ -1107,7 +1106,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get categoryCareer => '事业';
 
   @override
-  String get categoryMoney => '日常开销';
+  String get categoryMoney => '财务';
 
   @override
   String get categoryStudy => '学习与成长';
@@ -1145,7 +1144,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get reveal => '查看指引';
+  String get reveal => '开始分析';
 
   @override
   String get aligning => '正在对齐信号';
@@ -1163,7 +1162,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get loadingLocalMoment => '正在解读你此刻的信号';
 
   @override
-  String get loadingReassurance => '请稍等片刻——我正在梳理此刻的宇宙信号。';
+  String get loadingReassurance => '请稍候片刻——当下的宇宙信号正在汇聚。';
 
   @override
   String readingForCategory(String category) {
@@ -1174,7 +1173,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get yourDirection => '给你的方向';
 
   @override
-  String get resultBasis => '基于你的个人周期与此刻的信号。';
+  String get resultBasis => '基于此刻属于你的能量与宇宙信号。';
 
   @override
   String get percentageCaveat => '百分比表示象征性的契合度，并非现实中的概率。';
@@ -1250,7 +1249,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在对照扩展与收敛的趋势';
+  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -1344,8 +1343,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get financeTitle => '投资与赌博';
 
   @override
-  String get financeDetail =>
-      '“日常开销”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
+  String get financeDetail => '“财务”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
 
   @override
   String get consentTitle => '同意、未成年人及关系';
@@ -1364,7 +1362,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get crisisSupport => '如果你或他人正面临迫在眉睫的危险或心理危机，请立即联系当地紧急服务或可信赖的本地危机援助热线。';
 
   @override
-  String get acknowledge => '我已理解并同意使用边界';
+  String get acknowledge => '我已了解并同意';
 
   @override
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
@@ -1403,10 +1401,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '推进';
+  String get choiceAdvance => '投入';
 
   @override
-  String get choiceRetreat => '退守';
+  String get choiceRetreat => '抽离';
 
   @override
   String get choiceStay => '留下';
@@ -2021,10 +2019,10 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get signAfterBirthDate => '输入出生日期后，将显示你的星座';
 
   @override
-  String get buildPattern => '探索属于你的个人节律。';
+  String get buildPattern => '探索属于你的专属能量。';
 
   @override
-  String get profileExplainer => '这些信息会用于构建每次解读所参考的个人周期。';
+  String get profileExplainer => '定格分析时所依据的能量周期。';
 
   @override
   String get nameField => '姓名';
@@ -2039,10 +2037,10 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
-  String get birthTimeUnknown => '不清楚出生时间';
+  String get birthTimeUnknown => '出生时间未知';
 
   @override
-  String get birthTimeUnknownDetail => '我们会比较可能的出生时辰模式。';
+  String get birthTimeUnknownDetail => '若不知出生时间，算法将采用与你性格最契合的时段进行测算。';
 
   @override
   String get timeOfBirth => '出生时间';
@@ -2063,7 +2061,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
 
   @override
-  String get homeEyebrow => '犹豫时刻的指引罗盘';
+  String get homeEyebrow => '指引方向的专属罗盘';
 
   @override
   String get homeTitle => '正在选择之间犹豫吗？';
@@ -2072,7 +2070,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get areaQuestion => '这与哪方面有关？';
 
   @override
-  String get findDirection => '探索我的方向';
+  String get findDirection => '寻找你的专属方向';
 
   @override
   String get todaySignals => '今日信号';
@@ -2096,7 +2094,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get categoryCareer => '事业';
 
   @override
-  String get categoryMoney => '日常开销';
+  String get categoryMoney => '财务';
 
   @override
   String get categoryStudy => '学习与成长';
@@ -2134,7 +2132,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   }
 
   @override
-  String get reveal => '查看指引';
+  String get reveal => '开始分析';
 
   @override
   String get aligning => '正在对齐信号';
@@ -2152,7 +2150,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get loadingLocalMoment => '正在解读你此刻的信号';
 
   @override
-  String get loadingReassurance => '请稍等片刻——我正在梳理此刻的宇宙信号。';
+  String get loadingReassurance => '请稍候片刻——当下的宇宙信号正在汇聚。';
 
   @override
   String readingForCategory(String category) {
@@ -2163,7 +2161,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get yourDirection => '给你的方向';
 
   @override
-  String get resultBasis => '基于你的个人周期与此刻的信号。';
+  String get resultBasis => '基于此刻属于你的能量与宇宙信号。';
 
   @override
   String get percentageCaveat => '百分比表示象征性的契合度，并非现实中的概率。';
@@ -2239,7 +2237,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在对照扩展与收敛的趋势';
+  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -2333,8 +2331,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get financeTitle => '投资与赌博';
 
   @override
-  String get financeDetail =>
-      '“日常开销”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
+  String get financeDetail => '“财务”仅用于反思小额日常支出。不得把解读用于投资、借贷、加密资产投机、赌博或重大财务决定。';
 
   @override
   String get consentTitle => '同意、未成年人及关系';
@@ -2353,7 +2350,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get crisisSupport => '如果你或他人正面临迫在眉睫的危险或心理危机，请立即联系当地紧急服务或可信赖的本地危机援助热线。';
 
   @override
-  String get acknowledge => '我已理解并同意使用边界';
+  String get acknowledge => '我已了解并同意';
 
   @override
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
@@ -2392,10 +2389,10 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '推进';
+  String get choiceAdvance => '投入';
 
   @override
-  String get choiceRetreat => '退守';
+  String get choiceRetreat => '抽离';
 
   @override
   String get choiceStay => '留下';

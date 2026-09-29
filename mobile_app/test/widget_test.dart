@@ -54,7 +54,7 @@ void main() {
 
     await completeOnboarding(tester);
     expect(find.text('Caught between choices?'), findsOneWidget);
-    expect(find.text('Find My Direction'), findsOneWidget);
+    expect(find.text('Find Your Path'), findsOneWidget);
   });
 
   testWidgets('double tap during loading shows reassurance then result', (
@@ -74,7 +74,7 @@ void main() {
     await tester.pump();
     expect(
       find.text(
-        'Give me a moment — I’m still bringing your cosmic signals into focus.',
+        'Please wait a moment — cosmic signals are coming into focus.',
       ),
       findsOneWidget,
     );

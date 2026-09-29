@@ -357,7 +357,8 @@ class _RitualPageState extends State<RitualPage>
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 color: CompassColors.secondary,
-                fontSize: 12,
+                fontSize: 11,
+                fontStyle: FontStyle.italic,
                 height: 1.45,
               ),
             ),

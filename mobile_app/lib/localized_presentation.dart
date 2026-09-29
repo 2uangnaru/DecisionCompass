@@ -128,8 +128,16 @@ String localizedChoice(
   String engineLabel,
 ) {
   final english = englishChoiceLabels[mode]!;
-  if (engineLabel == english.first) return modeFirstLabel(l10n, mode);
-  if (engineLabel == english.second) return modeSecondLabel(l10n, mode);
+  if (engineLabel == english.first ||
+      (mode == DecisionMode.advanceRetreat &&
+          (engineLabel == 'ADVANCE' || engineLabel == 'COMMIT'))) {
+    return modeFirstLabel(l10n, mode);
+  }
+  if (engineLabel == english.second ||
+      (mode == DecisionMode.advanceRetreat &&
+          (engineLabel == 'RETREAT' || engineLabel == 'WITHDRAW'))) {
+    return modeSecondLabel(l10n, mode);
+  }
   return engineLabel;
 }
 
