@@ -693,6 +693,20 @@ class _DialHandPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
 
+    // A faint tick dot behind each of the twelve positions, so every number
+    // reads as anchored to the dial even when it is not the one selected.
+    final tickPaint = Paint()..color = inactiveColor.withValues(alpha: 0.5);
+    for (var i = 0; i < 12; i++) {
+      final tickAngle = i * math.pi / 6;
+      final pos =
+          center +
+          Offset(
+            math.sin(tickAngle) * minuteLength,
+            -math.cos(tickAngle) * minuteLength,
+          );
+      canvas.drawCircle(pos, 2, tickPaint);
+    }
+
     void drawHand(double? angle, double length, bool active) {
       if (angle == null) return;
       final tip =
