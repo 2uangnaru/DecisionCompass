@@ -33,10 +33,11 @@ flutter:
   generate: true
   assets:
     - assets/zodiac/
-    # The SIL OFL text for the bundled Noto families, registered at startup so
-    # it shows up in the standard Flutter licence list.
+    # The SIL OFL text for the bundled Noto and Cormorant families, registered
+    # at startup so it shows up in the standard Flutter licence list.
     - assets/fonts/OFL-NotoSans.txt
     - assets/fonts/OFL-NotoSansCJK.txt
+    - assets/fonts/OFL-CormorantGaramond.txt
     # Unicode CLDR supplies the Vietnamese, Thai and Hindi country names in
     # lib/data/country_names_data.dart; its licence ships with them.
     - assets/licenses/UNICODE-LICENSE.txt
@@ -44,6 +45,11 @@ flutter:
   # kanji and Simplified Chinese do not depend on what a device happens to
   # have installed. SIL Open Font License 1.1; the licences ship beside them.
   fonts:
+    - family: CormorantGaramond
+      fonts:
+        - asset: assets/fonts/CormorantGaramond-Regular.ttf
+        - asset: assets/fonts/CormorantGaramond-Bold.ttf
+          weight: 700
     - family: NotoSans
       fonts:
         - asset: assets/fonts/NotoSans-Regular.ttf

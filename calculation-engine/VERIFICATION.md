@@ -15,6 +15,383 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.2 — fixing what the v9.1 review found — 2026-09-30
+
+Engine **4.1.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.2-experimental`**, scales
+`v9.2-cohort-2026-09-30`.
+
+A review of the v9.1 implementation found four defects and one imbalance. This
+section records what changed and what it did to the numbers. Everything below
+is behaviour of the software; none of it is evidence that a percentage predicts
+anything about a real decision.
+
+### 1. The timing signal could not see inside a period
+
+`T` compared the anchor only against the **periods** that had not started yet.
+For an evening reading nothing starts after 18:00, so `T` was exactly zero —
+and every candidate window of that reading reused it.
+
+`T` now compares against the rest of the selected period, hour by hour, and
+then against the periods still ahead. NOW keeps the old comparison set: it is a
+single instant, not a span, so there is no "rest of NOW". The median absolute
+raw value of `T` across the calibration cohort rose from **0.011 to 0.089**,
+and its held-out median `|tanh|` from **0.0395 to 0.1662** — it now carries
+information where it used to carry none.
+
+### 2. A window reused the headline's cross-day signals
+
+Each candidate window is now scored from scratch at its own instant: every
+signal the mode mixes is recomputed there, `T` included. The fortnight contrast
+is deliberately *not* applied, because a fifteen-minute slot has no fortnight
+of its own.
+
+So a window's number means: **this mode's own score for that slot, on the same
+display curve as the headline, before the headline's comparison against the
+reader's own fortnight.** Windows are ranked by it, ties broken by the earlier
+slot.
+
+`test/scoring.test.js` and `test/local_engine/scoring_test.dart` both assert
+that ACT / WAIT and YES / NO rank the *same* candidate slots in a *different*
+order. YES / NO reads no timing at all, so that difference is the timing signal
+moving the ranking — which it could not do before.
+
+### 3. The Node score cache ignored the requested signal set
+
+Its key omitted `needed`, so on one calculator a `probeAllSignals` call after a
+normal reading returned only the normal reading's three signals, and — not
+reported, but just as real — a normal reading after a probe returned all nine.
+The displayed percentages were never affected, because a mode score only reads
+the signals its own mixture names, but the reported `scoring.signals` block was
+wrong in both directions.
+
+The key now carries the signal set, matching Dart. It also carries the period
+again, which it must, because `T` now depends on it. Regression tests cover
+both call orders in both engines and check that the reading itself is identical
+whichever came first.
+
+### 4. LEFT / RIGHT read nothing about the person
+
+Under v9.1 it was `Y` alone. Two readers with the same date and hour branch got
+the same polarity, and it was the only mode that consulted no personal chart.
+It is now `.70Y + .20P + .10L`: the polarity convention still decides it.
+
+### 5. The percentage scale meant different things per mode
+
+The headline imbalance: LEFT / RIGHT reached 80%+ on 24.6% of readings while
+YES / NO never reached it at all.
+
+The cause is structural, not a tuning accident. A weighted average of several
+roughly independent signals is narrower than any one of them — with weights
+summing to one, the spread shrinks by `sqrt(sum of w squared)`. LEFT / RIGHT
+was one signal at weight 1.0; YES / NO was three signals whose spread was
+therefore about 40% narrower before anything was even calculated.
+
+Each mixture is now divided by its own `sqrt(sum of w squared)` (`MODE_GAIN`).
+That constant comes from the weights and nothing else — no cohort, no fitting,
+no per-user value — and is strictly positive, so it cannot change which side a
+mode names, only how far from the middle it reads.
+
+**The cost, stated plainly:** a mixture that averages away more of its evidence
+is no longer shown as correspondingly less certain, and the overall mean
+winning percentage rose from 64.5 to 67.0. Equalising the instrument makes
+"80%" mean the same thing across modes; it does not make any mode better
+informed.
+
+### Held-out simulation, v9.1 against v9.2
+
+`dart run tool/simulate_v91.dart --profiles 210 --days 28` from `mobile_app`:
+the same 41,160 readings — 210 profiles that contributed nothing to either
+calibration, seven modes, 28 consecutive local dates, 20 timezones, seven
+categories, no failures.
+
+Winners at 80%+, by mode:
+
+| Mode | v8 | v9.1 | v9.2 |
+|---|---:|---:|---:|
+| YES / NO | 0.0% | 0.0% | 2.2% |
+| ACT / WAIT | 0.0% | 0.0% | 5.1% |
+| ADVANCE / RETREAT | 0.0% | 0.1% | 3.1% |
+| STAY / GO | 0.0% | 0.5% | 4.8% |
+| KEEP / LET GO | 0.0% | 0.5% | 4.6% |
+| COMMIT / WITHDRAW | 0.0% | 0.0% | 0.0% |
+| LEFT / RIGHT | 0.0% | 24.6% | 19.5% |
+
+Full v9.2 distribution:
+
+| Mode | 50-54.9 | 55-59.9 | 60-79.9 | 80+ | adjacent exact repeats | 7-day same direction | mean |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| YES / NO | 5.7% | 15.4% | 76.7% | 2.2% | 0.1% | 17.5% | 66.2 |
+| ACT / WAIT | 5.0% | 14.1% | 75.7% | 5.1% | 0.3% | 3.8% | 67.1 |
+| ADVANCE / RETREAT | 6.5% | 14.8% | 75.6% | 3.1% | 0.2% | 0.5% | 66.3 |
+| STAY / GO | 5.5% | 14.3% | 75.4% | 4.8% | 0.1% | 1.8% | 67.1 |
+| KEEP / LET GO | 5.8% | 14.5% | 75.1% | 4.6% | 0.2% | 4.8% | 66.9 |
+| COMMIT / WITHDRAW | 5.4% | 16.9% | 77.7% | 0.0% | 2.0% | 88.4% | 64.6 |
+| LEFT / RIGHT | 3.0% | 8.1% | 69.4% | 19.5% | 0.1% | 14.8% | 71.1 |
+| **all** | **5.3%** | **14.0%** | **75.1%** | **5.6%** | **0.4%** | **18.8%** | **67.0** |
+
+Overall, winners in 50–59.9%: v8 98.5% → v9.1 27.1% → v9.2 19.3%.
+Winners at 80%+: v8 0.0% → v9.1 5.6% (almost all of it one mode) → v9.2 5.6%
+(spread across six).
+
+Repeat behaviour barely moved: adjacent exact repeats stayed at 0.4% overall,
+and LEFT / RIGHT's seven-day same-direction rate fell from 20.5% to 14.8%
+because the personal share breaks up the parity alternation. Birth-hour
+coverage is unchanged — 0.910 known against 0.678 unknown.
+
+### The two imbalances that remain
+
+Reported, not tuned away.
+
+1. **LEFT / RIGHT is still about four times more likely to reach 80%+ than any
+   other mode** (19.5% against 2.2–5.1%), and it is the only mode with almost
+   nothing in the 50–54.9 band. `Y` still carries half its weight on three
+   terms that are each exactly +1 or -1, which gives it a fatter tail than a
+   continuous signal has: across the held-out cohort its p95/p75 ratio of
+   absolute raw value is 2.3, against 1.5–1.6 for every other signal. The
+   fortnight contrast then amplifies it, because a parity term genuinely does
+   alternate against its own fortnight. Flattening this further would mean
+   changing what `Y` measures, not how it is scaled.
+2. **COMMIT / WITHDRAW never reaches 80%+ at all, and holds one direction
+   through 88.4% of seven-day windows.** `H` is a median over an eight-day
+   window that moves one day at a time, so it barely differs from its own
+   fortnight and the contrast term contributes almost nothing. That is the
+   durability the mode is for; the number simply records how much of it the
+   formula produces.
+
+**v9.2 stays experimental.**
+
+### Commands executed on 2026-09-30
+
+Runtime: Node **v24.19.0**, Dart **3.13.4**, Flutter stable, Windows 11.
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **185 passed, 0 failed** (exit 0) |
+| `node scripts/mobile-fixtures.mjs --check` | `All 16 engine fixtures match current engine output.` |
+| `node scripts/port/gen_edge_readings.mjs` | 16 edge scenarios regenerated |
+| `node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930` | only `T` moved; held-out saturation 0% on every signal |
+| `flutter analyze` | **No issues found** |
+| `flutter test` | **754 passed, 0 failed** |
+| `dart run tool/simulate_v91.dart --profiles 210 --days 28` | 41,160 readings, 0 failures |
+
+Node–Dart parity is re-established at v9.2: all 16 standard fixtures and all 16
+edge readings reproduce byte for byte in the Dart port, `readingKey` included.
+
+### Result screen
+
+The day's own signals are back on the result, compactly — both colours, the
+lucky number and the energy label, as three caption-and-value rows — with
+Action Guidance below them. `localization_layout_test.dart` asserts both are
+present and fit at 360dp across 1.0, 1.3 and 1.5 text scale in all seven
+languages, and `widget_test.dart` asserts the same at 360x640, 390x844,
+412x915 and 800x1280. Home is untouched.
+
+### Result guidance
+
+The guidance was keyed on life-area category and polarity, so every mode said
+the same thing, and writing per category had produced lines that told a reader
+to leave a relationship. It is now keyed on the **decision mode and which side
+the reading named**, and on nothing else. No line names money, work, a partner
+or any third person, and none tells the reader to start, end, buy, sell or
+leave anything. `test/action_guidance_test.dart` checks a per-language list of
+prohibited terms across every mode and side, and that no two modes share a
+headline. The copy is Claude-drafted and is flagged for editorial review in
+`handoff/localization/CLAUDE_DRAFT_RESULT_GUIDANCE.md`.
+
+Dropped with it: the journey-tenure progression that varied the wording over
+the first 30 days, and the daily rotation between three variants. Both selected
+between texts that no longer exist. Noted here because neither was asked to go.
+
+### Not verified
+
+- **No physical Android device or emulator was available.** Nothing in this
+  release has been seen on a screen; the Result layout is verified by widget
+  tests at those sizes and scales, which is not the same thing.
+- Predictive validity. None claimed, none tested.
+- The result-guidance copy and the ADVANCE / RETREAT words in seven languages
+  are Claude's drafts, not the editorial owner's.
+
+## Experimental v9.1 symbolic scoring — 2026-09-30
+
+Engine **4.0.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.1-experimental`**.
+
+v9.1 replaces how a decision is scored and nothing else. Birth-data parsing,
+timezone resolution, the calendar, natal BaZi, Zi Wei, the Western and Vedic
+charts, the daily colours and the daily energy label are untouched, and
+`test/foundations.test.js` proves it: the natal charts and the whole daily
+brief for eight profiles across four timezones are compared field by field
+against a capture taken from the engine as it stood *before* this change.
+
+Instead of projecting one fused `action`/`change` pair onto seven fixed lines,
+the engine extracts nine named signals — `P C L T M R G H Y` — several of which
+read other local dates, and gives each mode its own mixture of them. Each
+signal is normalized with `tanh(raw / scale)` against a fixed, versioned scale
+(`SCALE_VERSION = v9.1-cohort-2026-09-30`) measured once, offline, by
+`scripts/calibrate-v91.mjs`. Nothing learns or adapts at runtime.
+
+### Decision-mode contract correction
+
+`forward_backward` is retired and replaced by `commit_withdraw`, driven by a
+seven-day durability horizon. `advance_retreat` remains its own mode and is now
+driven by three-day momentum.
+
+The app had been showing the COMMIT / WITHDRAW words under the ADVANCE /
+RETREAT mode in all seven languages. That copy moved to `choiceCommit` /
+`choiceWithdraw` and ADVANCE / RETREAT received words of its own.
+
+`calculate` refuses `forward_backward` with
+`LEGACY_DECISION_MODE:forward_backward` (HTTP 422), and
+`mobile_app/test/fixtures/legacy_forward_backward_reading.json` is a real v8
+reading kept verbatim so the app can prove it still parses and renders one. A
+saved FORWARD/BACKWARD reading is never relabelled COMMIT: its percentage was
+never calculated for that question.
+
+### Calibration
+
+`node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930`: 374 readings
+from 120 synthetic profiles across seven categories, four periods and twenty
+timezones, roughly a third with no birth hour. Each scale is four times the
+75th percentile of that signal's absolute raw value. A disjoint held-out cohort
+(60 profiles, 199 readings) showed **0% saturation** on every signal — none had
+lost the ability to tell two days apart — with median `|tanh|` between 0.04 and
+0.22.
+
+### Held-out simulation
+
+`dart run tool/simulate_v91.dart --profiles 210 --days 28` from `mobile_app`:
+**41,160 scored readings** — 210 profiles that contributed nothing to the
+calibration, seven modes, 28 consecutive local dates, twenty timezones, seven
+categories, no failures. Run in Dart because the two engines produce identical
+readings and the Node reference is roughly 300x slower (see Performance below).
+
+The same run also recovers what ruleset v8 would have displayed, exactly, from
+each reading's own unchanged fused axes:
+
+| Winning percentage | v8 | v9.1 |
+|---|---:|---:|
+| 50.0-54.9 | 59.5% | 7.2% |
+| 55.0-59.9 | 39.0% | 19.9% |
+| 60.0-79.9 | 1.5% | 69.2% |
+| 80.0+ | 0.0% | 3.7% |
+| mean winning percentage | 54.5 | 64.5 |
+
+By mode, under v9.1:
+
+| Mode | 50-54.9 | 55-59.9 | 60-79.9 | 80+ | adjacent exact repeats | 7-day same direction | mean |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| YES / NO | 9.9% | 24.5% | 65.6% | 0.0% | 0.2% | 17.5% | 62.3 |
+| ACT / WAIT | 9.3% | 24.2% | 66.4% | 0.0% | 0.2% | 3.2% | 62.6 |
+| ADVANCE / RETREAT | 9.4% | 21.9% | 68.6% | 0.1% | 0.2% | 0.5% | 63.1 |
+| STAY / GO | 7.4% | 19.3% | 72.7% | 0.5% | 0.2% | 1.8% | 64.5 |
+| KEEP / LET GO | 7.7% | 20.4% | 71.4% | 0.5% | 0.2% | 4.8% | 64.2 |
+| COMMIT / WITHDRAW | 6.7% | 22.1% | 71.2% | 0.0% | 2.0% | 88.4% | 63.0 |
+| LEFT / RIGHT | 0.0% | 6.8% | 68.5% | 24.6% | 0.0% | 20.5% | 71.7 |
+
+Category spread is narrow: every category sits between 5.6% and 8.1% in the
+50-54.9 band and between 63.9 and 64.9 mean, with `other` tracking `general` as
+the honest fallback it is meant to be.
+
+Birth-hour coverage behaved as required: mean data coverage **0.910** with a
+known hour against **0.678** without one. Normalization did not turn a missing
+chart into confidence.
+
+### Weaknesses found, and not tuned away
+
+Reported rather than coefficient-fixed, because adjusting the formulas to make
+the distribution look better is exactly what this work is supposed to avoid.
+
+1. **LEFT / RIGHT is far more extreme than every other mode.** `Y` puts 0.50 of
+   its weight on three parity terms that are each exactly +1 or -1, so the raw
+   signal is coarse and close to bimodal. The result is 24.6% of readings at
+   80%+, a 71.7 mean, and nothing at all below 55%. Two thirds of every 80%+
+   result in the whole simulation comes from this one mode. It is doing what
+   the specification says, and what it says produces a blunt instrument.
+2. **COMMIT / WITHDRAW is very sticky.** 88.4% of seven-day windows named the
+   same side throughout, and its adjacent exact repeats (2.0%) are ten times
+   any other mode's. This follows from `H` being medians over an eight-day
+   window that shifts one day at a time. Durability was the intent; this is how
+   much of it the formula produces.
+3. **ADVANCE / RETREAT barely persists at all** — 0.5% of seven-day windows
+   held one direction — because `M` is a three-day difference. Neither extreme
+   was chosen; both fall out of the specified signals.
+4. The 50-59.9 band is still 27.1% overall. A large improvement on v8's 98.5%,
+   but not near zero, and it should not be driven to zero: a genuinely balanced
+   day ought to read as one.
+
+**v9.1 stays experimental.** Nothing here establishes that a percentage
+predicts anything about a real decision. It establishes that the software is
+deterministic, reproducible from a saved snapshot, and that its modes are no
+longer near-copies of one another.
+
+### Performance
+
+`node --expose-gc scripts/bench-v91.mjs` and `dart run tool/bench_v91.dart`:
+same profiles, same instant, a fresh calculator per measurement.
+
+| Profile | Dart (ships to Android) | Node reference |
+|---|---:|---:|
+| known hour + convention | 6-57 ms | 373-999 ms |
+| known hour, unspecified | 5-22 ms | 723-1908 ms |
+| unknown hour + convention | 9-32 ms | 4295-11266 ms |
+| unknown hour, unspecified | 15-37 ms | 8575-22700 ms |
+
+The gap is entirely the Zi Wei provider: `chart.horoscope()` from `iztro` costs
+about 15 ms per chart-date-hour and accounts for 95% of a Node reading, while
+the Dart port computes the same values natively. An unknown birth hour
+multiplies the chart count by twelve and an unspecified convention by
+twenty-four, which is why the Node numbers explode and the Dart ones do not.
+
+Two changes were made for this: `scoreChart` is memoized per chart, date, hour
+and category (pure memoization — same key, same value), and a reading computes
+only the cross-day anchors the chosen mode's signals actually need. Without the
+second, the worst Node case was 24 s.
+
+The Flutter app already runs the engine on a background isolate
+(`test/local_engine/offline_guarantees_test.dart`) and the ritual screen lasts
+4.2-5.2 s, so a 37 ms worst case leaves no room for jank. **Not measured on a
+physical Android device** — these are desktop numbers.
+
+### Commands executed on 2026-09-30
+
+Runtime: Node **v24.19.0**, Dart **3.13.4**, Flutter stable, Windows 11.
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **181 passed, 0 failed** (exit 0) |
+| `node scripts/mobile-fixtures.mjs --check` | `All 16 engine fixtures match current engine output.` (exit 0) |
+| `node scripts/port/gen_edge_readings.mjs` | 16 edge scenarios regenerated |
+| `node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930` | scales above; held-out cohort 0% saturation |
+| `node --expose-gc scripts/bench-v91.mjs` | table above |
+| `flutter analyze` | **No issues found** |
+| `flutter test` | **748 passed, 0 failed** |
+| `dart run tool/simulate_v91.dart --profiles 210 --days 28` | 41,160 readings, 0 failures, 80 s |
+| `dart run tool/bench_v91.dart` | table above |
+| `flutter build apk --debug` | `build/app/outputs/flutter-apk/app-debug.apk` |
+
+The Dart port reproduced all 16 standard fixtures and all 16 edge readings
+byte for byte, including `readingKey`, which is a SHA-256 over the profile, the
+ruleset, the provider versions and the evaluated segments. That is what
+establishes the two engines are equivalent rather than merely similar.
+
+`dart:math` has no `tanh`, so the Dart port implements it (`jsTanh` in
+`core/scoring.dart`) with an `expm1` series near zero and the exponential form
+elsewhere. Agreement is checked directly against known values and, more
+importantly, through the whole-reading golden parity above.
+
+### Not verified
+
+- **No physical Android device or emulator was available.** Nothing in this
+  release has been seen on a screen, and the performance figures are desktop
+  measurements.
+- Predictive validity. There is none claimed and none tested.
+- The ADVANCE / RETREAT words and one loading line in seven languages were
+  drafted by Claude, not by the editorial owner; see
+  `handoff/localization/CLAUDE_DRAFT_DECISION_MODES.md`. Vietnamese renders the
+  new ADVANCE / RETREAT pair with the same two words as the retired
+  FORWARD / BACKWARD pair, which is flagged there.
+
 ## Mobile fixture generation run — 2026-09-21
 
 Runtime: Node **v24.19.0** on Windows, engine `3.1.0-mvp`, ruleset

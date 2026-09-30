@@ -6,12 +6,14 @@ import 'package:decision_compass/data/models/models.dart';
 /// Fixture files under `test/fixtures/`.
 ///
 /// See `test/fixtures/README.md` for provenance: `synthetic_*` files are
-/// parser-only fixtures for states the engine cannot be asked to emit, the rest
-/// are scenarios `calculation-engine/scripts/mobile-fixtures.mjs` reproduces
-/// from the real engine.
+/// parser-only fixtures for states the engine cannot be asked to emit,
+/// `legacy_*` is a reading taken under a retired ruleset and kept verbatim,
+/// and the rest are scenarios
+/// `calculation-engine/scripts/mobile-fixtures.mjs` reproduces from the real
+/// engine.
 const fixtureFiles = <String>[
   'ready_yes_no_now.json',
-  'ready_forward_backward_two_windows.json',
+  'ready_commit_withdraw_two_windows.json',
   'ready_left_right.json',
   'ready_advance_retreat.json',
   'ready_act_wait_midday.json',
@@ -26,6 +28,7 @@ const fixtureFiles = <String>[
   'ready_study_morning.json',
   'ready_friends_midday.json',
   'ready_other_now.json',
+  'legacy_forward_backward_reading.json',
   'synthetic_balanced.json',
   'synthetic_insufficient_data.json',
 ];

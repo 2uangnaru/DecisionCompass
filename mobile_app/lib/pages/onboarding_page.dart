@@ -213,6 +213,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
       zodiacSign: zodiacForDate(birthDate),
       useCurrentLocation: false,
       safetyAcknowledged: widget.initialSafetyAcknowledged,
+      createdAt: widget.dependencies.nowLocal(),
     );
     await widget.dependencies.profileRepository.save(profile);
     if (!mounted) return;
@@ -255,14 +256,24 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'ASTRACUE',
-                        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                          color: CompassColors.gold,
-                          letterSpacing: 2.2,
+                      Expanded(
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              'ASTRACUE',
+                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                                color: CompassColors.gold,
+                                letterSpacing: 2.8,
+                              ),
+                            ),
+                          ),
                         ),
                       ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
                       // On the welcome screen itself, above the profile step:
                       // an obvious globe and the current language, never an
                       // unsolicited popup and never an extra required screen.

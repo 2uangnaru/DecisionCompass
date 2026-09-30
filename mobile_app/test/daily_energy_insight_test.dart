@@ -671,7 +671,7 @@ void main() {
   });
 
   group('Home and Result together', () {
-    testWidgets('reading it on Result clears the mark on Home', (tester) async {
+    testWidgets('Result renders action guidance while Home retains daily energy', (tester) async {
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
         // The fixture's reading is for 2026-09-18, so the device is on the
@@ -689,124 +689,19 @@ void main() {
       await tester.pump(const Duration(milliseconds: 5400));
       await tester.pumpAndSettle();
 
-      // The Result's own ⓘ, for the same date and tone.
-      final resultButton = find.descendant(
-        of: find.byKey(const Key('result_daily_brief')),
-        matching: infoButton,
-      );
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
-      final message = shownNote(tester);
-      expect(dailyEnergyMessagePools['flowing'], contains(message));
+      // Result displays action guidance
+      expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
 
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
+      // Back on Home: daily energy button and note work as expected
       await tester.tap(find.byIcon(Icons.close_rounded).first);
       await tester.pumpAndSettle();
-
-      // Back on Home: already read, and the same sentence.
-      expect(unreadDot, findsNothing);
+      expect(unreadDot, findsOneWidget);
       await tester.ensureVisible(infoButton);
       await tester.pumpAndSettle();
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
-      expect(shownNote(tester), message);
-    });
-
-    testWidgets('an unread Result stops claiming "new today" past midnight', (
-      tester,
-    ) async {
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        localNow: DateTime(2026, 9, 18, 23, 50),
-      );
-      rig.dailyBriefProvider.response = briefWith('flowing');
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await tester.pump();
-      await revealReading(tester);
-      await tester.pump(const Duration(milliseconds: 5400));
-      await tester.pumpAndSettle();
-
-      final inBrief = find.descendant(
-        of: find.byKey(const Key('result_daily_brief')),
-        matching: unreadDot,
-      );
-      // Left unopened on purpose: the mark is what has to expire.
-      expect(inBrief, findsOneWidget);
-
-      rig.localClock = DateTime(2026, 9, 19, 0, 30);
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      await tester.pumpAndSettle();
-
-      expect(
-        inBrief,
-        findsNothing,
-        reason: 'yesterday’s reading cannot still be new today',
-      );
-      // The insight is still readable, and still the reading's own date's.
-      final resultButton = find.descendant(
-        of: find.byKey(const Key('result_daily_brief')),
-        matching: infoButton,
-      );
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
-      expect(dailyEnergyMessagePools['flowing'], contains(shownNote(tester)));
-    });
-
-    testWidgets('a Result held past midnight keeps its own date', (
-      tester,
-    ) async {
-      final rig = ReadingTestRig(
-        response: fixtureResponse('ready_yes_no_now.json'),
-        localNow: DateTime(2026, 9, 18, 23, 50),
-      );
-      rig.dailyBriefProvider.response = briefWith('flowing');
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await tester.pump();
-      await revealReading(tester);
-      await tester.pump(const Duration(milliseconds: 5400));
-      await tester.pumpAndSettle();
-
-      final resultButton = find.descendant(
-        of: find.byKey(const Key('result_daily_brief')),
-        matching: infoButton,
-      );
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
       final message = shownNote(tester);
-
-      // Midnight passes with the Result still open.
-      rig.localClock = DateTime(2026, 9, 19, 0, 30);
-      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
-      await tester.pumpAndSettle();
-
-      // Still the reading's own insight, and no "new today" on a past date.
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
-      await tester.ensureVisible(resultButton);
-      await tester.pumpAndSettle();
-      await tester.tap(resultButton);
-      await tester.pumpAndSettle();
-      expect(shownNote(tester), message);
-      expect(
-        find.descendant(
-          of: find.byKey(const Key('result_daily_brief')),
-          matching: unreadDot,
-        ),
-        findsNothing,
-      );
+      expect(dailyEnergyMessagePools['flowing'], contains(message));
     });
   });
 

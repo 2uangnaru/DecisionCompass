@@ -1,5 +1,5 @@
-export const VERSION = '3.5.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v8';
+export const VERSION = '4.1.0-mvp';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v9.2-experimental';
 export const WEIGHTS = Object.freeze({ B: .18, Z: .18, T: .10, W: .18, V: .16, N: .15, U: .05 });
 export const LUCK_BASELINE = 0.05;
 
@@ -37,15 +37,51 @@ export function weightsFor(category = 'general') {
   if (!Object.hasOwn(CATEGORY_WEIGHTS, category)) throw new Error('INVALID_CATEGORY');
   return CATEGORY_WEIGHTS[category];
 }
+/**
+ * The seven pairs a reader can choose, plus the modes kept only so that saved
+ * readings from older rulesets still parse.
+ *
+ * A mode carries no projection any more: v9.1 gives each one its own mixture
+ * of named signals in `scoring.js`. What lives here is identity — the two
+ * English wire labels and the basis string a saved reading records.
+ *
+ * LEFT / RIGHT is symbolic polarity only, receptive/inward against
+ * expressive/outward. It must never be used for physical navigation.
+ */
 export const MODES = Object.freeze({
-  yes_no: Object.freeze({ labels: ['YES', 'NO'], a: 1, c: 0, sign: 1, basis: 'overall_acceptance' }),
-  act_wait: Object.freeze({ labels: ['ACT', 'WAIT'], a: .85, c: .15, sign: 1, basis: 'action_timing' }),
-  advance_retreat: Object.freeze({ labels: ['ADVANCE', 'RETREAT'], a: .55, c: .45, sign: 1, basis: 'tactical_momentum' }),
-  stay_go: Object.freeze({ labels: ['STAY', 'GO'], a: 0, c: 1, sign: -1, basis: 'change_alignment' }),
-  keep_let_go: Object.freeze({ labels: ['KEEP', 'LET GO'], a: -.3, c: .7, sign: -1, basis: 'release_alignment' }),
-  forward_backward: Object.freeze({ labels: ['FORWARD', 'BACKWARD'], a: .25, c: .75, sign: 1, basis: 'temporal_momentum' }),
-  left_right: Object.freeze({ labels: ['LEFT', 'RIGHT'], a: .7, c: -.3, sign: -1, basis: 'symbolic_polarity' }),
+  yes_no: Object.freeze({ labels: ['YES', 'NO'], basis: 'overall_acceptance' }),
+  act_wait: Object.freeze({ labels: ['ACT', 'WAIT'], basis: 'action_timing' }),
+  advance_retreat: Object.freeze({ labels: ['ADVANCE', 'RETREAT'], basis: 'tactical_momentum' }),
+  stay_go: Object.freeze({ labels: ['STAY', 'GO'], basis: 'change_alignment' }),
+  keep_let_go: Object.freeze({ labels: ['KEEP', 'LET GO'], basis: 'release_alignment' }),
+  commit_withdraw: Object.freeze({ labels: ['COMMIT', 'WITHDRAW'], basis: 'durability_horizon' }),
+  left_right: Object.freeze({ labels: ['LEFT', 'RIGHT'], basis: 'symbolic_polarity' }),
 });
+
+/**
+ * Modes that existed under an earlier ruleset and may still appear in a saved
+ * reading.
+ *
+ * `forward_backward` was replaced by `commit_withdraw`, which is a different
+ * question scored a different way. Relabelling the old readings would put a
+ * COMMIT verdict on a percentage that was never calculated for it, so the old
+ * identity is preserved verbatim and the engine refuses to compute new ones.
+ */
+export const LEGACY_MODES = Object.freeze({
+  forward_backward: Object.freeze({ labels: ['FORWARD', 'BACKWARD'], basis: 'temporal_momentum', replacedBy: 'commit_withdraw' }),
+});
+
+/** Every mode identity a saved reading may legitimately carry. */
+export function modeIdentity(mode) {
+  return MODES[mode] ?? LEGACY_MODES[mode] ?? null;
+}
+
+/** Rejects a retired mode with its own error, never as a generic bad value. */
+export function requireCurrentMode(mode) {
+  if (Object.hasOwn(MODES, mode)) return MODES[mode];
+  if (Object.hasOwn(LEGACY_MODES, mode)) throw new Error(`LEGACY_DECISION_MODE:${mode}`);
+  throw new Error('INVALID_DECISION_MODE');
+}
 export const mod = (x, n) => ((x % n) + n) % n;
 export const clamp = x => Math.max(-1, Math.min(1, x));
 export const round = x => Math.round(x * 1e10) / 1e10;
@@ -74,32 +110,28 @@ export function combine(modules, category = 'general') {
   return evidence(clamp(out.a), clamp(out.c), Math.min(1, out.coverage));
 }
 
-export function percentTenths(score) {
-  const s = clamp(score);
-  const sign = s < 0 ? -1 : s > 0 ? 1 : 0;
-  const expanded = sign * Math.pow(Math.abs(s), 0.65);
-  return Math.floor(500 + 400 * clamp(expanded) + .5);
-}
-
-export function percent(score) {
-  return Math.round(percentTenths(score) / 10);
-}
-
-export function scoreForMode(e, mode) {
-  if (!Object.hasOwn(MODES, mode)) throw new Error('INVALID_DECISION_MODE');
-  const definition = MODES[mode];
-  return clamp(definition.sign * (definition.a * e.a + definition.c * e.c));
-}
-export function decision(e, mode) {
-  if (!Object.hasOwn(MODES, mode)) throw new Error('INVALID_DECISION_MODE');
-  if (!e.coverage) return { status: 'insufficient_data', percentages: null, winner: null };
-  const definition = MODES[mode], [first, second] = definition.labels;
-  const selectedScore = scoreForMode(e, mode), tenths = percentTenths(selectedScore);
+/**
+ * The decision block of a reading.
+ *
+ * v9.1 hands in a score that has already been mixed from its signals and
+ * adjusted against the reader's own fortnight, so this only names the winner
+ * and splits the percentage. `displayTenths` lives in `scoring.js` and is
+ * passed in, which keeps the display curve in one place.
+ */
+export function decision(mode, adjustedScore, coverage, tenths) {
+  const definition = requireCurrentMode(mode);
+  if (!coverage) return { status: 'insufficient_data', percentages: null, winner: null };
+  const [first, second] = definition.labels;
   const balanced = tenths === 500;
-  return { status: balanced ? 'balanced' : 'ready', winner: balanced ? null : tenths > 500 ? first : second,
-    percentages: { [first]: tenths / 10, [second]: (1000 - tenths) / 10 }, dataCoverage: round(e.coverage),
-    modeScore: round(selectedScore), modeBasis: definition.basis,
-    meaning: 'symbolic_alignment_not_success_probability' };
+  return {
+    status: balanced ? 'balanced' : 'ready',
+    winner: balanced ? null : tenths > 500 ? first : second,
+    percentages: { [first]: tenths / 10, [second]: (1000 - tenths) / 10 },
+    dataCoverage: round(coverage),
+    modeScore: round(adjustedScore),
+    modeBasis: definition.basis,
+    meaning: 'symbolic_alignment_not_success_probability',
+  };
 }
 export function weightedTimeAverage(items) {
   const seconds = items.reduce((s, x) => s + x.duration, 0);

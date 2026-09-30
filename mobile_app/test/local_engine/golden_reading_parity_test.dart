@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:decision_compass/data/models/models.dart';
+import 'package:decision_compass/local_engine/core/core.dart';
 import 'package:decision_compass/local_engine/local_reading_engine.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,7 +21,7 @@ void main() {
   /// reproduced by running the engine.
   const engineFixtures = <String>[
     'ready_yes_no_now.json',
-    'ready_forward_backward_two_windows.json',
+    'ready_commit_withdraw_two_windows.json',
     'ready_left_right.json',
     'ready_advance_retreat.json',
     'ready_act_wait_midday.json',
@@ -195,7 +196,7 @@ void main() {
     expect(jsonEncode(second), jsonEncode(first));
   });
 
-  test('FORWARD/BACKWARD and LEFT/RIGHT are not aliases of YES/NO', () {
+  test('COMMIT/WITHDRAW and LEFT/RIGHT are not aliases of YES/NO', () {
     final fixture = loadFixture('ready_yes_no_now.json');
     final request = requestFrom(fixture, 'ready_yes_no_now.json');
     final profile = request['profile']! as Map<String, Object?>;
@@ -210,28 +211,65 @@ void main() {
     );
 
     final yesNo = forMode('yes_no');
-    final forwardBackward = forMode('forward_backward');
+    final commitWithdraw = forMode('commit_withdraw');
     final leftRight = forMode('left_right');
 
-    // Same axes, three different projections: the selected score must differ,
-    // and the winners must come from each mode's own label pair.
+    // One instant, three different signal mixtures: the selected score must
+    // differ, and the winners must come from each mode's own label pair.
     final yesNoScore = (yesNo['modeScore']! as num).toDouble();
-    final forwardScore = (forwardBackward['modeScore']! as num).toDouble();
+    final commitScore = (commitWithdraw['modeScore']! as num).toDouble();
     final leftScore = (leftRight['modeScore']! as num).toDouble();
 
-    expect(forwardScore, isNot(closeTo(yesNoScore, 1e-9)));
+    expect(commitScore, isNot(closeTo(yesNoScore, 1e-9)));
     expect(leftScore, isNot(closeTo(yesNoScore, 1e-9)));
-    expect(leftScore, isNot(closeTo(forwardScore, 1e-9)));
+    expect(leftScore, isNot(closeTo(commitScore, 1e-9)));
 
     expect(<String>['YES', 'NO'], contains(yesNo['winner']));
-    expect(<String>[
-      'FORWARD',
-      'BACKWARD',
-    ], contains(forwardBackward['winner']));
+    expect(<String>['COMMIT', 'WITHDRAW'], contains(commitWithdraw['winner']));
     expect(<String>['LEFT', 'RIGHT'], contains(leftRight['winner']));
 
     expect(yesNo['modeBasis'], 'overall_acceptance');
-    expect(forwardBackward['modeBasis'], 'temporal_momentum');
+    expect(commitWithdraw['modeBasis'], 'durability_horizon');
     expect(leftRight['modeBasis'], 'symbolic_polarity');
+  });
+
+  test('a FORWARD/BACKWARD reading survives as itself, never as COMMIT', () {
+    // The fixture is a real reading taken under ruleset v8. COMMIT/WITHDRAW
+    // asks a different question from a different signal, so relabelling this
+    // one would put a COMMIT verdict on a percentage never calculated for it.
+    final legacy = loadFixture('legacy_forward_backward_reading.json');
+    expect(legacy['mode'], 'forward_backward');
+    expect(legacy['rulesetVersion'], isNot(rulesetVersion));
+
+    final parsed = ReadingResponse.fromJson(legacy);
+    expect(parsed.mode, DecisionMode.forwardBackward);
+    expect(parsed.mode.legacy, isTrue);
+    expect(
+      parsed.percentages!.values.keys,
+      containsAll(<String>['FORWARD', 'BACKWARD']),
+    );
+
+    // And the engine will not produce a new one.
+    final request = requestFrom(legacy, 'legacy_forward_backward_reading.json');
+    expect(
+      () => calculateReading(
+        profile: request['profile']! as Map<String, Object?>,
+        context: request['context']! as Map<String, Object?>,
+        period: 'now',
+        mode: 'forward_backward',
+        category: 'general',
+      ),
+      throwsA(
+        isA<EngineFailure>().having(
+          (e) => e.code,
+          'code',
+          'LEGACY_DECISION_MODE:forward_backward',
+        ),
+      ),
+    );
+    expect(
+      DecisionMode.selectable,
+      isNot(contains(DecisionMode.forwardBackward)),
+    );
   });
 }

@@ -157,12 +157,12 @@ void main() {
             deviceTimezone: 'Asia/Ho_Chi_Minh',
           ),
           period: TimePeriod.evening,
-          mode: DecisionMode.forwardBackward,
+          mode: DecisionMode.commitWithdraw,
         ),
       );
 
       expect(response.status, ReadingStatus.ready);
-      expect(response.mode, DecisionMode.forwardBackward);
+      expect(response.mode, DecisionMode.commitWithdraw);
       expect(response.luckyWindows, isNotEmpty);
     },
   );

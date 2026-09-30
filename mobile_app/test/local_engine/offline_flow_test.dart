@@ -69,9 +69,9 @@ void main() {
     expect(find.byKey(const Key('reading_error')), findsNothing);
     expect(find.byKey(const Key('result_ready')), findsOneWidget);
     expect(find.text('YES'), findsWidgets);
-    // NOW never offers a window, and the daily brief comes from the engine.
+    // NOW never offers a window, and action guidance is shown directly.
     expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
-    expect(find.byKey(const Key('result_daily_brief')), findsOneWidget);
+    expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
   });
 
   testWidgets('a future period reaches the result page with real windows', (
@@ -79,12 +79,12 @@ void main() {
   ) async {
     await tester.pumpWidget(buildApp());
     await completeOnboarding(tester);
-    await revealReading(tester, modeLabel: 'FORWARD', periodName: 'evening');
+    await revealReading(tester, modeLabel: 'COMMIT', periodName: 'evening');
     await pumpPastRitual(tester);
 
     expect(find.byKey(const Key('reading_error')), findsNothing);
     expect(find.byKey(const Key('result_ready')), findsOneWidget);
-    expect(find.text('FORWARD'), findsWidgets);
+    expect(find.text('COMMIT'), findsWidgets);
     // A future period really does carry engine-calculated windows.
     expect(find.byKey(const Key('result_lucky_windows')), findsOneWidget);
   });

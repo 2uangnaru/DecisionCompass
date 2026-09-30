@@ -281,7 +281,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'Đối chiếu xu hướng gắn bó và chấm dứt';
+      'Đối chiếu đà của hôm nay với vài ngày trước';
 
   @override
   String get loadingModeStayGo => 'Đối chiếu sự gắn bó và chuyển động';
@@ -292,6 +292,10 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get loadingModeForwardBackward =>
       'Đối chiếu xu hướng tiến lên và lùi lại';
+
+  @override
+  String get loadingModeCommitWithdraw =>
+      'Đối chiếu xu hướng gắn bó và chấm dứt';
 
   @override
   String get loadingModeLeftRight => 'Cân bằng xu hướng tiếp nhận và thể hiện';
@@ -354,7 +358,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      'TRÁI / PHẢI và TIẾN / LÙI chỉ là lựa chọn mang tính biểu tượng. Không dùng chúng để tham gia giao thông, lái xe, tìm đường hoặc quyết định liên quan đến an toàn thân thể.';
+      'TRÁI / PHẢI và TIẾN LÊN / LÙI LẠI chỉ là lựa chọn mang tính biểu tượng. Không dùng chúng để tham gia giao thông, lái xe, tìm đường hoặc quyết định liên quan đến an toàn thân thể.';
 
   @override
   String get politicsTitle => 'Chính trị & Xung đột xã hội';
@@ -445,10 +449,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get choiceWait => 'CHỜ ĐỢI';
 
   @override
-  String get choiceAdvance => 'GẮN BÓ';
+  String get choiceAdvance => 'TIẾN LÊN';
 
   @override
-  String get choiceRetreat => 'CHẤM DỨT';
+  String get choiceRetreat => 'LÙI LẠI';
 
   @override
   String get choiceStay => 'Ở LẠI';
@@ -467,6 +471,12 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get choiceBackward => 'LÙI LẠI';
+
+  @override
+  String get choiceCommit => 'GẮN BÓ';
+
+  @override
+  String get choiceWithdraw => 'CHẤM DỨT';
 
   @override
   String get choiceLeft => 'TRÁI';

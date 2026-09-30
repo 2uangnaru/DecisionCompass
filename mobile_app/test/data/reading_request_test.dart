@@ -160,9 +160,15 @@ void main() {
         'advance_retreat',
         'stay_go',
         'keep_let_go',
-        'forward_backward',
+        'commit_withdraw',
         'left_right',
+        // Retired with v9.1 and last on purpose: it is never offered, only
+        // parsed, so a saved reading still names the pair it was calculated
+        // for instead of being relabelled COMMIT/WITHDRAW.
+        'forward_backward',
       ]);
+      expect(DecisionMode.selectable.map((m) => m.wireValue), isNot(contains('forward_backward')));
+      expect(DecisionMode.forwardBackward.legacy, isTrue);
     });
 
     test('TimePeriod', () {

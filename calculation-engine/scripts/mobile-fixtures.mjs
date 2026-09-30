@@ -7,15 +7,18 @@
  *   node scripts/mobile-fixtures.mjs --check   fail when a committed fixture differs
  *   node scripts/mobile-fixtures.mjs           same as --check
  *
- * Projection checks call the engine's own MODES / percent / scoreForMode, so no
- * formula is re-implemented here. This script never writes the synthetic_*
- * fixtures: those cover states the engine cannot be asked to emit on demand and
- * are maintained by hand (see mobile_app/test/fixtures/README.md).
+ * Scoring checks call the engine's own MODES / scoring module, so no formula
+ * is re-implemented here. This script never writes the synthetic_*
+ * or legacy_* fixtures: those cover states the engine cannot be asked to emit
+ * on demand — a balanced result, no coverage at all, or a reading taken under
+ * a ruleset that has since retired its mode — and are maintained by hand (see
+ * mobile_app/test/fixtures/README.md).
  */
 import { readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { createCalculator } from '../src/index.js';
-import { MODES, percentTenths, scoreForMode } from '../src/core.js';
+import { MODES, LEGACY_MODES, RULESET } from '../src/core.js';
+import { displayTenths, modeScore, adjustAgainstHistory } from '../src/scoring.js';
 
 const FIXTURE_DIR = fileURLToPath(new URL('../../mobile_app/test/fixtures/', import.meta.url));
 const ZONE_VN = 'Asia/Ho_Chi_Minh';
@@ -41,9 +44,9 @@ const SCENARIOS = [
     expect: { status: 'ready', windowStatus: 'not_applicable', luckyWindows: 0 },
   },
   {
-    file: 'ready_forward_backward_two_windows.json', profile: PROFILE_KNOWN_HOUR,
+    file: 'ready_commit_withdraw_two_windows.json', profile: PROFILE_KNOWN_HOUR,
     context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: ZONE_VN },
-    mode: 'forward_backward', period: 'evening',
+    mode: 'commit_withdraw', period: 'evening',
     expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
   },
   {
@@ -85,7 +88,7 @@ const SCENARIOS = [
   {
     file: 'unknown_birth_time_warnings.json', profile: PROFILE_UNKNOWN_HOUR,
     context: { instantUtc: '2026-09-18T07:30:00Z', deviceTimezone: ZONE_VN },
-    mode: 'forward_backward', period: 'afternoon',
+    mode: 'commit_withdraw', period: 'afternoon',
     expect: { status: 'ready', warnings: ['unknown_birth_time'] },
   },
   {
@@ -126,7 +129,7 @@ const SCENARIOS = [
   {
     file: 'ready_study_morning.json', profile: PROFILE_KNOWN_HOUR,
     context: { instantUtc: '2026-09-17T23:30:00Z', deviceTimezone: ZONE_VN },
-    mode: 'forward_backward', period: 'morning', category: 'study',
+    mode: 'commit_withdraw', period: 'morning', category: 'study',
     expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
   },
   {
@@ -148,23 +151,32 @@ const SCENARIOS = [
 function projectionProblems(result, label) {
   const problems = [];
   const axes = result.axisScores;
-  if (axes) {
-    const recomputed = scoreForMode({ a: axes.action, c: axes.change }, result.mode);
-    if (Math.abs(recomputed - axes.selected) > 1e-9) {
-      problems.push(`${label}: axisScores.selected ${axes.selected} != projection ${recomputed}`);
+  const scoring = result.scoring;
+  if (axes && result.modeScore != null && Math.abs(result.modeScore - axes.selected) > 1e-9) {
+    problems.push(`${label}: modeScore ${result.modeScore} != axisScores.selected ${axes.selected}`);
+  }
+  if (scoring) {
+    // The reported score must be reproducible from the reported signals: mix
+    // the normalized set the same way, then apply the same fortnight push.
+    const remixed = modeScore(result.mode, scoring.normalized);
+    if (Math.abs(remixed - scoring.rawModeScore) > 1e-9) {
+      problems.push(`${label}: rawModeScore ${scoring.rawModeScore} != mixture of the reported signals ${remixed}`);
     }
-    if (result.modeScore != null && Math.abs(result.modeScore - axes.selected) > 1e-9) {
-      problems.push(`${label}: modeScore ${result.modeScore} != axisScores.selected ${axes.selected}`);
+    if (scoring.priorMedian != null) {
+      const pushed = adjustAgainstHistory(scoring.rawModeScore, [scoring.priorMedian]);
+      if (Math.abs(pushed - scoring.adjustedModeScore) > 1e-9) {
+        problems.push(`${label}: adjustedModeScore ${scoring.adjustedModeScore} != push from the reported median ${pushed}`);
+      }
     }
   }
   if (result.percentages) {
     const [first, second] = MODES[result.mode].labels;
     // Percentages carry one decimal, held as an integer number of tenths so
     // the pair is exact; compare in tenths rather than in floating point.
-    const expected = percentTenths(result.modeScore);
+    const expected = displayTenths(result.modeScore);
     const shown = Math.round(result.percentages[first] * 10);
     if (shown !== expected) {
-      problems.push(`${label}: percentages.${first} ${result.percentages[first]} != percentTenths(modeScore)/10 ${expected / 10}`);
+      problems.push(`${label}: percentages.${first} ${result.percentages[first]} != displayTenths(modeScore)/10 ${expected / 10}`);
     }
     if (shown + Math.round(result.percentages[second] * 10) !== 1000) {
       problems.push(`${label}: percentages do not sum to 100.0`);
@@ -230,6 +242,20 @@ function main() {
   // Synthetic fixtures are hand-maintained but must still be self-consistent.
   for (const file of readdirSync(FIXTURE_DIR).filter(f => f.endsWith('.json'))) {
     const fixture = JSON.parse(readFileSync(FIXTURE_DIR + file, 'utf8'));
+    if (file.startsWith('legacy_')) {
+      // A legacy fixture is a reading taken under an earlier ruleset, kept
+      // verbatim so the app can prove it still parses and renders one.
+      // Re-deriving its percentage under today's curve is exactly the silent
+      // relabelling this fixture exists to prevent, so it is checked for
+      // being genuinely old instead.
+      if (!Object.hasOwn(LEGACY_MODES, fixture.mode)) {
+        problems.push(`${file}: mode ${fixture.mode} is not a retired mode`);
+      }
+      if (fixture.rulesetVersion === RULESET) {
+        problems.push(`${file}: claims the current ruleset ${RULESET}, so it is not a legacy reading`);
+      }
+      continue;
+    }
     if (fixture.mode) problems.push(...projectionProblems(fixture, `${file} (as committed)`));
   }
 

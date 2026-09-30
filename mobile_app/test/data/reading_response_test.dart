@@ -307,7 +307,7 @@ void main() {
   group('parsed readings are immutable', () {
     test('collections on the response reject mutation', () {
       final response = ReadingResponse.fromJson(
-        fixtures['ready_forward_backward_two_windows.json']!,
+        fixtures['ready_commit_withdraw_two_windows.json']!,
       );
 
       expect(
@@ -417,7 +417,7 @@ void main() {
 
     test('unknown top-level and nested fields from a newer server do not crash parsing', () {
       final future = JsonMap.from(
-        fixtures['ready_forward_backward_two_windows.json']!,
+        fixtures['ready_commit_withdraw_two_windows.json']!,
       );
       future['futureTopLevelField'] = {'anything': 'goes'};
       future['meaning'] = 'symbolic_alignment_not_success_probability';
@@ -433,7 +433,7 @@ void main() {
 
       final response = ReadingResponse.fromJson(future);
       expect(response.status, ReadingStatus.ready);
-      expect(response.mode, DecisionMode.forwardBackward);
+      expect(response.mode, DecisionMode.commitWithdraw);
       expect(response.luckyWindows, hasLength(2));
     });
   });

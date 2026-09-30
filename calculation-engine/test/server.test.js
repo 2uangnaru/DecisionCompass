@@ -49,8 +49,8 @@ test('health reports the engine version and ruleset from the engine itself', asy
     service: SERVICE, status: 'ok', engineVersion: VERSION, rulesetVersion: RULESET,
   });
   // Bumped with the expanded full-day energy tones.
-  assert.equal(VERSION, '3.5.0-mvp');
-  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v8');
+  assert.equal(VERSION, '4.1.0-mvp');
+  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v9.2-experimental');
 });
 
 test('a YES/NO NOW request returns a real engine reading', async () => {
@@ -76,15 +76,25 @@ test('a YES/NO NOW request returns a real engine reading', async () => {
   assert.ok(reading.inputSnapshot.profile.birthDate === PROFILE.birthDate);
 });
 
-test('FORWARD/BACKWARD keeps its own mode and percentages', async () => {
-  const response = await post(request({ mode: 'forward_backward', period: 'evening' }));
+test('COMMIT/WITHDRAW keeps its own mode and percentages', async () => {
+  const response = await post(request({ mode: 'commit_withdraw', period: 'evening' }));
   assert.equal(response.status, 200);
   const reading = await response.json();
-  assert.equal(reading.mode, 'forward_backward');
-  assert.equal(reading.modeBasis, 'temporal_momentum');
-  assert.equal(reading.percentages.FORWARD + reading.percentages.BACKWARD, 100);
+  assert.equal(reading.mode, 'commit_withdraw');
+  assert.equal(reading.modeBasis, 'durability_horizon');
+  assert.equal(reading.percentages.COMMIT + reading.percentages.WITHDRAW, 100);
   assert.equal(typeof reading.modeScore, 'number');
   assert.ok(reading.luckyWindows.length > 0);
+});
+
+test('the retired mode is refused over the wire, not quietly relabelled', async () => {
+  const response = await post(request({ mode: 'forward_backward', period: 'evening' }));
+  // The same status the API already uses for a request it will not process,
+  // rather than a 500 that would read as an engine fault.
+  assert.equal(response.status, 422);
+  const body = await response.json();
+  assert.equal(body.error.code, 'invalid_reading_request');
+  assert.ok(!JSON.stringify(body).includes('COMMIT'), 'the refusal must not suggest a relabelling');
 });
 
 test('LEFT/RIGHT keeps its own mode and percentages', async () => {

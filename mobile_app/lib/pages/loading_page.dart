@@ -200,20 +200,25 @@ class _LoadingPageState extends State<LoadingPage> {
   void _showResult(engine.ReadingResponse reading) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
-        transitionDuration: const Duration(milliseconds: 760),
+        transitionDuration: const Duration(milliseconds: 400),
         pageBuilder: (_, animation, secondaryAnimation) =>
             ResultPage(reading: reading, dependencies: widget.dependencies),
-        transitionsBuilder: (_, animation, secondaryAnimation, child) =>
-            FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOut,
-              ),
-              child: ScaleTransition(
-                scale: Tween<double>(begin: 0.96, end: 1).animate(animation),
-                child: child,
-              ),
+        transitionsBuilder: (_, animation, secondaryAnimation, child) {
+          final curved = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeOutCubic,
+          );
+          return FadeTransition(
+            opacity: curved,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0.0, 0.03),
+                end: Offset.zero,
+              ).animate(curved),
+              child: child,
             ),
+          );
+        },
       ),
     );
   }

@@ -195,6 +195,10 @@ void useScreen(
 Future<void> loadBundledFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   for (final entry in const {
+    'CormorantGaramond': [
+      'CormorantGaramond-Regular.ttf',
+      'CormorantGaramond-Bold.ttf',
+    ],
     'NotoSans': ['NotoSans-Regular.ttf', 'NotoSans-Bold.ttf'],
     'NotoSansThai': ['NotoSansThai-Regular.ttf', 'NotoSansThai-Bold.ttf'],
     'NotoSansDevanagari': [

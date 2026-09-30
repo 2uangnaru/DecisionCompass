@@ -277,7 +277,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'Balancing commitment against withdrawal';
+      'Measuring today\'s push against the last few days';
 
   @override
   String get loadingModeStayGo => 'Comparing roots with movement';
@@ -288,6 +288,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get loadingModeForwardBackward =>
       'Tracing forward motion against returning energy';
+
+  @override
+  String get loadingModeCommitWithdraw =>
+      'Balancing commitment against withdrawal';
 
   @override
   String get loadingModeLeftRight =>
@@ -351,7 +355,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      'LEFT / RIGHT and FORWARD / BACKWARD are symbolic choices only. Never use them for traffic, driving, route-finding, or physical safety.';
+      'LEFT / RIGHT and ADVANCE / RETREAT are symbolic choices only. Never use them for traffic, driving, route-finding, or physical safety.';
 
   @override
   String get politicsTitle => 'Politics & Social Conflicts';
@@ -442,10 +446,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get choiceWait => 'WAIT';
 
   @override
-  String get choiceAdvance => 'COMMIT';
+  String get choiceAdvance => 'ADVANCE';
 
   @override
-  String get choiceRetreat => 'WITHDRAW';
+  String get choiceRetreat => 'RETREAT';
 
   @override
   String get choiceStay => 'STAY';
@@ -464,6 +468,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get choiceBackward => 'BACKWARD';
+
+  @override
+  String get choiceCommit => 'COMMIT';
+
+  @override
+  String get choiceWithdraw => 'WITHDRAW';
 
   @override
   String get choiceLeft => 'LEFT';

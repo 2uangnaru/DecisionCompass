@@ -15,7 +15,11 @@ class AppProfile {
     this.birthTime,
     this.traditionalProfile,
     this.safetyAcknowledged = false,
+    this.createdAt,
   });
+
+  /// The timestamp when the user created their profile, used for journey tenure progression.
+  final DateTime? createdAt;
 
   /// The name the reader typed, or null when they left it blank.
   ///
@@ -72,6 +76,7 @@ class AppProfile {
     ZodiacSign? zodiacSign,
     bool? useCurrentLocation,
     bool? safetyAcknowledged,
+    DateTime? createdAt,
   }) {
     return AppProfile(
       userName: userName ?? this.userName,
@@ -82,6 +87,7 @@ class AppProfile {
       zodiacSign: zodiacSign ?? this.zodiacSign,
       useCurrentLocation: useCurrentLocation ?? this.useCurrentLocation,
       safetyAcknowledged: safetyAcknowledged ?? this.safetyAcknowledged,
+      createdAt: createdAt ?? this.createdAt,
     );
   }
 
@@ -114,11 +120,13 @@ class AppProfile {
       'traditionalProfile': traditionalProfile!.wireValue,
     'useCurrentLocation': useCurrentLocation,
     'safetyAcknowledged': safetyAcknowledged,
+    if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
   };
 
   factory AppProfile.fromJson(Map<String, dynamic> json) {
     final birthDate = DateTime.parse(json['birthDate'] as String);
     final rawTraditionalProfile = json['traditionalProfile'] as String?;
+    final rawCreatedAt = json['createdAt'] as String?;
     // A record written before the default-name state existed always has this
     // key, so it is read as a name the reader chose — including the literal
     // string `Explorer`, which such a reader may well have typed. Guessing
@@ -135,6 +143,7 @@ class AppProfile {
       zodiacSign: zodiacForDate(birthDate),
       useCurrentLocation: json['useCurrentLocation'] as bool,
       safetyAcknowledged: json['safetyAcknowledged'] as bool? ?? false,
+      createdAt: rawCreatedAt != null ? DateTime.tryParse(rawCreatedAt) : null,
     );
   }
 }

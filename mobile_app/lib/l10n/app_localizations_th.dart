@@ -275,7 +275,8 @@ class AppLocalizationsTh extends AppLocalizations {
   String get loadingModeActWait => 'กำลังชั่งแรงขับกับความอดทน';
 
   @override
-  String get loadingModeAdvanceRetreat => 'กำลังเทียบความผูกพันกับการยุติ';
+  String get loadingModeAdvanceRetreat =>
+      'กำลังเทียบแรงผลักของวันนี้กับไม่กี่วันก่อน';
 
   @override
   String get loadingModeStayGo => 'กำลังเทียบความผูกพันกับการเคลื่อนไหว';
@@ -286,6 +287,9 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get loadingModeForwardBackward =>
       'กำลังดูแรงไปข้างหน้ากับพลังที่หวนกลับ';
+
+  @override
+  String get loadingModeCommitWithdraw => 'กำลังเทียบความผูกพันกับการยุติ';
 
   @override
   String get loadingModeLeftRight => 'กำลังปรับสมดุลระหว่างการรับและการแสดงออก';
@@ -348,7 +352,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      'ซ้าย / ขวา และ ไปข้างหน้า / ย้อนกลับ เป็นเพียงตัวเลือกเชิงสัญลักษณ์ ห้ามใช้กับการจราจร การขับรถ การหาเส้นทาง หรือความปลอดภัยทางกาย';
+      'ซ้าย / ขวา และ เดินหน้า / ถอยกลับ เป็นเพียงตัวเลือกเชิงสัญลักษณ์ ห้ามใช้กับการจราจร การขับรถ การหาเส้นทาง หรือความปลอดภัยทางกาย';
 
   @override
   String get politicsTitle => 'การเมืองและความขัดแย้งทางสังคม';
@@ -439,10 +443,10 @@ class AppLocalizationsTh extends AppLocalizations {
   String get choiceWait => 'รอ';
 
   @override
-  String get choiceAdvance => 'ผูกพัน';
+  String get choiceAdvance => 'เดินหน้า';
 
   @override
-  String get choiceRetreat => 'ถอย';
+  String get choiceRetreat => 'ถอยกลับ';
 
   @override
   String get choiceStay => 'อยู่ต่อ';
@@ -461,6 +465,12 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get choiceBackward => 'ย้อนกลับ';
+
+  @override
+  String get choiceCommit => 'ผูกพัน';
+
+  @override
+  String get choiceWithdraw => 'ถอย';
 
   @override
   String get choiceLeft => 'ซ้าย';

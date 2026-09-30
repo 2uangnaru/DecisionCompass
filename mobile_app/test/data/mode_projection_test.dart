@@ -5,144 +5,161 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'fixture_loader.dart';
 
-typedef Projection = ({
-  double a,
-  double c,
-  int sign,
-  String first,
-  String second,
-});
-
-/// Mirrors `MODES` in `calculation-engine/src/core.js`: the first label's score
-/// is `clamp(sign * (a * action + c * change))`.
+/// Mirrors `MODE_SIGNALS` in `calculation-engine/src/scoring.js`: the weights
+/// each mode mixes its normalized signals with.
 ///
-/// These weights are duplicated here deliberately, as a tripwire — if the
-/// engine's projection ever changes, this table and the fixtures have to move
-/// together and this test fails loudly. It is *not* the authoritative check:
+/// Duplicated here deliberately, as a tripwire — if a mixture ever changes,
+/// this table and the fixtures have to move together and this test fails
+/// loudly. It is *not* the authoritative check:
 /// `node scripts/mobile-fixtures.mjs --check` validates fixtures against the
-/// engine's own `scoreForMode`/`percent`, without re-implementing anything.
-const projections = <DecisionMode, Projection>{
-  DecisionMode.yesNo: (a: 1.0, c: 0.0, sign: 1, first: 'YES', second: 'NO'),
-  DecisionMode.actWait: (
-    a: 0.85,
-    c: 0.15,
-    sign: 1,
-    first: 'ACT',
-    second: 'WAIT',
-  ),
-  DecisionMode.advanceRetreat: (
-    a: 0.55,
-    c: 0.45,
-    sign: 1,
-    first: 'ADVANCE',
-    second: 'RETREAT',
-  ),
-  DecisionMode.stayGo: (a: 0.0, c: 1.0, sign: -1, first: 'STAY', second: 'GO'),
-  DecisionMode.keepLetGo: (
-    a: -0.3,
-    c: 0.7,
-    sign: -1,
-    first: 'KEEP',
-    second: 'LET GO',
-  ),
-  DecisionMode.forwardBackward: (
-    a: 0.25,
-    c: 0.75,
-    sign: 1,
-    first: 'FORWARD',
-    second: 'BACKWARD',
-  ),
-  DecisionMode.leftRight: (
-    a: 0.7,
-    c: -0.3,
-    sign: -1,
-    first: 'LEFT',
-    second: 'RIGHT',
-  ),
+/// engine's own scoring module, without re-implementing anything.
+const mixtures = <DecisionMode, Map<String, double>>{
+  DecisionMode.yesNo: {'P': 0.45, 'C': 0.20, 'L': 0.35},
+  DecisionMode.actWait: {'P': 0.30, 'C': 0.10, 'T': 0.30, 'L': 0.30},
+  DecisionMode.advanceRetreat: {'P': 0.25, 'M': 0.60, 'L': 0.15},
+  DecisionMode.stayGo: {'G': 0.70, 'P': 0.20, 'L': 0.10},
+  DecisionMode.keepLetGo: {'R': 0.70, 'P': 0.20, 'L': 0.10},
+  DecisionMode.commitWithdraw: {'H': 0.80, 'P': 0.15, 'L': 0.05},
+  DecisionMode.leftRight: {'Y': 0.70, 'P': 0.20, 'L': 0.10},
 };
 
-double projectedScore(DecisionMode mode, AxisScores axes) {
-  final projection = projections[mode]!;
-  final raw =
-      projection.sign *
-      (projection.a * axes.action + projection.c * axes.change);
-  return raw.clamp(-1.0, 1.0);
+/// The two English labels each mode's percentages are keyed by.
+const labels = <DecisionMode, (String, String)>{
+  DecisionMode.yesNo: ('YES', 'NO'),
+  DecisionMode.actWait: ('ACT', 'WAIT'),
+  DecisionMode.advanceRetreat: ('ADVANCE', 'RETREAT'),
+  DecisionMode.stayGo: ('STAY', 'GO'),
+  DecisionMode.keepLetGo: ('KEEP', 'LET GO'),
+  DecisionMode.commitWithdraw: ('COMMIT', 'WITHDRAW'),
+  DecisionMode.leftRight: ('LEFT', 'RIGHT'),
+  DecisionMode.forwardBackward: ('FORWARD', 'BACKWARD'),
+};
+
+/// The first option's score, mixed from the signals the reading reported.
+///
+/// The mixture is divided by `sqrt(sum of w squared)`, mirroring `MODE_GAIN`
+/// in `calculation-engine/src/scoring.js`. Without it a four-signal mode would
+/// read structurally milder than a one-signal mode purely because averaging
+/// more terms narrows the spread — the imbalance v9.2 exists to remove.
+double mixedScore(DecisionMode mode, Map<String, double> normalized) {
+  final mixture = mixtures[mode]!;
+  var score = 0.0;
+  var squares = 0.0;
+  mixture.forEach((name, weight) {
+    expect(
+      normalized[name],
+      isNotNull,
+      reason: '${mode.wireValue} mixes $name but the reading did not report it',
+    );
+    score += weight * normalized[name]!;
+    squares += weight * weight;
+  });
+  return (score / math.sqrt(squares)).clamp(-1.0, 1.0);
 }
 
-/// `percentTenths()` in `calculation-engine/src/core.js`: the display band in
-/// integer tenths of a percent, so the pair is exact.
-int percentTenthsFor(double score) {
+/// `displayTenths()` in `calculation-engine/src/scoring.js`: the display band
+/// in integer tenths of a percent, so the pair is exact.
+int displayTenthsFor(double score) {
   final s = score.clamp(-1.0, 1.0);
-  final sign = s < 0 ? -1 : s > 0 ? 1 : 0;
-  final expanded = (sign * math.pow(s.abs(), 0.65)).toDouble();
+  final sign = s < 0
+      ? -1
+      : s > 0
+      ? 1
+      : 0;
+  final expanded = (sign * math.pow(s.abs(), 0.55)).toDouble();
   return (500 + 400 * expanded.clamp(-1.0, 1.0) + 0.5).floor();
 }
 
-int percentFor(double score) => ((percentTenthsFor(score) + 5) / 10).floor();
+/// The `scoring` block is engine output the app deliberately does not parse:
+/// nothing on screen needs it, and leaving it out of the DTO keeps a saved
+/// snapshot small. Tests read it straight from the fixture JSON.
+Map<String, double>? normalizedSignals(JsonMap fixture) {
+  final scoring = fixture['scoring'];
+  if (scoring is! JsonMap) return null;
+  final normalized = scoring['normalized'];
+  if (normalized is! JsonMap) return null;
+  return {
+    for (final entry in normalized.entries)
+      entry.key: (entry.value as num).toDouble(),
+  };
+}
 
 void main() {
   final fixtures = readAllFixtures();
 
-  final scored = <String, ReadingResponse>{};
+  final scored = <String, (ReadingResponse, Map<String, double>)>{};
   for (final entry in fixtures.entries) {
+    final signals = normalizedSignals(entry.value);
     final response = ReadingResponse.fromJson(entry.value);
-    if (response.axisScores != null && response.modeScore != null) {
-      scored[entry.key] = response;
+    if (signals != null && response.modeScore != null) {
+      scored[entry.key] = (response, signals);
     }
   }
 
-  test('the projection table matches the seven documented decision modes', () {
-    expect(projections.keys.toSet(), equals(DecisionMode.values.toSet()));
+  test('the mixture table covers every mode a reader can choose', () {
+    expect(mixtures.keys.toSet(), equals(DecisionMode.selectable.toSet()));
+    // The retired mode has no mixture: v9.1 does not score it at all.
+    expect(mixtures.containsKey(DecisionMode.forwardBackward), isFalse);
+    for (final mixture in mixtures.values) {
+      final total = mixture.values.fold<double>(0, (s, w) => s + w);
+      expect(total, closeTo(1, 1e-9));
+    }
   });
 
-  test('every DecisionMode has at least one scored fixture', () {
+  test('every selectable mode has at least one scored fixture', () {
     expect(
-      scored.values.map((r) => r.mode).toSet(),
-      equals(DecisionMode.values.toSet()),
-      reason: 'a mode with no scored fixture is not projection-tested',
+      scored.values.map((pair) => pair.$1.mode).toSet(),
+      equals(DecisionMode.selectable.toSet()),
+      reason: 'a mode with no scored fixture is not signal-tested',
     );
   });
 
-  group('projection consistency', () {
+  group('scoring consistency', () {
     for (final entry in scored.entries) {
       final name = entry.key;
-      final response = entry.value;
+      final (response, normalized) = entry.value;
 
       test('$name (${response.mode.wireValue}) is internally consistent', () {
-        final axes = response.axisScores!;
-        final expected = projectedScore(response.mode, axes);
+        final raw = (fixtures[name]!['scoring']! as JsonMap);
+        final rawModeScore = (raw['rawModeScore']! as num).toDouble();
+        expect(
+          mixedScore(response.mode, normalized),
+          closeTo(rawModeScore, 1e-9),
+          reason: '$name: rawModeScore is not the mixture of its own signals',
+        );
 
-        expect(
-          axes.selected,
-          closeTo(expected, 1e-9),
-          reason:
-              '$name: axisScores.selected is not the mode projection of '
-              'action/change',
-        );
-        expect(
-          response.modeScore,
-          closeTo(axes.selected, 1e-9),
-          reason: '$name: modeScore must equal axisScores.selected',
-        );
+        // The displayed score is the raw one pushed away from the reader's
+        // own fortnight, so it is allowed to differ — but only that way.
+        final median = raw['priorMedian'];
+        if (median is num) {
+          final pushed = (rawModeScore + 0.5 * (rawModeScore - median)).clamp(
+            -1.0,
+            1.0,
+          );
+          expect(
+            response.modeScore,
+            closeTo(pushed, 1e-9),
+            reason:
+                '$name: modeScore is not the fortnight push of rawModeScore',
+          );
+        }
 
         final percentages = response.percentages;
         if (percentages == null) return;
 
-        final projection = projections[response.mode]!;
-        final first = percentTenthsFor(response.modeScore!);
+        final (first, second) = labels[response.mode]!;
+        final tenths = displayTenthsFor(response.modeScore!);
         expect(
-          percentages.tenths[projection.first],
-          first,
+          percentages.tenths[first],
+          tenths,
           reason:
-              '$name: percentages.${projection.first} must be '
-              'floor(500 + 400 * modeScore + 0.5) tenths',
+              '$name: percentages.$first must be '
+              'floor(500 + 400 * sign * |modeScore|^0.55 + 0.5) tenths',
         );
-        expect(percentages.tenths[projection.second], 1000 - first);
+        expect(percentages.tenths[second], 1000 - tenths);
         expect(
           response.winner,
-          first == 500
-              ? isNull
-              : (first > 500 ? projection.first : projection.second),
+          tenths == 500 ? isNull : (tenths > 500 ? first : second),
           reason: '$name: winner must follow the percentages',
         );
       });
@@ -155,29 +172,51 @@ void main() {
     );
     expect(response.status, ReadingStatus.balanced);
     expect(response.winner, isNull);
-    expect(percentTenthsFor(response.modeScore!), 500);
+    expect(displayTenthsFor(response.modeScore!), 500);
   });
 
-  test('LEFT/RIGHT and FORWARD/BACKWARD are not relabelled YES/NO', () {
-    // Each fixture is generated at its own instant, so comparing two fixtures
-    // would compare different axes. Re-project one fixture's own axes through
-    // the other modes instead: that isolates the projection from the reading.
-    final leftRight = ReadingResponse.fromJson(
-      fixtures['ready_left_right.json']!,
-    );
-    final axes = leftRight.axisScores!;
-
-    final asYesNo = projectedScore(DecisionMode.yesNo, axes);
-    final asForwardBackward = projectedScore(
-      DecisionMode.forwardBackward,
-      axes,
-    );
-
-    expect(leftRight.modeScore, isNot(closeTo(asYesNo, 1e-9)));
-    expect(asForwardBackward, isNot(closeTo(asYesNo, 1e-9)));
+  test('each mode reads a different mixture of the same signals', () {
+    // One synthetic signal set, mixed seven ways. A fixture only carries the
+    // signals its own mode asked for, and comparing two fixtures would compare
+    // two different instants, so the mixtures are isolated from the moment.
+    const normalized = <String, double>{
+      'P': 0.21,
+      'C': -0.34,
+      'L': 0.12,
+      'T': 0.47,
+      'M': -0.18,
+      'R': 0.09,
+      'G': -0.07,
+      'H': 0.15,
+      'Y': 0.52,
+    };
+    final scores = <DecisionMode, double>{
+      for (final mode in DecisionMode.selectable)
+        mode: mixedScore(mode, normalized),
+    };
+    expect(scores.length, 7);
     expect(
-      percentTenthsFor(leftRight.modeScore!),
-      isNot(percentTenthsFor(asYesNo)),
+      scores.values.toSet().length,
+      scores.length,
+      reason: 'two modes collapsed onto the same score: one is redundant',
     );
+  });
+
+  test('a retired reading keeps the numbers it was calculated with', () {
+    // Under the old ruleset the display curve had a different exponent, so
+    // re-deriving this fixture's percentage today would change it. The point
+    // of keeping it is that nothing re-derives it.
+    final fixture = fixtures['legacy_forward_backward_reading.json']!;
+    final response = ReadingResponse.fromJson(fixture);
+    expect(response.mode, DecisionMode.forwardBackward);
+    expect(response.mode.legacy, isTrue);
+    expect(fixture['scoring'], isNull, reason: 'it predates v9.1 scoring');
+
+    final (first, second) = labels[DecisionMode.forwardBackward]!;
+    final shown = response.percentages!.tenths;
+    expect(shown.keys, containsAll(<String>[first, second]));
+    expect(shown[first]! + shown[second]!, 1000);
+    // Its own stored percentage, not one recomputed under v9.1.
+    expect(shown[first], isNot(displayTenthsFor(response.modeScore!)));
   });
 }

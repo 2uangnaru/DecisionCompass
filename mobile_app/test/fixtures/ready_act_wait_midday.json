@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.5.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+  "engineVersion": "4.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,18 +58,40 @@
   "status": "ready",
   "winner": "ACT",
   "percentages": {
-    "ACT": 55.1,
-    "WAIT": 44.9
+    "ACT": 61.9,
+    "WAIT": 38.1
   },
   "dataCoverage": 0.973,
-  "modeScore": 0.0420503475,
+  "modeScore": 0.1099476503,
   "modeBasis": "action_timing",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "805d7e02d398c5eb50906279ef63d5d2b06a907b5d2174585500fe71b5f04c10",
+  "readingKey": "c72b0d0736ad16f5d8808edd152410b033bf2d6ec132aed4dc6662ff06b0532c",
   "axisScores": {
     "action": 0.0214201168,
     "change": 0.1589549879,
-    "selected": 0.0420503475
+    "selected": 0.1099476503
+  },
+  "scoring": {
+    "system": "v9.2-experimental",
+    "scaleVersion": "v9.2-cohort-2026-09-30",
+    "anchorLocal": "2026-09-18T12:00",
+    "signals": {
+      "P": 0.0128315394,
+      "C": 0.2014574252,
+      "T": 0.0047361998,
+      "L": 0.019
+    },
+    "normalized": {
+      "P": 0.0775756285,
+      "C": 0.5823222089,
+      "T": 0.0091595271,
+      "L": 0.024961962
+    },
+    "rawModeScore": 0.1733748666,
+    "priorDatesUsed": 14,
+    "priorMedian": 0.3002292992,
+    "adjustedModeScore": 0.1099476503,
+    "meaning": "symbolic_alignment_not_success_probability"
   },
   "evaluatedAtUtc": "2026-09-18T05:00:00.000Z",
   "luckyWindows": [
@@ -78,7 +100,7 @@
       "endUtc": "2026-09-18T06:00:00.000Z",
       "startLocal": "2026-09-18T12:30:00+07:00",
       "endLocal": "2026-09-18T13:00:00+07:00",
-      "score": 55,
+      "score": 65,
       "dataCoverage": 0.973,
       "hourBranch": 6,
       "meaning": "symbolic_timing_score_not_probability"
@@ -88,7 +110,7 @@
       "endUtc": "2026-09-18T07:00:00.000Z",
       "startLocal": "2026-09-18T13:00:00+07:00",
       "endLocal": "2026-09-18T14:00:00+07:00",
-      "score": 55,
+      "score": 65,
       "dataCoverage": 0.973,
       "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"

@@ -1,5 +1,8 @@
+import 'dart:math' as math;
+
 import 'package:decision_compass/local_engine/core/core.dart';
 import 'package:decision_compass/local_engine/core/numbers.dart';
+import 'package:decision_compass/local_engine/core/scoring.dart';
 import 'package:decision_compass/local_engine/core/sha256.dart';
 import 'package:decision_compass/local_engine/numerology/numerology.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -71,45 +74,71 @@ void main() {
 
   group('decision projections', () {
     test('the display band is 10–90, centred on 50', () {
-      expect(percent(0), 50);
-      expect(percent(1), 90);
-      expect(percent(-1), 10);
-      expect(percent(2), 90);
-      expect(percent(-2), 10);
+      expect(displayPercent(0), 50);
+      expect(displayPercent(1), 90);
+      expect(displayPercent(-1), 10);
+      expect(displayPercent(2), 90);
+      expect(displayPercent(-2), 10);
     });
 
-    test('each mode projects the two axes its own way', () {
-      final evidence = Evidence(0.5, -0.25, 1);
+    test('each mode mixes its own set of signals', () {
+      // One raw signal set, read by all seven mixtures. Two modes agreeing
+      // here by coincidence would mean one of them is redundant.
+      final raw = <String, double>{
+        'P': 0.18,
+        'C': -0.22,
+        'L': 0.09,
+        'T': 0.31,
+        'M': -0.14,
+        'R': 0.07,
+        'G': -0.05,
+        'H': 0.12,
+        'Y': 0.44,
+      };
+      final normalized = normalizeAll(raw);
       final scores = <String, double>{
-        for (final mode in modes.keys) mode: scoreForMode(evidence, mode),
+        for (final mode in modes.keys) mode: modeScore(mode, normalized),
       };
 
-      expect(scores['yes_no'], closeTo(0.5, 1e-12));
-      expect(scores['act_wait'], closeTo(.85 * 0.5 + .15 * -0.25, 1e-12));
-      expect(
-        scores['advance_retreat'],
-        closeTo(.55 * 0.5 + .45 * -0.25, 1e-12),
-      );
-      expect(scores['stay_go'], closeTo(-1 * (1 * -0.25), 1e-12));
-      expect(
-        scores['keep_let_go'],
-        closeTo(-1 * (-.3 * 0.5 + .7 * -0.25), 1e-12),
-      );
-      expect(
-        scores['forward_backward'],
-        closeTo(.25 * 0.5 + .75 * -0.25, 1e-12),
-      );
-      expect(
-        scores['left_right'],
-        closeTo(-1 * (.7 * 0.5 + -.3 * -0.25), 1e-12),
-      );
-
-      // No two modes may collapse into the same projection.
+      for (final entry in modeSignals.entries) {
+        var expected = 0.0;
+        var squares = 0.0;
+        for (final part in entry.value.entries) {
+          expected += part.value * normalized[part.key]!;
+          squares += part.value * part.value;
+        }
+        // Divided by sqrt(sum of w squared) so a four-signal mode is not
+        // structurally milder than a one-signal mode.
+        expect(
+          scores[entry.key],
+          closeTo(expected / math.sqrt(squares), 1e-12),
+          reason: entry.key,
+        );
+      }
       expect(scores.values.toSet().length, modes.length);
     });
 
+    test('a legacy mode is refused rather than silently relabelled', () {
+      expect(
+        () => requireCurrentMode('forward_backward'),
+        throwsA(
+          isA<EngineFailure>().having(
+            (e) => e.code,
+            'code',
+            'LEGACY_DECISION_MODE:forward_backward',
+          ),
+        ),
+      );
+      // Its identity is still readable, so history can render it.
+      expect(modeIdentity('forward_backward')!.labels, <String>[
+        'FORWARD',
+        'BACKWARD',
+      ]);
+      expect(modeIdentity('forward_backward')!.replacedBy, 'commit_withdraw');
+    });
+
     test('zero coverage is insufficient data, never a fabricated 50/50', () {
-      final result = decision(Evidence(), 'yes_no');
+      final result = decision('yes_no', 0, 0, displayTenths(0));
       expect(result.status, 'insufficient_data');
       expect(result.winner, isNull);
       expect(result.percentages, isNull);
@@ -117,7 +146,7 @@ void main() {
     });
 
     test('an exactly centred score is balanced with no winner', () {
-      final result = decision(Evidence(0, 0, 1), 'yes_no');
+      final result = decision('yes_no', 0, 1, displayTenths(0));
       expect(result.status, 'balanced');
       expect(result.winner, isNull);
       // Tenths now, so the balance point is 500 on each side.

@@ -27,3 +27,7 @@ mobile_app/.metadata
 *.class
 *.pyc
 .DS_Store
+*.apk
+.claude/
+mobile_app/.claude/
+mobile_app/design_previews/

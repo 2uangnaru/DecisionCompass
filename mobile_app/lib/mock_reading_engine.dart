@@ -7,6 +7,7 @@ ReadingResult createMockReading(DecisionMode mode, TimePeriod period) {
     DecisionMode.advanceRetreat => ('ADVANCE', 58, 'RETREAT'),
     DecisionMode.stayGo => ('GO', 58, 'STAY'),
     DecisionMode.keepLetGo => ('LET GO', 63, 'KEEP'),
+    DecisionMode.commitWithdraw => ('COMMIT', 57, 'WITHDRAW'),
     DecisionMode.forwardBackward => ('FORWARD', 57, 'BACKWARD'),
     DecisionMode.leftRight => ('RIGHT', 54, 'LEFT'),
   };

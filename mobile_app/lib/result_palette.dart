@@ -30,6 +30,31 @@ const _neutral = ResultPalette(
   bottom: Color(0xFF18243C),
 );
 
+/// The pair-specific accent colour for either choice of a decision mode.
+Color choiceAccentColor(DecisionMode mode, {required bool isFirst}) {
+  if (mode == DecisionMode.yesNo) {
+    return isFirst ? CompassColors.blueLight : const Color(0xFFD88990);
+  }
+  return switch (mode) {
+    DecisionMode.yesNo => throw StateError('Handled above'),
+    DecisionMode.actWait =>
+      isFirst ? const Color(0xFF6BCDBF) : const Color(0xFFE8BE7B),
+    DecisionMode.advanceRetreat =>
+      isFirst ? const Color(0xFF82BCEF) : const Color(0xFFC6A7D2),
+    DecisionMode.stayGo =>
+      isFirst ? const Color(0xFFADAEF0) : const Color(0xFF75D8C5),
+    DecisionMode.keepLetGo =>
+      isFirst ? const Color(0xFF84B6E8) : const Color(0xFFE7A5A4),
+    DecisionMode.commitWithdraw =>
+      isFirst ? const Color(0xFF7ABEEB) : const Color(0xFFB9A8E5),
+    DecisionMode.leftRight =>
+      isFirst ? const Color(0xFFB6CCEA) : const Color(0xFFE8C979),
+    // Retired, but a saved reading still has to be painted.
+    DecisionMode.forwardBackward =>
+      isFirst ? const Color(0xFF7ABEEB) : const Color(0xFFB9A8E5),
+  };
+}
+
 /// The pair-specific accents follow the UX spec's mode table. The gradient is
 /// derived from the winning accent so every mode keeps the same visual weight.
 ResultPalette resultPaletteFor({
@@ -45,6 +70,8 @@ ResultPalette resultPaletteFor({
   if (winner != pair.first && winner != pair.second) return _neutral;
 
   final first = winner == pair.first;
+  final accent = choiceAccentColor(mode, isFirst: first);
+
   if (mode == DecisionMode.yesNo) {
     return first
         ? const ResultPalette(
@@ -59,21 +86,6 @@ ResultPalette resultPaletteFor({
           );
   }
 
-  final accent = switch (mode) {
-    DecisionMode.yesNo => throw StateError('Handled above'),
-    DecisionMode.actWait =>
-      first ? const Color(0xFF6BCDBF) : const Color(0xFFE8BE7B),
-    DecisionMode.advanceRetreat =>
-      first ? const Color(0xFF82BCEF) : const Color(0xFFC6A7D2),
-    DecisionMode.stayGo =>
-      first ? const Color(0xFFADAEF0) : const Color(0xFF75D8C5),
-    DecisionMode.keepLetGo =>
-      first ? const Color(0xFF84B6E8) : const Color(0xFFE7A5A4),
-    DecisionMode.forwardBackward =>
-      first ? const Color(0xFF7ABEEB) : const Color(0xFFB9A8E5),
-    DecisionMode.leftRight =>
-      first ? const Color(0xFFB6CCEA) : const Color(0xFFE8C979),
-  };
   return ResultPalette(
     accent: accent,
     top: Color.lerp(CompassColors.deep, accent, 0.08)!,

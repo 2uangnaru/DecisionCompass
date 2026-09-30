@@ -318,18 +318,18 @@ void main() {
       await tester.pump(const Duration(milliseconds: 5400));
       await tester.pumpAndSettle();
 
-      expect(find.text('56.0%'), findsOneWidget);
-      expect(find.text('NO  44.0%'), findsOneWidget);
+      expect(find.text('71.9%'), findsOneWidget);
+      expect(find.text('NO  28.1%'), findsOneWidget);
       // Never a bare integer percentage on the headline split.
-      expect(find.text('56%'), findsNothing);
-      expect(find.text('NO  44%'), findsNothing);
+      expect(find.text('72%'), findsNothing);
+      expect(find.text('NO  28%'), findsNothing);
       final winner = tester.widget<Text>(
         find.byKey(const Key('result_winner_label')),
       );
       final heading = tester.widget<Text>(
         find.byKey(const Key('result_direction_heading')),
       );
-      final percent = tester.widget<Text>(find.text('56.0%'));
+      final percent = tester.widget<Text>(find.text('71.9%'));
       expect(heading.style!.fontSize, lessThanOrEqualTo(18));
       expect(winner.style!.fontSize, 114);
       expect(winner.style!.fontSize, greaterThan(percent.style!.fontSize!));
@@ -340,9 +340,9 @@ void main() {
       final response = fixtureResponse('ready_yes_no_now.json');
       final percentages = response.percentages!;
       expect(percentages.tenths.values.reduce((a, b) => a + b), 1000);
-      expect(percentages['YES'], 56.0);
-      expect(percentages.display('YES'), '56.0');
-      expect(percentages.display('NO'), '44.0');
+      expect(percentages['YES'], 71.9);
+      expect(percentages.display('YES'), '71.9');
+      expect(percentages.display('NO'), '28.1');
       expect(percentages.display('MAYBE'), isNull);
     });
   });

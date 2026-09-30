@@ -6,12 +6,11 @@
 /// percentage they produce is a symbolic alignment — never a probability.
 library;
 
-import 'dart:math' as math;
-
 import 'numbers.dart';
 
-const String engineVersion = '3.5.0-mvp';
-const String rulesetVersion = 'civil-midnight-chinese-calendar-symbolic-v8';
+const String engineVersion = '4.1.0-mvp';
+const String rulesetVersion =
+    'civil-midnight-chinese-calendar-symbolic-v9.2-experimental';
 
 /// Default module weights: BaZi, Zi Wei, almanac, Western, Vedic, numerology, cosmic.
 const Map<String, double> defaultWeights = <String, double>{
@@ -127,77 +126,87 @@ Map<String, double> weightsFor([String category = 'general']) {
   return profile;
 }
 
-/// One decision mode: its two labels and how it projects the two fusion axes.
+/// One decision mode's identity.
+///
+/// A mode carries no projection any more: v9.1 gives each one its own mixture
+/// of named signals in `scoring.dart`. What lives here is the two English wire
+/// labels and the basis string a saved reading records.
 class ModeDefinition {
   const ModeDefinition({
     required this.labels,
-    required this.a,
-    required this.c,
-    required this.sign,
     required this.basis,
+    this.replacedBy,
   });
 
   final List<String> labels;
-  final double a;
-  final double c;
-  final int sign;
   final String basis;
+
+  /// Set only on a retired mode, naming what took its place.
+  final String? replacedBy;
 }
 
-/// The seven independent projections. LEFT/RIGHT is symbolic polarity only —
-/// receptive/inward versus expressive/outward — and must never be presented as
-/// physical navigation.
+/// The seven pairs a reader can choose.
+///
+/// LEFT/RIGHT is symbolic polarity only — receptive/inward against
+/// expressive/outward — and must never be presented as physical navigation.
 const Map<String, ModeDefinition> modes = <String, ModeDefinition>{
   'yes_no': ModeDefinition(
     labels: <String>['YES', 'NO'],
-    a: 1,
-    c: 0,
-    sign: 1,
     basis: 'overall_acceptance',
   ),
   'act_wait': ModeDefinition(
     labels: <String>['ACT', 'WAIT'],
-    a: .85,
-    c: .15,
-    sign: 1,
     basis: 'action_timing',
   ),
   'advance_retreat': ModeDefinition(
     labels: <String>['ADVANCE', 'RETREAT'],
-    a: .55,
-    c: .45,
-    sign: 1,
     basis: 'tactical_momentum',
   ),
   'stay_go': ModeDefinition(
     labels: <String>['STAY', 'GO'],
-    a: 0,
-    c: 1,
-    sign: -1,
     basis: 'change_alignment',
   ),
   'keep_let_go': ModeDefinition(
     labels: <String>['KEEP', 'LET GO'],
-    a: -.3,
-    c: .7,
-    sign: -1,
     basis: 'release_alignment',
   ),
-  'forward_backward': ModeDefinition(
-    labels: <String>['FORWARD', 'BACKWARD'],
-    a: .25,
-    c: .75,
-    sign: 1,
-    basis: 'temporal_momentum',
+  'commit_withdraw': ModeDefinition(
+    labels: <String>['COMMIT', 'WITHDRAW'],
+    basis: 'durability_horizon',
   ),
   'left_right': ModeDefinition(
     labels: <String>['LEFT', 'RIGHT'],
-    a: .7,
-    c: -.3,
-    sign: -1,
     basis: 'symbolic_polarity',
   ),
 };
+
+/// Modes that existed under an earlier ruleset and may still appear in a saved
+/// reading.
+///
+/// `forward_backward` was replaced by `commit_withdraw`, which is a different
+/// question scored a different way. Relabelling the old readings would put a
+/// COMMIT verdict on a percentage that was never calculated for it, so the old
+/// identity is preserved verbatim and the engine refuses to compute new ones.
+const Map<String, ModeDefinition> legacyModes = <String, ModeDefinition>{
+  'forward_backward': ModeDefinition(
+    labels: <String>['FORWARD', 'BACKWARD'],
+    basis: 'temporal_momentum',
+    replacedBy: 'commit_withdraw',
+  ),
+};
+
+/// Every mode identity a saved reading may legitimately carry.
+ModeDefinition? modeIdentity(String mode) => modes[mode] ?? legacyModes[mode];
+
+/// Rejects a retired mode with its own code, never as a generic bad value.
+ModeDefinition requireCurrentMode(String mode) {
+  final current = modes[mode];
+  if (current != null) return current;
+  if (legacyModes.containsKey(mode)) {
+    throw EngineFailure('LEGACY_DECISION_MODE:$mode');
+  }
+  throw const EngineFailure('INVALID_DECISION_MODE');
+}
 
 /// Evidence from one module or from the fusion: two axis values plus how much
 /// of the module's inputs were actually available.
@@ -269,23 +278,6 @@ Evidence combine(
   return Evidence(clampUnit(a), clampUnit(c), coverage < 1 ? coverage : 1);
 }
 
-/// The same projection carried to one decimal, as an integer number of tenths.
-int percentTenths(double score) {
-  final s = clampUnit(score);
-  final sign = s < 0 ? -1 : s > 0 ? 1 : 0;
-  final expanded = (sign * math.pow(s.abs(), 0.65)).toDouble();
-  return (500 + 400 * clampUnit(expanded) + .5).floor();
-}
-
-/// Maps a symbolic score in [-1, 1] onto the 10–90 display band.
-int percent(double score) => ((percentTenths(score) + 5) / 10).floor();
-
-double scoreForMode(Evidence e, String mode) {
-  final definition = modes[mode];
-  if (definition == null) throw const EngineFailure('INVALID_DECISION_MODE');
-  return clampUnit(definition.sign * (definition.a * e.a + definition.c * e.c));
-}
-
 /// The decision block of a reading: status, winner, percentages and the
 /// bookkeeping that goes with them.
 class Decision {
@@ -310,10 +302,19 @@ class Decision {
   final String? meaning;
 }
 
-Decision decision(Evidence e, String mode) {
-  final definition = modes[mode];
-  if (definition == null) throw const EngineFailure('INVALID_DECISION_MODE');
-  if (e.coverage == 0) {
+/// Names the winner and splits the percentage.
+///
+/// v9.1 hands in a score that has already been mixed from its signals and
+/// adjusted against the reader's own fortnight, so the display curve lives in
+/// `scoring.dart` and its result is passed in as [tenths].
+Decision decision(
+  String mode,
+  double adjustedScore,
+  double coverage,
+  int tenths,
+) {
+  final definition = requireCurrentMode(mode);
+  if (coverage == 0) {
     return const Decision(
       status: 'insufficient_data',
       percentages: null,
@@ -322,8 +323,6 @@ Decision decision(Evidence e, String mode) {
   }
   final first = definition.labels[0];
   final second = definition.labels[1];
-  final selectedScore = scoreForMode(e, mode);
-  final tenths = percentTenths(selectedScore);
   final balanced = tenths == 500;
   return Decision(
     status: balanced ? 'balanced' : 'ready',
@@ -333,8 +332,8 @@ Decision decision(Evidence e, String mode) {
         ? first
         : second,
     percentages: <String, int>{first: tenths, second: 1000 - tenths},
-    dataCoverage: roundTen(e.coverage),
-    modeScore: roundTen(selectedScore),
+    dataCoverage: roundTen(coverage),
+    modeScore: roundTen(adjustedScore),
     modeBasis: definition.basis,
     meaning: 'symbolic_alignment_not_success_probability',
   );

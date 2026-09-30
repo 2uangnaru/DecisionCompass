@@ -73,9 +73,7 @@ void main() {
     await tester.tap(find.byKey(const Key('loading_tap_surface')));
     await tester.pump();
     expect(
-      find.text(
-        'Please wait a moment — cosmic signals are coming into focus.',
-      ),
+      find.text('Please wait a moment — cosmic signals are coming into focus.'),
       findsOneWidget,
     );
 
@@ -84,7 +82,7 @@ void main() {
     expect(find.text('YOUR DIRECTION'), findsOneWidget);
     // Real engine fixture values, not mock ones.
     expect(find.text('YES'), findsOneWidget);
-    expect(find.text('56.0%'), findsOneWidget);
+    expect(find.text('71.9%'), findsOneWidget);
   });
 
   testWidgets('core flow renders on common Android window sizes', (
@@ -120,6 +118,26 @@ void main() {
       await tester.pump(const Duration(seconds: 1));
       expect(tester.takeException(), isNull, reason: 'Result failed at $size');
       expect(find.text('YOUR DIRECTION'), findsOneWidget);
+
+      // The day's own signals sit on Result at every one of these widths,
+      // with Action Guidance still below them rather than squeezed out.
+      final brief = find.byKey(const Key('result_daily_brief'));
+      await tester.ensureVisible(brief);
+      expect(brief, findsOneWidget, reason: 'daily brief missing at $size');
+      expect(
+        find.byKey(const Key('result_daily_lucky_number')),
+        findsOneWidget,
+        reason: 'lucky number missing at $size',
+      );
+      expect(
+        find.byKey(const Key('result_daily_energy_label')),
+        findsOneWidget,
+        reason: 'daily energy missing at $size',
+      );
+      await tester.ensureVisible(
+        find.byKey(const Key('result_action_guidance')),
+      );
+      expect(tester.takeException(), isNull, reason: 'brief failed at $size');
     }
   });
 }

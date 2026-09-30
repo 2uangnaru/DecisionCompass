@@ -1,6 +1,6 @@
 {
-  "engineVersion": "3.5.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+  "engineVersion": "4.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,18 +58,38 @@
   "status": "ready",
   "winner": "GO",
   "percentages": {
-    "STAY": 37.2,
-    "GO": 62.8
+    "STAY": 10.8,
+    "GO": 89.2
   },
   "dataCoverage": 0.9775,
-  "modeScore": -0.1729185886,
+  "modeScore": -0.9642633474,
   "modeBasis": "change_alignment",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "c40f558cadc260a6b94ea92bf3c87c63be5b18be9b255fccc3f8e8e8d1bf9fd3",
+  "readingKey": "c02ac980cd975aaa4bce6dd742ce653419c53789b37421d8678c72d068ac4506",
   "axisScores": {
     "action": 0.0002899749,
     "change": 0.1729185886,
-    "selected": -0.1729185886
+    "selected": -0.9642633474
+  },
+  "scoring": {
+    "system": "v9.2-experimental",
+    "scaleVersion": "v9.2-cohort-2026-09-30",
+    "anchorLocal": "2026-09-18T12:00",
+    "signals": {
+      "G": -0.1201685143,
+      "P": -0.0277205554,
+      "L": 0.019
+    },
+    "normalized": {
+      "G": -0.6850804669,
+      "P": -0.1663666496,
+      "L": 0.024961962
+    },
+    "rawModeScore": -0.6944758761,
+    "priorDatesUsed": 14,
+    "priorMedian": -0.1549009334,
+    "adjustedModeScore": -0.9642633474,
+    "meaning": "symbolic_alignment_not_success_probability"
   },
   "evaluatedAtUtc": "2026-09-18T05:00:00.000Z",
   "luckyWindows": [
@@ -78,7 +98,7 @@
       "endUtc": "2026-09-18T06:00:00.000Z",
       "startLocal": "2026-09-18T12:30:00+07:00",
       "endLocal": "2026-09-18T13:00:00+07:00",
-      "score": 38,
+      "score": 17,
       "dataCoverage": 0.9775,
       "hourBranch": 6,
       "meaning": "symbolic_timing_score_not_probability"
@@ -88,7 +108,7 @@
       "endUtc": "2026-09-18T07:00:00.000Z",
       "startLocal": "2026-09-18T13:00:00+07:00",
       "endLocal": "2026-09-18T14:00:00+07:00",
-      "score": 37,
+      "score": 17,
       "dataCoverage": 0.9775,
       "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"

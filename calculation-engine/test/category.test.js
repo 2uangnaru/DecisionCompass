@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { calculate, createCalculator, CATEGORIES } from '../src/index.js';
 import { CATEGORY_WEIGHTS, MODES, WEIGHTS, combine, evidence, weightsFor } from '../src/core.js';
+import { MODE_SIGNALS, MODE_GAIN } from '../src/scoring.js';
 import { WESTERN_CATEGORY_PROFILES } from '../src/astronomy.js';
 import { ZIWEI_CATEGORY_TARGETS, buildZiWei, scoreZiWei } from '../src/ziwei.js';
 import { birthContext } from '../src/time.js';
@@ -145,17 +146,34 @@ test('unknown hour and unknown convention keep their scenario policy per categor
   }
 });
 
-test('decision-mode coefficients are untouched by the category work', () => {
+test('the signal mixtures are untouched by the category work', () => {
+  assert.deepEqual(MODE_SIGNALS, {
+    yes_no: { P: .45, C: .20, L: .35 },
+    act_wait: { P: .30, C: .10, T: .30, L: .30 },
+    advance_retreat: { P: .25, M: .60, L: .15 },
+    stay_go: { G: .70, P: .20, L: .10 },
+    keep_let_go: { R: .70, P: .20, L: .10 },
+    commit_withdraw: { H: .80, P: .15, L: .05 },
+    left_right: { Y: 0.70, P: 0.20, L: 0.10 },
+  });
+  // Each mixture states relative emphasis and sums to one; the divisor that
+  // puts the seven modes on one scale is derived from those same weights.
+  for (const [mode, mixture] of Object.entries(MODE_SIGNALS)) {
+    const weights = Object.values(mixture);
+    assert.ok(Math.abs(weights.reduce((s, w) => s + w, 0) - 1) < 1e-9, mode);
+    const squares = weights.reduce((s, w) => s + w * w, 0);
+    assert.ok(Math.abs(MODE_GAIN[mode] - 1 / Math.sqrt(squares)) < 1e-12, mode);
+  }
   assert.deepEqual(
-    Object.fromEntries(Object.entries(MODES).map(([mode, m]) => [mode, [m.a, m.c, m.sign, m.basis]])),
+    Object.fromEntries(Object.entries(MODES).map(([mode, m]) => [mode, m.basis])),
     {
-      yes_no: [1, 0, 1, 'overall_acceptance'],
-      act_wait: [.85, .15, 1, 'action_timing'],
-      advance_retreat: [.55, .45, 1, 'tactical_momentum'],
-      stay_go: [0, 1, -1, 'change_alignment'],
-      keep_let_go: [-.3, .7, -1, 'release_alignment'],
-      forward_backward: [.25, .75, 1, 'temporal_momentum'],
-      left_right: [.7, -.3, -1, 'symbolic_polarity'],
+      yes_no: 'overall_acceptance',
+      act_wait: 'action_timing',
+      advance_retreat: 'tactical_momentum',
+      stay_go: 'change_alignment',
+      keep_let_go: 'release_alignment',
+      commit_withdraw: 'durability_horizon',
+      left_right: 'symbolic_polarity',
     },
   );
 });

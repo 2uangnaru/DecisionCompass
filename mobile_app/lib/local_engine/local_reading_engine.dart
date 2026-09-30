@@ -19,6 +19,7 @@ import 'core/bounded_cache.dart';
 import 'colors.dart';
 import 'core/core.dart';
 import 'core/numbers.dart';
+import 'core/scoring.dart';
 import 'core/sha256.dart';
 import 'daily_energy.dart';
 import 'location/location.dart';
@@ -111,6 +112,15 @@ EngineProfile normalizeProfile(Map<String, Object?> input) {
   );
 }
 
+/// One date's signals and the unadjusted mode score they produce.
+class _RawScore {
+  const _RawScore(this.raw, this.normalized, this.score);
+
+  final Map<String, double> raw;
+  final Map<String, double> normalized;
+  final double score;
+}
+
 /// One evaluated instant: the calendar view, the six modules and their fusion.
 class _Evaluated {
   const _Evaluated(this.calendar, this.modules, this.evidence);
@@ -161,8 +171,14 @@ class ReadingCalculator {
   final BuiltZiWei _ziWei;
   final NatalSky _natal;
 
+  // Sized for a v9.1 reading: the selected segments, the whole local day for
+  // the brief, and every cross-day anchor the chosen mode reaches for.
   final BoundedCache<String, _Evaluated> _cache =
-      BoundedCache<String, _Evaluated>(256);
+      BoundedCache<String, _Evaluated>(512);
+  final BoundedCache<String, MomentSignals> _signalCache =
+      BoundedCache<String, MomentSignals>(512);
+  final BoundedCache<String, _RawScore?> _scoreCache =
+      BoundedCache<String, _RawScore?>(256);
 
   _Evaluated _evaluate(double ms, String zone, String category) {
     // Category changes Zi Wei targets, Western body emphasis and fusion
@@ -190,9 +206,158 @@ class ReadingCalculator {
         ? clampUnit(raw.c - luckBaseline * raw.coverage)
         : 0.0;
     final fusion = Evidence(a, c, raw.coverage);
-    return _cache.set(
+    return _cache.set(key, _Evaluated(calendar, modules, fusion));
+  }
+
+  MomentSignals _moments(double ms, String zone, String category) {
+    final key = '$ms|$zone|$category';
+    final cached = _signalCache.get(key);
+    if (cached != null) return cached;
+    final evaluated = _evaluate(ms, zone, category);
+    return _signalCache.set(
       key,
-      _Evaluated(calendar, modules, fusion),
+      momentSignals(
+        evaluated.modules,
+        weightsFor(category),
+        dayStem: evaluated.calendar.day.stem,
+        hourBranch: evaluated.calendar.hour.branch,
+      ),
+    );
+  }
+
+  /// An anchor is one local wall-clock time on one local civil date.
+  ///
+  /// A date where that wall time does not exist — the hour a spring-forward
+  /// transition skips — has no anchor, and every caller drops it rather than
+  /// sliding to a neighbouring hour and pretending it was the same time of day.
+  double? _anchorAt(String date, String clock, String zone) {
+    final candidates = localCandidates(date, clock, zone);
+    return candidates.isEmpty ? null : candidates.first;
+  }
+
+  /// A later window is read at the first hour of its period that exists on
+  /// that date, so a transition inside the period still leaves it comparable.
+  double? _periodAnchor(String date, String period, String zone) {
+    final bounds = periods[period]!;
+    for (var h = bounds[0]; h < bounds[1]; h++) {
+      final ms = _anchorAt(date, '${h.toString().padLeft(2, '0')}:00', zone);
+      if (ms != null) return ms;
+    }
+    return null;
+  }
+
+  /// Every moment later than [anchorHour] on [date] that the timing signal is
+  /// compared against.
+  ///
+  /// Two groups, in order: the rest of the selected period hour by hour, then
+  /// the periods that have not started yet. Without the first group an evening
+  /// reading had nothing later to compare against at all — no period starts
+  /// after 18:00 — so every evening slot scored a timing of exactly zero.
+  ///
+  /// NOW contributes no first group: it is a single instant rather than a
+  /// span, so it is compared only against the periods still ahead of it.
+  List<double> _laterAlignments(
+    String date,
+    int anchorHour,
+    String period,
+    String zone,
+    String category,
+  ) {
+    final later = <double>[];
+    if (period != 'now') {
+      for (final h in periodBoundaryHours(period)) {
+        if (h <= anchorHour) continue;
+        final ms = _anchorAt(date, '${h.toString().padLeft(2, '0')}:00', zone);
+        if (ms != null) later.add(_moments(ms, zone, category).q);
+      }
+    }
+    for (final other in periods.keys) {
+      if (periods[other]![0] <= anchorHour) continue;
+      final ms = _periodAnchor(date, other, zone);
+      if (ms != null) later.add(_moments(ms, zone, category).q);
+    }
+    return later;
+  }
+
+  Map<String, double> _rawSignals(
+    String date,
+    String clock,
+    String period,
+    String zone,
+    String category,
+    List<String> needed,
+    MomentSignals base,
+  ) {
+    final raw = <String, double>{};
+    for (final name in needed) {
+      switch (name) {
+        case 'P':
+          raw['P'] = base.p;
+        case 'C':
+          raw['C'] = base.c;
+        case 'L':
+          raw['L'] = base.l;
+        case 'R':
+          raw['R'] = base.r;
+        case 'Y':
+          raw['Y'] = base.y;
+        case 'T':
+          raw['T'] = timing(
+            base.q,
+            _laterAlignments(
+              date,
+              int.parse(clock.substring(0, 2)),
+              period,
+              zone,
+              category,
+            ),
+          );
+        case 'M':
+          final priors = <double>[];
+          for (var k = 1; k <= 3; k++) {
+            final ms = _anchorAt(civilDateShift(date, -k), clock, zone);
+            if (ms != null) priors.add(_moments(ms, zone, category).c);
+          }
+          raw['M'] = momentum(base.c, priors);
+        case 'G':
+          final ms = _anchorAt(civilDateShift(date, 7), clock, zone);
+          raw['G'] = grounding(
+            base.p,
+            base.c,
+            ms == null ? null : _moments(ms, zone, category).p,
+          );
+        case 'H':
+          final series = <MomentSignals>[base];
+          for (var k = 1; k <= 7; k++) {
+            final ms = _anchorAt(civilDateShift(date, k), clock, zone);
+            if (ms != null) series.add(_moments(ms, zone, category));
+          }
+          raw['H'] = horizon(series);
+      }
+    }
+    return raw;
+  }
+
+  /// One date's unadjusted mode score, or null when that date has no anchor.
+  _RawScore? _rawScoreOn(
+    String date,
+    String clock,
+    String period,
+    String zone,
+    String category,
+    String mode,
+    List<String> needed,
+  ) {
+    final key = '$date|$clock|$period|$zone|$category|$mode|${needed.join()}';
+    if (_scoreCache.containsKey(key)) return _scoreCache.get(key);
+    final ms = _anchorAt(date, clock, zone);
+    if (ms == null) return _scoreCache.set(key, null);
+    final base = _moments(ms, zone, category);
+    final raw = _rawSignals(date, clock, period, zone, category, needed, base);
+    final normalized = normalizeAll(raw);
+    return _scoreCache.set(
+      key,
+      _RawScore(raw, normalized, modeScore(mode, normalized)),
     );
   }
 
@@ -203,11 +368,13 @@ class ReadingCalculator {
     String mode = 'yes_no',
     String category = 'general',
     bool diagnostics = false,
+    bool probeAllSignals = false,
     Object? space,
     ZoneGeometryResolver? geometry,
   }) {
-    if (!modes.containsKey(mode))
-      throw const EngineFailure('INVALID_DECISION_MODE');
+    // A retired mode fails with its own code: the caller is asking for a
+    // question this ruleset no longer scores, not passing a typo.
+    requireCurrentMode(mode);
     if (!categories.contains(category))
       throw const EngineFailure('INVALID_CATEGORY');
     // Spatial feng shui is out of scope, and asking for it must fail loudly
@@ -307,12 +474,86 @@ class ReadingCalculator {
 
     double duration(DaySegment s) => (s.end - s.includedFrom) / 1000;
 
+    // The fused pair no longer decides anything. It still describes the window
+    // the reader picked — coverage, the two axes, the daily brief — so it is
+    // calculated exactly as before and reported unchanged.
     final fused = period == 'now'
         ? evaluated[0].value.evidence
         : weightedTimeAverage(<({double duration, Evidence evidence})>[
             for (final e in evaluated)
               (duration: duration(e.segment), evidence: e.value.evidence),
           ]);
+
+    // The anchor: one wall-clock time on one local date, the instant whose
+    // modules the mode is scored from. Every other date this reading reads —
+    // the previous fortnight, the three days behind it, the week ahead — is
+    // that same wall time on that date.
+    final anchorLocal = localAt(evaluated[0].segment.start, zone);
+    final anchorDate = anchorLocal.date;
+    final anchorClock =
+        '${anchorLocal.hour.toString().padLeft(2, '0')}:'
+        '${anchorLocal.minute.toString().padLeft(2, '0')}';
+    final mixture = signalsNeededBy(mode);
+    // Calibration and simulation scripts ask for every signal so they can
+    // measure the raw distributions. It cannot change the result: a mode score
+    // only ever reads the signals its own mixture names.
+    final needed = probeAllSignals ? List<String>.of(signalNames) : mixture;
+    final today = _rawScoreOn(
+      anchorDate,
+      anchorClock,
+      period,
+      zone,
+      category,
+      mode,
+      needed,
+    )!;
+    // The fortnight only ever contributes mode scores, so each prior date
+    // costs exactly the signals this mode mixes — never the probe's nine.
+    final priorScores = <double>[];
+    for (var k = 1; k <= 14; k++) {
+      final prior = _rawScoreOn(
+        civilDateShift(anchorDate, -k),
+        anchorClock,
+        period,
+        zone,
+        category,
+        mode,
+        mixture,
+      );
+      if (prior != null) priorScores.add(prior.score);
+    }
+    final adjusted = adjustAgainstHistory(today.score, priorScores);
+    final tenths = displayTenths(adjusted);
+
+    /// A window's score: this mode's own mixture, recomputed from scratch at
+    /// that window's instant.
+    ///
+    /// Every signal is recalculated there, the timing signal included. Under
+    /// v9.1 a window reused the headline's `T`, so all of an ACT / WAIT
+    /// reading's windows carried the same timing value and the ranking could
+    /// not see the one thing that mode is about.
+    ///
+    /// The fortnight contrast is deliberately not applied: a fifteen-minute
+    /// slot has no fortnight of its own, and the number's job is to rank the
+    /// slots of one day against each other. So the figure reads as "this
+    /// mode's score for this slot, on the same display curve as the headline,
+    /// before the headline's comparison against the reader's own fortnight".
+    int windowScore(double start) {
+      final local = localAt(start, zone);
+      final clock =
+          '${local.hour.toString().padLeft(2, '0')}:'
+          '${local.minute.toString().padLeft(2, '0')}';
+      final raw = _rawSignals(
+        local.date,
+        clock,
+        period,
+        zone,
+        category,
+        mixture,
+        _moments(start, zone, category),
+      );
+      return displayPercent(modeScore(mode, normalizeAll(raw)));
+    }
 
     // A window must be at least fifteen minutes long to be worth offering.
     final windows = <Map<String, Object?>>[];
@@ -325,7 +566,7 @@ class ReadingCalculator {
           'endUtc': toIsoStringUtc(s.end),
           'startLocal': localAt(s.includedFrom, zone).iso,
           'endLocal': localAt(s.end, zone).iso,
-          'score': percent(scoreForMode(e.value.evidence, mode)),
+          'score': windowScore(s.start),
           'dataCoverage': jsNumber(roundTen(e.value.evidence.coverage)),
           'hourBranch': s.hourBranchIndex,
           'meaning': 'symbolic_timing_score_not_probability',
@@ -387,7 +628,7 @@ class ReadingCalculator {
       ],
     });
 
-    final result = decision(fused, mode);
+    final result = decision(mode, adjusted, fused.coverage, tenths);
 
     return <String, Object?>{
       ...base,
@@ -408,7 +649,27 @@ class ReadingCalculator {
       'axisScores': <String, Object?>{
         'action': jsNumber(roundTen(fused.a)),
         'change': jsNumber(roundTen(fused.c)),
-        'selected': jsNumber(roundTen(scoreForMode(fused, mode))),
+        'selected': jsNumber(roundTen(adjusted)),
+      },
+      'scoring': <String, Object?>{
+        'system': scoringVersion,
+        'scaleVersion': scaleVersion,
+        'anchorLocal': '${anchorDate}T$anchorClock',
+        'signals': <String, Object?>{
+          for (final entry in today.raw.entries)
+            entry.key: jsNumber(roundTen(entry.value)),
+        },
+        'normalized': <String, Object?>{
+          for (final entry in today.normalized.entries)
+            entry.key: jsNumber(roundTen(entry.value)),
+        },
+        'rawModeScore': jsNumber(roundTen(today.score)),
+        'priorDatesUsed': priorScores.length,
+        'priorMedian': priorScores.isEmpty
+            ? null
+            : jsNumber(roundTen(median(priorScores))),
+        'adjustedModeScore': jsNumber(roundTen(adjusted)),
+        'meaning': 'symbolic_alignment_not_success_probability',
       },
       'evaluatedAtUtc': toIsoStringUtc(evaluated[0].segment.start),
       'luckyWindows': windows,
@@ -531,6 +792,7 @@ Map<String, Object?> calculateReading({
   String mode = 'yes_no',
   String category = 'general',
   bool diagnostics = false,
+  bool probeAllSignals = false,
   Object? space,
   ZoneGeometryResolver? geometry,
 }) {
@@ -540,6 +802,7 @@ Map<String, Object?> calculateReading({
     mode: mode,
     category: category,
     diagnostics: diagnostics,
+    probeAllSignals: probeAllSignals,
     space: space,
     geometry: geometry,
   );

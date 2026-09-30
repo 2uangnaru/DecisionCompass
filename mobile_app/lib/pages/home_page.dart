@@ -589,7 +589,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(child: card(DecisionMode.forwardBackward)),
+            Expanded(child: card(DecisionMode.commitWithdraw)),
             const SizedBox(width: 10),
             Expanded(child: card(DecisionMode.leftRight)),
           ],

@@ -261,7 +261,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
+  String get loadingModeAdvanceRetreat => '正在将今日的势头与前几日相比';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -271,6 +271,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get loadingModeForwardBackward => '正在追踪向前与回返的节律';
+
+  @override
+  String get loadingModeCommitWithdraw => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
@@ -331,7 +334,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get navigationTitle => '驾驶与实际导航';
 
   @override
-  String get navigationDetail => '左／右、向前／向后只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
+  String get navigationDetail => '左／右、进取／退守只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
 
   @override
   String get politicsTitle => '政治与社会冲突';
@@ -413,10 +416,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '投入';
+  String get choiceAdvance => '进取';
 
   @override
-  String get choiceRetreat => '抽离';
+  String get choiceRetreat => '退守';
 
   @override
   String get choiceStay => '留下';
@@ -435,6 +438,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get choiceBackward => '向后';
+
+  @override
+  String get choiceCommit => '投入';
+
+  @override
+  String get choiceWithdraw => '抽离';
 
   @override
   String get choiceLeft => '左';
@@ -1249,7 +1258,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
+  String get loadingModeAdvanceRetreat => '正在将今日的势头与前几日相比';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -1259,6 +1268,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get loadingModeForwardBackward => '正在追踪向前与回返的节律';
+
+  @override
+  String get loadingModeCommitWithdraw => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
@@ -1319,7 +1331,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get navigationTitle => '驾驶与实际导航';
 
   @override
-  String get navigationDetail => '左／右、向前／向后只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
+  String get navigationDetail => '左／右、进取／退守只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
 
   @override
   String get politicsTitle => '政治与社会冲突';
@@ -1401,10 +1413,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '投入';
+  String get choiceAdvance => '进取';
 
   @override
-  String get choiceRetreat => '抽离';
+  String get choiceRetreat => '退守';
 
   @override
   String get choiceStay => '留下';
@@ -1423,6 +1435,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get choiceBackward => '向后';
+
+  @override
+  String get choiceCommit => '投入';
+
+  @override
+  String get choiceWithdraw => '抽离';
 
   @override
   String get choiceLeft => '左';
@@ -2237,7 +2255,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get loadingModeActWait => '正在权衡行动的动力与耐心';
 
   @override
-  String get loadingModeAdvanceRetreat => '正在权衡深度投入与适时抽离';
+  String get loadingModeAdvanceRetreat => '正在将今日的势头与前几日相比';
 
   @override
   String get loadingModeStayGo => '正在比较扎根与流动的信号';
@@ -2247,6 +2265,9 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get loadingModeForwardBackward => '正在追踪向前与回返的节律';
+
+  @override
+  String get loadingModeCommitWithdraw => '正在权衡深度投入与适时抽离';
 
   @override
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
@@ -2307,7 +2328,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get navigationTitle => '驾驶与实际导航';
 
   @override
-  String get navigationDetail => '左／右、向前／向后只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
+  String get navigationDetail => '左／右、进取／退守只是象征性选项，不得用于交通、驾驶、找路或人身安全。';
 
   @override
   String get politicsTitle => '政治与社会冲突';
@@ -2389,10 +2410,10 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get choiceWait => '等待';
 
   @override
-  String get choiceAdvance => '投入';
+  String get choiceAdvance => '进取';
 
   @override
-  String get choiceRetreat => '抽离';
+  String get choiceRetreat => '退守';
 
   @override
   String get choiceStay => '留下';
@@ -2411,6 +2432,12 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get choiceBackward => '向后';
+
+  @override
+  String get choiceCommit => '投入';
+
+  @override
+  String get choiceWithdraw => '抽离';
 
   @override
   String get choiceLeft => '左';

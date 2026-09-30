@@ -719,7 +719,7 @@ void main() {
     ) async {
       final rig = ReadingTestRig();
       final reading = fixtureResponse(
-        'ready_forward_backward_two_windows.json',
+        'ready_commit_withdraw_two_windows.json',
       );
       await tester.pumpWidget(
         localizedApp(
@@ -737,7 +737,7 @@ void main() {
       final ja = stringsFor(AppLocale.japanese);
       expect(
         tester.widget<Text>(find.byKey(const Key('result_winner_label'))).data,
-        modeFirstLabel(ja, DecisionMode.forwardBackward),
+        modeFirstLabel(ja, DecisionMode.commitWithdraw),
       );
       // The heading is one complete Japanese sentence, not a frame.
       expect(find.text(ja.luckyTimesEvening), findsOneWidget);

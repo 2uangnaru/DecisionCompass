@@ -21,6 +21,42 @@ const Map<String, List<int>> periods = <String, List<int>>{
   'evening': <int>[18, 24],
 };
 
+/// The local wall hours a civil day is cut at: the earthly-branch boundaries
+/// plus midnight and the four period edges.
+///
+/// Exposed because the timing signal needs the hours *inside* a period, and
+/// deriving them from this one list is what keeps the comparison set and the
+/// day's actual segments from drifting apart.
+const List<int> boundaryHours = <int>[
+  0,
+  1,
+  3,
+  5,
+  6,
+  7,
+  9,
+  11,
+  12,
+  13,
+  14,
+  15,
+  17,
+  18,
+  19,
+  21,
+  23,
+];
+
+/// The boundary hours that fall inside `[lo, hi)` of a named period.
+List<int> periodBoundaryHours(String period) {
+  final bounds = periods[period];
+  if (bounds == null) throw const EngineError('INVALID_PERIOD');
+  return <int>[
+    for (final h in boundaryHours)
+      if (h >= bounds[0] && h < bounds[1]) h,
+  ];
+}
+
 bool validZone(String? zone) => zone != null && isValidZone(zone);
 
 String requireZone(String? zone) {
@@ -422,6 +458,25 @@ List<DaySegment> periodSegments(
       .where((s) => s.local.hour >= lo && s.local.hour < hi && s.end > now)
       .map((s) => s.withCandidateStart(now > s.start ? now : s.start))
       .toList();
+}
+
+/// Pure civil-date arithmetic: no zone, because "the previous three local
+/// dates" is a calendar statement, not a 72-hour subtraction. Adding days in
+/// UTC and reformatting keeps 23- and 25-hour dates one date each.
+///
+/// Deliberately not range-checked: a seven-day horizon may reach past the
+/// supported reading years, and the caller drops a date it cannot resolve.
+String civilDateShift(String date, int days) {
+  final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(date);
+  if (match == null) throw const EngineError('INVALID_LOCAL_DATE');
+  final shifted = DateTime.utc(
+    int.parse(match.group(1)!),
+    int.parse(match.group(2)!),
+    int.parse(match.group(3)!),
+  ).add(Duration(days: days));
+  return '${shifted.year.toString().padLeft(4, '0')}-'
+      '${shifted.month.toString().padLeft(2, '0')}-'
+      '${shifted.day.toString().padLeft(2, '0')}';
 }
 
 double addCivil(

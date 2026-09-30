@@ -261,7 +261,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get loadingModeActWait => '行動の勢いと待つ余地を比べています';
 
   @override
-  String get loadingModeAdvanceRetreat => 'コミットする動きと身を引く動きを読み解いています';
+  String get loadingModeAdvanceRetreat => '今日の勢いを直近の数日と比べています';
 
   @override
   String get loadingModeStayGo => '根づくことと動くことを比べています';
@@ -271,6 +271,9 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get loadingModeForwardBackward => '前へ進む流れと戻る流れをたどっています';
+
+  @override
+  String get loadingModeCommitWithdraw => 'コミットする動きと身を引く動きを読み解いています';
 
   @override
   String get loadingModeLeftRight => '受け取ることと表すことの両極を比べています';
@@ -332,7 +335,7 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      '左／右、前へ／後ろへは象徴的な選択肢です。交通、運転、経路案内、身体の安全に関わる判断には使わないでください。';
+      '左／右、進む／退くは象徴的な選択肢です。交通、運転、経路案内、身体の安全に関わる判断には使わないでください。';
 
   @override
   String get politicsTitle => '政治・社会的な対立';
@@ -416,10 +419,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get choiceWait => '待つ';
 
   @override
-  String get choiceAdvance => '踏み込む';
+  String get choiceAdvance => '進む';
 
   @override
-  String get choiceRetreat => '引く';
+  String get choiceRetreat => '退く';
 
   @override
   String get choiceStay => 'とどまる';
@@ -438,6 +441,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get choiceBackward => '後ろへ';
+
+  @override
+  String get choiceCommit => '踏み込む';
+
+  @override
+  String get choiceWithdraw => '引く';
 
   @override
   String get choiceLeft => '左';

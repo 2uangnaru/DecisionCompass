@@ -20,19 +20,23 @@ test('same inputs deterministic and same segment does not reroll',()=>{
   assert.deepEqual(first.percentages,later.percentages);assert.equal(first.readingKey,later.readingKey);
 });
 test('each decision mode has its own semantic projection without altering the calculation key',()=>{
-  const modes=['yes_no','act_wait','advance_retreat','stay_go','keep_let_go','forward_backward','left_right'];
+  const modes=['yes_no','act_wait','advance_retreat','stay_go','keep_let_go','commit_withdraw','left_right'];
   const readings=modes.map(mode=>engine.calculate({context,mode}));
   assert.ok(readings.every(r=>Object.values(r.percentages).reduce((a,b)=>a+b,0)===100));
   assert.ok(readings.every(r=>r.readingKey===readings[0].readingKey));
   assert.deepEqual(readings.map(r=>r.modeBasis),[
     'overall_acceptance','action_timing','tactical_momentum','change_alignment',
-    'release_alignment','temporal_momentum','symbolic_polarity'
+    'release_alignment','durability_horizon','symbolic_polarity'
   ]);
-  const sample=evidence(.8,-.4,1);
-  const yes=decision(sample,'yes_no'),forward=decision(sample,'forward_backward'),left=decision(sample,'left_right');
-  assert.notEqual(yes.percentages.YES,forward.percentages.FORWARD);
-  assert.notEqual(yes.percentages.YES,left.percentages.LEFT);
+  // Under v9.1 each mode mixes a different set of signals, so the seven
+  // readings of the same instant are genuinely different numbers rather than
+  // seven angles on one fused pair.
+  const shown=readings.map(r=>Object.values(r.percentages)[0]);
+  assert.ok(new Set(shown).size>=5,`only ${new Set(shown).size} distinct results across seven modes`);
   assert.throws(()=>engine.calculate({context,mode:'up_down'}),/INVALID_DECISION_MODE/);
+  // The retired mode fails with its own code, so a caller can tell a legacy
+  // reading apart from a typo.
+  assert.throws(()=>engine.calculate({context,mode:'forward_backward'}),/LEGACY_DECISION_MODE:forward_backward/);
 });
 test('period returns two valid ranked nonoverlapping windows with absolute instants',()=>{
   const r=engine.calculate({context,period:'evening'});assert.equal(r.luckyWindows.length,2);

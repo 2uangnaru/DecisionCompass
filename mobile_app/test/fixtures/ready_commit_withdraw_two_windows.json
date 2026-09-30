@@ -1,0 +1,486 @@
+{
+  "engineVersion": "4.1.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2026d"
+  },
+  "mode": "commit_withdraw",
+  "period": "evening",
+  "category": "general",
+  "context": {
+    "instantMs": 1789720200000,
+    "instantUtc": "2026-09-18T08:30:00.000Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "zoneSource": "device",
+    "offsetSeconds": 25200,
+    "localDate": "2026-09-18",
+    "region": "Asia",
+    "countryCandidates": [
+      "VN"
+    ],
+    "locationStatus": "not_provided",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2026d"
+  },
+  "birthData": {
+    "status": "exact",
+    "timeKnown": true,
+    "timezoneSource": "birth_country_zone_candidates",
+    "timezoneCandidates": [
+      "Asia/Bangkok",
+      "Asia/Ho_Chi_Minh"
+    ]
+  },
+  "warnings": [],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "birthTimezone": null,
+      "traditionalProfile": "male",
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-18T08:30:00.000Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "zoneSource": "device"
+    },
+    "period": "evening",
+    "mode": "commit_withdraw",
+    "category": "general"
+  },
+  "status": "ready",
+  "winner": "COMMIT",
+  "percentages": {
+    "COMMIT": 69.6,
+    "WITHDRAW": 30.4
+  },
+  "dataCoverage": 0.973,
+  "modeScore": 0.2730263427,
+  "modeBasis": "durability_horizon",
+  "meaning": "symbolic_alignment_not_success_probability",
+  "readingKey": "d18c43fce632a9c206eae4ff5302202c5ddc817a2fc4ba830f6cbcf6761fdaf3",
+  "axisScores": {
+    "action": 0.0536317943,
+    "change": 0.1572310997,
+    "selected": 0.2730263427
+  },
+  "scoring": {
+    "system": "v9.2-experimental",
+    "scaleVersion": "v9.2-cohort-2026-09-30",
+    "anchorLocal": "2026-09-18T18:00",
+    "signals": {
+      "H": 0.054777758,
+      "P": 0.012488343,
+      "L": 0.019
+    },
+    "normalized": {
+      "H": 0.3000250642,
+      "P": 0.0755087702,
+      "L": 0.024961962
+    },
+    "rawModeScore": 0.3097512069,
+    "priorDatesUsed": 14,
+    "priorMedian": 0.3832009352,
+    "adjustedModeScore": 0.2730263427,
+    "meaning": "symbolic_alignment_not_success_probability"
+  },
+  "evaluatedAtUtc": "2026-09-18T11:00:00.000Z",
+  "luckyWindows": [
+    {
+      "startUtc": "2026-09-18T11:00:00.000Z",
+      "endUtc": "2026-09-18T12:00:00.000Z",
+      "startLocal": "2026-09-18T18:00:00+07:00",
+      "endLocal": "2026-09-18T19:00:00+07:00",
+      "score": 71,
+      "dataCoverage": 0.973,
+      "hourBranch": 9,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
+      "startUtc": "2026-09-18T12:00:00.000Z",
+      "endUtc": "2026-09-18T14:00:00.000Z",
+      "startLocal": "2026-09-18T19:00:00+07:00",
+      "endLocal": "2026-09-18T21:00:00+07:00",
+      "score": 71,
+      "dataCoverage": 0.973,
+      "hourBranch": 10,
+      "meaning": "symbolic_timing_score_not_probability"
+    }
+  ],
+  "windowStatus": "two_available",
+  "dailyBrief": {
+    "luckyNumber": 1,
+    "colors": {
+      "lead": {
+        "key": "mint",
+        "name": "Mint",
+        "hex": "#AADBB2",
+        "element": "wood",
+        "stem": 1
+      },
+      "supporting": {
+        "key": "solar_coral",
+        "name": "Solar Coral",
+        "hex": "#E88862",
+        "element": "fire",
+        "stem": 2
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    },
+    "energy": {
+      "level": "flowing",
+      "index": 53,
+      "dataCoverage": 0.973
+    }
+  },
+  "segments": [
+    {
+      "startUtc": "2026-09-18T11:00:00.000Z",
+      "endUtc": "2026-09-18T12:00:00.000Z",
+      "includedFromUtc": "2026-09-18T11:00:00.000Z",
+      "durationSeconds": 3600,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0355588235,
+          "c": 0.0441911765,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0054405,
+            "c": 0.00676125
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0423322917,
+          "c": -0.00929375,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0076198125,
+            "c": -0.001672875
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.065,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.0065,
+            "c": 0.06
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0350922627,
+          "c": 0.0321281303,
+          "weight": 0.18,
+          "contribution": {
+            "a": -0.0063166073,
+            "c": 0.0057830635
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.15,
+          "contribution": {
+            "a": 0.078,
+            "c": 0.09
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3091677198,
+          "c": 0.0354091182,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.015458386,
+            "c": 0.0017704559
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T12:00:00.000Z",
+      "endUtc": "2026-09-18T14:00:00.000Z",
+      "includedFromUtc": "2026-09-18T12:00:00.000Z",
+      "durationSeconds": 7200,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0413823529,
+          "c": -0.0004558824,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0063315,
+            "c": -0.00006975
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0628947917,
+          "c": -0.00841875,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0113210625,
+            "c": -0.001515375
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.465,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.0465,
+            "c": 0.06
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0243047511,
+          "c": 0.0265097598,
+          "weight": 0.18,
+          "contribution": {
+            "a": -0.0043748552,
+            "c": 0.0047717568
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.15,
+          "contribution": {
+            "a": 0.078,
+            "c": 0.09
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3093301217,
+          "c": 0.0338262382,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.0154665061,
+            "c": 0.0016913119
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T14:00:00.000Z",
+      "endUtc": "2026-09-18T16:00:00.000Z",
+      "includedFromUtc": "2026-09-18T14:00:00.000Z",
+      "durationSeconds": 7200,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0296470588,
+          "c": -0.0434264706,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.004536,
+            "c": -0.00664425
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0368635417,
+          "c": -0.00491875,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0066354375,
+            "c": -0.000885375
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.465,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.0465,
+            "c": 0.06
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0027371435,
+          "c": 0.0152768271,
+          "weight": 0.18,
+          "contribution": {
+            "a": -0.0004926858,
+            "c": 0.0027498289
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.15,
+          "contribution": {
+            "a": 0.078,
+            "c": 0.09
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3096020568,
+          "c": 0.0306591405,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.0154801028,
+            "c": 0.001532957
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T16:00:00.000Z",
+      "endUtc": "2026-09-18T17:00:00.000Z",
+      "includedFromUtc": "2026-09-18T16:00:00.000Z",
+      "durationSeconds": 3600,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0482647059,
+          "c": 0.0353676471,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0073845,
+            "c": 0.00541125
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0434260417,
+          "c": -0.01016875,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0078166875,
+            "c": -0.001830375
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.065,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.0065,
+            "c": 0.06
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0000490331,
+          "c": 0.0134837774,
+          "weight": 0.18,
+          "contribution": {
+            "a": -0.000008826,
+            "c": 0.0024270799
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.15,
+          "contribution": {
+            "a": 0.078,
+            "c": 0.09
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3098035392,
+          "c": 0.0274907927,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.015490177,
+            "c": 0.0013745396
+          }
+        }
+      }
+    }
+  ],
+  "monetizationHandledByApp": true
+}

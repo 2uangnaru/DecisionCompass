@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { MODES, percent, percentTenths, scoreForMode } from '../src/core.js';
+import { MODES } from '../src/core.js';
+import { displayPercent, displayTenths } from '../src/scoring.js';
 import { createCalculator } from '../src/index.js';
 
 const PROFILE = { birthDate: '1998-06-21', birthTime: '14:30', birthCountry: 'US', traditionalProfile: 'unspecified' };
@@ -14,15 +15,18 @@ const readingOn = (day, mode = 'yes_no') => engine.calculate({
 
 test('tenths follow the same projection as whole percent', () => {
   for (const score of [-1, -.5, -.0125, 0, .0125, .25, .5, 1]) {
-    assert.equal(Math.round(percentTenths(score) / 10), Math.round(percent(score)),
+    assert.equal(Math.round(displayTenths(score) / 10), Math.round(displayPercent(score)),
       `tenths and percent disagree at ${score}`);
   }
-  assert.equal(percentTenths(0), 500);
-  assert.equal(percentTenths(1), 900);
-  assert.equal(percentTenths(-1), 100);
+  assert.equal(displayTenths(0), 500);
+  assert.equal(displayTenths(1), 900);
+  assert.equal(displayTenths(-1), 100);
   // Clamped, never beyond the 10–90 band.
-  assert.equal(percentTenths(5), 900);
-  assert.equal(percentTenths(-5), 100);
+  assert.equal(displayTenths(5), 900);
+  assert.equal(displayTenths(-5), 100);
+  // The v9.1 curve is flatter than the one it replaced, so a modest score is
+  // allowed to leave the 50s instead of being crushed against the middle.
+  assert.ok(displayTenths(.25) > 680, `a quarter-scale lean showed ${displayTenths(.25) / 10}%`);
 });
 
 test('the two sides always add to exactly 100.0', () => {
@@ -43,16 +47,15 @@ test('the two sides always add to exactly 100.0', () => {
   }
 });
 
-test('tenths separate consecutive days that whole percent collapsed', () => {
-  // 22–24 September 2026 scored .0565, .0599 and .0548 for this profile:
-  // three different readings that all floored to 52.
+test('consecutive days are told apart at one decimal', () => {
   const days = [22, 23, 24].map(day => readingOn(day));
   const scores = days.map(r => r.modeScore);
   assert.equal(new Set(scores).size, 3, 'the raw scores were already distinct');
-  assert.deepEqual(days.map(r => percent(r.modeScore)), [52, 53, 55],
-    'whole percent is separated by dynamic expansion');
   const shown = days.map(r => r.percentages.YES);
   assert.equal(new Set(shown).size, 3, 'tenths must tell them apart');
+  // Deliberately not asserting particular percentages: the scoring system is
+  // experimental, and pinning the numbers here would turn a calibration change
+  // into a test failure instead of a reported difference.
 });
 
 test('raw evidence genuinely moves from day to day', () => {
@@ -65,18 +68,19 @@ test('raw evidence genuinely moves from day to day', () => {
 });
 
 test('a genuine tie is still reported honestly', () => {
-  // Two scores a ten-thousandth apart legitimately share a tenth. The engine
-  // must not manufacture a difference to avoid looking stale.
-  assert.equal(percentTenths(.05000), percentTenths(.050001));
-  const balanced = { a: 0, c: 0, coverage: 1 };
-  assert.equal(percentTenths(scoreForMode(balanced, 'yes_no')), 500);
+  // Two scores a millionth apart legitimately share a tenth. The engine must
+  // not manufacture a difference to avoid looking stale.
+  assert.equal(displayTenths(.05000), displayTenths(.0500001));
+  // A score of exactly zero is 50.0/50.0 and is reported as balanced, not
+  // nudged off the middle.
+  assert.equal(displayTenths(0), 500);
 });
 
 test('every mode keeps its own projection at one decimal', () => {
   const byMode = new Map();
   for (const mode of Object.keys(MODES)) byMode.set(mode, readingOn(20, mode).modeScore);
-  // FORWARD/BACKWARD and LEFT/RIGHT must not be aliases of YES/NO.
-  assert.notEqual(byMode.get('forward_backward'), byMode.get('yes_no'));
+  // COMMIT/WITHDRAW and LEFT/RIGHT must not be aliases of YES/NO.
+  assert.notEqual(byMode.get('commit_withdraw'), byMode.get('yes_no'));
   assert.notEqual(byMode.get('left_right'), byMode.get('yes_no'));
   assert.notEqual(byMode.get('stay_go'), byMode.get('yes_no'));
 });

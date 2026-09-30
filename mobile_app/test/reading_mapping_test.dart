@@ -13,8 +13,11 @@ void main() {
         DecisionMode.advanceRetreat: engine.DecisionMode.advanceRetreat,
         DecisionMode.stayGo: engine.DecisionMode.stayGo,
         DecisionMode.keepLetGo: engine.DecisionMode.keepLetGo,
-        DecisionMode.forwardBackward: engine.DecisionMode.forwardBackward,
+        DecisionMode.commitWithdraw: engine.DecisionMode.commitWithdraw,
         DecisionMode.leftRight: engine.DecisionMode.leftRight,
+        // Retired, but still mapped: history has to reach the engine enum to
+        // render a reading taken before v9.1.
+        DecisionMode.forwardBackward: engine.DecisionMode.forwardBackward,
       };
 
       expect(expected.keys.toSet(), DecisionMode.values.toSet());
@@ -28,16 +31,23 @@ void main() {
       expect(mapped, hasLength(DecisionMode.values.length));
     });
 
-    test('FORWARD/BACKWARD and LEFT/RIGHT never route through YES/NO', () {
+    test('COMMIT/WITHDRAW and LEFT/RIGHT never route through YES/NO', () {
+      expect(
+        toEngineMode(DecisionMode.commitWithdraw).wireValue,
+        'commit_withdraw',
+      );
+      expect(toEngineMode(DecisionMode.leftRight).wireValue, 'left_right');
+      expect(
+        toEngineMode(DecisionMode.commitWithdraw),
+        isNot(engine.DecisionMode.yesNo),
+      );
+      // The retired mode keeps its own wire value rather than borrowing the
+      // one that replaced it.
       expect(
         toEngineMode(DecisionMode.forwardBackward).wireValue,
         'forward_backward',
       );
-      expect(toEngineMode(DecisionMode.leftRight).wireValue, 'left_right');
-      expect(
-        toEngineMode(DecisionMode.forwardBackward),
-        isNot(engine.DecisionMode.yesNo),
-      );
+      expect(DecisionMode.selectable, hasLength(7));
       expect(
         toEngineMode(DecisionMode.leftRight),
         isNot(engine.DecisionMode.yesNo),
@@ -62,8 +72,9 @@ void main() {
         engine.DecisionMode.advanceRetreat: ('ADVANCE', 'RETREAT'),
         engine.DecisionMode.stayGo: ('STAY', 'GO'),
         engine.DecisionMode.keepLetGo: ('KEEP', 'LET GO'),
-        engine.DecisionMode.forwardBackward: ('FORWARD', 'BACKWARD'),
+        engine.DecisionMode.commitWithdraw: ('COMMIT', 'WITHDRAW'),
         engine.DecisionMode.leftRight: ('LEFT', 'RIGHT'),
+        engine.DecisionMode.forwardBackward: ('FORWARD', 'BACKWARD'),
       };
 
       for (final mode in DecisionMode.values) {

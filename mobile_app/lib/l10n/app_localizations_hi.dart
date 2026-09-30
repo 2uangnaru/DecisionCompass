@@ -281,7 +281,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
+      'आज की गति को पिछले कुछ दिनों से तौल रहे हैं';
 
   @override
   String get loadingModeStayGo =>
@@ -294,6 +294,10 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get loadingModeForwardBackward =>
       'आगे की गति और लौटने की ऊर्जा देख रहे हैं';
+
+  @override
+  String get loadingModeCommitWithdraw =>
+      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
 
   @override
   String get loadingModeLeftRight =>
@@ -357,7 +361,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      'बाएँ / दाएँ और आगे / पीछे केवल प्रतीकात्मक विकल्प हैं। इन्हें यातायात, गाड़ी चलाने, रास्ता खोजने या शारीरिक सुरक्षा के लिए कभी न अपनाएँ।';
+      'बाएँ / दाएँ और आगे बढ़ें / पीछे लौटें केवल प्रतीकात्मक विकल्प हैं। इन्हें यातायात, गाड़ी चलाने, रास्ता खोजने या शारीरिक सुरक्षा के लिए कभी न अपनाएँ।';
 
   @override
   String get politicsTitle => 'राजनीति और सामाजिक टकराव';
@@ -448,10 +452,10 @@ class AppLocalizationsHi extends AppLocalizations {
   String get choiceWait => 'प्रतीक्षा करें';
 
   @override
-  String get choiceAdvance => 'प्रतिबद्ध हों';
+  String get choiceAdvance => 'आगे बढ़ें';
 
   @override
-  String get choiceRetreat => 'पीछे हटें';
+  String get choiceRetreat => 'पीछे लौटें';
 
   @override
   String get choiceStay => 'रुकें';
@@ -470,6 +474,12 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get choiceBackward => 'पीछे की ओर';
+
+  @override
+  String get choiceCommit => 'प्रतिबद्ध हों';
+
+  @override
+  String get choiceWithdraw => 'पीछे हटें';
 
   @override
   String get choiceLeft => 'बाएँ';
@@ -1407,7 +1417,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get loadingModeAdvanceRetreat =>
-      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
+      'आज की गति को पिछले कुछ दिनों से तौल रहे हैं';
 
   @override
   String get loadingModeStayGo =>
@@ -1420,6 +1430,10 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get loadingModeForwardBackward =>
       'आगे की गति और लौटने की ऊर्जा देख रहे हैं';
+
+  @override
+  String get loadingModeCommitWithdraw =>
+      'प्रतिबद्धता और अलग होने की प्रवृत्ति देख रहे हैं';
 
   @override
   String get loadingModeLeftRight =>
@@ -1483,7 +1497,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get navigationDetail =>
-      'बाएँ / दाएँ और आगे / पीछे केवल प्रतीकात्मक विकल्प हैं। इन्हें यातायात, गाड़ी चलाने, रास्ता खोजने या शारीरिक सुरक्षा के लिए कभी न अपनाएँ।';
+      'बाएँ / दाएँ और आगे बढ़ें / पीछे लौटें केवल प्रतीकात्मक विकल्प हैं। इन्हें यातायात, गाड़ी चलाने, रास्ता खोजने या शारीरिक सुरक्षा के लिए कभी न अपनाएँ।';
 
   @override
   String get politicsTitle => 'राजनीति और सामाजिक टकराव';
@@ -1574,10 +1588,10 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get choiceWait => 'प्रतीक्षा करें';
 
   @override
-  String get choiceAdvance => 'प्रतिबद्ध हों';
+  String get choiceAdvance => 'आगे बढ़ें';
 
   @override
-  String get choiceRetreat => 'पीछे हटें';
+  String get choiceRetreat => 'पीछे लौटें';
 
   @override
   String get choiceStay => 'रुकें';
@@ -1596,6 +1610,12 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get choiceBackward => 'पीछे की ओर';
+
+  @override
+  String get choiceCommit => 'प्रतिबद्ध हों';
+
+  @override
+  String get choiceWithdraw => 'पीछे हटें';
 
   @override
   String get choiceLeft => 'बाएँ';

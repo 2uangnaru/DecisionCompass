@@ -5,6 +5,23 @@ export const TZDB_VERSION = moment.tz.dataVersion;
 export const HOUR = 3600000;
 export const DAY = 24 * HOUR;
 export const PERIODS = Object.freeze({ morning: [6, 12], midday: [12, 14], afternoon: [14, 18], evening: [18, 24] });
+
+/**
+ * The local wall hours a civil day is cut at: the earthly-branch boundaries
+ * plus midnight and the four period edges.
+ *
+ * Exported because the timing signal needs to enumerate the hours *inside* a
+ * period, and deriving them from this one list is what keeps the comparison
+ * set and the day's actual segments from drifting apart.
+ */
+export const BOUNDARY_HOURS = Object.freeze([0, 1, 3, 5, 6, 7, 9, 11, 12, 13, 14, 15, 17, 18, 19, 21, 23]);
+
+/** The boundary hours that fall inside [lo, hi) of a named period. */
+export function periodBoundaryHours(period) {
+  if (!Object.hasOwn(PERIODS, period)) throw new Error('INVALID_PERIOD');
+  const [lo, hi] = PERIODS[period];
+  return BOUNDARY_HOURS.filter(h => h >= lo && h < hi);
+}
 export function validZone(zone) { return typeof zone === 'string' && !!moment.tz.zone(zone); }
 export function requireZone(zone) { if (!validZone(zone)) throw new Error('INVALID_IANA_TIMEZONE'); return zone; }
 export function parseInstant(value) {
@@ -92,7 +109,7 @@ export function civilBoundaries(date, zone) {
   const day = moment.utc(date);
   for (let delta = -1; delta <= 2; delta++) {
     const d = day.clone().add(delta, 'days').format('YYYY-MM-DD');
-    for (const h of [0, 1, 3, 5, 6, 7, 9, 11, 12, 13, 14, 15, 17, 18, 19, 21, 23]) {
+    for (const h of BOUNDARY_HOURS) {
       for (const ms of localCandidates(d, `${String(h).padStart(2, '0')}:00`, zone)) boundaries.add(ms);
     }
   }
@@ -116,6 +133,16 @@ export function periodSegments(segments, now, period) {
   const [lo, hi] = PERIODS[period];
   return segments.filter(s => s.local.hour >= lo && s.local.hour < hi && s.end > now)
     .map(s => ({ ...s, candidateStart: Math.max(now, s.start) }));
+}
+// Pure civil-date arithmetic: no zone, because "the previous three local
+// dates" is a calendar statement, not a 72-hour subtraction. Adding days in
+// UTC and reformatting keeps 23- and 25-hour dates one date each.
+export function civilDateShift(date, days) {
+  const m = moment.utc(date, 'YYYY-MM-DD', true);
+  if (!m.isValid()) throw new Error('INVALID_LOCAL_DATE');
+  // Deliberately not range-checked: a seven-day horizon may reach past the
+  // supported reading years, and the caller drops a date it cannot resolve.
+  return m.add(days, 'days').format('YYYY-MM-DD');
 }
 export function addCivil(ms, zone, years, months = 0, days = 0, hours = 0) {
   return moment.tz(ms, zone).add(years, 'years').add(months, 'months').add(days, 'days').add(hours, 'hours').valueOf();

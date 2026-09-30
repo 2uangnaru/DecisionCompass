@@ -14,6 +14,7 @@ engine.DecisionMode toEngineMode(DecisionMode mode) => switch (mode) {
   DecisionMode.advanceRetreat => engine.DecisionMode.advanceRetreat,
   DecisionMode.stayGo => engine.DecisionMode.stayGo,
   DecisionMode.keepLetGo => engine.DecisionMode.keepLetGo,
+  DecisionMode.commitWithdraw => engine.DecisionMode.commitWithdraw,
   DecisionMode.forwardBackward => engine.DecisionMode.forwardBackward,
   DecisionMode.leftRight => engine.DecisionMode.leftRight,
 };
@@ -24,6 +25,7 @@ DecisionMode fromEngineMode(engine.DecisionMode mode) => switch (mode) {
   engine.DecisionMode.advanceRetreat => DecisionMode.advanceRetreat,
   engine.DecisionMode.stayGo => DecisionMode.stayGo,
   engine.DecisionMode.keepLetGo => DecisionMode.keepLetGo,
+  engine.DecisionMode.commitWithdraw => DecisionMode.commitWithdraw,
   engine.DecisionMode.forwardBackward => DecisionMode.forwardBackward,
   engine.DecisionMode.leftRight => DecisionMode.leftRight,
 };

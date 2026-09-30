@@ -129,10 +129,10 @@ void main() {
       const cases = {
         'YES': engine.DecisionMode.yesNo,
         'ACT': engine.DecisionMode.actWait,
-        'COMMIT': engine.DecisionMode.advanceRetreat,
+        'ADVANCE': engine.DecisionMode.advanceRetreat,
         'STAY': engine.DecisionMode.stayGo,
         'KEEP': engine.DecisionMode.keepLetGo,
-        'FORWARD': engine.DecisionMode.forwardBackward,
+        'COMMIT': engine.DecisionMode.commitWithdraw,
         'LEFT': engine.DecisionMode.leftRight,
       };
 
@@ -246,45 +246,45 @@ void main() {
 
       expect(find.byKey(const Key('result_ready')), findsOneWidget);
       expect(find.text('YES'), findsOneWidget);
-      expect(find.text('56.0%'), findsOneWidget);
-      expect(find.text('NO  44.0%'), findsOneWidget);
+      expect(find.text('71.9%'), findsOneWidget);
+      expect(find.text('NO  28.1%'), findsOneWidget);
       // NOW never shows windows.
       expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
-      expect(find.byKey(const Key('result_daily_brief')), findsOneWidget);
+      expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
     });
 
-    testWidgets('FORWARD/BACKWARD keeps its own percentages and windows', (
+    testWidgets('COMMIT/WITHDRAW keeps its own percentages and windows', (
       tester,
     ) async {
       final rig = ReadingTestRig(
-        response: fixtureResponse('ready_forward_backward_two_windows.json'),
+        response: fixtureResponse('ready_commit_withdraw_two_windows.json'),
       );
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
-      await revealReading(tester, modeLabel: 'FORWARD', periodName: 'evening');
+      await revealReading(tester, modeLabel: 'COMMIT', periodName: 'evening');
       await pumpPastRitual(tester);
 
-      expect(find.text('FORWARD'), findsWidgets);
-      // Scoped to the direction block: the window scores are also 61%.
+      expect(find.text('COMMIT'), findsWidgets);
+      // Scoped to the direction block: the window scores are also in the 70s.
       expect(
         find.descendant(
           of: find.byKey(const Key('result_ready')),
-          matching: find.text('60.7%'),
+          matching: find.text('69.6%'),
         ),
         findsOneWidget,
       );
-      expect(find.text('BACKWARD  39.3%'), findsOneWidget);
+      expect(find.text('WITHDRAW  30.4%'), findsOneWidget);
       final windowCard = find.byKey(const Key('result_lucky_windows'));
       expect(windowCard, findsOneWidget);
-      // The engine's own local wall clock (18:00–19:00 and 19:00–21:00 in
+      // The engine's own local wall clock (19:00–21:00 and 21:00–23:00 in
       // +07:00), rendered without a second timezone conversion.
       String window(int fromHour, int toHour) =>
           '${clock(fromHour)} \u2013 ${clock(toHour)}';
       expect(find.text(window(18, 19)), findsOneWidget);
       expect(find.text(window(19, 21)), findsOneWidget);
-      // Scores read as percentages; both windows scored 61 in this fixture.
+      // Scores read as percentages; both windows scored 71 in this fixture.
       expect(
-        find.descendant(of: windowCard, matching: find.text('61%')),
+        find.descendant(of: windowCard, matching: find.text('71%')),
         findsNWidgets(2),
       );
       expect(
@@ -313,9 +313,11 @@ void main() {
       await revealReading(tester, modeLabel: 'LEFT', periodName: 'afternoon');
       await pumpPastRitual(tester);
 
-      expect(find.text('LEFT'), findsWidgets);
-      expect(find.text('53.4%'), findsOneWidget);
-      expect(find.text('RIGHT  46.6%'), findsOneWidget);
+      // The winner is whichever side the polarity signal lands on; here it
+      // is RIGHT, and LEFT is shown as the counterpart.
+      expect(find.text('RIGHT'), findsWidgets);
+      expect(find.text('82.5%'), findsOneWidget);
+      expect(find.text('LEFT  17.5%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (

@@ -155,7 +155,7 @@ void main() {
     },
   );
 
-  testWidgets('a saved legacy result shows its original single colour', (
+  testWidgets('a saved legacy result renders cleanly with action guidance', (
     tester,
   ) async {
     final json = fixtureResponse('ready_yes_no_now.json').toJson();
@@ -174,7 +174,7 @@ void main() {
       ),
     );
     await tester.pump();
-    expect(find.text('Colour to keep near you: Ocean Blue'), findsOneWidget);
+    expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 

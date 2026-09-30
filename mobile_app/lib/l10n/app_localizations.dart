@@ -610,7 +610,7 @@ abstract class AppLocalizations {
   /// No description provided for @loadingModeAdvanceRetreat.
   ///
   /// In en, this message translates to:
-  /// **'Balancing commitment against withdrawal'**
+  /// **'Measuring today\'s push against the last few days'**
   String get loadingModeAdvanceRetreat;
 
   /// No description provided for @loadingModeStayGo.
@@ -630,6 +630,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tracing forward motion against returning energy'**
   String get loadingModeForwardBackward;
+
+  /// No description provided for @loadingModeCommitWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'Balancing commitment against withdrawal'**
+  String get loadingModeCommitWithdraw;
 
   /// No description provided for @loadingModeLeftRight.
   ///
@@ -748,7 +754,7 @@ abstract class AppLocalizations {
   /// No description provided for @navigationDetail.
   ///
   /// In en, this message translates to:
-  /// **'LEFT / RIGHT and FORWARD / BACKWARD are symbolic choices only. Never use them for traffic, driving, route-finding, or physical safety.'**
+  /// **'LEFT / RIGHT and ADVANCE / RETREAT are symbolic choices only. Never use them for traffic, driving, route-finding, or physical safety.'**
   String get navigationDetail;
 
   /// No description provided for @politicsTitle.
@@ -910,13 +916,13 @@ abstract class AppLocalizations {
   /// No description provided for @choiceAdvance.
   ///
   /// In en, this message translates to:
-  /// **'COMMIT'**
+  /// **'ADVANCE'**
   String get choiceAdvance;
 
   /// No description provided for @choiceRetreat.
   ///
   /// In en, this message translates to:
-  /// **'WITHDRAW'**
+  /// **'RETREAT'**
   String get choiceRetreat;
 
   /// No description provided for @choiceStay.
@@ -954,6 +960,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'BACKWARD'**
   String get choiceBackward;
+
+  /// No description provided for @choiceCommit.
+  ///
+  /// In en, this message translates to:
+  /// **'COMMIT'**
+  String get choiceCommit;
+
+  /// No description provided for @choiceWithdraw.
+  ///
+  /// In en, this message translates to:
+  /// **'WITHDRAW'**
+  String get choiceWithdraw;
 
   /// No description provided for @choiceLeft.
   ///

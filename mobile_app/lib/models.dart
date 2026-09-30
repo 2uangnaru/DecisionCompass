@@ -1,17 +1,27 @@
-/// The seven symbolic pairs, as identity only.
+/// The seven symbolic pairs, as identity only, plus the retired one.
 ///
 /// The words a reader sees live in `lib/l10n/` and are resolved through
 /// `localized_presentation.dart`: a mode carries no English text, so no screen
 /// can accidentally show an untranslated label. `LEFT / RIGHT` and
-/// `FORWARD / BACKWARD` remain symbolic polarity, never physical navigation.
+/// `ADVANCE / RETREAT` remain symbolic, never physical navigation.
 enum DecisionMode {
   yesNo,
   actWait,
   advanceRetreat,
   stayGo,
   keepLetGo,
-  forwardBackward,
+  commitWithdraw,
   leftRight,
+
+  /// Retired with ruleset v9.1. Offered nowhere; rendered in history so an
+  /// old reading still shows the pair it was actually calculated for.
+  forwardBackward;
+
+  bool get isLegacy => this == DecisionMode.forwardBackward;
+
+  /// The modes Home offers.
+  static List<DecisionMode> get selectable =>
+      values.where((mode) => !mode.isLegacy).toList(growable: false);
 }
 
 /// The engine's own English spelling of each pair.
@@ -27,8 +37,9 @@ const englishChoiceLabels = <DecisionMode, ({String first, String second})>{
   DecisionMode.advanceRetreat: (first: 'ADVANCE', second: 'RETREAT'),
   DecisionMode.stayGo: (first: 'STAY', second: 'GO'),
   DecisionMode.keepLetGo: (first: 'KEEP', second: 'LET GO'),
-  DecisionMode.forwardBackward: (first: 'FORWARD', second: 'BACKWARD'),
+  DecisionMode.commitWithdraw: (first: 'COMMIT', second: 'WITHDRAW'),
   DecisionMode.leftRight: (first: 'LEFT', second: 'RIGHT'),
+  DecisionMode.forwardBackward: (first: 'FORWARD', second: 'BACKWARD'),
 };
 
 /// The Western Sun sign derived from the birth date — not a Chinese zodiac

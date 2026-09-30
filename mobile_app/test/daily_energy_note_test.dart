@@ -3,7 +3,6 @@ import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'data/fixture_loader.dart';
 import 'reading_test_rig.dart';
 
 /// The ritual floor is 4.2–5.2s, so this clears any draw of the jitter.
@@ -289,12 +288,7 @@ void main() {
   });
 
   group('the result card', () {
-    Finder inBrief(Finder matching) => find.descendant(
-      of: find.byKey(const Key('result_daily_brief')),
-      matching: matching,
-    );
-
-    testWidgets('the button reveals the sentence in place and hides it again', (
+    testWidgets('renders action guidance card beneath the reading', (
       tester,
     ) async {
       final rig = ReadingTestRig(
@@ -305,57 +299,7 @@ void main() {
       await revealReading(tester);
       await pumpPastRitual(tester);
 
-      // This fixture's engine-calculated day is BRIGHT.
-      expect(
-        inBrief(find.byKey(const Key('result_daily_energy_label'))),
-        findsOneWidget,
-      );
-      expect(find.text('FLOWING'), findsOneWidget);
-      expect(note, findsNothing);
-      final card = find.byKey(const Key('result_daily_brief'));
-      final closed = tester.getSize(card).height;
-
-      await tester.ensureVisible(inBrief(infoButton));
-      await tester.pumpAndSettle();
-      await tester.tap(inBrief(infoButton));
-      await tester.pumpAndSettle();
-
-      expect(note, findsOneWidget);
-      expect(tester.getSize(card).height, closed);
-      expect(find.text(flowingSentence), findsOneWidget);
-      expect(find.byType(BottomSheet), findsNothing);
-      expect(find.byType(Dialog), findsNothing);
-      expect(find.text(quietSentence), findsNothing);
-
-      await tester.ensureVisible(inBrief(infoButton));
-      await tester.pumpAndSettle();
-      await tester.tap(inBrief(infoButton));
-      await tester.pumpAndSettle();
-      expect(note, findsNothing);
-      expect(find.text(flowingSentence), findsNothing);
-      expect(tester.getSize(card).height, closed);
-    });
-
-    testWidgets('a reading with no energy offers no button', (tester) async {
-      // The engine cannot be asked for an unavailable day on demand, so the
-      // committed fixture is patched at the one field under test.
-      final json = readFixture('ready_yes_no_now.json');
-      (json['dailyBrief']! as Map<String, dynamic>)['energy'] = {
-        'level': 'unavailable',
-        'index': null,
-        'dataCoverage': 0.1,
-      };
-      final rig = ReadingTestRig(
-        response: engine.ReadingResponse.fromJson(json),
-      );
-      await tester.pumpWidget(rig.app);
-      await completeOnboarding(tester);
-      await revealReading(tester);
-      await pumpPastRitual(tester);
-
-      expect(find.byKey(const Key('result_daily_brief')), findsOneWidget);
-      expect(inBrief(infoButton), findsNothing);
-      expect(note, findsNothing);
+      expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
     });
   });
 
@@ -387,12 +331,7 @@ void main() {
       }
     });
 
-    testWidgets('the result card fits with the sentence open', (tester) async {
-      final inBrief = find.descendant(
-        of: find.byKey(const Key('result_daily_brief')),
-        matching: infoButton,
-      );
-
+    testWidgets('the result card fits without overflow on all sizes', (tester) async {
       for (final size in sizes) {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pump();
@@ -408,20 +347,9 @@ void main() {
         expect(
           tester.takeException(),
           isNull,
-          reason: 'the result card failed at $size',
+          reason: 'the result page overflowed at $size',
         );
-
-        // The brief sits below the fold on a short phone.
-        await tester.ensureVisible(inBrief);
-        await tester.pumpAndSettle();
-        await tester.tap(inBrief);
-        await tester.pumpAndSettle();
-        expect(find.text(flowingSentence), findsOneWidget);
-        expect(
-          tester.takeException(),
-          isNull,
-          reason: 'the sentence overflowed at $size',
-        );
+        expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
       }
     });
   });

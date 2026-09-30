@@ -83,8 +83,9 @@ String modeFirstLabel(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.advanceRetreat => l10n.choiceAdvance,
       DecisionMode.stayGo => l10n.choiceStay,
       DecisionMode.keepLetGo => l10n.choiceKeep,
-      DecisionMode.forwardBackward => l10n.choiceForward,
+      DecisionMode.commitWithdraw => l10n.choiceCommit,
       DecisionMode.leftRight => l10n.choiceLeft,
+      DecisionMode.forwardBackward => l10n.choiceForward,
     };
 
 String modeSecondLabel(AppLocalizations l10n, DecisionMode mode) =>
@@ -94,8 +95,9 @@ String modeSecondLabel(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.advanceRetreat => l10n.choiceRetreat,
       DecisionMode.stayGo => l10n.choiceGo,
       DecisionMode.keepLetGo => l10n.choiceLetGo,
-      DecisionMode.forwardBackward => l10n.choiceBackward,
+      DecisionMode.commitWithdraw => l10n.choiceWithdraw,
       DecisionMode.leftRight => l10n.choiceRight,
+      DecisionMode.forwardBackward => l10n.choiceBackward,
     };
 
 /// `FIRST / SECOND`, built from two localized tokens and a separator rather
@@ -112,8 +114,9 @@ String modeLoadingPhrase(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.advanceRetreat => l10n.loadingModeAdvanceRetreat,
       DecisionMode.stayGo => l10n.loadingModeStayGo,
       DecisionMode.keepLetGo => l10n.loadingModeKeepLetGo,
-      DecisionMode.forwardBackward => l10n.loadingModeForwardBackward,
+      DecisionMode.commitWithdraw => l10n.loadingModeCommitWithdraw,
       DecisionMode.leftRight => l10n.loadingModeLeftRight,
+      DecisionMode.forwardBackward => l10n.loadingModeForwardBackward,
     };
 
 /// The winner a response names, translated by the mode it belongs to.
@@ -128,16 +131,8 @@ String localizedChoice(
   String engineLabel,
 ) {
   final english = englishChoiceLabels[mode]!;
-  if (engineLabel == english.first ||
-      (mode == DecisionMode.advanceRetreat &&
-          (engineLabel == 'ADVANCE' || engineLabel == 'COMMIT'))) {
-    return modeFirstLabel(l10n, mode);
-  }
-  if (engineLabel == english.second ||
-      (mode == DecisionMode.advanceRetreat &&
-          (engineLabel == 'RETREAT' || engineLabel == 'WITHDRAW'))) {
-    return modeSecondLabel(l10n, mode);
-  }
+  if (engineLabel == english.first) return modeFirstLabel(l10n, mode);
+  if (engineLabel == english.second) return modeSecondLabel(l10n, mode);
   return engineLabel;
 }
 

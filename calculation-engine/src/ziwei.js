@@ -42,6 +42,17 @@ function resolveTargets(chart,category) {
 
 const weightedProximity=(palaceIndex,targets)=>targets.reduce((sum,t)=>sum+t.weight*proximity(palaceIndex,t.index),0);
 const charts=boundedCache(256);
+// `chart.horoscope()` costs about fifteen milliseconds and dominates a
+// reading. A v9.1 reading asks for the same chart, date, hour and category
+// repeatedly — once for the daily brief, again for the selected period,
+// again for every cross-day anchor that shares the hour — so the scored
+// result is memoized. Pure memoization: same key, same value, no policy.
+const chartScores=boundedCache(4096);
+// Counted, not timed, so the benchmark can report how much of a reading is
+// provider work without the counter itself costing anything measurable.
+const counters={horoscopes:0,scoreChartCalls:0,scoreChartHits:0};
+export const ziweiCounters=()=>({...counters});
+export const resetZiweiCounters=()=>{counters.horoscopes=0;counters.scoreChartCalls=0;counters.scoreChartHits=0;};
 function configure(){iztro.astro.config(CONFIG);iztro.i18n?.setLanguage?.('zh-CN');}
 function chartFor(date,index,gender) {
   const key=`${date}|${index}|${gender}`;
@@ -54,10 +65,14 @@ export function buildZiWei(birth,traditionalProfile) {
   if(birth.status==='birth_time_nonexistent')return {charts:[],reason:birth.status,unknownHour:!birth.clock};
   // Unknown convention is modeled as alternatives, never inferred from a name.
   const genders=['male','female'].includes(traditionalProfile)?[traditionalProfile]:['male','female'];
-  const entries=indexes.flatMap(index=>genders.map(gender=>({index,gender,chart:chartFor(birth.date,index,gender)})));
+  const entries=indexes.flatMap(index=>genders.map(gender=>({index,gender,key:`${birth.date}|${index}|${gender}`,chart:chartFor(birth.date,index,gender)})));
   return {charts:entries,unknownHour:!birth.clock,unknownConvention:genders.length>1,rules:CONFIG};
 }
-function scoreChart(chart,date,timeIndex,category) {
+function scoreChart(chart,date,timeIndex,category,chartKey) {
+  const key=`${chartKey}|${date}|${timeIndex}|${category}`;
+  counters.scoreChartCalls++;
+  const hit=chartScores.get(key);
+  if(hit){counters.scoreChartHits++;return hit;}
   configure();
   const targets=resolveTargets(chart,category);
   const stars=chart.palaces.flatMap((p,index)=>[...p.majorStars,...p.minorStars,...p.adjectiveStars].map(s=>({...s,palace:index})));
@@ -73,6 +88,7 @@ function scoreChart(chart,date,timeIndex,category) {
   }
   const transformed=[],layerDetails={};
   const natalEvents=stars.filter(s=>s.mutagen in TRANSFORMS).map(s=>({name:s.name,kind:s.mutagen,palace:s.palace}));
+  counters.horoscopes++;
   const horoscope=chart.horoscope(date,timeIndex);
   for(const [layer,weight]of Object.entries(LAYERS)) {
     const data=horoscope[layer], index=layer==='natal'?null:data.index;
@@ -87,14 +103,14 @@ function scoreChart(chart,date,timeIndex,category) {
     layerDetails[layer]={target:index===null?targets.map(t=>({palace:t.palace,index:t.index,weight:t.weight})):index,events};
   }
   parts.push([.35,blend(transformed)]);
-  return {evidence:blend(parts),layers:layerDetails,category,
+  return chartScores.set(key,{evidence:blend(parts),layers:layerDetails,category,
     targetPalaces:targets.map(t=>({palace:t.palace,aliases:t.aliases,index:t.index,weight:t.weight})),
     lifePalace:chart.palaces.findIndex(p=>p.name==='命宫'),bodyPalace:chart.palaces.findIndex(p=>p.isBodyPalace),
-    majorCount:14,auxiliaryCount:12};
+    majorCount:14,auxiliaryCount:12});
 }
 export function scoreZiWei(built,cal,category='general') {
   if(!built.charts.length)return moduleResult(evidence(),{reason:built.reason,category});
-  const results=built.charts.map(entry=>({...scoreChart(entry.chart,cal.local.date,cal.hour.branch,category),birthHourIndex:entry.index,convention:entry.gender}));
+  const results=built.charts.map(entry=>({...scoreChart(entry.chart,cal.local.date,cal.hour.branch,category,entry.key),birthHourIndex:entry.index,convention:entry.gender}));
   if(results.length===1)return moduleResult(results[0].evidence,{...results[0],rules:CONFIG,scenarioCount:1,method:'single_chart'});
   const ranges=Object.fromEntries(['a','c'].map(k=>[k,{min:Math.min(...results.map(r=>r.evidence[k])),max:Math.max(...results.map(r=>r.evidence[k]))}]));
   const conservative=k=>ranges[k].min>0?ranges[k].min:ranges[k].max<0?ranges[k].max:0;

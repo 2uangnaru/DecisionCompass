@@ -70,7 +70,7 @@ const SCENARIOS = [
     period: 'morning', mode: 'yes_no', category: 'general' },
   { name: 'two_windows_evening', profile: PROFILE_KNOWN,
     context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: 'Asia/Ho_Chi_Minh' },
-    period: 'evening', mode: 'forward_backward', category: 'study' },
+    period: 'evening', mode: 'commit_withdraw', category: 'study' },
   { name: 'one_window_evening_late', profile: PROFILE_KNOWN,
     context: { instantUtc: '2026-09-18T15:50:00Z', deviceTimezone: 'Asia/Ho_Chi_Minh' },
     period: 'evening', mode: 'keep_let_go', category: 'friends' },

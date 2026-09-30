@@ -60,7 +60,9 @@ const ENGINE_INPUT_CODES = new Set([
 function isInputError(error) {
   const code = typeof error?.message === 'string' ? error.message : '';
   if (ENGINE_INTERNAL_CODES.has(code) || code.startsWith('UNKNOWN_MODULE')) return false;
-  return ENGINE_INPUT_CODES.has(code) || code.startsWith('INVALID_');
+  // A retired mode is the caller asking for a question this ruleset no longer
+  // scores. That is a bad request, not a server fault.
+  return ENGINE_INPUT_CODES.has(code) || code.startsWith('INVALID_') || code.startsWith('LEGACY_');
 }
 
 function sendJson(res, status, payload, extraHeaders) {

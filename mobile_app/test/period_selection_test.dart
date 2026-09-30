@@ -164,11 +164,11 @@ void main() {
       tester,
     ) async {
       final rig = ReadingTestRig(
-        response: fixtureResponse('ready_forward_backward_two_windows.json'),
+        response: fixtureResponse('ready_commit_withdraw_two_windows.json'),
       );
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
-      await revealReading(tester, modeLabel: 'FORWARD', periodName: 'evening');
+      await revealReading(tester, modeLabel: 'COMMIT', periodName: 'evening');
 
       expect(rig.sentRequest!.period, engine.TimePeriod.evening);
       expect(find.byKey(const Key('loading_period_label')), findsOneWidget);
@@ -201,10 +201,7 @@ void main() {
       expect(find.text(label(TimePeriod.now)), findsWidgets);
 
       await pumpPastRitual(tester);
-      expect(
-        find.text('This reading reflects your current moment.'),
-        findsOneWidget,
-      );
+      expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
       expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
     });
   });

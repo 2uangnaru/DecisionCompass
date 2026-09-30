@@ -1,7 +1,8 @@
 # AstraCue: Cosmic Decisions — Calculation Engine
 
-Engine MVP 3.4.0-mvp, ruleset `civil-midnight-chinese-calendar-symbolic-v7`, cập nhật
-23/09/2026. Nhận hồ sơ người dùng
+Engine MVP 4.0.0-mvp, ruleset
+`civil-midnight-chinese-calendar-symbolic-v9.1-experimental`, cập nhật
+30/09/2026. Nhận hồ sơ người dùng
 và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
 trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
 trong đường tính kết quả.
@@ -86,27 +87,73 @@ ngược lại là `FLOWING`. Nếu độ phủ <0.2, trả `unavailable` và in
 cho cùng nhãn, không phụ thuộc mode/category/period; ngày DST 23/25 giờ dùng
 đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v2.md`.
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
-FORWARD/BACKWARD và LEFT/RIGHT. FORWARD/BACKWARD dùng temporal momentum; LEFT/RIGHT
-dùng symbolic polarity (LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.
+COMMIT/WITHDRAW và LEFT/RIGHT. LEFT/RIGHT dùng symbolic polarity
+(LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.
 
-### Projection riêng theo Decision Mode
+`forward_backward` đã nghỉ hưu ở ruleset v9.1 và được thay bằng
+`commit_withdraw`. Hai mode hỏi hai câu khác nhau và chấm bằng tín hiệu khác
+nhau, nên engine **từ chối** tính mới cho `forward_backward`
+(`LEGACY_DECISION_MODE:forward_backward`); các bản đọc đã lưu vẫn giữ nguyên
+nhãn FORWARD/BACKWARD và phần trăm cũ, không bị đổi tên thành COMMIT/WITHDRAW.
 
-Sau khi sáu module hợp nhất thành `A` (action) và `C` (change), điểm cho vế thứ nhất của từng mode là:
+### Hệ chấm điểm v9.1 (thử nghiệm)
 
-| Mode | Score vế thứ nhất |
+Thay vì chiếu một cặp trục `A`/`C` lên bảy đường cố định, v9.1 rút ra chín tín
+hiệu — xem `src/scoring.js` để biết công thức đầy đủ:
+
+| Tín hiệu | Đọc gì |
+|---|---|
+| `P` | Prospect: B, Z, W nâng đỡ tới đâu, mẫu số cố định nên module thiếu kéo về 0 |
+| `C` | Change pressure: trục thay đổi của cả bảy module |
+| `L` | Luck: almanac/Vedic/numerology của chính khoảnh khắc, trừ baseline 0.05 |
+| `T` | Timing: khoảnh khắc này so với phần còn lại của ngày — cả các khung giờ còn lại của chính period đang chọn lẫn các period chưa bắt đầu |
+| `M` | Momentum: `C` hôm nay so với ba ngày trước |
+| `R` | Release: `.50P − .35C + .15·qZ·aZ` |
+| `G` | Grounding: `.35P − .45C − .20·(P cuối tuần tới − P hôm nay)` |
+| `H` | Horizon: trung vị của hôm nay tới ngày +7 |
+| `Y` | Polarity: quy ước âm/dương, `Y` dương chọn LEFT |
+
+Mỗi tín hiệu được chuẩn hoá `tanh(raw / scale)` với `scale` cố định, đã đánh
+phiên bản (`SCALE_VERSION`), đo offline bằng `scripts/calibrate-v91.mjs`. Không
+có học hoặc chỉnh theo từng người dùng lúc chạy.
+
+| Mode | Score vế thứ nhất (tín hiệu đã chuẩn hoá) |
 |---|---:|
-| YES / NO | `A` |
-| ACT / WAIT | `.85A + .15C` |
-| ADVANCE / RETREAT | `.55A + .45C` |
-| STAY / GO | `-C` |
-| KEEP / LET GO | `.30A - .70C` |
-| FORWARD / BACKWARD | `.25A + .75C` |
-| LEFT / RIGHT | `-.70A + .30C` |
+| YES / NO | `.45P + .20C + .35L` |
+| ACT / WAIT | `.30P + .10C + .30T + .30L` |
+| ADVANCE / RETREAT | `.25P + .60M + .15L` |
+| STAY / GO | `.70G + .20P + .10L` |
+| KEEP / LET GO | `.70R + .20P + .10L` |
+| COMMIT / WITHDRAW | `.80H + .15P + .05L` |
+| LEFT / RIGHT | `.70Y + .20P + .10L` |
 
-Mọi score được clamp về `[-1, 1]`; phần trăm vế thứ nhất vẫn dùng
-`floor(50 + 40 × score + .5)`. Top 2 time windows dùng projection của mode đang chọn,
-không còn mặc định xếp theo YES/NO. LEFT/RIGHT là polarity biểu tượng, không dùng để
-định hướng giao thông, điều hướng vật lý hoặc quyết định an toàn.
+Mỗi mixture được chia cho `sqrt(tổng bình phương trọng số)` của chính nó
+(`MODE_GAIN`). Trung bình có trọng số của nhiều tín hiệu gần độc lập thì hẹp
+hơn từng tín hiệu riêng lẻ, nên ở v9.1 một mode bốn tín hiệu luôn "nhạt" hơn
+một mode một tín hiệu — LEFT/RIGHT đạt 80%+ ở 24.6% số lần đọc trong khi
+YES/NO không bao giờ chạm tới. Hệ số này chỉ suy ra từ trọng số, luôn dương,
+nên không bao giờ đổi bên thắng, chỉ đổi khoảng cách so với 50%.
+
+Score được clamp về `[-1, 1]`, rồi so với trung vị score thô của 14 ngày dương
+lịch trước đó tại cùng giờ địa phương:
+`adjusted = clamp(today + 0.5 × (today − median14))`. Phần trăm vế thứ nhất là
+`round1(50 + 40 × sign(adjusted) × |adjusted|^0.55)`, giữ dưới dạng số nguyên
+phần mười nên hai vế luôn cộng đúng 100.0.
+
+Không có random, không ép khác nhau, không ép đổi chiều, không có sàn 60% và
+không có phần thưởng daily-energy cộng thêm sau điểm.
+
+Top 2 time windows được chấm lại **từ đầu tại chính khoảnh khắc của từng
+window**, kể cả tín hiệu `T`. Ở v9.1 mỗi window dùng lại `T` của phần đầu bài
+đọc, nên với ACT/WAIT mọi window mang cùng một giá trị timing và thứ hạng
+không nhìn thấy đúng thứ mà mode đó nói về. Phần bù 14 ngày **không** áp cho
+window: một khung 15 phút không có "14 ngày" của riêng nó, và con số chỉ để
+xếp hạng các khung trong cùng một ngày.
+LEFT/RIGHT là polarity biểu tượng, không dùng để định hướng giao thông, điều
+hướng vật lý hoặc quyết định an toàn.
+
+Phần trăm là mức đồng pha biểu tượng, **không** phải xác suất thành công của
+một quyết định ngoài đời.
 
 ## Quy tắc thiếu dữ liệu
 

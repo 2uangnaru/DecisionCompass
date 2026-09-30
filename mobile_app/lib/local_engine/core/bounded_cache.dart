@@ -11,6 +11,10 @@ class BoundedCache<K, V> {
 
   V? get(K key) => _map[key];
 
+  /// Distinguishes "cached as null" from "not cached", which the v9.1 scoring
+  /// needs: a date with no anchor is a real, reusable answer.
+  bool containsKey(K key) => _map.containsKey(key);
+
   V set(K key, V value) {
     if (_map.length >= max && !_map.containsKey(key)) {
       _map.remove(_map.keys.first);

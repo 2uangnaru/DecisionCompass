@@ -42,7 +42,7 @@ Supported modes:
 3. ADVANCE / RETREAT
 4. STAY / GO
 5. KEEP / LET GO
-6. FORWARD / BACKWARD
+6. COMMIT / WITHDRAW
 7. LEFT / RIGHT
 
 Periods are `now`, `morning`, `midday`, `afternoon`, and `evening`. NOW uses the
@@ -97,18 +97,32 @@ Implemented modules:
 - NOW and future-period calculations with top two mode-specific time windows.
 - Unknown-birth-hour scenario handling instead of inventing noon or an hour.
 
-The two fusion axes are `A` (action) and `C` (change). The first label score for
-each mode is:
+Since ruleset v9.1 the score is not a projection of the fused axes. The engine
+extracts nine named signals — several of which read other local dates — and
+each mode mixes its own subset. `calculation-engine/src/scoring.js` is the
+definition; `CALIBRATION.md` covers the normalization scales. Each mixture is
+divided by its own `sqrt(sum of w squared)` so that the seven modes read on one
+scale.
 
-| Mode | Projection |
+| Mode | First label score, from normalized signals |
 |---|---:|
-| YES / NO | `A` |
-| ACT / WAIT | `.85A + .15C` |
-| ADVANCE / RETREAT | `.55A + .45C` |
-| STAY / GO | `-C` |
-| KEEP / LET GO | `.30A - .70C` |
-| FORWARD / BACKWARD | `.25A + .75C` |
-| LEFT / RIGHT | `-.70A + .30C` |
+| YES / NO | `.45P + .20C + .35L` |
+| ACT / WAIT | `.30P + .10C + .30T + .30L` |
+| ADVANCE / RETREAT | `.25P + .60M + .15L` |
+| STAY / GO | `.70G + .20P + .10L` |
+| KEEP / LET GO | `.70R + .20P + .10L` |
+| COMMIT / WITHDRAW | `.80H + .15P + .05L` |
+| LEFT / RIGHT | `.70Y + .20P + .10L` |
+
+`FORWARD / BACKWARD` was retired in v9.1 and replaced by `COMMIT / WITHDRAW`,
+which asks a different question from a different signal. The engine refuses new
+readings for it (`LEGACY_DECISION_MODE:forward_backward`); saved readings keep
+their own labels and percentages and are never relabelled. See the 2026-09-30
+section of `calculation-engine/VERIFICATION.md`, including the weaknesses the
+held-out simulation found and why they were reported rather than tuned away.
+
+v9.1 is **experimental**. A percentage is symbolic alignment, never the
+probability that a decision succeeds.
 
 LEFT/RIGHT is symbolic polarity only: LEFT is receptive/inward; RIGHT is
 expressive/outward. It must never be used for physical navigation or safety.
@@ -227,7 +241,10 @@ The current APK is a visual prototype, not a functional MVP.
 
 Resolve these before tagging a release:
 
-- `calculation-engine/src/core.js` reports engine `3.1.0-mvp` and ruleset v4.
+- Engine metadata was normalized to `4.0.0-mvp` /
+  `civil-midnight-chinese-calendar-symbolic-v9.1-experimental` on 2026-09-30
+  across `src/core.js`, `package.json`, `README.md` and the Dart port. Keep
+  them together.
 - `calculation-engine/package.json`, the beginning of
   `calculation-engine/README.md`, and `calculation-engine/VERIFICATION.md` still
   say `3.0.0-mvp`.
@@ -253,7 +270,7 @@ Use `calculation-engine/src/index.d.ts` as the exact schema. Minimal example:
     "instantUtc": "2026-09-21T04:00:00.000Z",
     "deviceTimezone": "Asia/Ho_Chi_Minh"
   },
-  "mode": "forward_backward",
+  "mode": "commit_withdraw",
   "period": "evening",
   "category": "general",
   "diagnostics": false
@@ -298,7 +315,7 @@ Milestone A acceptance criteria:
 
 - Two different profiles can produce real, deterministic engine responses.
 - Repeating the same reading key returns the same snapshot without rerolling.
-- All seven modes map correctly; FORWARD/BACKWARD and LEFT/RIGHT are demonstrably
+- All seven modes map correctly; COMMIT/WITHDRAW and LEFT/RIGHT are demonstrably
   not aliases of YES/NO.
 - NOW contains no lucky windows. Future periods correctly show two, one, none or
   elapsed state.
@@ -327,7 +344,8 @@ Milestone A acceptance criteria:
 
 Take Milestone A items 1 and 3 only, unless the user explicitly expands scope:
 
-1. Normalize engine metadata to `3.1.0-mvp` and ruleset v4 in package/docs.
+1. Engine metadata is already normalized to `4.0.0-mvp` / ruleset
+   `v9.1-experimental`; check it has not drifted again.
 2. Add Dart request/response DTOs and enum serialization that mirror
    `calculation-engine/src/index.d.ts`.
 3. Add round-trip fixture tests using committed sanitized engine JSON. Do not
@@ -348,7 +366,11 @@ UI later without editing the same files.
 ## 10. Coordination rules
 
 - Run `git status --short` before and after work. Preserve unrelated user edits.
-- Do not edit `calculation-engine/src/core.js` formulas without an explicit task.
+- Do not edit `calculation-engine/src/core.js` or `src/scoring.js` formulas,
+  or the `SCALES` constants, without an explicit task. A scale change moves
+  every percentage the app has ever shown; see `calculation-engine/CALIBRATION.md`.
+- Do not tune scoring coefficients to make a percentage distribution look
+  better. Measure, then report what it does.
 - Do not call the current Flutter app “integrated” while it imports
   `mock_reading_engine.dart` in the production flow.
 - Put engine access behind an interface; UI pages must not construct HTTP or raw

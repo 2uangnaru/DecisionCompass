@@ -12,6 +12,7 @@ import 'app_locale.dart';
 /// platform, which is what covers anything Noto does not — including scripts
 /// this app does not translate into.
 abstract final class CompassFonts {
+  static const display = 'CormorantGaramond';
   static const latin = 'NotoSans';
   static const thai = 'NotoSansThai';
   static const devanagari = 'NotoSansDevanagari';
@@ -46,6 +47,21 @@ abstract final class CompassFonts {
         if (family != preferred) family,
     ];
   }
+
+  /// Display font fallback stack for headlines and brand titles.
+  /// For Latin-based languages (Vietnamese, English, Spanish), Cormorant Garamond
+  /// sits at the front to give AstraCue its celestial editorial identity.
+  /// For non-Latin scripts (Thai, Hindi, Japanese, Chinese), the script's native
+  /// family leads so glyphs always render faithfully.
+  static List<String> displayFallbackFor(AppLocale locale) {
+    return switch (locale) {
+      AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => [
+        display,
+        ...fallbackFor(locale),
+      ],
+      _ => fallbackFor(locale),
+    };
+  }
 }
 
 abstract final class CompassColors {
@@ -74,6 +90,8 @@ abstract final class CompassColors {
 ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
   final fallback = CompassFonts.fallbackFor(locale);
   final family = fallback.first;
+  final displayFallback = CompassFonts.displayFallbackFor(locale);
+  final displayFamily = displayFallback.first;
   // Thai and Devanagari clip at the tight English line heights; Japanese and
   // Chinese simply read better with a little more air. Vietnamese has stacked
   // diacritics and tone marks that need room to prevent lines feeling cramped.
@@ -136,18 +154,25 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
     fontFamilyFallback: fallback,
     textTheme: TextTheme(
       displayLarge: TextStyle(
+        fontFamily: displayFamily,
+        fontFamilyFallback: displayFallback,
         color: CompassColors.text,
         fontSize: displayLargeSize,
-        height: 1.05 * lead,
-        fontWeight: FontWeight.w600,
+        height: 1.08 * lead,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.5,
       ),
       headlineLarge: TextStyle(
+        fontFamily: displayFamily,
+        fontFamilyFallback: displayFallback,
         color: CompassColors.text,
         fontSize: headlineLargeSize,
-        height: 1.22 * lead,
-        fontWeight: FontWeight.w600,
+        height: 1.25 * lead,
+        fontWeight: FontWeight.w700,
       ),
       headlineMedium: TextStyle(
+        fontFamily: displayFamily,
+        fontFamilyFallback: displayFallback,
         color: CompassColors.text,
         fontSize: headlineMediumSize,
         // Left to the font's own metrics in the Latin-script languages, as it
@@ -193,5 +218,66 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
         borderSide: const BorderSide(color: CompassColors.blueLight),
       ),
     ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: {
+        TargetPlatform.android: CelestialPageTransitionsBuilder(),
+        TargetPlatform.iOS: CelestialPageTransitionsBuilder(),
+        TargetPlatform.macOS: CelestialPageTransitionsBuilder(),
+        TargetPlatform.windows: CelestialPageTransitionsBuilder(),
+        TargetPlatform.linux: CelestialPageTransitionsBuilder(),
+      },
+    ),
   );
 }
+
+/// A custom ethereal page transition designed for AstraCue's celestial atmosphere.
+///
+/// Replaces Android's rigid Material 3 Zoom with a tranquil, weightless flow:
+/// - Entering page: Smooth fade-in (opacity 0 -> 1) with subtle vertical drift (upward ~20px)
+///   using [Curves.easeOutCubic].
+/// - Covered / background page: Soft dimming (1.0 -> 0.88) without harsh scaling,
+///   keeping the starry cosmos stable and peaceful.
+/// - Returning / popping page: Gently glides downward and dissolves away.
+class CelestialPageTransitionsBuilder extends PageTransitionsBuilder {
+  const CelestialPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+
+    final fadeIn = Tween<double>(begin: 0.0, end: 1.0).animate(curved);
+    final slideIn = Tween<Offset>(
+      begin: const Offset(0.0, 0.035),
+      end: Offset.zero,
+    ).animate(curved);
+
+    final secondaryCurved = CurvedAnimation(
+      parent: secondaryAnimation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeInCubic,
+    );
+    final fadeOut = Tween<double>(begin: 1.0, end: 0.88).animate(secondaryCurved);
+
+    return FadeTransition(
+      opacity: fadeOut,
+      child: FadeTransition(
+        opacity: fadeIn,
+        child: SlideTransition(
+          position: slideIn,
+          child: child,
+        ),
+      ),
+    );
+  }
+}
+

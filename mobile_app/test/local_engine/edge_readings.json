@@ -17,8 +17,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -105,18 +105,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 54.4,
-          "NO": 45.6
+          "YES": 68.2,
+          "NO": 31.8
         },
         "dataCoverage": 0.8477,
-        "modeScore": 0.0336992766,
+        "modeScore": 0.2398035788,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "7863f06f305d7747c550c384e7fe3dd67893f820be87a61501d7fb9f432916d7",
+        "readingKey": "fa2c903b0eec7c8e7bcc2d2bebd2d2db671de2471cb396ada752d53c54027f7a",
         "axisScores": {
           "action": 0.0336992766,
           "change": -0.0134573997,
-          "selected": 0.0336992766
+          "selected": 0.2398035788
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T03:00",
+          "signals": {
+            "P": 0.000828127,
+            "C": 0.0289276003,
+            "L": 0.2021
+          },
+          "normalized": {
+            "P": 0.0050166446,
+            "C": 0.09533718,
+            "L": 0.2594994266
+          },
+          "rawModeScore": 0.1856315463,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.0772874813,
+          "adjustedModeScore": 0.2398035788,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
         "luckyWindows": [],
@@ -253,8 +273,8 @@
       "mode": "act_wait",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -310,41 +330,63 @@
           "category": "general"
         },
         "status": "ready",
-        "winner": "WAIT",
+        "winner": "ACT",
         "percentages": {
-          "ACT": 46.9,
-          "WAIT": 53.1
+          "ACT": 58.3,
+          "WAIT": 41.7
         },
         "dataCoverage": 0.973,
-        "modeScore": -0.0194655026,
+        "modeScore": 0.0575112695,
         "modeBasis": "action_timing",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "e83f46002e908b2b1a1b31a3040ff10932e40923d533814a7f57e7d972008acf",
+        "readingKey": "0e03e7fc7f49fe319360495c230a6b352adbbef3c15d223690a6611bb5e53696",
         "axisScores": {
           "action": 0.0004089387,
           "change": -0.1320873369,
-          "selected": -0.0194655026
+          "selected": 0.0575112695
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-11-01T06:00",
+          "signals": {
+            "P": 0.0010897592,
+            "C": -0.0862561364,
+            "T": 0.0214477891,
+            "L": 0.1255
+          },
+          "normalized": {
+            "P": 0.0066015249,
+            "C": -0.2776572308,
+            "T": 0.0414561279,
+            "L": 0.1634356224
+          },
+          "rawModeScore": 0.067433132,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.087276857,
+          "adjustedModeScore": 0.0575112695,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-11-01T11:00:00.000Z",
         "luckyWindows": [
-          {
-            "startUtc": "2026-11-01T16:00:00.000Z",
-            "endUtc": "2026-11-01T17:00:00.000Z",
-            "startLocal": "2026-11-01T11:00:00-05:00",
-            "endLocal": "2026-11-01T12:00:00-05:00",
-            "score": 51,
-            "dataCoverage": 0.973,
-            "hourBranch": 6,
-            "meaning": "symbolic_timing_score_not_probability"
-          },
           {
             "startUtc": "2026-11-01T11:00:00.000Z",
             "endUtc": "2026-11-01T12:00:00.000Z",
             "startLocal": "2026-11-01T06:00:00-05:00",
             "endLocal": "2026-11-01T07:00:00-05:00",
-            "score": 49,
+            "score": 59,
             "dataCoverage": 0.973,
             "hourBranch": 3,
+            "meaning": "symbolic_timing_score_not_probability"
+          },
+          {
+            "startUtc": "2026-11-01T16:00:00.000Z",
+            "endUtc": "2026-11-01T17:00:00.000Z",
+            "startLocal": "2026-11-01T11:00:00-05:00",
+            "endLocal": "2026-11-01T12:00:00-05:00",
+            "score": 59,
+            "dataCoverage": 0.973,
+            "hourBranch": 6,
             "meaning": "symbolic_timing_score_not_probability"
           }
         ],
@@ -736,8 +778,8 @@
       "mode": "advance_retreat",
       "category": "career",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -795,39 +837,59 @@
         "status": "ready",
         "winner": "RETREAT",
         "percentages": {
-          "ADVANCE": 46.9,
-          "RETREAT": 53.1
+          "ADVANCE": 26.9,
+          "RETREAT": 73.1
         },
         "dataCoverage": 0.967,
-        "modeScore": -0.0198967575,
+        "modeScore": -0.3681083992,
         "modeBasis": "tactical_momentum",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "cf22a444ac23dbca5b37e49bf7161cc0725ea58b32c4c52c0792cfa8f74a1bc9",
+        "readingKey": "e49418486ebeb882b8c840a74e9b2f3e5ff1247f9a8ecb673ef74e483b98dc35",
         "axisScores": {
           "action": 0.0073489093,
           "change": -0.0531970169,
-          "selected": -0.0198967575
+          "selected": -0.3681083992
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-03-08T06:00",
+          "signals": {
+            "P": 0.0140948512,
+            "M": -0.095945908,
+            "L": -0.06475
+          },
+          "normalized": {
+            "P": 0.0851778909,
+            "M": -0.2547414231,
+            "L": -0.0848806807
+          },
+          "rawModeScore": -0.2162885867,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.0873510382,
+          "adjustedModeScore": -0.3681083992,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-03-08T10:00:00.000Z",
         "luckyWindows": [
-          {
-            "startUtc": "2026-03-08T11:00:00.000Z",
-            "endUtc": "2026-03-08T13:00:00.000Z",
-            "startLocal": "2026-03-08T07:00:00-04:00",
-            "endLocal": "2026-03-08T09:00:00-04:00",
-            "score": 48,
-            "dataCoverage": 0.967,
-            "hourBranch": 4,
-            "meaning": "symbolic_timing_score_not_probability"
-          },
           {
             "startUtc": "2026-03-08T15:00:00.000Z",
             "endUtc": "2026-03-08T16:00:00.000Z",
             "startLocal": "2026-03-08T11:00:00-04:00",
             "endLocal": "2026-03-08T12:00:00-04:00",
-            "score": 48,
+            "score": 40,
             "dataCoverage": 0.967,
             "hourBranch": 6,
+            "meaning": "symbolic_timing_score_not_probability"
+          },
+          {
+            "startUtc": "2026-03-08T13:00:00.000Z",
+            "endUtc": "2026-03-08T15:00:00.000Z",
+            "startLocal": "2026-03-08T09:00:00-04:00",
+            "endLocal": "2026-03-08T11:00:00-04:00",
+            "score": 37,
+            "dataCoverage": 0.967,
+            "hourBranch": 5,
             "meaning": "symbolic_timing_score_not_probability"
           }
         ],
@@ -1219,8 +1281,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1282,18 +1344,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 57.6,
-          "NO": 42.4
+          "YES": 77,
+          "NO": 23
         },
         "dataCoverage": 0.4346,
-        "modeScore": 0.0776457356,
+        "modeScore": 0.4895585577,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "e4c0e93b540b4753527718636865380d6bc5832b6477fd305fd783b757f750f7",
+        "readingKey": "a542dae64fc238b3d5289f763cf366e7c78d47de08a654a9df98891e1c56165f",
         "axisScores": {
           "action": 0.0776457356,
           "change": 0.1766342059,
-          "selected": 0.0776457356
+          "selected": 0.4895585577
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T09:00",
+          "signals": {
+            "P": -0.0005055556,
+            "C": 0.1983642059,
+            "L": 0.2341
+          },
+          "normalized": {
+            "P": -0.0030625807,
+            "C": 0.57552397,
+            "L": 0.2982717892
+          },
+          "rawModeScore": 0.3610377042,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.1039959973,
+          "adjustedModeScore": 0.4895585577,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],
@@ -1430,8 +1512,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1502,18 +1584,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 54.9,
-          "NO": 45.1
+          "YES": 72.2,
+          "NO": 27.8
         },
         "dataCoverage": 0.8477,
-        "modeScore": 0.0400560447,
+        "modeScore": 0.3431429531,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "003d02873d963ad8d36592a8350f2080142caae13a4f0d68cbb590f44eeb6c3c",
+        "readingKey": "76ded1871263ea48480aca6d62f4415e1e4e2a6334c4b9390abbaf10021bf7ae",
         "axisScores": {
           "action": 0.0400560447,
           "change": -0.0201892421,
-          "selected": 0.0400560447
+          "selected": 0.3431429531
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T19:00",
+          "signals": {
+            "P": 0.0236792892,
+            "C": 0.0221957579,
+            "L": 0.1941
+          },
+          "normalized": {
+            "P": 0.1424702215,
+            "C": 0.0732423857,
+            "L": 0.2496683965
+          },
+          "rawModeScore": 0.2750035313,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.1387246878,
+          "adjustedModeScore": 0.3431429531,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:30:00.000Z",
         "luckyWindows": [],
@@ -1650,8 +1752,8 @@
       "mode": "stay_go",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1710,18 +1812,38 @@
         "status": "ready",
         "winner": "GO",
         "percentages": {
-          "STAY": 44.3,
-          "GO": 55.7
+          "STAY": 28.8,
+          "GO": 71.2
         },
         "dataCoverage": 0.4346,
-        "modeScore": -0.050266843,
+        "modeScore": -0.3158923251,
         "modeBasis": "change_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "e14d2764a5f5ad32752b0df6af379cdb1567214d19416d6b1cf6507449c60fc7",
+        "readingKey": "21d6876a3f282f0d2d94f258cbc621967f2cfd17472b972dec67f87bba71ac54",
         "axisScores": {
           "action": -0.0642426367,
           "change": 0.050266843,
-          "selected": -0.050266843
+          "selected": -0.3158923251
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T21:00",
+          "signals": {
+            "G": -0.0326014968,
+            "P": 0.0011111111,
+            "L": 0.0781
+          },
+          "normalized": {
+            "G": -0.2236714715,
+            "P": 0.006730866,
+            "L": 0.1022693212
+          },
+          "rawModeScore": -0.1973158222,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.0398371836,
+          "adjustedModeScore": -0.3158923251,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
         "luckyWindows": [
@@ -1730,7 +1852,7 @@
             "endUtc": "2026-09-18T09:00:00.000Z",
             "startLocal": "2026-09-18T22:30:00+14:00",
             "endLocal": "2026-09-18T23:00:00+14:00",
-            "score": 44,
+            "score": 34,
             "dataCoverage": 0.4346,
             "hourBranch": 11,
             "meaning": "symbolic_timing_score_not_probability"
@@ -1740,7 +1862,7 @@
             "endUtc": "2026-09-18T10:00:00.000Z",
             "startLocal": "2026-09-18T23:00:00+14:00",
             "endLocal": "2026-09-19T00:00:00+14:00",
-            "score": 44,
+            "score": 32,
             "dataCoverage": 0.4346,
             "hourBranch": 0,
             "meaning": "symbolic_timing_score_not_probability"
@@ -1964,8 +2086,8 @@
       "mode": "keep_let_go",
       "category": "love",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2027,18 +2149,38 @@
         "status": "ready",
         "winner": "LET GO",
         "percentages": {
-          "KEEP": 44,
-          "LET GO": 56
+          "KEEP": 26.8,
+          "LET GO": 73.2
         },
         "dataCoverage": 0.5806,
-        "modeScore": -0.0544044314,
+        "modeScore": -0.3706701751,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "251579ec5078074ba7d069cba5ea3a7051a4c7dab549cbf0698b16bbee8fa580",
+        "readingKey": "fddfe2e101555c7083a16c8843347b2f2b1c6080cff679013dc0374762db814b",
         "axisScores": {
           "action": 0.0633828003,
           "change": 0.1048846735,
-          "selected": -0.0544044314
+          "selected": -0.3706701751
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T15:00",
+          "signals": {
+            "R": -0.0471007287,
+            "P": -0.000461186,
+            "L": 0.2781
+          },
+          "normalized": {
+            "R": -0.3548803737,
+            "P": -0.0027937977,
+            "L": 0.3499968901
+          },
+          "rawModeScore": -0.2911835452,
+          "priorDatesUsed": 14,
+          "priorMedian": -0.1322102852,
+          "adjustedModeScore": -0.3706701751,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],
@@ -2175,8 +2317,8 @@
       "mode": "left_right",
       "category": "money",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2232,41 +2374,61 @@
           "category": "money"
         },
         "status": "ready",
-        "winner": "LEFT",
+        "winner": "RIGHT",
         "percentages": {
-          "LEFT": 53.8,
-          "RIGHT": 46.2
+          "LEFT": 18.5,
+          "RIGHT": 81.5
         },
         "dataCoverage": 0.97,
-        "modeScore": 0.0263263033,
+        "modeScore": -0.6485236701,
         "modeBasis": "symbolic_polarity",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "453886c75f2b460ce4ac489f8dcc766783e7b04ecee6e536ca782357516a22bc",
+        "readingKey": "00ca17f389736a9e96b569323506e18420b372152f107c2cf48cd07aa589e117",
         "axisScores": {
           "action": 0.0252162156,
           "change": 0.1465921807,
-          "selected": 0.0263263033
+          "selected": -0.6485236701
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T14:00",
+          "signals": {
+            "Y": -0.516373849,
+            "P": 0.0150004784,
+            "L": 0.019
+          },
+          "normalized": {
+            "Y": -0.5300541217,
+            "P": 0.0906216613,
+            "L": 0.024961962
+          },
+          "rawModeScore": -0.4768576228,
+          "priorDatesUsed": 14,
+          "priorMedian": -0.133525528,
+          "adjustedModeScore": -0.6485236701,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:15:00.000Z",
         "luckyWindows": [
+          {
+            "startUtc": "2026-09-18T09:15:00.000Z",
+            "endUtc": "2026-09-18T11:15:00.000Z",
+            "startLocal": "2026-09-18T15:00:00+05:45",
+            "endLocal": "2026-09-18T17:00:00+05:45",
+            "score": 35,
+            "dataCoverage": 0.97,
+            "hourBranch": 8,
+            "meaning": "symbolic_timing_score_not_probability"
+          },
           {
             "startUtc": "2026-09-18T08:30:00.000Z",
             "endUtc": "2026-09-18T09:15:00.000Z",
             "startLocal": "2026-09-18T14:15:00+05:45",
             "endLocal": "2026-09-18T15:00:00+05:45",
-            "score": 55,
+            "score": 23,
             "dataCoverage": 0.97,
             "hourBranch": 7,
-            "meaning": "symbolic_timing_score_not_probability"
-          },
-          {
-            "startUtc": "2026-09-18T11:15:00.000Z",
-            "endUtc": "2026-09-18T12:15:00.000Z",
-            "startLocal": "2026-09-18T17:00:00+05:45",
-            "endLocal": "2026-09-18T18:00:00+05:45",
-            "score": 55,
-            "dataCoverage": 0.97,
-            "hourBranch": 9,
             "meaning": "symbolic_timing_score_not_probability"
           }
         ],
@@ -2573,8 +2735,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2650,11 +2812,11 @@
         "deviceTimezone": "Asia/Ho_Chi_Minh"
       },
       "period": "evening",
-      "mode": "forward_backward",
+      "mode": "commit_withdraw",
       "category": "study",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2663,7 +2825,7 @@
           "momentTimezone": "0.6.4",
           "tzdb": "2026d"
         },
-        "mode": "forward_backward",
+        "mode": "commit_withdraw",
         "period": "evening",
         "category": "study",
         "context": {
@@ -2706,45 +2868,65 @@
             "zoneSource": "device"
           },
           "period": "evening",
-          "mode": "forward_backward",
+          "mode": "commit_withdraw",
           "category": "study"
         },
         "status": "ready",
-        "winner": "FORWARD",
+        "winner": "COMMIT",
         "percentages": {
-          "FORWARD": 62.2,
-          "BACKWARD": 37.8
+          "COMMIT": 61.7,
+          "WITHDRAW": 38.3
         },
         "dataCoverage": 0.973,
-        "modeScore": 0.161563774,
-        "modeBasis": "temporal_momentum",
+        "modeScore": 0.1068893008,
+        "modeBasis": "durability_horizon",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "fc388b9babd769c7612489a590db80e3c87da266d70e476bbf30536fb1433c25",
+        "readingKey": "8d5f732d7f256199cc939e6ba2fa94db97cbe5bdb4cb6d359e8752fce441127c",
         "axisScores": {
           "action": 0.0323215629,
           "change": 0.204644511,
-          "selected": 0.161563774
+          "selected": 0.1068893008
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T18:00",
+          "signals": {
+            "H": 0.0364754412,
+            "P": -0.0657343103,
+            "L": 0.019
+          },
+          "normalized": {
+            "H": 0.2032510869,
+            "P": -0.3784162977,
+            "L": 0.024961962
+          },
+          "rawModeScore": 0.1313179199,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.1801751581,
+          "adjustedModeScore": 0.1068893008,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T11:00:00.000Z",
         "luckyWindows": [
-          {
-            "startUtc": "2026-09-18T12:00:00.000Z",
-            "endUtc": "2026-09-18T14:00:00.000Z",
-            "startLocal": "2026-09-18T19:00:00+07:00",
-            "endLocal": "2026-09-18T21:00:00+07:00",
-            "score": 63,
-            "dataCoverage": 0.973,
-            "hourBranch": 10,
-            "meaning": "symbolic_timing_score_not_probability"
-          },
           {
             "startUtc": "2026-09-18T11:00:00.000Z",
             "endUtc": "2026-09-18T12:00:00.000Z",
             "startLocal": "2026-09-18T18:00:00+07:00",
             "endLocal": "2026-09-18T19:00:00+07:00",
-            "score": 62,
+            "score": 63,
             "dataCoverage": 0.973,
             "hourBranch": 9,
+            "meaning": "symbolic_timing_score_not_probability"
+          },
+          {
+            "startUtc": "2026-09-18T12:00:00.000Z",
+            "endUtc": "2026-09-18T14:00:00.000Z",
+            "startLocal": "2026-09-18T19:00:00+07:00",
+            "endLocal": "2026-09-18T21:00:00+07:00",
+            "score": 62,
+            "dataCoverage": 0.973,
+            "hourBranch": 10,
             "meaning": "symbolic_timing_score_not_probability"
           }
         ],
@@ -3136,8 +3318,8 @@
       "mode": "keep_let_go",
       "category": "friends",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3195,18 +3377,38 @@
         "status": "ready",
         "winner": "LET GO",
         "percentages": {
-          "KEEP": 39.9,
-          "LET GO": 60.1
+          "KEEP": 13.7,
+          "LET GO": 86.3
         },
         "dataCoverage": 0.9775,
-        "modeScore": -0.1196376096,
+        "modeScore": -0.8361654801,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "50cfcb8904a4b9847d55e88e96b581480386d5a1ac43ce1f4efe4623c8b68aec",
+        "readingKey": "072a2e7814aa4456104a48655875c9a4740db5c485bb5f8c63b59b1275c8e8e1",
         "axisScores": {
           "action": 0.0089460489,
           "change": 0.1747448918,
-          "selected": -0.1196376096
+          "selected": -0.8361654801
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T21:00",
+          "signals": {
+            "R": -0.0879091933,
+            "P": -0.0277426462,
+            "L": 0.219
+          },
+          "normalized": {
+            "R": -0.5995651425,
+            "P": -0.1664967664,
+            "L": 0.2800895452
+          },
+          "rawModeScore": -0.5783326912,
+          "priorDatesUsed": 14,
+          "priorMedian": -0.0626671133,
+          "adjustedModeScore": -0.8361654801,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T14:00:00.000Z",
         "luckyWindows": [
@@ -3215,7 +3417,7 @@
             "endUtc": "2026-09-18T17:00:00.000Z",
             "startLocal": "2026-09-18T23:00:00+07:00",
             "endLocal": "2026-09-19T00:00:00+07:00",
-            "score": 40,
+            "score": 20,
             "dataCoverage": 0.9775,
             "hourBranch": 0,
             "meaning": "symbolic_timing_score_not_probability"
@@ -3439,8 +3641,8 @@
       "mode": "keep_let_go",
       "category": "other",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3498,18 +3700,38 @@
         "status": "ready",
         "winner": "LET GO",
         "percentages": {
-          "KEEP": 40.9,
-          "LET GO": 59.1
+          "KEEP": 20.7,
+          "LET GO": 79.3
         },
         "dataCoverage": 0.973,
-        "modeScore": -0.1033529846,
+        "modeScore": -0.5691531402,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "5cbe5b7577489702ee1bf85f5cf7103cd36d14175557bccfa095f92831107425",
+        "readingKey": "2bf6d3a94ec09841e579eec72ce8daad59b9c32f49659b68c7fa72501ec0d4f6",
         "axisScores": {
           "action": 0.0305325385,
           "change": 0.1607324946,
-          "selected": -0.1033529846
+          "selected": -0.5691531402
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T23:00",
+          "signals": {
+            "R": -0.0527029654,
+            "P": 0.0281340029,
+            "L": 0.019
+          },
+          "normalized": {
+            "R": -0.3928330158,
+            "P": 0.1688009195,
+            "L": 0.024961962
+          },
+          "rawModeScore": -0.3248659327,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.1637084824,
+          "adjustedModeScore": -0.5691531402,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T16:00:00.000Z",
         "luckyWindows": [],
@@ -3646,8 +3868,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3704,18 +3926,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 56,
-          "NO": 44
+          "YES": 71.9,
+          "NO": 28.1
         },
         "dataCoverage": 0.973,
-        "modeScore": 0.0536403832,
+        "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "6e3e9234e521bcf656abbd4e6ce10801d1d9582737b53b2c1b0a730aa2ece65e",
+        "readingKey": "a482477ba9016595a90f19b23522a90a3eb84dba78ca218e5e23602eb5fd3524",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
-          "selected": 0.0536403832
+          "selected": 0.334208523
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T15:00",
+          "signals": {
+            "P": -0.0030339861,
+            "C": 0.2138654457,
+            "L": 0.219
+          },
+          "normalized": {
+            "P": -0.0183774266,
+            "C": 0.6087840751,
+            "L": 0.2800895452
+          },
+          "rawModeScore": 0.3501076042,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.3819057666,
+          "adjustedModeScore": 0.334208523,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],
@@ -3851,8 +4093,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3909,18 +4151,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 59.3,
-          "NO": 40.7
+          "YES": 78.1,
+          "NO": 21.9
         },
         "dataCoverage": 0.6452,
-        "modeScore": 0.1056839231,
+        "modeScore": 0.525330685,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "f0aeb0fd2cab39dde49be6f3828c4aff99d2fae20f6edbbea44fb4295c3cb329",
+        "readingKey": "e4158de3bc276475a7b5736eb4c15f53a80626454630c3c1bd9a083e221b7736",
         "axisScores": {
           "action": 0.1056839231,
           "change": 0.1484292238,
-          "selected": 0.1056839231
+          "selected": 0.525330685
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T15:00",
+          "signals": {
+            "P": 0.0098059028,
+            "C": 0.1806892238,
+            "L": 0.2781
+          },
+          "normalized": {
+            "P": 0.0593331197,
+            "C": 0.5351359599,
+            "L": 0.3499968901
+          },
+          "rawModeScore": 0.424108305,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.2216635451,
+          "adjustedModeScore": 0.525330685,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],
@@ -4063,8 +4325,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -4122,18 +4384,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 56,
-          "NO": 44
+          "YES": 71.9,
+          "NO": 28.1
         },
         "dataCoverage": 0.973,
-        "modeScore": 0.0536403832,
+        "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "8b105e8b9208953bcb7ef4a71d8e83d43b266122abc028c972533ddf24df6c17",
+        "readingKey": "2c53015934514b148d8fca2ff3fb87e470c281d7957dc566cc5be264854f512a",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
-          "selected": 0.0536403832
+          "selected": 0.334208523
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T15:00",
+          "signals": {
+            "P": -0.0030339861,
+            "C": 0.2138654457,
+            "L": 0.219
+          },
+          "normalized": {
+            "P": -0.0183774266,
+            "C": 0.6087840751,
+            "L": 0.2800895452
+          },
+          "rawModeScore": 0.3501076042,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.3819057666,
+          "adjustedModeScore": 0.334208523,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],
@@ -4276,8 +4558,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "3.5.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v8",
+        "engineVersion": "4.1.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -4335,18 +4617,38 @@
         "status": "ready",
         "winner": "YES",
         "percentages": {
-          "YES": 56,
-          "NO": 44
+          "YES": 71.9,
+          "NO": 28.1
         },
         "dataCoverage": 0.973,
-        "modeScore": 0.0536403832,
+        "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "8b105e8b9208953bcb7ef4a71d8e83d43b266122abc028c972533ddf24df6c17",
+        "readingKey": "2c53015934514b148d8fca2ff3fb87e470c281d7957dc566cc5be264854f512a",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
-          "selected": 0.0536403832
+          "selected": 0.334208523
+        },
+        "scoring": {
+          "system": "v9.2-experimental",
+          "scaleVersion": "v9.2-cohort-2026-09-30",
+          "anchorLocal": "2026-09-18T15:00",
+          "signals": {
+            "P": -0.0030339861,
+            "C": 0.2138654457,
+            "L": 0.219
+          },
+          "normalized": {
+            "P": -0.0183774266,
+            "C": 0.6087840751,
+            "L": 0.2800895452
+          },
+          "rawModeScore": 0.3501076042,
+          "priorDatesUsed": 14,
+          "priorMedian": 0.3819057666,
+          "adjustedModeScore": 0.334208523,
+          "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
         "luckyWindows": [],

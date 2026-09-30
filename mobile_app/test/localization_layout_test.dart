@@ -168,7 +168,7 @@ void main() {
               locale: locale,
               home: ResultPage(
                 reading: fixtureResponse(
-                  'ready_forward_backward_two_windows.json',
+                  'ready_commit_withdraw_two_windows.json',
                 ),
                 dependencies: rig.dependencies,
                 autoSave: false,
@@ -202,6 +202,62 @@ void main() {
             lessThanOrEqualTo(narrow.width),
             reason: 'the winning choice is wider than the screen, $at',
           );
+          final winnerText = tester.widget<Text>(
+            find.byKey(const Key('result_winner_label')),
+          );
+          expect(
+            winnerText.maxLines,
+            1,
+            reason: 'the winning choice must stay on 1 line, $at',
+          );
+          expect(
+            winnerText.softWrap,
+            isFalse,
+            reason: 'the winning choice must not wrap words, $at',
+          );
+
+          final counterpartText = tester.widget<Text>(
+            find.byKey(const Key('result_counterpart_label')),
+          );
+          expect(
+            counterpartText.style?.color,
+            Colors.white70,
+            reason: 'counterpart choice must use subtle white70, $at',
+          );
+
+          // The day's own signals are back on Result, compactly: both
+          // colours, the lucky number and the energy label. Each row is a
+          // caption free to wrap beside a value, so a long caption in this
+          // language at this scale must not push its value off the card.
+          final brief = find.byKey(const Key('result_daily_brief'));
+          await tester.ensureVisible(brief);
+          expect(
+            brief,
+            findsOneWidget,
+            reason: 'the daily brief is missing, $at',
+          );
+          expect(
+            tester.getSize(brief).width,
+            lessThanOrEqualTo(narrow.width),
+            reason: 'the daily brief is wider than the screen, $at',
+          );
+          for (final key in const <String>[
+            'result_daily_color_lead',
+            'result_daily_color_supporting',
+            'result_daily_lucky_number',
+            'result_daily_energy_label',
+          ]) {
+            expect(
+              find.byKey(Key(key)),
+              findsOneWidget,
+              reason: '$key is missing from the daily brief, $at',
+            );
+          }
+          // Action Guidance still fits underneath it rather than being
+          // crowded out by it.
+          final guidance = find.byKey(const Key('result_action_guidance'));
+          await tester.ensureVisible(guidance);
+          expect(guidance, findsOneWidget, reason: 'guidance crowded out, $at');
 
           final caveat = find.byKey(const Key('result_lucky_times_caveat'));
           await tester.ensureVisible(caveat);
@@ -260,4 +316,57 @@ void main() {
       });
     }
   }
+
+  group(
+    'winning choice displays on a single line across all decision modes',
+    () {
+      const viLabels = [
+        'CÓ',
+        'KHÔNG',
+        'HÀNH ĐỘNG',
+        'CHỜ ĐỢI',
+        'TIẾN LÊN',
+        'LÙI LẠI',
+        'Ở LẠI',
+        'RỜI ĐI',
+        'GIỮ LẠI',
+        'BUÔNG BỎ',
+        'GẮN BÓ',
+        'CHẤM DỨT',
+        'TRÁI',
+        'PHẢI',
+      ];
+
+      for (final label in viLabels) {
+        testWidgets('Vietnamese winner "$label" fits on 1 line at 360dp', (
+          tester,
+        ) async {
+          tester.view.physicalSize = const Size(360, 640);
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+
+          final rig = ReadingTestRig();
+          final reading = fixtureResponse('ready_yes_no_now.json');
+          await tester.pumpWidget(
+            localizedApp(
+              locale: AppLocale.vietnamese,
+              home: ResultPage(
+                reading: reading,
+                dependencies: rig.dependencies,
+                autoSave: false,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+
+          final winnerText = tester.widget<Text>(
+            find.byKey(const Key('result_winner_label')),
+          );
+          expect(winnerText.maxLines, 1);
+          expect(winnerText.softWrap, isFalse);
+        });
+      }
+    },
+  );
 }

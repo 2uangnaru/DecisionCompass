@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../data/action_guidance.dart';
 import '../data/history_entry.dart';
-import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
@@ -12,10 +12,8 @@ import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
 import '../result_palette.dart';
-import '../text_formatting.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
-import '../widgets/daily_energy_info.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 
@@ -95,7 +93,8 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _today = dailyEnergyDayKey(widget.dependencies.nowLocal());
+    final local = widget.dependencies.nowLocal();
+    _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
     if (widget.autoSave) {
       _saving = true;
@@ -118,7 +117,8 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   void _refreshIfNewDay() {
-    final day = dailyEnergyDayKey(widget.dependencies.nowLocal());
+    final local = widget.dependencies.nowLocal();
+    final day = '${local.year}-${local.month}-${local.day}';
     if (day != _today) setState(() => _today = day);
     _scheduleDayChange();
   }
@@ -298,33 +298,24 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                 body: l10n.periodElapsedBody,
               ),
             },
-            const SizedBox(height: 30),
-            if (_period == TimePeriod.now)
-              GlassCard(
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.schedule_rounded,
-                      color: CompassColors.gold,
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(child: Text(l10n.currentMoment)),
-                  ],
+            const SizedBox(height: 24),
+            if (reading.status == engine.ReadingStatus.ready ||
+                reading.status == engine.ReadingStatus.balanced) ...[
+              if (reading.dailyBrief != null) ...[
+                _DailyBriefStrip(brief: reading.dailyBrief!),
+                const SizedBox(height: 14),
+              ],
+              _ActionGuidanceCard(
+                guidance: resolveActionGuidance(
+                  locale: widget.dependencies.localeController.locale,
+                  reading: reading,
                 ),
-              )
-            else if (reading.luckyWindows.isNotEmpty)
-              _LuckyWindows(reading: reading, period: _period),
-            if (reading.dailyBrief != null) ...[
-              const SizedBox(height: 14),
-              _DailyBrief(
-                brief: reading.dailyBrief!,
-                // The reading's own local date, not the device's: a Result
-                // left open past midnight keeps the insight it was read
-                // for, and a past one never announces "new today".
-                day: reading.context.localDate,
-                isCurrentDay: reading.context.localDate == _today,
-                insights: widget.dependencies.dailyEnergyInsights,
               ),
+              if (_period != TimePeriod.now &&
+                  reading.luckyWindows.isNotEmpty) ...[
+                const SizedBox(height: 14),
+                _LuckyWindows(reading: reading, period: _period),
+              ],
             ],
             const SizedBox(height: 22),
             FilledButton.icon(
@@ -466,6 +457,7 @@ class _Direction extends StatelessWidget {
           const SizedBox(height: 14),
           Text(
             '${counterpart.label}  ${counterpart.percent}%',
+            key: const Key('result_counterpart_label'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.headlineMedium
                 ?.copyWith(color: Colors.white70),
@@ -507,8 +499,8 @@ class _WinnerHeadline extends StatelessWidget {
   static const _maxSize = 114.0;
 
   /// Below this the choice stops being the headline and starts being a
-  /// caption, so it wraps to a second line instead of shrinking further.
-  static const _minSize = 34.0;
+  /// caption, so it will not shrink further.
+  static const _minSize = 28.0;
 
   /// What the percentage is worth relative to the choice. 114 × this is 38,
   /// which is the size the English result has always used.
@@ -518,12 +510,23 @@ class _WinnerHeadline extends StatelessWidget {
   Widget build(BuildContext context) {
     final scaler = MediaQuery.textScalerOf(context);
     final direction = Directionality.of(context);
+    final displayFamily = Theme.of(context).textTheme.displayLarge?.fontFamily;
+    final displayFallback =
+        Theme.of(context).textTheme.displayLarge?.fontFamilyFallback;
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
         var size = _maxSize;
         while (size > _minSize &&
-            !_fits(label, size, width, scaler, direction)) {
+            !_fits(
+              label,
+              size,
+              width,
+              scaler,
+              direction,
+              displayFamily,
+              displayFallback,
+            )) {
           size -= 2;
         }
         final percentSize = size * _percentRatio;
@@ -532,12 +535,18 @@ class _WinnerHeadline extends StatelessWidget {
             SizedBox(
               key: const Key('result_winner_box'),
               width: double.infinity,
-              child: Text(
-                label,
-                key: const Key('result_winner_label'),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                style: _style(size),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.center,
+                child: Text(
+                  label,
+                  key: const Key('result_winner_label'),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  softWrap: false,
+                  overflow: TextOverflow.clip,
+                  style: _style(size, displayFamily, displayFallback),
+                ),
               ),
             ),
             if (percent != null) ...[
@@ -555,31 +564,40 @@ class _WinnerHeadline extends StatelessWidget {
     );
   }
 
-  TextStyle _style(double size) => TextStyle(
+  TextStyle _style(
+    double size,
+    String? fontFamily,
+    List<String>? fontFamilyFallback,
+  ) => TextStyle(
     color: accent,
     fontSize: size,
     height: 1,
-    fontWeight: FontWeight.w900,
-    // Negative tracking tightens Latin capitals; it would collide glyphs in
-    // the scripts that do not use it.
-    letterSpacing: size >= 60 ? -2 : 0,
+    fontWeight: FontWeight.w700,
+    fontFamily: fontFamily,
+    fontFamilyFallback: fontFamilyFallback,
+    letterSpacing: 0,
     shadows: [Shadow(color: accent.withValues(alpha: 0.28), blurRadius: 24)],
   );
 
-  /// Whether [label] lays out inside [width] in no more than two lines.
+  /// Whether [label] lays out inside [width] on a single line.
   bool _fits(
     String label,
     double size,
     double width,
     TextScaler scaler,
     TextDirection direction,
+    String? fontFamily,
+    List<String>? fontFamilyFallback,
   ) {
     final painter = TextPainter(
-      text: TextSpan(text: label, style: _style(size)),
+      text: TextSpan(
+        text: label,
+        style: _style(size, fontFamily, fontFamilyFallback),
+      ),
       textAlign: TextAlign.center,
       textDirection: direction,
       textScaler: scaler,
-      maxLines: 2,
+      maxLines: 1,
     )..layout(maxWidth: width);
     final fits = !painter.didExceedMaxLines && painter.width <= width;
     painter.dispose();
@@ -673,86 +691,110 @@ class _Explanation extends StatelessWidget {
   }
 }
 
-class _DailyBrief extends StatelessWidget {
-  const _DailyBrief({
-    required this.brief,
-    required this.day,
-    required this.isCurrentDay,
-    required this.insights,
-  });
+class _ActionGuidanceCard extends StatelessWidget {
+  const _ActionGuidanceCard({required this.guidance});
 
-  final engine.DailyBrief brief;
-  final String day;
-  final bool isCurrentDay;
-  final DailyEnergyInsightController insights;
+  final ActionGuidance guidance;
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
-    final colors = brief.colors;
-    final colourDescription = colors == null
-        // An older saved snapshot kept a single free-text colour. There is no
-        // key to translate it by, so it is shown as it was saved.
-        ? l10n.colorToKeepNear(titleCaseWords(brief.legacyColorInspiration!))
-        : l10n.colorsToKeepNear(
-            dailyColorName(l10n, colors.lead),
-            dailyColorName(l10n, colors.supporting),
-          );
     return GlassCard(
-      key: const Key('result_daily_brief'),
+      key: const Key('result_action_guidance'),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.wb_twilight_rounded, color: CompassColors.gold),
-              const SizedBox(width: 12),
-              Expanded(child: Text(colourDescription)),
-              const SizedBox(width: 10),
-              Text(
-                formatWholeNumber(intlLocaleOf(context), brief.luckyNumber),
-                style: const TextStyle(
-                  color: CompassColors.blueLight,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 20,
+              const Icon(
+                Icons.auto_awesome_rounded,
+                color: CompassColors.gold,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  guidance.title,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.gold,
+                    letterSpacing: trackingFor(context, 1.2),
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
             ],
           ),
-          if (brief.energy != null) ...[
-            const Divider(height: 28, color: CompassColors.line),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Flexible so the ⓘ can never push the row past the card, at
-                // a large text scale or in a language with a longer word for
-                // this than English has.
-                Expanded(child: Text(l10n.dailyEnergy)),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      energyLevelLabel(l10n, brief.energy!.level) ?? '—',
-                      key: const Key('result_daily_energy_label'),
-                      style: TextStyle(
-                        color: CompassColors.teal,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: trackingFor(context, 1.2),
-                      ),
-                    ),
-                    const SizedBox(width: 2),
-                    DailyEnergyInfoButton(
-                      level: brief.energy!.level,
-                      controller: insights,
-                      day: day,
-                      isCurrentDay: isCurrentDay,
-                    ),
-                  ],
-                ),
-              ],
+          const SizedBox(height: 12),
+          Text(
+            guidance.headline,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CompassColors.text,
+              fontWeight: FontWeight.w600,
+              height: 1.45,
             ),
-          ],
+          ),
+          const SizedBox(height: 14),
+          _GuidanceItem(
+            tag: guidance.shouldDoTag,
+            tagColor: CompassColors.teal,
+            icon: Icons.check_circle_outline_rounded,
+            text: guidance.shouldDo,
+          ),
+          const SizedBox(height: 10),
+          _GuidanceItem(
+            tag: guidance.avoidTag,
+            tagColor: const Color(0xFFE27C7C),
+            icon: Icons.remove_circle_outline_rounded,
+            text: guidance.avoid,
+          ),
         ],
       ),
+    );
+  }
+}
+
+class _GuidanceItem extends StatelessWidget {
+  const _GuidanceItem({
+    required this.tag,
+    required this.tagColor,
+    required this.icon,
+    required this.text,
+  });
+
+  final String tag;
+  final Color tagColor;
+  final IconData icon;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Icon(icon, color: tagColor, size: 15),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          tag,
+          style: TextStyle(
+            color: tagColor,
+            fontWeight: FontWeight.w700,
+            fontSize: 13.5,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            text,
+            style: const TextStyle(
+              color: CompassColors.secondary,
+              fontSize: 13.5,
+              height: 1.4,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -842,6 +884,166 @@ class _LuckyWindows extends StatelessWidget {
                 ?.copyWith(color: CompassColors.muted),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// The day's own signals, compactly: both colours, the lucky number and the
+/// energy label.
+///
+/// Three label-and-value rows rather than three columns. Columns read tidier
+/// on a wide screen and fall apart at 360dp once a caption like
+/// "Sua energia diaria" or a Thai line is set at 1.5x text scale; a row per
+/// value keeps every caption free to wrap without pushing its value off the
+/// card. The colours keep the swatch treatment Home uses — the hex is the
+/// engine's, the app only draws it, and the name is revealed on tap rather
+/// than printed, because several languages run long enough to crowd it.
+class _DailyBriefStrip extends StatelessWidget {
+  const _DailyBriefStrip({required this.brief});
+
+  final engine.DailyBrief brief;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final colors = brief.colors;
+    final energy = brief.energy;
+    return GlassCard(
+      key: const Key('result_daily_brief'),
+      child: Column(
+        children: [
+          _BriefRow(
+            label: l10n.yourColorsToday,
+            value: colors == null
+                // An older saved snapshot kept one free-text colour and no
+                // palette entry to translate, so it is shown as it was saved.
+                ? Text(
+                    brief.legacyColorInspiration ?? '—',
+                    key: const Key('result_daily_colors_legacy'),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  )
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      _ResultSwatch(
+                        color: colors.lead,
+                        role: l10n.colorRoleLead,
+                        testKey: 'result_daily_color_lead',
+                      ),
+                      const SizedBox(width: 10),
+                      _ResultSwatch(
+                        color: colors.supporting,
+                        role: l10n.colorRoleSupporting,
+                        testKey: 'result_daily_color_supporting',
+                      ),
+                    ],
+                  ),
+          ),
+          const Divider(height: 22, color: CompassColors.line),
+          _BriefRow(
+            label: l10n.luckyNumberToday,
+            value: Text(
+              formatWholeNumber(intlLocaleOf(context), brief.luckyNumber),
+              key: const Key('result_daily_lucky_number'),
+              style: const TextStyle(
+                color: CompassColors.blueLight,
+                fontWeight: FontWeight.w700,
+                fontSize: 20,
+              ),
+            ),
+          ),
+          if (energy != null) ...[
+            const Divider(height: 22, color: CompassColors.line),
+            _BriefRow(
+              label: l10n.dailyEnergy,
+              value: Text(
+                energyLevelLabel(l10n, energy.level) ?? '—',
+                key: const Key('result_daily_energy_label'),
+                style: TextStyle(
+                  color: CompassColors.teal,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: trackingFor(context, 1.2),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+/// A caption on the left, free to wrap, and its value on the right.
+class _BriefRow extends StatelessWidget {
+  const _BriefRow({required this.label, required this.value});
+
+  final String label;
+  final Widget value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Expanded(child: Text(label)),
+        const SizedBox(width: 12),
+        value,
+      ],
+    );
+  }
+}
+
+/// One of the day's two colours, drawn the way Home draws it.
+class _ResultSwatch extends StatelessWidget {
+  const _ResultSwatch({
+    required this.color,
+    required this.role,
+    required this.testKey,
+  });
+
+  final engine.DailyColor color;
+  final String role;
+  final String testKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final swatch = Color(color.argb);
+    return Semantics(
+      label: l10n.colorRoleSemantics(role, dailyColorName(l10n, color)),
+      child: Tooltip(
+        key: Key(testKey),
+        message: dailyColorName(l10n, color),
+        triggerMode: TooltipTriggerMode.tap,
+        showDuration: const Duration(seconds: 4),
+        textStyle: const TextStyle(
+          color: CompassColors.text,
+          fontSize: 12.5,
+          fontWeight: FontWeight.w600,
+        ),
+        decoration: BoxDecoration(
+          color: CompassColors.raised,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: CompassColors.line),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Container(
+          width: 20,
+          height: 20,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: swatch,
+            border: Border.all(color: Colors.white54, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: swatch.withValues(alpha: 0.5),
+                blurRadius: 9,
+                spreadRadius: 0.5,
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

@@ -280,7 +280,8 @@ class AppLocalizationsEs extends AppLocalizations {
   String get loadingModeActWait => 'Equilibrando impulso y paciencia';
 
   @override
-  String get loadingModeAdvanceRetreat => 'Equilibrando compromiso y retirada';
+  String get loadingModeAdvanceRetreat =>
+      'Comparando el impulso de hoy con los últimos días';
 
   @override
   String get loadingModeStayGo => 'Comparando arraigo y movimiento';
@@ -290,6 +291,9 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get loadingModeForwardBackward => 'Trazando avance y retorno';
+
+  @override
+  String get loadingModeCommitWithdraw => 'Equilibrando compromiso y retirada';
 
   @override
   String get loadingModeLeftRight =>
@@ -353,7 +357,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get navigationDetail =>
-      'IZQUIERDA / DERECHA y HACIA DELANTE / HACIA ATRÁS son opciones simbólicas. Nunca las uses para el tráfico, la conducción, elegir rutas ni la seguridad física.';
+      'IZQUIERDA / DERECHA y AVANZAR / REPLEGARSE son opciones simbólicas. Nunca las uses para el tráfico, la conducción, elegir rutas ni la seguridad física.';
 
   @override
   String get politicsTitle => 'Política y conflictos sociales';
@@ -444,10 +448,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get choiceWait => 'ESPERAR';
 
   @override
-  String get choiceAdvance => 'COMPROMETERSE';
+  String get choiceAdvance => 'AVANZAR';
 
   @override
-  String get choiceRetreat => 'RETIRARSE';
+  String get choiceRetreat => 'REPLEGARSE';
 
   @override
   String get choiceStay => 'QUEDARSE';
@@ -466,6 +470,12 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get choiceBackward => 'HACIA ATRÁS';
+
+  @override
+  String get choiceCommit => 'COMPROMETERSE';
+
+  @override
+  String get choiceWithdraw => 'RETIRARSE';
 
   @override
   String get choiceLeft => 'IZQUIERDA';

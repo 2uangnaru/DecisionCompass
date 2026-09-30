@@ -112,9 +112,9 @@ void main() {
   group('successful readings parse real engine output', () {
     for (final entry in {
       'ready_yes_no_now.json': ('yes_no', DecisionMode.yesNo),
-      'ready_forward_backward_two_windows.json': (
-        'forward_backward',
-        DecisionMode.forwardBackward,
+      'ready_commit_withdraw_two_windows.json': (
+        'commit_withdraw',
+        DecisionMode.commitWithdraw,
       ),
       'ready_left_right.json': ('left_right', DecisionMode.leftRight),
     }.entries) {
