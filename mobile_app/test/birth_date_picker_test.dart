@@ -96,4 +96,32 @@ void main() {
     expect(find.byKey(const Key('birth_date_dialog')), findsNothing);
     expect(result(), isNull);
   });
+
+  testWidgets('calendar option opens and returns to date entry', (tester) async {
+    await openPicker(tester, lastDate: DateTime(2026, 9, 30));
+    await tester.tap(find.byKey(const Key('birth_date_calendar')));
+    await tester.pumpAndSettle();
+    expect(find.byType(DatePickerDialog), findsOneWidget);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byType(DatePickerDialog),
+        matching: find.text('Cancel'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('birth_date_dialog')), findsOneWidget);
+  });
+
+  testWidgets('date entry fits a narrow phone screen', (tester) async {
+    tester.view.physicalSize = const Size(320, 568);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    await openPicker(tester, lastDate: DateTime(2026, 9, 30));
+    expect(tester.takeException(), isNull);
+    expect(find.byKey(const Key('birth_date_year')), findsOneWidget);
+    expect(find.byKey(const Key('birth_date_confirm')), findsOneWidget);
+  });
 }
