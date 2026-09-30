@@ -6,6 +6,7 @@ import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../result_palette.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'result_page.dart';
@@ -135,6 +136,13 @@ String _timeOfDay(String localeName, engine.ReadingResponse reading) {
   return formatClock(localeName, local.hour, local.minute);
 }
 
+String _date(String localeName, engine.ReadingResponse reading) {
+  final localMs =
+      reading.context.instantMs + reading.context.offsetSeconds * 1000;
+  final local = DateTime.fromMillisecondsSinceEpoch(localMs, isUtc: true);
+  return formatDate(localeName, local);
+}
+
 /// The result column's text for every status the contract defines, not just
 /// `ready` — a balanced or elapsed reading is still a real saved entry.
 ///
@@ -256,7 +264,11 @@ class _HistoryRow extends StatelessWidget {
     final localeName = intlLocaleOf(context);
     final reading = entry.reading;
     final mode = fromEngineMode(reading.mode);
-    final period = fromEnginePeriod(reading.period);
+    final palette = resultPaletteFor(
+      mode: mode,
+      status: reading.status,
+      winner: reading.winner,
+    );
     return GlassCard(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute<void>(
@@ -281,8 +293,8 @@ class _HistoryRow extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '${categoryLabel(l10n, reading.category)}  •  '
-                  '${periodLabel(l10n, period)}  •  '
-                  '${_timeOfDay(localeName, reading)}',
+                  '${_timeOfDay(localeName, reading)}  •  '
+                  '${_date(localeName, reading)}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ],
@@ -294,8 +306,8 @@ class _HistoryRow extends StatelessWidget {
             child: Text(
               _resultLabel(l10n, localeName, reading),
               textAlign: TextAlign.right,
-              style: const TextStyle(
-                color: CompassColors.blueLight,
+              style: TextStyle(
+                color: palette.accent,
                 fontSize: 17,
                 fontWeight: FontWeight.w700,
               ),

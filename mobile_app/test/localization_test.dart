@@ -707,7 +707,9 @@ void main() {
         findsWidgets,
       );
       expect(
-        find.textContaining(periodLabel(vi, TimePeriod.evening)),
+        find.textContaining(
+          formatDate(AppLocale.vietnamese.intlName, DateTime(2026, 9, 18)),
+        ),
         findsWidgets,
       );
       // The engine's English winner never reaches the screen.

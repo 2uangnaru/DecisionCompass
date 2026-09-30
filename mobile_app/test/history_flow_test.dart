@@ -8,6 +8,7 @@ import 'package:decision_compass/pages/history_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:decision_compass/app_locale.dart';
+import 'package:decision_compass/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -234,7 +235,7 @@ void main() {
   );
 
   testWidgets(
-    'the History page lists every saved category and period distinctly',
+    'the History page lists every saved category, time and date',
     (tester) async {
       final rig = ReadingTestRig();
       await rig.historyRepository.save(
@@ -260,10 +261,44 @@ void main() {
       expect(find.byKey(const Key('history_empty')), findsNothing);
       expect(find.textContaining('Love'), findsOneWidget);
       expect(find.textContaining('Career'), findsOneWidget);
-      expect(find.textContaining('Evening'), findsOneWidget);
-      expect(find.textContaining('NOW'), findsOneWidget);
+      expect(find.textContaining('3:30'), findsWidgets);
+      expect(find.textContaining('Sep 18, 2026'), findsWidgets);
     },
   );
+
+  testWidgets('a saved result in History uses the mode accent colour', (
+    tester,
+  ) async {
+    final rig = ReadingTestRig();
+    final jsonYes = fixtureResponse('ready_yes_no_now.json').toJson();
+    jsonYes['winner'] = 'YES';
+    final jsonNo = fixtureResponse('ready_yes_no_now.json').toJson();
+    jsonNo['winner'] = 'NO';
+    await rig.historyRepository.save(
+      HistoryEntry(
+        id: 'yes-reading',
+        reading: engine.ReadingResponse.fromJson(jsonYes),
+        savedAtUtc: DateTime.utc(2026, 9, 18, 8),
+      ),
+    );
+    await rig.historyRepository.save(
+      HistoryEntry(
+        id: 'no-reading',
+        reading: engine.ReadingResponse.fromJson(jsonNo),
+        savedAtUtc: DateTime.utc(2026, 9, 18, 9),
+      ),
+    );
+
+    await tester.pumpWidget(
+      localizedApp(home: HistoryPage(dependencies: rig.dependencies)),
+    );
+    await tester.pumpAndSettle();
+
+    final yesText = tester.widget<Text>(find.textContaining('YES 56'));
+    final noText = tester.widget<Text>(find.textContaining('NO 44'));
+    expect(yesText.style?.color, CompassColors.blueLight);
+    expect(noText.style?.color, const Color(0xFFD88990));
+  });
 
   testWidgets('an empty history shows an explicit empty state, not mock rows', (
     tester,
