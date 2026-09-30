@@ -235,45 +235,29 @@ class ReadingCalculator {
     return candidates.isEmpty ? null : candidates.first;
   }
 
-  /// A later window is read at the first hour of its period that exists on
-  /// that date, so a transition inside the period still leaves it comparable.
-  double? _periodAnchor(String date, String period, String zone) {
-    final bounds = periods[period]!;
-    for (var h = bounds[0]; h < bounds[1]; h++) {
-      final ms = _anchorAt(date, '${h.toString().padLeft(2, '0')}:00', zone);
-      if (ms != null) return ms;
-    }
-    return null;
-  }
-
   /// Every moment later than [anchorHour] on [date] that the timing signal is
-  /// compared against.
+  /// compared against: the rest of the local day, hour by hour.
   ///
-  /// Two groups, in order: the rest of the selected period hour by hour, then
-  /// the periods that have not started yet. Without the first group an evening
-  /// reading had nothing later to compare against at all — no period starts
-  /// after 18:00 — so every evening slot scored a timing of exactly zero.
+  /// The same set for every period, NOW included. Two earlier versions were
+  /// both blind in the evening — comparing only against periods that had not
+  /// started yet left nothing at all after 18:00, and adding the rest of the
+  /// selected period fixed that for a named period while leaving NOW with the
+  /// same hole. "This moment against the rest of today" only ever meant the
+  /// rest of today.
   ///
-  /// NOW contributes no first group: it is a single instant rather than a
-  /// span, so it is compared only against the periods still ahead of it.
+  /// An anchor late enough that nothing follows it — 23:00, or a NOW taken in
+  /// the last hour — legitimately scores zero: there is nothing left to be
+  /// better or worse than.
   List<double> _laterAlignments(
     String date,
     int anchorHour,
-    String period,
     String zone,
     String category,
   ) {
     final later = <double>[];
-    if (period != 'now') {
-      for (final h in periodBoundaryHours(period)) {
-        if (h <= anchorHour) continue;
-        final ms = _anchorAt(date, '${h.toString().padLeft(2, '0')}:00', zone);
-        if (ms != null) later.add(_moments(ms, zone, category).q);
-      }
-    }
-    for (final other in periods.keys) {
-      if (periods[other]![0] <= anchorHour) continue;
-      final ms = _periodAnchor(date, other, zone);
+    for (final h in boundaryHours) {
+      if (h <= anchorHour) continue;
+      final ms = _anchorAt(date, '${h.toString().padLeft(2, '0')}:00', zone);
       if (ms != null) later.add(_moments(ms, zone, category).q);
     }
     return later;
@@ -282,7 +266,6 @@ class ReadingCalculator {
   Map<String, double> _rawSignals(
     String date,
     String clock,
-    String period,
     String zone,
     String category,
     List<String> needed,
@@ -307,7 +290,6 @@ class ReadingCalculator {
             _laterAlignments(
               date,
               int.parse(clock.substring(0, 2)),
-              period,
               zone,
               category,
             ),
@@ -342,18 +324,17 @@ class ReadingCalculator {
   _RawScore? _rawScoreOn(
     String date,
     String clock,
-    String period,
     String zone,
     String category,
     String mode,
     List<String> needed,
   ) {
-    final key = '$date|$clock|$period|$zone|$category|$mode|${needed.join()}';
+    final key = '$date|$clock|$zone|$category|$mode|${needed.join()}';
     if (_scoreCache.containsKey(key)) return _scoreCache.get(key);
     final ms = _anchorAt(date, clock, zone);
     if (ms == null) return _scoreCache.set(key, null);
     final base = _moments(ms, zone, category);
-    final raw = _rawSignals(date, clock, period, zone, category, needed, base);
+    final raw = _rawSignals(date, clock, zone, category, needed, base);
     final normalized = normalizeAll(raw);
     return _scoreCache.set(
       key,
@@ -501,7 +482,6 @@ class ReadingCalculator {
     final today = _rawScoreOn(
       anchorDate,
       anchorClock,
-      period,
       zone,
       category,
       mode,
@@ -514,7 +494,6 @@ class ReadingCalculator {
       final prior = _rawScoreOn(
         civilDateShift(anchorDate, -k),
         anchorClock,
-        period,
         zone,
         category,
         mode,
@@ -546,7 +525,6 @@ class ReadingCalculator {
       final raw = _rawSignals(
         local.date,
         clock,
-        period,
         zone,
         category,
         mixture,

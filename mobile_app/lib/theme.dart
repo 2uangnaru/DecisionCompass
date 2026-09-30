@@ -12,8 +12,11 @@ import 'app_locale.dart';
 /// platform, which is what covers anything Noto does not — including scripts
 /// this app does not translate into.
 abstract final class CompassFonts {
-  static const display = 'CormorantGaramond';
-  static const latin = 'NotoSans';
+  static const geometric = 'Montserrat';
+  static const display = 'Montserrat';
+  static const cormorant = 'CormorantGaramond';
+  static const latin = 'Montserrat';
+  static const latinFallback = 'NotoSans';
   static const thai = 'NotoSansThai';
   static const devanagari = 'NotoSansDevanagari';
   static const japanese = 'NotoSansJP';
@@ -31,14 +34,16 @@ abstract final class CompassFonts {
       AppLocale.hindi => devanagari,
       AppLocale.japanese => japanese,
       AppLocale.simplifiedChinese => simplifiedChinese,
-      // Latin-script languages, Vietnamese included: Noto Sans carries the
-      // full Vietnamese diacritic set, including the stacked tone marks.
-      AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => latin,
+      // Latin-script languages, Vietnamese included: Montserrat carries
+      // beautiful geometric curves with full Vietnamese diacritics coverage,
+      // backed by Noto Sans.
+      AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => geometric,
     };
     return [
       preferred,
       for (final family in [
-        latin,
+        geometric,
+        latinFallback,
         thai,
         devanagari,
         japanese,
@@ -49,8 +54,8 @@ abstract final class CompassFonts {
   }
 
   /// Display font fallback stack for headlines and brand titles.
-  /// For Latin-based languages (Vietnamese, English, Spanish), Cormorant Garamond
-  /// sits at the front to give AstraCue its celestial editorial identity.
+  /// For Latin-based languages (Vietnamese, English, Spanish), Montserrat
+  /// sits at the front to give AstraCue its celestial geometric identity.
   /// For non-Latin scripts (Thai, Hindi, Japanese, Chinese), the script's native
   /// family leads so glyphs always render faithfully.
   static List<String> displayFallbackFor(AppLocale locale) {
@@ -88,8 +93,6 @@ abstract final class CompassColors {
 /// room — Thai vowel marks and tone marks stack above and below the line, and
 /// Devanagari hangs conjuncts below it — rather than shrinking the text.
 ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
-  final fallback = CompassFonts.fallbackFor(locale);
-  final family = fallback.first;
   final displayFallback = CompassFonts.displayFallbackFor(locale);
   final displayFamily = displayFallback.first;
   // Thai and Devanagari clip at the tight English line heights; Japanese and
@@ -129,8 +132,8 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
       15.0,
       13.5,
     ),
-    AppLocale.spanish => (48.0, 25.0, 21.0, 15.5, 13.5),
-    AppLocale.english => (50.0, 26.5, 21.5, 16.0, 14.0),
+    AppLocale.spanish => (46.0, 23.5, 20.5, 15.0, 13.5),
+    AppLocale.english => (46.0, 23.5, 20.5, 15.5, 14.0),
   };
 
   final scheme =
@@ -150,8 +153,8 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
     colorScheme: scheme,
     scaffoldBackgroundColor: CompassColors.deep,
     useMaterial3: true,
-    fontFamily: family,
-    fontFamilyFallback: fallback,
+    fontFamily: displayFamily,
+    fontFamilyFallback: displayFallback,
     textTheme: TextTheme(
       displayLarge: TextStyle(
         fontFamily: displayFamily,

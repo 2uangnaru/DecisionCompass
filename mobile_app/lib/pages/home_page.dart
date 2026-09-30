@@ -281,15 +281,15 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       key: const Key('home_positioning'),
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.homeEyebrow,
-          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: CompassColors.gold,
-            letterSpacing: trackingFor(context, 1.6),
+        FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            l10n.homeTitle,
+            maxLines: 1,
+            style: Theme.of(context).textTheme.headlineLarge,
           ),
         ),
-        const SizedBox(height: 10),
-        Text(l10n.homeTitle, style: Theme.of(context).textTheme.headlineLarge),
         const SizedBox(height: 8),
         // Reserve space only while the saved description is loading. Once it
         // arrives, let short and long lines take their natural height.
@@ -383,7 +383,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             children: [
               Expanded(
                 child: Text(
-                  l10n.todaySignals,
+                  l10n.dailyEnergy.toUpperCase(),
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: CompassColors.gold,
                     fontWeight: FontWeight.w700,
@@ -401,7 +401,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           FutureBuilder<engine.DailyBrief?>(
             key: const Key('daily_signals_content'),
             future: _dailyBrief,
@@ -423,53 +423,39 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   Row(
                     children: [
                       Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                        child: Row(
                           children: [
-                            Text(
-                              l10n.dailyEnergy,
-                              style: Theme.of(context).textTheme.bodySmall
-                                  ?.copyWith(
-                                    color: CompassColors.secondary,
-                                    fontSize: 11,
-                                  ),
+                            Flexible(
+                              child: Text(
+                                energyLevelLabel(l10n, energy?.level) ??
+                                    '—',
+                                key: const Key('daily_energy_label'),
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium
+                                    ?.copyWith(
+                                      color: CompassColors.text,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: trackingFor(
+                                        context,
+                                        1.2,
+                                      ),
+                                    ),
+                              ),
                             ),
-                            const SizedBox(height: 1),
-                            Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    energyLevelLabel(l10n, energy?.level) ??
-                                        '—',
-                                    key: const Key('daily_energy_label'),
-                                    overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .headlineMedium
-                                        ?.copyWith(
-                                          color: CompassColors.text,
-                                          fontSize: 22,
-                                          fontWeight: FontWeight.w700,
-                                          letterSpacing: trackingFor(
-                                            context,
-                                            1.2,
-                                          ),
-                                        ),
-                                  ),
-                                ),
-                                const SizedBox(width: 2),
-                                // Home always speaks for the current local
-                                // day, and is where discovery lives.
-                                DailyEnergyInfoButton(
-                                  level: energy?.level,
-                                  controller:
-                                      widget.dependencies.dailyEnergyInsights,
-                                  day: dailyEnergyDayKey(
-                                    widget.dependencies.nowLocal(),
-                                  ),
-                                  showsDiscovery: true,
-                                ),
-                              ],
+                            const SizedBox(width: 4),
+                            // Home always speaks for the current local
+                            // day, and is where discovery lives.
+                            DailyEnergyInfoButton(
+                              level: energy?.level,
+                              controller:
+                                  widget.dependencies.dailyEnergyInsights,
+                              day: dailyEnergyDayKey(
+                                widget.dependencies.nowLocal(),
+                              ),
+                              showsDiscovery: true,
                             ),
                           ],
                         ),
@@ -626,12 +612,15 @@ class _TodaySignalTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            label,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: Theme.of(context).textTheme.bodySmall
-                ?.copyWith(color: CompassColors.secondary, fontSize: 11),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Text(
+              label,
+              maxLines: 1,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: CompassColors.secondary, fontSize: 11),
+            ),
           ),
           const SizedBox(height: 8),
           // Only the value is centred; the label stays where it was.

@@ -92,7 +92,10 @@ void main() {
       await revealReading(tester);
       await tester.pump();
 
-      expect(rig.clockReads, 1);
+      // One capture, carrying exactly the tap's instant. The clock itself is
+      // read more often than that — the period chips need the time of day —
+      // so the capture count is what pins the reading's moment.
+      expect(rig.contextProvider.captures, hasLength(1));
       expect(rig.contextProvider.captures.map((c) => c.instantUtc), [instant]);
       expect(rig.sentRequest!.context.instantUtc, instant.toIso8601String());
       expect(rig.sentRequest!.context.deviceTimezone, 'Asia/Ho_Chi_Minh');
@@ -433,7 +436,8 @@ void main() {
         rig.repository.requests.last.context.instantUtc,
         rig.repository.requests.first.context.instantUtc,
       );
-      expect(rig.clockReads, 1);
+      // The retry replays the captured moment rather than capturing a new one.
+      expect(rig.contextProvider.captures, hasLength(1));
     });
 
     testWidgets('a rejected request offers no retry', (tester) async {

@@ -10,18 +10,12 @@ export const PERIODS = Object.freeze({ morning: [6, 12], midday: [12, 14], after
  * The local wall hours a civil day is cut at: the earthly-branch boundaries
  * plus midnight and the four period edges.
  *
- * Exported because the timing signal needs to enumerate the hours *inside* a
- * period, and deriving them from this one list is what keeps the comparison
- * set and the day's actual segments from drifting apart.
+ * Exported because the timing signal walks the rest of the local day, and
+ * deriving those hours from this one list is what keeps the comparison set and
+ * the day's actual segments from drifting apart.
  */
 export const BOUNDARY_HOURS = Object.freeze([0, 1, 3, 5, 6, 7, 9, 11, 12, 13, 14, 15, 17, 18, 19, 21, 23]);
 
-/** The boundary hours that fall inside [lo, hi) of a named period. */
-export function periodBoundaryHours(period) {
-  if (!Object.hasOwn(PERIODS, period)) throw new Error('INVALID_PERIOD');
-  const [lo, hi] = PERIODS[period];
-  return BOUNDARY_HOURS.filter(h => h >= lo && h < hi);
-}
 export function validZone(zone) { return typeof zone === 'string' && !!moment.tz.zone(zone); }
 export function requireZone(zone) { if (!validZone(zone)) throw new Error('INVALID_IANA_TIMEZONE'); return zone; }
 export function parseInstant(value) {

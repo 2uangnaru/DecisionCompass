@@ -65,6 +65,18 @@ class AppLocalizationsHi extends AppLocalizations {
   String get birthDateRequired => 'आगे बढ़ने के लिए जन्मतिथि चुनें।';
 
   @override
+  String get birthDay => 'दिन';
+
+  @override
+  String get birthMonth => 'महीना';
+
+  @override
+  String get birthYear => 'वर्ष';
+
+  @override
+  String get birthDateInvalid => '1900 से आज तक की मान्य तारीख दर्ज करें।';
+
+  @override
   String get birthTimeUnknown => 'जन्म का समय पता नहीं';
 
   @override
@@ -157,8 +169,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get periodPassed => 'बीत चुका';
 
   @override
+  String get periodTooLittleTime => 'समय कम है';
+
+  @override
   String periodHasPassed(String period) {
     return '$period का समय बीत चुका है। कोई दूसरा समय चुनें।';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'आज $period में पर्याप्त समय नहीं बचा है। कोई दूसरा समय चुनें।';
   }
 
   @override
@@ -1201,6 +1221,18 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get birthDateRequired => 'आगे बढ़ने के लिए जन्मतिथि चुनें।';
 
   @override
+  String get birthDay => 'दिन';
+
+  @override
+  String get birthMonth => 'महीना';
+
+  @override
+  String get birthYear => 'वर्ष';
+
+  @override
+  String get birthDateInvalid => '1900 से आज तक की मान्य तारीख दर्ज करें।';
+
+  @override
   String get birthTimeUnknown => 'जन्म का समय पता नहीं';
 
   @override
@@ -1293,8 +1325,16 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get periodPassed => 'बीत चुका';
 
   @override
+  String get periodTooLittleTime => 'समय कम है';
+
+  @override
   String periodHasPassed(String period) {
     return '$period का समय बीत चुका है। कोई दूसरा समय चुनें।';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'आज $period में पर्याप्त समय नहीं बचा है। कोई दूसरा समय चुनें।';
   }
 
   @override

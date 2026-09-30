@@ -237,10 +237,10 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
 
     const textStyle = TextStyle(
       color: Colors.white,
-      fontFamily: CompassFonts.latin,
-      fontSize: 34,
-      fontWeight: FontWeight.w600,
-      letterSpacing: 1.3,
+      fontFamily: CompassFonts.display,
+      fontSize: 36,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 2.0,
       height: 1.1,
       shadows: [
         Shadow(color: Color(0x664EB3E8), blurRadius: 20),
@@ -337,10 +337,10 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
       textAlign: TextAlign.center,
       style: TextStyle(
         color: CompassColors.gold.withValues(alpha: 0.78),
-        fontFamily: CompassFonts.latin,
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        letterSpacing: 1.6,
+        fontFamily: CompassFonts.display,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        letterSpacing: 2.2,
       ),
     );
 

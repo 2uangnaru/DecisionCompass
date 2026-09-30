@@ -217,6 +217,30 @@ abstract class AppLocalizations {
   /// **'Select your birth date to continue.'**
   String get birthDateRequired;
 
+  /// No description provided for @birthDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Day'**
+  String get birthDay;
+
+  /// No description provided for @birthMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Month'**
+  String get birthMonth;
+
+  /// No description provided for @birthYear.
+  ///
+  /// In en, this message translates to:
+  /// **'Year'**
+  String get birthYear;
+
+  /// No description provided for @birthDateInvalid.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid date from 1900 to today.'**
+  String get birthDateInvalid;
+
   /// No description provided for @birthTimeUnknown.
   ///
   /// In en, this message translates to:
@@ -397,11 +421,23 @@ abstract class AppLocalizations {
   /// **'Passed'**
   String get periodPassed;
 
+  /// No description provided for @periodTooLittleTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Too little time'**
+  String get periodTooLittleTime;
+
   /// No description provided for @periodHasPassed.
   ///
   /// In en, this message translates to:
   /// **'{period} has passed. Choose another time.'**
   String periodHasPassed(String period);
+
+  /// No description provided for @periodNotEnoughTimeLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'There is not enough time left in {period} today. Choose another time.'**
+  String periodNotEnoughTimeLeft(String period);
 
   /// No description provided for @reveal.
   ///

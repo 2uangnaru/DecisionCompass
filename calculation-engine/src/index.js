@@ -2,7 +2,7 @@ import { createHash } from 'node:crypto';
 import { dailyColors } from './colors.js';
 import { VERSION, RULESET, WEIGHTS, LUCK_BASELINE, CATEGORIES, MODES, LEGACY_MODES, requireCurrentMode, combine, decision, weightedTimeAverage, round, weightsFor, boundedCache, clamp, evidence } from './core.js';
 import { SCORING_VERSION, SCALE_VERSION, SCALES, SIGNALS, MODE_SIGNALS, signalsNeededBy, momentSignals, timing, momentum, grounding, horizon, median, normalizeAll, modeScore, adjustAgainstHistory, displayTenths, displayPercent } from './scoring.js';
-import { birthContext, segmentsForDay, periodSegments, localAt, localCandidates, civilDateShift, parseBirthDate, parseBirthTime, PERIODS, periodBoundaryHours } from './time.js';
+import { birthContext, segmentsForDay, periodSegments, localAt, localCandidates, civilDateShift, parseBirthDate, parseBirthTime, BOUNDARY_HOURS } from './time.js';
 import { resolveCurrentContext } from './location.js';
 import { calendarAt, nearbyBoundaries } from './calendar.js';
 import { numerology } from './numerology.js';
@@ -75,43 +75,31 @@ export function createCalculator(inputProfile) {
   }
   // A later window is read at the first hour of its period that exists on
   // that date, so a transition inside the period still leaves it comparable.
-  function periodAnchor(date,period,zone) {
-    const [lo,hi]=PERIODS[period];
-    for(let h=lo;h<hi;h++) {
-      const ms=anchorAt(date,`${String(h).padStart(2,'0')}:00`,zone);
-      if(ms!=null)return ms;
-    }
-    return null;
-  }
   /**
    * Every moment later than [anchorHour] on [date] that the timing signal is
-   * compared against.
+   * compared against: the rest of the local day, hour by hour.
    *
-   * Two groups, in order: the rest of the selected period hour by hour, then
-   * the periods that have not started yet. Without the first group an evening
-   * reading had nothing later to compare against at all — no period starts
-   * after 18:00 — so every evening slot scored a timing of exactly zero.
+   * The same set for every period, NOW included. Two earlier versions were
+   * both blind in the evening — comparing only against periods that had not
+   * started yet left nothing at all after 18:00, and adding the rest of the
+   * selected period fixed that for a named period while leaving NOW with the
+   * same hole. "This moment against the rest of today" only ever meant the
+   * rest of today.
    *
-   * NOW contributes no first group: it is a single instant rather than a span,
-   * so it is compared only against the periods still ahead of it.
+   * An anchor late enough that nothing follows it — 23:00, or a NOW taken in
+   * the last hour — legitimately scores zero: there is nothing left to be
+   * better or worse than.
    */
-  function laterAlignments(date,anchorHour,period,zone,category) {
+  function laterAlignments(date,anchorHour,zone,category) {
     const later=[];
-    if(period!=='now') {
-      for(const h of periodBoundaryHours(period)) {
-        if(h<=anchorHour)continue;
-        const ms=anchorAt(date,`${String(h).padStart(2,'0')}:00`,zone);
-        if(ms!=null)later.push(moments(ms,zone,category).q);
-      }
-    }
-    for(const other of Object.keys(PERIODS)) {
-      if(PERIODS[other][0]<=anchorHour)continue;
-      const ms=periodAnchor(date,other,zone);
+    for(const h of BOUNDARY_HOURS) {
+      if(h<=anchorHour)continue;
+      const ms=anchorAt(date,`${String(h).padStart(2,'0')}:00`,zone);
       if(ms!=null)later.push(moments(ms,zone,category).q);
     }
     return later;
   }
-  function rawSignals(date,clock,period,zone,category,needed,base) {
+  function rawSignals(date,clock,zone,category,needed,base) {
     const raw={};
     for(const name of needed) {
       if(name==='P')raw.P=base.p;
@@ -120,7 +108,7 @@ export function createCalculator(inputProfile) {
       else if(name==='R')raw.R=base.r;
       else if(name==='Y')raw.Y=base.y;
       else if(name==='T') {
-        raw.T=timing(base.q,laterAlignments(date,Number(clock.slice(0,2)),period,zone,category));
+        raw.T=timing(base.q,laterAlignments(date,Number(clock.slice(0,2)),zone,category));
       }
       else if(name==='M') {
         const priors=[];
@@ -152,17 +140,17 @@ export function createCalculator(inputProfile) {
    * reading taken after a `probeAllSignals` call on the same calculator would
    * be handed the probe's nine signals, and a probe taken after a normal
    * reading would be handed only the three that mode mixes. The selected
-   * period is part of the identity too, because the timing signal compares
-   * against the rest of that period.
+   * period is *not* part of it: what a period changes is which instant becomes
+   * the anchor, and the anchor's own wall clock is already in the key.
    */
-  function rawScoreOn(date,clock,period,zone,category,mode,needed) {
-    const key=`${date}|${clock}|${period}|${zone}|${category}|${mode}|${needed.join('')}`;
+  function rawScoreOn(date,clock,zone,category,mode,needed) {
+    const key=`${date}|${clock}|${zone}|${category}|${mode}|${needed.join('')}`;
     const hit=scoreCache.get(key);
     if(hit)return hit===UNAVAILABLE?null:hit;
     const ms=anchorAt(date,clock,zone);
     if(ms==null) { scoreCache.set(key,UNAVAILABLE); return null; }
     const base=moments(ms,zone,category);
-    const raw=rawSignals(date,clock,period,zone,category,needed,base);
+    const raw=rawSignals(date,clock,zone,category,needed,base);
     const normalized=normalizeAll(raw);
     return scoreCache.set(key,{raw,normalized,score:modeScore(mode,normalized),base});
   }
@@ -212,12 +200,12 @@ export function createCalculator(inputProfile) {
     // score only ever reads the signals its own mixture names.
     const mixture=signalsNeededBy(mode);
     const needed=input.probeAllSignals?[...SIGNALS]:mixture;
-    const today=rawScoreOn(anchorDate,anchorClock,period,zone,category,mode,needed);
+    const today=rawScoreOn(anchorDate,anchorClock,zone,category,mode,needed);
     // The fortnight only ever contributes mode scores, so each prior date
     // costs exactly the signals this mode mixes — never the probe's nine.
     const priorScores=[];
     for(let k=1;k<=14;k++) {
-      const prior=rawScoreOn(civilDateShift(anchorDate,-k),anchorClock,period,zone,category,mode,mixture);
+      const prior=rawScoreOn(civilDateShift(anchorDate,-k),anchorClock,zone,category,mode,mixture);
       if(prior)priorScores.push(prior.score);
     }
     const adjusted=adjustAgainstHistory(today.score,priorScores);
@@ -241,7 +229,7 @@ export function createCalculator(inputProfile) {
     const windowScore=start=>{
       const local=localAt(start,zone);
       const clock=`${String(local.hour).padStart(2,'0')}:${String(local.minute).padStart(2,'0')}`;
-      const raw=rawSignals(local.date,clock,period,zone,category,mixture,moments(start,zone,category));
+      const raw=rawSignals(local.date,clock,zone,category,mixture,moments(start,zone,category));
       return displayPercent(modeScore(mode,normalizeAll(raw)));
     };
     const windows=period==='now'?[]:evaluated.filter(s=>duration(s)>=900).map(s=>({

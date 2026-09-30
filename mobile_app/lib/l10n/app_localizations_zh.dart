@@ -61,6 +61,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
+  String get birthDay => '日';
+
+  @override
+  String get birthMonth => '月';
+
+  @override
+  String get birthYear => '年';
+
+  @override
+  String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';
+
+  @override
   String get birthTimeUnknown => '出生时间未知';
 
   @override
@@ -151,8 +163,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get periodPassed => '已过';
 
   @override
+  String get periodTooLittleTime => '时间不够';
+
+  @override
   String periodHasPassed(String period) {
     return '$period已经过去，请选择其他时段。';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return '今天$period剩余的时间已经不够了，请选择其他时段。';
   }
 
   @override
@@ -1058,6 +1078,18 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
+  String get birthDay => '日';
+
+  @override
+  String get birthMonth => '月';
+
+  @override
+  String get birthYear => '年';
+
+  @override
+  String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';
+
+  @override
   String get birthTimeUnknown => '出生时间未知';
 
   @override
@@ -1148,8 +1180,16 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get periodPassed => '已过';
 
   @override
+  String get periodTooLittleTime => '时间不够';
+
+  @override
   String periodHasPassed(String period) {
     return '$period已经过去，请选择其他时段。';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return '今天$period剩余的时间已经不够了，请选择其他时段。';
   }
 
   @override
@@ -2055,6 +2095,18 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get birthDateRequired => '请选择出生日期后继续。';
 
   @override
+  String get birthDay => '日';
+
+  @override
+  String get birthMonth => '月';
+
+  @override
+  String get birthYear => '年';
+
+  @override
+  String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';
+
+  @override
   String get birthTimeUnknown => '出生时间未知';
 
   @override
@@ -2145,8 +2197,16 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get periodPassed => '已过';
 
   @override
+  String get periodTooLittleTime => '时间不够';
+
+  @override
   String periodHasPassed(String period) {
     return '$period已经过去，请选择其他时段。';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return '今天$period剩余的时间已经不够了，请选择其他时段。';
   }
 
   @override

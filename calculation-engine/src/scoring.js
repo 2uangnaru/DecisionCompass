@@ -19,7 +19,7 @@
 import { clamp } from './core.js';
 
 /** Identifies the scoring system itself, independently of the engine build. */
-export const SCORING_VERSION = 'v9.2-experimental';
+export const SCORING_VERSION = 'v9.3-experimental';
 
 /**
  * The nine signals, in a fixed order so that diagnostics, tests and the Dart
@@ -71,24 +71,27 @@ export const DISPLAY_EXPONENT = 0.55;
  * per-user adjust them, or two readers would stop being comparable and a
  * reading would stop being reproducible from its saved snapshot.
  */
-export const SCALE_VERSION = 'v9.2-cohort-2026-09-30';
+export const SCALE_VERSION = 'v9.3-cohort-2026-09-30';
 
 // Measured by `node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930`:
 // 374 readings from 120 synthetic profiles across seven categories, four
 // periods and twenty timezones, with roughly a third of the profiles having no
 // birth hour. Reproduce with that exact command.
 //
-// Only `T` moved between v9.1 and v9.2, because only `T` changed definition:
-// it now compares against the rest of the selected period as well as the
-// periods still ahead, so its median absolute value rose from 0.011 to 0.089.
-// Under v9.1 an evening reading had nothing later to compare against at all
-// and the signal was simply zero.
+// Only `T` has moved across v9.1, v9.2 and v9.3, because only `T` has changed
+// definition. v9.1 compared against the periods still ahead, which left an
+// evening reading with nothing to look at and a signal of exactly zero. v9.2
+// added the rest of the selected period, which fixed named periods but left
+// NOW with the same hole after 18:00. v9.3 compares against the rest of the
+// local day for every period, NOW included: median absolute value 0.011 ->
+// 0.089 -> 0.090, with a tighter upper quartile now that NOW contributes real
+// values all day rather than zeros.
 
 export const SCALES = Object.freeze({
   P: 0.1650744988,
   C: 0.3025025936,
   L: 0.7610000000,
-  T: 0.5170646117,
+  T: 0.4372109297,
   M: 0.3683472651,
   R: 0.1269505512,
   G: 0.1432921879,

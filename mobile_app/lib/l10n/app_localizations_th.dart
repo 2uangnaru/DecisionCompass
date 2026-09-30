@@ -61,6 +61,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get birthDateRequired => 'โปรดเลือกวันเกิดก่อนดำเนินต่อ';
 
   @override
+  String get birthDay => 'วัน';
+
+  @override
+  String get birthMonth => 'เดือน';
+
+  @override
+  String get birthYear => 'ปี';
+
+  @override
+  String get birthDateInvalid => 'กรอกวันที่ที่ถูกต้องตั้งแต่ปี 1900 ถึงวันนี้';
+
+  @override
   String get birthTimeUnknown => 'ไม่ทราบเวลาเกิด';
 
   @override
@@ -153,8 +165,16 @@ class AppLocalizationsTh extends AppLocalizations {
   String get periodPassed => 'ผ่านไปแล้ว';
 
   @override
+  String get periodTooLittleTime => 'เวลาไม่พอ';
+
+  @override
   String periodHasPassed(String period) {
     return 'ช่วง$periodผ่านไปแล้ว โปรดเลือกช่วงเวลาอื่น';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'วันนี้$periodเหลือเวลาไม่พอแล้ว กรุณาเลือกช่วงเวลาอื่น';
   }
 
   @override

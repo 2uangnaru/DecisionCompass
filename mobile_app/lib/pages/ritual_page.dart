@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
 import '../data/models/models.dart' as engine;
+import '../data/period_availability.dart';
+import '../local_engine/time/local_time.dart' show validZone;
 import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../models.dart';
@@ -37,11 +39,19 @@ class RitualPage extends StatefulWidget {
 }
 
 class _RitualPageState extends State<RitualPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
   Timer? _periodRefreshTimer;
   late final AnimationController _pulseController;
   late AppProfile _profile = widget.profile;
+
+  /// The IANA zone a reading taken now would resolve to.
+  ///
+  /// Resolved once when the screen opens. Until it arrives every period is
+  /// offered: muting one on the strength of the host machine's clock, which
+  /// may be a different zone entirely, would take away a period the reader can
+  /// still use and give no reason for it.
+  String? _timezone;
 
   /// When the reading is for. Chosen here, beside the Reveal tap, so the
   /// moment and the period are picked together.
@@ -54,48 +64,130 @@ class _RitualPageState extends State<RitualPage>
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
-    _schedulePeriodRefresh();
+    WidgetsBinding.instance.addObserver(this);
+    _resolveTimezone();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _periodRefreshTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
 
-  /// Refresh the chips as soon as a period ends, even if the user leaves this
-  /// screen open without touching it. Midnight also resets the day's chips.
-  void _schedulePeriodRefresh() {
-    _periodRefreshTimer?.cancel();
-    final now = widget.dependencies.nowLocal();
-    final boundaries = [
-      DateTime(now.year, now.month, now.day, 12),
-      DateTime(now.year, now.month, now.day, 14),
-      DateTime(now.year, now.month, now.day, 18),
-      DateTime(now.year, now.month, now.day + 1),
-    ];
-    final next = boundaries.firstWhere((boundary) => boundary.isAfter(now));
-    _periodRefreshTimer = Timer(next.difference(now), () {
-      if (!mounted) return;
-      setState(() {});
-      _schedulePeriodRefresh();
-    });
+  Future<void> _resolveTimezone() async {
+    String zone;
+    try {
+      zone = await widget.dependencies.contextProvider.currentTimezone();
+    } catch (_) {
+      // A zone lookup that fails leaves every period selectable. The engine
+      // still resolves its own zone at Reveal and still answers
+      // `period_elapsed` on its own segments, so nothing invents a reading.
+      return;
+    }
+    // A platform can name a zone this build's tz database has never heard of.
+    // Muting periods by a clock we cannot read would be worse than offering
+    // them: the engine rejects the zone at Reveal, with a message, which is
+    // the honest place for that failure to surface.
+    if (!validZone(zone)) return;
+    if (!mounted) return;
+    setState(() => _timezone = zone);
+    _dropSelectionIfClosed();
+    _schedulePeriodRefresh();
   }
 
-  bool _rejectElapsedPeriod() {
-    if (!_period.hasElapsedAt(widget.dependencies.nowLocal())) return false;
-    final l10n = AppLocalizations.of(context);
-    setState(() {});
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.periodHasPassed(periodLabel(l10n, _period)))),
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Coming back from the background can land well past a cutoff the timer
+    // never got to fire for.
+    if (state != AppLifecycleState.resumed) return;
+    _dropSelectionIfClosed();
+    _schedulePeriodRefresh();
+  }
+
+  /// The availability of [period] at this instant, by the reader's own zone.
+  PeriodAvailability _availability(TimePeriod period, {DateTime? at}) {
+    final zone = _timezone;
+    if (zone == null) {
+      return const PeriodAvailability(
+        status: PeriodStatus.available,
+        remaining: null,
+      );
+    }
+    return periodAvailability(
+      period,
+      instantUtc: at ?? widget.dependencies.nowUtc(),
+      timezone: zone,
     );
+  }
+
+  /// If the chosen period has closed, fall back to NOW and say why.
+  ///
+  /// Quietly leaving a closed period selected would let the reader tap Reveal
+  /// on something that cannot produce a reading; quietly swapping in a
+  /// different named period would answer a question they did not ask.
+  void _dropSelectionIfClosed() {
+    if (!mounted || _locked) return;
+    final availability = _availability(_period);
+    if (availability.selectable) return;
+    final closed = _period;
+    setState(() => _period = TimePeriod.now);
+    final l10n = AppLocalizations.of(context);
+    final label = periodLabel(l10n, closed);
+    final messenger = ScaffoldMessenger.of(context)..removeCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        key: const Key('ritual_period_closed_notice'),
+        duration: const Duration(seconds: 4),
+        content: Text(
+          availability.status == PeriodStatus.passed
+              ? l10n.periodHasPassed(label)
+              : l10n.periodNotEnoughTimeLeft(label),
+        ),
+      ),
+    );
+  }
+
+  /// Re-render exactly when a period's availability actually changes — when
+  /// it drops under its cutoff, when it ends, and when the local date turns
+  /// over and re-opens them all — rather than on a poll.
+  void _schedulePeriodRefresh() {
+    _periodRefreshTimer?.cancel();
+    final zone = _timezone;
+    if (zone == null) return;
+    final now = widget.dependencies.nowUtc();
+    final next = nextAvailabilityChange(instantUtc: now, timezone: zone);
+    if (next == null) return;
+    final wait = next.difference(now.toUtc());
+    _periodRefreshTimer = Timer(
+      wait > Duration.zero ? wait : const Duration(seconds: 1),
+      () {
+        if (!mounted) return;
+        setState(() {});
+        _dropSelectionIfClosed();
+        _schedulePeriodRefresh();
+      },
+    );
+  }
+
+  /// Re-checks the selection against the instant of this very tap.
+  ///
+  /// The chips may have been painted minutes ago. Revalidating here, against
+  /// `nowUtc()` rather than the last render, is what stops a stale selection
+  /// producing a reading — and it runs before anything is captured, saved or
+  /// unlocked.
+  bool _rejectClosedPeriod() {
+    if (_availability(_period, at: widget.dependencies.nowUtc()).selectable) {
+      return false;
+    }
+    _dropSelectionIfClosed();
     return true;
   }
 
   Future<void> _reveal() async {
     if (_locked) return;
-    if (_rejectElapsedPeriod()) return;
+    if (_rejectClosedPeriod()) return;
     if (!_profile.safetyAcknowledged) {
       final agreed = await showResponsibleUseSheet(
         context,
@@ -105,7 +197,8 @@ class _RitualPageState extends State<RitualPage>
       setState(() => _profile = _profile.copyWith(safetyAcknowledged: true));
       widget.onSafetyAcknowledged?.call(_profile);
     }
-    if (_rejectElapsedPeriod()) return;
+    // Checked again: the responsible-use sheet can sit open across a cutoff.
+    if (_rejectClosedPeriod()) return;
     setState(() => _locked = true);
     // The reading's moment is this tap, recorded before the transition and
     // before any timezone or GPS lookup, so a slow lookup cannot move it.
@@ -170,9 +263,7 @@ class _RitualPageState extends State<RitualPage>
     bool reduceMotion,
   ) {
     final l10n = AppLocalizations.of(context);
-    final selectedPeriodElapsed = _period.hasElapsedAt(
-      widget.dependencies.nowLocal(),
-    );
+    final selectedPeriodElapsed = !_availability(_period).selectable;
     return Column(
       children: [
         Row(
@@ -371,10 +462,9 @@ class _RitualPageState extends State<RitualPage>
   /// Compact chips, wrapped and centred so all five fit a 360dp phone without
   /// overflow and without competing with the reveal circle for attention.
   Widget _periodSelector(AppLocalizations l10n) {
-    // Read on every build so a period that ends while the screen is open stops
-    // being offered. The engine's own `period_elapsed` answer stays the
-    // authority if the clock crosses the boundary after the tap.
-    final localNow = widget.dependencies.nowLocal();
+    // Availability is read on every build, so a period that closes while the
+    // screen is open stops being offered. The engine's own `period_elapsed`
+    // answer stays the authority if the clock crosses a boundary after the tap.
     return Column(
       children: [
         Text(
@@ -392,14 +482,22 @@ class _RitualPageState extends State<RitualPage>
           spacing: 7,
           runSpacing: 2,
           children: TimePeriod.values.map((period) {
-            final elapsed = period.hasElapsedAt(localNow);
+            final availability = _availability(period);
+            final elapsed = !availability.selectable;
             final selected = period == _period;
             final label = periodLabel(l10n, period);
+            // Two complete labels joined by a separator, so no language has to
+            // fit "Passed" into an English sentence frame. A period that is
+            // still running but under its cutoff says so instead: it has not
+            // passed, there is simply not enough of it left.
+            final suffix = switch (availability.status) {
+              PeriodStatus.available => null,
+              PeriodStatus.tooLittleTime => l10n.periodTooLittleTime,
+              PeriodStatus.passed => l10n.periodPassed,
+            };
             return ChoiceChip(
               key: Key('ritual_period_${period.name}'),
-              // Two complete labels joined by a separator, so no language has
-              // to fit "Passed" into an English sentence frame.
-              label: Text(elapsed ? '$label · ${l10n.periodPassed}' : label),
+              label: Text(suffix == null ? label : '$label · $suffix'),
               selected: selected,
               showCheckmark: false,
               visualDensity: VisualDensity.compact,
@@ -408,8 +506,8 @@ class _RitualPageState extends State<RitualPage>
               onSelected: elapsed || _locked
                   ? null
                   : (_) {
-                      // A boundary may have passed since the last paint.
-                      if (period.hasElapsedAt(widget.dependencies.nowLocal())) {
+                      // A cutoff may have passed since the last paint.
+                      if (!_availability(period).selectable) {
                         setState(() {});
                         return;
                       }

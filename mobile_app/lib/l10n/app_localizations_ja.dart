@@ -61,6 +61,18 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthDateRequired => '続けるには生年月日を選択してください。';
 
   @override
+  String get birthDay => '日';
+
+  @override
+  String get birthMonth => '月';
+
+  @override
+  String get birthYear => '年';
+
+  @override
+  String get birthDateInvalid => '1900年から今日までの有効な日付を入力してください。';
+
+  @override
   String get birthTimeUnknown => '出生時刻が不明';
 
   @override
@@ -151,8 +163,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get periodPassed => '終了';
 
   @override
+  String get periodTooLittleTime => '時間が足りません';
+
+  @override
   String periodHasPassed(String period) {
     return '$periodは過ぎました。別の時間帯を選んでください。';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return '今日の$periodは残り時間が足りません。別の時間帯を選んでください。';
   }
 
   @override

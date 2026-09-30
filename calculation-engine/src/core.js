@@ -1,5 +1,5 @@
-export const VERSION = '4.1.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v9.2-experimental';
+export const VERSION = '4.2.0-mvp';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v9.3-experimental';
 export const WEIGHTS = Object.freeze({ B: .18, Z: .18, T: .10, W: .18, V: .16, N: .15, U: .05 });
 export const LUCK_BASELINE = 0.05;
 

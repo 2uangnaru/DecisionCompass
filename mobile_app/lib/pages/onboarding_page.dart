@@ -8,6 +8,7 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
+import '../widgets/birth_date_picker.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/language_selector.dart';
@@ -90,21 +91,9 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   Future<void> _pickBirthDate() async {
-    final picked = await showDatePicker(
+    final picked = await showBirthDatePicker(
       context: context,
-      initialDate: _birthDate ?? DateTime(2000, 1, 1),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-      initialDatePickerMode: DatePickerMode.year,
-      // Flutter's own typed-entry field dismisses the keyboard the instant
-      // it's cleared to empty (a framework quirk, not something this app
-      // controls), so the dialog opens on the calendar/year-grid by default.
-      // Its own keyboard icon still switches to typed entry for anyone who
-      // wants to type the date instead.
-      //
-      // The dialog's own chrome follows the app locale through
-      // `GlobalMaterialLocalizations`, so month names, weekday initials and
-      // the entry format are the reader's, not English.
+      initialDate: _birthDate,
     );
     if (picked != null && mounted) setState(() => _birthDate = picked);
   }
@@ -263,12 +252,13 @@ class _OnboardingPageState extends State<OnboardingPage> {
                             fit: BoxFit.scaleDown,
                             child: Text(
                               'ASTRACUE',
-                              style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700,
-                                color: CompassColors.gold,
-                                letterSpacing: 2.8,
-                              ),
+                              style: Theme.of(context).textTheme.displayLarge
+                                  ?.copyWith(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                    color: CompassColors.gold,
+                                    letterSpacing: 2.8,
+                                  ),
                             ),
                           ),
                         ),
@@ -389,8 +379,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       Text(
                         zodiacLabel(l10n, zodiacForDate(_birthDate!)),
                         textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall
-                            ?.copyWith(color: CompassColors.gold, letterSpacing: 1.7),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: CompassColors.gold,
+                          letterSpacing: 1.7,
+                        ),
                       ),
                     ],
                   ),

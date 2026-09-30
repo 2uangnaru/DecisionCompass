@@ -65,6 +65,18 @@ class AppLocalizationsVi extends AppLocalizations {
   String get birthDateRequired => 'Hãy chọn ngày sinh để tiếp tục.';
 
   @override
+  String get birthDay => 'Ngày';
+
+  @override
+  String get birthMonth => 'Tháng';
+
+  @override
+  String get birthYear => 'Năm';
+
+  @override
+  String get birthDateInvalid => 'Nhập ngày hợp lệ từ năm 1900 đến hôm nay.';
+
+  @override
   String get birthTimeUnknown => 'Không rõ giờ sinh';
 
   @override
@@ -109,10 +121,10 @@ class AppLocalizationsVi extends AppLocalizations {
   String get dailyEnergy => 'Năng lượng hôm nay';
 
   @override
-  String get yourColorsToday => 'Màu sắc của bạn hôm nay:';
+  String get yourColorsToday => 'Màu sắc hôm nay:';
 
   @override
-  String get luckyNumberToday => 'Con số may mắn hôm nay:';
+  String get luckyNumberToday => 'Con số hôm nay:';
 
   @override
   String get categoryOverall => 'Tổng quan';
@@ -157,8 +169,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get periodPassed => 'Đã qua';
 
   @override
+  String get periodTooLittleTime => 'Không đủ giờ';
+
+  @override
   String periodHasPassed(String period) {
     return '$period đã qua. Hãy chọn thời điểm khác.';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'Hôm nay $period không còn đủ thời gian. Hãy chọn thời điểm khác.';
   }
 
   @override

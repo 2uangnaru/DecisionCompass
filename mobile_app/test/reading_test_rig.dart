@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:decision_compass/local_engine/time/local_time.dart';
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
@@ -63,11 +64,36 @@ class ReadingTestRig {
          deviceTimezone: deviceTimezone,
          location: location,
        ),
-       revealInstant = now ?? DateTime.utc(2026, 9, 18, 8, 30);
+       revealInstant =
+           now ?? _utcForLocal(localNow ?? _beforeEveryPeriod, deviceTimezone);
 
-  /// Early enough that no period has elapsed, so a test that does not care
+  /// Early enough that no period has closed, so a test that does not care
   /// about the clock can still reach every one of them.
   static final _beforeEveryPeriod = DateTime(2026, 9, 18, 5, 30);
+
+  /// The UTC instant at which [local]'s wall time occurs in [zone].
+  ///
+  /// The ritual screen decides which periods are still offerable from the
+  /// instant of the tap read in the reader's own resolved zone, so a test that
+  /// pins an hour of the day has to pin it in both clocks or the two disagree
+  /// — which is what they quietly did before this existed.
+  static DateTime _utcForLocal(DateTime local, String zone) {
+    final date =
+        '${local.year.toString().padLeft(4, '0')}-'
+        '${local.month.toString().padLeft(2, '0')}-'
+        '${local.day.toString().padLeft(2, '0')}';
+    final clock =
+        '${local.hour.toString().padLeft(2, '0')}:'
+        '${local.minute.toString().padLeft(2, '0')}';
+    final candidates = localCandidates(date, clock, zone);
+    if (candidates.isEmpty) {
+      throw ArgumentError('$date $clock does not exist in $zone');
+    }
+    return DateTime.fromMillisecondsSinceEpoch(
+      candidates.first.round(),
+      isUtc: true,
+    );
+  }
 
   final FakeReadingRepository repository;
   final FixedCurrentContextProvider contextProvider;
@@ -104,6 +130,12 @@ class ReadingTestRig {
   DateTime localClock;
 
   /// How many times the flow asked for "now".
+  /// How many times anything asked for the current instant.
+  ///
+  /// No longer one per reading: the ritual screen reads the clock on every
+  /// build to decide which periods are still offerable. That a *reading* takes
+  /// its moment once is asserted through [FixedCurrentContextProvider.captures]
+  /// instead, which counts context captures rather than clock reads.
   var clockReads = 0;
 
   late final ReadingDependencies dependencies = ReadingDependencies(
@@ -120,7 +152,13 @@ class ReadingTestRig {
     localeController: localeController,
     nowUtc: () {
       clockReads++;
-      return revealInstant;
+      // A test that advances a live local clock is advancing the reader's own
+      // clock, so the UTC instant has to move with it — the ritual screen now
+      // decides period availability from `nowUtc` read in the resolved zone.
+      final live = liveLocalClock;
+      return live == null
+          ? revealInstant
+          : _utcForLocal(live(), contextProvider.deviceTimezone);
     },
     nowLocal: () => liveLocalClock?.call() ?? localClock,
   );
@@ -195,6 +233,11 @@ void useScreen(
 Future<void> loadBundledFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
   for (final entry in const {
+    'Montserrat': [
+      'Montserrat-Regular.ttf',
+      'Montserrat-SemiBold.ttf',
+      'Montserrat-Bold.ttf',
+    ],
     'CormorantGaramond': [
       'CormorantGaramond-Regular.ttf',
       'CormorantGaramond-Bold.ttf',
@@ -347,18 +390,10 @@ Future<void> fillDateAndCountry(WidgetTester tester) async {
   await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
   await tester.tap(find.byKey(const Key('birth_date_value')));
   await tester.pumpAndSettle();
-  // The dialog writes its years, days and buttons the way this language
-  // writes them — Japanese and Chinese label the year "2000年", not "2000" —
-  // so every label here is read back from the same localizations the dialog
-  // used rather than assumed to be English.
-  final dialog = MaterialLocalizations.of(
-    tester.element(find.byType(DatePickerDialog)),
-  );
-  await tester.tap(find.text(dialog.formatYear(DateTime(2000))).last);
-  await tester.pumpAndSettle();
-  await tester.tap(find.text(dialog.formatDecimal(1)).last);
-  await tester.pumpAndSettle();
-  await tester.tap(find.text(dialog.okButtonLabel));
+  await tester.enterText(find.byKey(const Key('birth_date_day')), '01');
+  await tester.enterText(find.byKey(const Key('birth_date_month')), '01');
+  await tester.enterText(find.byKey(const Key('birth_date_year')), '2000');
+  await tester.tap(find.byKey(const Key('birth_date_confirm')));
   await tester.pumpAndSettle();
 
   await tester.ensureVisible(find.byKey(const Key('birth_country')));

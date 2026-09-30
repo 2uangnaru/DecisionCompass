@@ -17,6 +17,10 @@
   "dateOfBirth": "Date of birth",
   "selectBirthDate": "Select your date of birth",
   "birthDateRequired": "Select your birth date to continue.",
+  "birthDay": "Day",
+  "birthMonth": "Month",
+  "birthYear": "Year",
+  "birthDateInvalid": "Enter a valid date from 1900 to today.",
   "birthTimeUnknown": "Birth time unknown",
   "birthTimeUnknownDetail": "If you don't know your birth time, the algorithm will use the time window closest to your personality.",
   "timeOfBirth": "Time of birth",
@@ -47,7 +51,14 @@
   "periodAfternoon": "Afternoon",
   "periodEvening": "Evening",
   "periodPassed": "Passed",
+  "periodTooLittleTime": "Too little time",
   "periodHasPassed": "{period} has passed. Choose another time.",
+  "periodNotEnoughTimeLeft": "There is not enough time left in {period} today. Choose another time.",
+  "@periodNotEnoughTimeLeft": {
+    "placeholders": {
+      "period": { "type": "String", "example": "Morning" }
+    }
+  },
   "@periodHasPassed": {
     "placeholders": {
       "period": {

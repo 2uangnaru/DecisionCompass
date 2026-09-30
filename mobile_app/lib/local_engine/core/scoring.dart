@@ -22,7 +22,7 @@ import 'core.dart';
 import 'numbers.dart';
 
 /// Identifies the scoring system itself, independently of the engine build.
-const String scoringVersion = 'v9.2-experimental';
+const String scoringVersion = 'v9.3-experimental';
 
 /// The nine signals, in the order the Node engine lists them.
 const List<String> signalNames = <String>[
@@ -68,7 +68,7 @@ const double displayExponent = 0.55;
 /// of the profiles having no birth hour. Copied here verbatim — the two
 /// engines must normalize identically or the same reading would show a
 /// different percentage depending on where it was calculated.
-const String scaleVersion = 'v9.2-cohort-2026-09-30';
+const String scaleVersion = 'v9.3-cohort-2026-09-30';
 
 /// Normalization scales, one per signal, each four times the 75th percentile
 /// of that signal's absolute raw value across the calibration cohort.
@@ -80,7 +80,7 @@ const Map<String, double> scales = <String, double>{
   'P': 0.1650744988,
   'C': 0.3025025936,
   'L': 0.7610000000,
-  'T': 0.5170646117,
+  'T': 0.4372109297,
   'M': 0.3683472651,
   'R': 0.1269505512,
   'G': 0.1432921879,

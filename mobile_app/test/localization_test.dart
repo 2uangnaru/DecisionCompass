@@ -438,10 +438,7 @@ void main() {
       await tester.pump();
 
       expect(find.byKey(const Key('language_button')), findsOneWidget);
-      expect(
-        find.text(rig.strings.onboardingLanguageHint),
-        findsOneWidget,
-      );
+      expect(find.text(rig.strings.onboardingLanguageHint), findsOneWidget);
       expect(
         tester
             .widget<Text>(find.byKey(const Key('language_button_label')))
@@ -486,10 +483,7 @@ void main() {
       final thai = stringsFor(AppLocale.thai);
       expect(find.text(thai.onboardingTitle), findsOneWidget);
       expect(find.text(thai.onboardingLanguageHint), findsOneWidget);
-      expect(
-        find.text(rig.strings.onboardingLanguageHint),
-        findsNothing,
-      );
+      expect(find.text(rig.strings.onboardingLanguageHint), findsNothing);
       expect(find.text(thai.continueAction), findsOneWidget);
       expect(find.text(rig.strings.onboardingTitle), findsNothing);
       expect(
@@ -535,10 +529,14 @@ void main() {
       await tester.pumpAndSettle();
 
       final material = MaterialLocalizations.of(
-        tester.element(find.byType(DatePickerDialog)),
+        tester.element(find.byKey(const Key('birth_date_dialog'))),
       );
       expect(material.cancelButtonLabel, 'Cancelar');
       expect(find.text(material.cancelButtonLabel), findsOneWidget);
+      final es = stringsFor(AppLocale.spanish);
+      expect(find.text(es.birthDay), findsOneWidget);
+      expect(find.text(es.birthMonth), findsOneWidget);
+      expect(find.text(es.birthYear), findsOneWidget);
     });
 
     testWidgets('the choice is stored before a profile exists', (tester) async {
@@ -720,9 +718,7 @@ void main() {
       tester,
     ) async {
       final rig = ReadingTestRig();
-      final reading = fixtureResponse(
-        'ready_commit_withdraw_two_windows.json',
-      );
+      final reading = fixtureResponse('ready_commit_withdraw_two_windows.json');
       await tester.pumpWidget(
         localizedApp(
           locale: AppLocale.japanese,

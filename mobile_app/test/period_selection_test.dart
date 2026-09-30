@@ -207,10 +207,11 @@ void main() {
   });
 
   group('periods that are already over', () {
-    testWidgets('lock at noon even when the selector was already open', (
+    testWidgets('close at the cutoff even when the selector was already open', (
       tester,
     ) async {
-      var clock = DateTime(2026, 9, 18, 11, 59, 59);
+      // A second before morning drops under its 90-minute cutoff.
+      var clock = DateTime(2026, 9, 18, 10, 29, 59);
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_study_morning.json'),
         liveLocalClock: () => clock,
@@ -221,12 +222,23 @@ void main() {
       await tester.pump();
       expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
 
-      clock = DateTime(2026, 9, 18, 12);
+      clock = DateTime(2026, 9, 18, 10, 30);
       await tester.pump(const Duration(seconds: 1));
-      expect(find.text('Morning · Passed'), findsOneWidget);
+      final labels = tester
+          .widgetList<ChoiceChip>(find.byType(ChoiceChip))
+          .map((c) => (c.label as Text).data)
+          .toList();
+      // Still running, so it must not claim to have passed.
+      expect(find.text('Morning · Too little time'), findsOneWidget,
+          reason: 'chips were $labels, lookups=${rig.contextProvider.timezoneLookups}, now=${rig.dependencies.nowUtc()}');
+      expect(find.text('Morning · Passed'), findsNothing);
       expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
+      // The selection falls back to NOW rather than to another named period.
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
       expect(
-        find.text('Morning has passed. Choose another time.'),
+        find.text(
+          'There is not enough time left in Morning today. Choose another time.',
+        ),
         findsOneWidget,
       );
 
@@ -312,13 +324,14 @@ void main() {
       await pumpPastRitual(tester);
     });
 
-    testWidgets('a period that is still running stays selectable at its edge', (
+    testWidgets('a period stays selectable right up to its cutoff', (
       tester,
     ) async {
-      // 11:59 is the last minute of morning; the boundary must not disable it.
+      // 10:29 leaves morning 91 minutes: one minute more than its cutoff, so
+      // it is still offered and a reading still goes through.
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_study_morning.json'),
-        localNow: DateTime(2026, 9, 18, 11, 59),
+        localNow: DateTime(2026, 9, 18, 10, 29),
       );
       await tester.pumpWidget(rig.app);
       await openRitual(tester);
@@ -350,9 +363,17 @@ void main() {
           reason: 'NOW must stay available at ${hour}h',
         );
         expect(chipFor(tester, TimePeriod.now).selected, isTrue);
-        // Evening runs to midnight, so it never reads as passed.
-        expect(chipFor(tester, TimePeriod.evening).onSelected, isNotNull);
         expect(find.text('NOW · Passed'), findsNothing);
+        expect(find.text('NOW · Too little time'), findsNothing);
+
+        // Evening runs to midnight, so it never reads as *passed* — but it
+        // does close 90 minutes before that, like every other period.
+        expect(find.text('Evening · Passed'), findsNothing);
+        expect(
+          chipFor(tester, TimePeriod.evening).onSelected,
+          hour == 23 ? isNull : isNotNull,
+          reason: 'evening at ${hour}h59',
+        );
       }
     });
 

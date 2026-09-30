@@ -1,6 +1,6 @@
 {
-  "engineVersion": "4.1.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.2-experimental",
+  "engineVersion": "4.2.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -65,15 +65,15 @@
   "modeScore": 0.2730263427,
   "modeBasis": "durability_horizon",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "d18c43fce632a9c206eae4ff5302202c5ddc817a2fc4ba830f6cbcf6761fdaf3",
+  "readingKey": "ed616c87f2449926ae6fa935d96e3d87e06e0d86138848b6b030e8cf578527e4",
   "axisScores": {
     "action": 0.0536317943,
     "change": 0.1572310997,
     "selected": 0.2730263427
   },
   "scoring": {
-    "system": "v9.2-experimental",
-    "scaleVersion": "v9.2-cohort-2026-09-30",
+    "system": "v9.3-experimental",
+    "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T18:00",
     "signals": {
       "H": 0.054777758,

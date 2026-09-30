@@ -65,6 +65,18 @@ class AppLocalizationsEs extends AppLocalizations {
       'Selecciona tu fecha de nacimiento para continuar.';
 
   @override
+  String get birthDay => 'Día';
+
+  @override
+  String get birthMonth => 'Mes';
+
+  @override
+  String get birthYear => 'Año';
+
+  @override
+  String get birthDateInvalid => 'Introduce una fecha válida entre 1900 y hoy.';
+
+  @override
   String get birthTimeUnknown => 'No sé mi hora de nacimiento';
 
   @override
@@ -110,10 +122,10 @@ class AppLocalizationsEs extends AppLocalizations {
   String get dailyEnergy => 'Energía de hoy';
 
   @override
-  String get yourColorsToday => 'Tus colores de hoy:';
+  String get yourColorsToday => 'Colores de hoy:';
 
   @override
-  String get luckyNumberToday => 'Número de la suerte de hoy:';
+  String get luckyNumberToday => 'Número de hoy:';
 
   @override
   String get categoryOverall => 'General';
@@ -158,8 +170,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get periodPassed => 'Pasado';
 
   @override
+  String get periodTooLittleTime => 'Queda poco tiempo';
+
+  @override
   String periodHasPassed(String period) {
     return '$period ya pasó. Elige otro momento.';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'Hoy ya no queda tiempo suficiente en $period. Elige otro momento.';
   }
 
   @override

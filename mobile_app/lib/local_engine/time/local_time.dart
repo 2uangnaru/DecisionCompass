@@ -24,9 +24,9 @@ const Map<String, List<int>> periods = <String, List<int>>{
 /// The local wall hours a civil day is cut at: the earthly-branch boundaries
 /// plus midnight and the four period edges.
 ///
-/// Exposed because the timing signal needs the hours *inside* a period, and
-/// deriving them from this one list is what keeps the comparison set and the
-/// day's actual segments from drifting apart.
+/// Exposed because the timing signal walks the rest of the local day, and
+/// deriving those hours from this one list is what keeps the comparison set
+/// and the day's actual segments from drifting apart.
 const List<int> boundaryHours = <int>[
   0,
   1,
@@ -47,15 +47,6 @@ const List<int> boundaryHours = <int>[
   23,
 ];
 
-/// The boundary hours that fall inside `[lo, hi)` of a named period.
-List<int> periodBoundaryHours(String period) {
-  final bounds = periods[period];
-  if (bounds == null) throw const EngineError('INVALID_PERIOD');
-  return <int>[
-    for (final h in boundaryHours)
-      if (h >= bounds[0] && h < bounds[1]) h,
-  ];
-}
 
 bool validZone(String? zone) => zone != null && isValidZone(zone);
 

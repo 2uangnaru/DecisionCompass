@@ -63,6 +63,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get birthDateRequired => 'Select your birth date to continue.';
 
   @override
+  String get birthDay => 'Day';
+
+  @override
+  String get birthMonth => 'Month';
+
+  @override
+  String get birthYear => 'Year';
+
+  @override
+  String get birthDateInvalid => 'Enter a valid date from 1900 to today.';
+
+  @override
   String get birthTimeUnknown => 'Birth time unknown';
 
   @override
@@ -156,8 +168,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get periodPassed => 'Passed';
 
   @override
+  String get periodTooLittleTime => 'Too little time';
+
+  @override
   String periodHasPassed(String period) {
     return '$period has passed. Choose another time.';
+  }
+
+  @override
+  String periodNotEnoughTimeLeft(String period) {
+    return 'There is not enough time left in $period today. Choose another time.';
   }
 
   @override

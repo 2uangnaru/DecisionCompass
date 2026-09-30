@@ -29,6 +29,18 @@ abstract interface class CurrentContextProvider {
   /// Asks the OS for foreground location permission. Called only when the user
   /// chooses "Allow Current Location".
   Future<void> requestLocationAccess();
+
+  /// The IANA timezone a reading taken now would resolve to, without capturing
+  /// anything else.
+  ///
+  /// The ritual screen needs it before Reveal, to work out how much of a local
+  /// period is actually left. It deliberately never consults location: a
+  /// pre-Reveal screen has no fix, and the device zone is what the engine
+  /// would use anyway unless the reader opts into location at the tap itself.
+  ///
+  /// Separate from [capture] so that asking the time of day is not recorded as
+  /// a reading's context capture.
+  Future<String> currentTimezone();
 }
 
 /// Production provider backed by `flutter_timezone` and a [LocationGateway].
@@ -48,6 +60,9 @@ class DeviceCurrentContextProvider implements CurrentContextProvider {
   /// The engine discards a fix older than 15 minutes as stale, so one that old
   /// is dropped here instead of being sent.
   static const Duration maxFixAge = Duration(minutes: 15);
+
+  @override
+  Future<String> currentTimezone() => _timezone();
 
   @override
   Future<CurrentContext> capture({
@@ -135,6 +150,16 @@ class FixedCurrentContextProvider implements CurrentContextProvider {
   final List<({DateTime instantUtc, bool includeLocation})> captures = [];
 
   var locationAccessRequests = 0;
+
+  /// Asking the time of day is not a capture, so it is counted separately.
+  var timezoneLookups = 0;
+
+  @override
+  Future<String> currentTimezone() async {
+    timezoneLookups++;
+    if (delay > Duration.zero) await Future<void>.delayed(delay);
+    return deviceTimezone;
+  }
 
   @override
   Future<CurrentContext> capture({

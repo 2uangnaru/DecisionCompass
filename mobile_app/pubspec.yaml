@@ -38,6 +38,7 @@ flutter:
     - assets/fonts/OFL-NotoSans.txt
     - assets/fonts/OFL-NotoSansCJK.txt
     - assets/fonts/OFL-CormorantGaramond.txt
+    - assets/fonts/OFL-Montserrat.txt
     # Unicode CLDR supplies the Vietnamese, Thai and Hindi country names in
     # lib/data/country_names_data.dart; its licence ships with them.
     - assets/licenses/UNICODE-LICENSE.txt
@@ -45,6 +46,13 @@ flutter:
   # kanji and Simplified Chinese do not depend on what a device happens to
   # have installed. SIL Open Font License 1.1; the licences ship beside them.
   fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Regular.ttf
+        - asset: assets/fonts/Montserrat-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Montserrat-Bold.ttf
+          weight: 700
     - family: CormorantGaramond
       fonts:
         - asset: assets/fonts/CormorantGaramond-Regular.ttf
