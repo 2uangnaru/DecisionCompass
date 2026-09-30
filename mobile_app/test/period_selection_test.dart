@@ -1,6 +1,7 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/localized_presentation.dart';
+import 'package:decision_compass/data/period_availability.dart';
 import 'package:decision_compass/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -230,7 +231,10 @@ void main() {
           .toList();
       // Still running, so it must not claim to have passed.
       expect(find.text('Morning · Too little time'), findsOneWidget,
-          reason: 'chips were $labels, lookups=${rig.contextProvider.timezoneLookups}, now=${rig.dependencies.nowUtc()}');
+          reason:
+              'chips were $labels, lookups=${rig.contextProvider.timezoneLookups}, '
+              'now=${rig.dependencies.nowUtc()}, '
+              'direct=${periodAvailability(TimePeriod.morning, instantUtc: rig.dependencies.nowUtc(), timezone: 'Asia/Ho_Chi_Minh').status}');
       expect(find.text('Morning · Passed'), findsNothing);
       expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
       // The selection falls back to NOW rather than to another named period.
