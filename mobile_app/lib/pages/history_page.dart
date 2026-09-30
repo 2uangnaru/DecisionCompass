@@ -300,17 +300,14 @@ class _HistoryRow extends StatelessWidget {
               ],
             ),
           ),
-          // Flexible so a longer translated choice wraps instead of pushing
-          // the row past a 360dp screen.
-          Flexible(
-            child: Text(
-              _resultLabel(l10n, localeName, reading),
-              textAlign: TextAlign.right,
-              style: TextStyle(
-                color: palette.accent,
-                fontSize: 17,
-                fontWeight: FontWeight.w700,
-              ),
+          const SizedBox(width: 8),
+          Text(
+            _resultLabel(l10n, localeName, reading),
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: palette.accent,
+              fontSize: 17,
+              fontWeight: FontWeight.w700,
             ),
           ),
           const SizedBox(width: 4),
