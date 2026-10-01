@@ -410,6 +410,113 @@ void main() {
       expect(read.provenance, LocaleProvenance.unset);
     });
 
+    group('a record that cannot be trusted', () {
+      // Every one of these is *valid JSON* — which is what makes them
+      // dangerous. The decoder used to cast `tag` with `as String?`, and a
+      // cast that fails throws a TypeError, not a FormatException. It escaped
+      // the decoder, escaped `load`, and took the first frame with it: the app
+      // would not start, over a value a single damaged write could produce,
+      // with the legacy locale sitting unread right beside it.
+      //
+      // The rule for all of them is the same as for unparseable text: fall
+      // back to the legacy tag, and to nothing if there is none.
+      const malformed = <String, Object?>{
+        'a numeric tag': {'tag': 123, 'provenance': 'manual'},
+        'a boolean tag': {'tag': true, 'provenance': 'manual'},
+        'a null tag': {'tag': null, 'provenance': 'manual'},
+        'a list tag': {
+          'tag': ['ja'],
+          'provenance': 'manual',
+        },
+        'a nested-object tag': {
+          'tag': {'value': 'ja'},
+          'provenance': 'manual',
+        },
+        'no tag at all': {'provenance': 'manual'},
+        // A bad *provenance* is not in this list: the language is still
+        // legible, so the record is usable. That case is checked on its own
+        // below, and it must not be discarded.
+        'a list record': ['ja', 'manual'],
+        'a bare string record': 'ja',
+        'a bare number record': 42,
+      };
+
+      malformed.forEach((name, record) {
+        test('$name falls back to the legacy locale', () async {
+          SharedPreferences.setMockInitialValues({
+            'app_locale_v1': 'ja',
+            'app_locale_v2': jsonEncode(record),
+          });
+
+          final read = await store.load();
+
+          // The legacy tag is reached, and the migration rule still applies
+          // to it: a language saved before provenance existed was chosen by
+          // hand.
+          expect(read.locale, AppLocale.japanese, reason: name);
+          expect(read.provenance, LocaleProvenance.manual, reason: name);
+        });
+
+        test('$name reads as nothing saved when there is no legacy', () async {
+          SharedPreferences.setMockInitialValues({
+            'app_locale_v2': jsonEncode(record),
+          });
+
+          final read = await store.load();
+
+          expect(read.locale, isNull, reason: name);
+          expect(read.provenance, LocaleProvenance.unset, reason: name);
+        });
+      });
+
+      test('a numeric provenance keeps a valid tag, read as manual', () async {
+        // The one malformed field that is not fatal: the language is still
+        // legible, and an unreadable reason is read the way an absent one is.
+        SharedPreferences.setMockInitialValues({
+          'app_locale_v2': jsonEncode({'tag': 'th', 'provenance': 7}),
+        });
+
+        final read = await store.load();
+
+        expect(read.locale, AppLocale.thai);
+        expect(read.provenance, LocaleProvenance.manual);
+      });
+
+      test('unparseable text behaves identically', () async {
+        for (final raw in ['', 'not json', '{', '{"tag":', '[1,2']) {
+          SharedPreferences.setMockInitialValues({
+            'app_locale_v1': 'ja',
+            'app_locale_v2': raw,
+          });
+          final read = await store.load();
+          expect(read.locale, AppLocale.japanese, reason: raw);
+          expect(read.provenance, LocaleProvenance.manual, reason: raw);
+        }
+      });
+
+      test('a controller starts rather than throwing on any of them', () async {
+        // The failure this is really about: `load` throwing means the first
+        // frame never renders.
+        for (final raw in [
+          jsonEncode({'tag': 123}),
+          jsonEncode(['ja']),
+          'not json',
+        ]) {
+          SharedPreferences.setMockInitialValues({'app_locale_v2': raw});
+          final controller = LocaleController(store: store);
+          await expectLater(controller.ensureLoaded(), completes);
+          expect(controller.locale, AppLocale.english, reason: raw);
+          expect(controller.provenance, LocaleProvenance.unset, reason: raw);
+          // And the country rule is free to act, because nothing was chosen.
+          expect(
+            (await controller.applyBirthCountryDefault('VN')).changedTo,
+            AppLocale.vietnamese,
+            reason: raw,
+          );
+        }
+      });
+    });
+
     test('a write that returns false is a failure, not a success', () async {
       // `setString` reports failure by returning false rather than by
       // throwing, so an unchecked call cannot tell the two apart. This swaps

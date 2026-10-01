@@ -82,24 +82,43 @@ class SharedPreferencesLocaleStore implements LocaleStore {
     return StoredLocale(locale: legacy, provenance: LocaleProvenance.manual);
   }
 
+  /// Reads a stored record, or null when it cannot be trusted.
+  ///
+  /// Every field is *checked* rather than cast. A cast would be shorter, but
+  /// `{"tag": 123}` is valid JSON, and `as String?` on an int throws a
+  /// `TypeError` — which is not a `FormatException`, so it would escape this
+  /// method, escape `load`, and take the first frame with it. The app would
+  /// not start, over a value one damaged write could produce, and the legacy
+  /// locale sitting right beside it would never be reached.
+  ///
+  /// Returning null instead keeps every malformed shape on the same path as
+  /// unparseable text: fall back to the legacy tag, and to the unset state if
+  /// there is none.
   static StoredLocale? _decode(String raw) {
+    final Object? decoded;
     try {
-      final decoded = jsonDecode(raw);
-      if (decoded is! Map) return null;
-      final locale = AppLocale.fromTag(decoded['tag'] as String?);
-      if (locale == null) return null;
-      final provenance = LocaleProvenance.values
-          .asNameMap()[decoded['provenance']];
-      // A record naming a provenance this build does not know is a record
-      // whose meaning is unclear. Manual is the reading that changes nothing
-      // on the reader's behalf.
-      return StoredLocale(
-        locale: locale,
-        provenance: provenance ?? LocaleProvenance.manual,
-      );
+      decoded = jsonDecode(raw);
     } on FormatException {
       return null;
     }
+    if (decoded is! Map) return null;
+
+    final tag = decoded['tag'];
+    if (tag is! String) return null;
+    final locale = AppLocale.fromTag(tag);
+    if (locale == null) return null;
+
+    // A provenance this build does not know — including one that is not even
+    // a string — is a record whose meaning is unclear. Manual is the reading
+    // that changes nothing on the reader's behalf.
+    final name = decoded['provenance'];
+    final provenance = name is String
+        ? LocaleProvenance.values.asNameMap()[name]
+        : null;
+    return StoredLocale(
+      locale: locale,
+      provenance: provenance ?? LocaleProvenance.manual,
+    );
   }
 
   @override
