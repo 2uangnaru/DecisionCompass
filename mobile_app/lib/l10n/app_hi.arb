@@ -53,7 +53,7 @@
   "periodAfternoon": "दोपहर बाद",
   "periodEvening": "शाम",
   "periodPassed": "बीत चुका",
-  "periodTooLittleTime": "समय कम है",
+  "periodTooLittleTime": "बीत चुका",
   "periodCheckingTimezone": "समय क्षेत्र जाँचा जा रहा है",
   "periodTimezoneUnknown": "समय क्षेत्र अज्ञात",
   "timezoneUnavailableNotice": "आपका समय क्षेत्र पढ़ा नहीं जा सका, इसलिए केवल अभी चुना जा सकता है। कोई अवधि चुनने के लिए फिर से कोशिश करें।",

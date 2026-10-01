@@ -169,7 +169,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get periodPassed => '已过';
 
   @override
-  String get periodTooLittleTime => '时间不够';
+  String get periodTooLittleTime => '已过';
 
   @override
   String get periodCheckingTimezone => '正在确认时区';
@@ -1201,7 +1201,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get periodPassed => '已过';
 
   @override
-  String get periodTooLittleTime => '时间不够';
+  String get periodTooLittleTime => '已过';
 
   @override
   String get periodCheckingTimezone => '正在确认时区';
@@ -2233,7 +2233,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get periodPassed => '已过';
 
   @override
-  String get periodTooLittleTime => '时间不够';
+  String get periodTooLittleTime => '已过';
 
   @override
   String get periodCheckingTimezone => '正在确认时区';

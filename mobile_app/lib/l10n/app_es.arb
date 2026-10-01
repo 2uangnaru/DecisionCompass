@@ -53,7 +53,7 @@
   "periodAfternoon": "Tarde",
   "periodEvening": "Noche",
   "periodPassed": "Pasado",
-  "periodTooLittleTime": "Queda poco tiempo",
+  "periodTooLittleTime": "Pasado",
   "periodCheckingTimezone": "Comprobando la zona horaria",
   "periodTimezoneUnknown": "Zona horaria desconocida",
   "timezoneUnavailableNotice": "No se pudo leer tu zona horaria, así que solo está disponible AHORA. Vuelve a intentarlo para elegir un periodo.",

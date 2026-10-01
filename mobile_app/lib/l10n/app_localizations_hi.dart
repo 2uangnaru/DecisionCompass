@@ -175,7 +175,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get periodPassed => 'बीत चुका';
 
   @override
-  String get periodTooLittleTime => 'समय कम है';
+  String get periodTooLittleTime => 'बीत चुका';
 
   @override
   String get periodCheckingTimezone => 'समय क्षेत्र जाँचा जा रहा है';
@@ -1347,7 +1347,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get periodPassed => 'बीत चुका';
 
   @override
-  String get periodTooLittleTime => 'समय कम है';
+  String get periodTooLittleTime => 'बीत चुका';
 
   @override
   String get periodCheckingTimezone => 'समय क्षेत्र जाँचा जा रहा है';

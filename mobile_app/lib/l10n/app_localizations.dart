@@ -436,7 +436,7 @@ abstract class AppLocalizations {
   /// No description provided for @periodTooLittleTime.
   ///
   /// In en, this message translates to:
-  /// **'Too little time'**
+  /// **'Passed'**
   String get periodTooLittleTime;
 
   /// Chip suffix while the reader's IANA zone is still being resolved. Named periods cannot be chosen until it is.

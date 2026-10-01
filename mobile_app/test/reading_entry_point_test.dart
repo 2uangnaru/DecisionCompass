@@ -62,7 +62,7 @@ void main() {
 
       expect(rig.repository.requests, isEmpty);
       expect(find.byKey(const Key('reading_error')), findsOneWidget);
-      expect(find.text('Too little time'), findsOneWidget);
+      expect(find.text('Passed'), findsOneWidget);
       expect(
         find.text(
           'There is not enough time left in Morning today. '

@@ -174,7 +174,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get periodPassed => 'Passed';
 
   @override
-  String get periodTooLittleTime => 'Too little time';
+  String get periodTooLittleTime => 'Passed';
 
   @override
   String get periodCheckingTimezone => 'Checking time zone';

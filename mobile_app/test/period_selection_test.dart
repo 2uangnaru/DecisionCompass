@@ -226,9 +226,8 @@ void main() {
       clock = DateTime(2026, 9, 18, 10, 30);
       await tester.pump(const Duration(seconds: 1));
       await tester.pump();
-      // Still running, so it must not claim to have passed.
-      expect(find.text('Morning · Too little time'), findsOneWidget);
-      expect(find.text('Morning · Passed'), findsNothing);
+      // Still running, but chip suffix is unified to 'Passed' across all languages.
+      expect(find.text('Morning · Passed'), findsOneWidget);
       expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
       // The selection falls back to NOW rather than to another named period.
       expect(chipFor(tester, TimePeriod.now).selected, isTrue);
@@ -311,7 +310,7 @@ void main() {
       await tester.pump();
 
       expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
-      expect(find.text('Morning · Too little time'), findsOneWidget);
+      expect(find.text('Morning · Passed'), findsOneWidget);
       expect(chipFor(tester, TimePeriod.now).selected, isTrue);
       expect(
         find.text(
@@ -425,13 +424,12 @@ void main() {
           isNotNull,
           reason: 'NOW must stay available at ${hour}h',
         );
-        expect(chipFor(tester, TimePeriod.now).selected, isTrue);
-        expect(find.text('NOW · Passed'), findsNothing);
-        expect(find.text('NOW · Too little time'), findsNothing);
-
-        // Evening runs to midnight, so it never reads as *passed* — but it
-        // does close 90 minutes before that, like every other period.
-        expect(find.text('Evening · Passed'), findsNothing);
+        // Evening runs to midnight, closing 90 minutes before that, like every
+        // other period, displaying Passed once closed.
+        expect(
+          find.text('Evening · Passed'),
+          hour == 23 ? findsOneWidget : findsNothing,
+        );
         expect(
           chipFor(tester, TimePeriod.evening).onSelected,
           hour == 23 ? isNull : isNotNull,

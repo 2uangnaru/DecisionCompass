@@ -53,7 +53,7 @@
   "periodAfternoon": "午後",
   "periodEvening": "夜",
   "periodPassed": "終了",
-  "periodTooLittleTime": "時間が足りません",
+  "periodTooLittleTime": "終了",
   "periodCheckingTimezone": "タイムゾーンを確認中",
   "periodTimezoneUnknown": "タイムゾーン不明",
   "timezoneUnavailableNotice": "タイムゾーンを読み取れなかったため、「今」のみ選べます。時間帯を選ぶにはもう一度お試しください。",

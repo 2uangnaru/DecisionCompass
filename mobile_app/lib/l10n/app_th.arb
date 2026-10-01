@@ -53,7 +53,7 @@
   "periodAfternoon": "ช่วงบ่าย",
   "periodEvening": "ช่วงเย็น",
   "periodPassed": "ผ่านไปแล้ว",
-  "periodTooLittleTime": "เวลาไม่พอ",
+  "periodTooLittleTime": "ผ่านไปแล้ว",
   "periodCheckingTimezone": "กำลังตรวจสอบเขตเวลา",
   "periodTimezoneUnknown": "ไม่ทราบเขตเวลา",
   "timezoneUnavailableNotice": "อ่านเขตเวลาของคุณไม่ได้ จึงเลือกได้เฉพาะ ตอนนี้ ลองอีกครั้งเพื่อเลือกช่วงเวลา",

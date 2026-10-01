@@ -176,7 +176,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get periodPassed => 'Pasado';
 
   @override
-  String get periodTooLittleTime => 'Queda poco tiempo';
+  String get periodTooLittleTime => 'Pasado';
 
   @override
   String get periodCheckingTimezone => 'Comprobando la zona horaria';

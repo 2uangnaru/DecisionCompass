@@ -171,7 +171,7 @@ class AppLocalizationsTh extends AppLocalizations {
   String get periodPassed => 'ผ่านไปแล้ว';
 
   @override
-  String get periodTooLittleTime => 'เวลาไม่พอ';
+  String get periodTooLittleTime => 'ผ่านไปแล้ว';
 
   @override
   String get periodCheckingTimezone => 'กำลังตรวจสอบเขตเวลา';

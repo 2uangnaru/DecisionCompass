@@ -169,7 +169,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get periodPassed => '終了';
 
   @override
-  String get periodTooLittleTime => '時間が足りません';
+  String get periodTooLittleTime => '終了';
 
   @override
   String get periodCheckingTimezone => 'タイムゾーンを確認中';
