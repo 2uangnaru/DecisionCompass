@@ -6,16 +6,20 @@ import 'reading_test_rig.dart';
 
 /// What the reader turns on the two dials is what the engine is asked about.
 ///
-/// The existing end-to-end coverage in `reading_flow_test.dart` reaches the
-/// engine through the date picker's *typing* tab, because that is the easiest
-/// thing to drive from a test. But the wheel is the tab the sheet opens on, so
-/// it is the path almost every reader takes, and it was rewritten twice in two
-/// days — once for the gold styling and the zodiac badge, once to stop the
-/// 01/01/2000 anchor being returned as an answer.
+/// The other end-to-end coverage reaches the engine through the date picker's
+/// *typing* tab, because that is the easiest thing to drive from a test. The
+/// wheel is the tab the sheet opens on, so it is the path almost every reader
+/// takes, and both pickers were rewritten repeatedly over two days. These
+/// drive the wheels the way a finger would and then assert on
+/// `ReadingRequest.profile` — the actual payload — rather than on anything the
+/// screen happens to be showing.
 ///
-/// So these drive the wheel and the clock face the way a finger would, and
-/// then assert on `ReadingRequest.profile` — the actual payload — rather than
-/// on anything the screen happens to be showing.
+/// Each column opens on a `--` placeholder rather than on a date, so every
+/// column has to be touched before Continue will commit anything. One row of
+/// travel on each lands on 1 January 2000; that is measured, not assumed, and
+/// `the sheet refuses a half-answered wheel` below is what fails first if the
+/// scheme changes again.
+
 /// The ritual floor is 4.2-5.2s; this clears any draw of the jitter.
 Future<void> pumpPastRitual(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 5400));
@@ -23,42 +27,39 @@ Future<void> pumpPastRitual(WidgetTester tester) async {
 }
 
 void main() {
-  /// Drags one date-wheel column by [rows] items.
+  /// Drags one date-wheel column by [rows] items. 44 is the itemExtent.
   Future<void> spin(WidgetTester tester, String column, int rows) async {
     await tester.drag(
-      find.byKey(Key('birth_date_$column\_wheel')),
-      Offset(0, -44.0 * rows), // 44 is the column's itemExtent
+      find.byKey(Key('birth_date_${column}_wheel')),
+      Offset(0, -44.0 * rows),
       warnIfMissed: false,
     );
     await tester.pumpAndSettle();
   }
 
-  /// Opens the date sheet from the profile step, spins to a date, confirms.
-  ///
-  /// The wheel opens anchored on 01/01/2000, so advancing day/month/year by
-  /// `d`, `m`, `y` rows lands on a known date without reading anything off
-  /// the screen.
+  Future<void> openDateSheet(WidgetTester tester) async {
+    await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
+    await tester.tap(find.byKey(const Key('birth_date_value')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const Key('birth_date_day_wheel')),
+      findsOneWidget,
+      reason: 'the sheet no longer opens on the wheel',
+    );
+  }
+
+  /// Spins all three columns and confirms. [years] 1 is 2000, 2 is 2001, and
+  /// so on, capped at the current year.
   Future<void> pickOnWheel(
     WidgetTester tester, {
     required int days,
     required int months,
     required int years,
   }) async {
-    await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
-    await tester.tap(find.byKey(const Key('birth_date_value')));
-    await tester.pumpAndSettle();
-
-    // No tab tap: the wheel is what the sheet opens on.
-    expect(
-      find.byKey(const Key('birth_date_day_wheel')),
-      findsOneWidget,
-      reason: 'the sheet no longer opens on the wheel',
-    );
-    // Each column starts on placeholder dashes, so offset by 1 row from anchor.
-    await spin(tester, 'year', years + 1);
-    await spin(tester, 'month', months + 1);
-    await spin(tester, 'day', days + 1);
-
+    await openDateSheet(tester);
+    await spin(tester, 'year', years);
+    await spin(tester, 'month', months);
+    await spin(tester, 'day', days);
     await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
     expect(
@@ -78,32 +79,69 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  Future<void> startProfileStep(WidgetTester tester) async {
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('continue_to_profile')));
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> finishOnboarding(WidgetTester tester) async {
+    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
+    await tester.tap(find.byKey(const Key('complete_profile')));
+    await tester.pumpAndSettle();
+  }
+
   testWidgets('a date chosen on the wheel is the date the engine is asked '
       'about', (tester) async {
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
-    await tester.pump();
-    await tester.tap(find.byKey(const Key('continue_to_profile')));
-    await tester.pumpAndSettle();
+    await startProfileStep(tester);
 
-    // 01/01/2000 + 20 years + 5 months + 14 days = 15 June 2020.
-    await pickOnWheel(tester, days: 14, months: 5, years: 20);
+    await pickOnWheel(tester, days: 15, months: 6, years: 1);
     await pickCountryUS(tester);
     await answerBirthTime(tester, null);
-
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await finishOnboarding(tester);
     await revealReading(tester);
     await tester.pump();
 
     final profile = rig.sentRequest!.profile;
-    expect(profile.birthDate, '2020-06-15');
+    expect(profile.birthDate, '2000-06-15');
     expect(profile.birthCountry, 'US');
     // Not answered, so it must travel as null rather than as a default hour.
     expect(profile.birthTime, isNull);
+
+    await pumpPastRitual(tester);
+  });
+
+  testWidgets('the screen and the engine agree on which date was chosen', (
+    tester,
+  ) async {
+    // The invariant, stated without a literal: whatever the wheel committed is
+    // shown on the profile step *and* sent to the engine, and the two are the
+    // same date. This survives any future change to where the wheel opens.
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+    );
+    await tester.pumpWidget(rig.app);
+    await startProfileStep(tester);
+    await pickOnWheel(tester, days: 9, months: 11, years: 24);
+
+    final shown = tester
+        .widget<Text>(find.byKey(const Key('birth_date_value')))
+        .data!;
+    expect(shown, isNot(contains('--')), reason: 'no date was committed');
+
+    await pickCountryUS(tester);
+    await answerBirthTime(tester, null);
+    await finishOnboarding(tester);
+    await revealReading(tester);
+    await tester.pump();
+
+    final sent = DateTime.parse(rig.sentRequest!.profile.birthDate);
+    expect(shown, contains('${sent.year}'));
+    expect(shown, contains('${sent.day}'));
 
     await pumpPastRitual(tester);
   });
@@ -115,18 +153,13 @@ void main() {
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
-    await tester.pump();
-    await tester.tap(find.byKey(const Key('continue_to_profile')));
-    await tester.pumpAndSettle();
+    await startProfileStep(tester);
 
-    await pickOnWheel(tester, days: 20, months: 0, years: 25);
+    await pickOnWheel(tester, days: 21, months: 1, years: 26);
     await pickCountryUS(tester);
     // Drives the real birth-time control, not a synthetic value.
     await answerBirthTime(tester, const TimeOfDay(hour: 7, minute: 45));
-
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await finishOnboarding(tester);
     await revealReading(tester);
     await tester.pump();
 
@@ -141,21 +174,17 @@ void main() {
     tester,
   ) async {
     // The picker writes into the profile, the profile is persisted, and the
-    // persisted value is what a later reading sends. A date that only lived
-    // in the widget would pass the first two tests and fail here.
+    // persisted value is what a later reading sends. A date that only lived in
+    // the widget would pass the first test and fail here.
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
-    await tester.pump();
-    await tester.tap(find.byKey(const Key('continue_to_profile')));
-    await tester.pumpAndSettle();
-    await pickOnWheel(tester, days: 10, months: 2, years: 22);
+    await startProfileStep(tester);
+    await pickOnWheel(tester, days: 11, months: 3, years: 23);
     await pickCountryUS(tester);
     await answerBirthTime(tester, const TimeOfDay(hour: 23, minute: 5));
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await finishOnboarding(tester);
 
     // Restart against the same storage.
     await tester.pumpWidget(const SizedBox.shrink());
@@ -175,32 +204,24 @@ void main() {
   testWidgets('an untouched wheel sends nothing, because it answers nothing', (
     tester,
   ) async {
-    // The anchor fix, checked where it actually matters: not "the sheet stays
-    // open", but "no birth date reached the engine".
+    // Checked where it actually matters: not "the sheet stays open", but "no
+    // birth date reached the engine".
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
-    await tester.pump();
-    await tester.tap(find.byKey(const Key('continue_to_profile')));
-    await tester.pumpAndSettle();
+    await startProfileStep(tester);
 
-    await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
-    await tester.tap(find.byKey(const Key('birth_date_value')));
-    await tester.pumpAndSettle();
+    await openDateSheet(tester);
     await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
-
-    // The sheet is still open and nothing was chosen.
     expect(find.byKey(const Key('birth_date_sheet')), findsOneWidget);
     await tester.tap(find.byKey(const Key('birth_date_cancel')));
     await tester.pumpAndSettle();
 
     await pickCountryUS(tester);
     await answerBirthTime(tester, null);
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await finishOnboarding(tester);
 
     // Onboarding refused to finish, so no reading could have been requested
     // with a date nobody gave.
@@ -212,29 +233,50 @@ void main() {
     );
   });
 
-  testWidgets('the wheel cannot be spun into the future', (tester) async {
-    // Over-spinning the year column by decades lands on the current year, not
-    // beyond it, so no future birth date can reach the engine. Found by
-    // getting this test's own arithmetic wrong, which is as good a way as any.
+  testWidgets('the sheet refuses a half-answered wheel', (tester) async {
+    // Two columns chosen, one still on its placeholder. This is the test that
+    // fails first if the placeholder scheme changes, which is what keeps the
+    // row arithmetic in the tests above honest.
     final rig = ReadingTestRig(
       response: fixtureResponse('ready_yes_no_now.json'),
     );
     await tester.pumpWidget(rig.app);
-    await tester.pump();
-    await tester.tap(find.byKey(const Key('continue_to_profile')));
+    await startProfileStep(tester);
+
+    await openDateSheet(tester);
+    await spin(tester, 'year', 20);
+    await spin(tester, 'month', 4);
+    // The day column is never touched.
+    await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
 
-    await pickOnWheel(tester, days: 0, months: 0, years: 60);
+    expect(
+      find.byKey(const Key('birth_date_sheet')),
+      findsOneWidget,
+      reason: 'a partly answered wheel was accepted as a whole date',
+    );
+  });
+
+  testWidgets('the wheel cannot be spun into the future', (tester) async {
+    // Over-spinning the year column by a century lands on the current year,
+    // not beyond it, so no future birth date can reach the engine. Asserted
+    // against the real clock, because the sheet's upper bound is today.
+    final rig = ReadingTestRig(
+      response: fixtureResponse('ready_yes_no_now.json'),
+    );
+    await tester.pumpWidget(rig.app);
+    await startProfileStep(tester);
+
+    await pickOnWheel(tester, days: 1, months: 1, years: 400);
     await pickCountryUS(tester);
     await answerBirthTime(tester, null);
-    await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-    await tester.tap(find.byKey(const Key('complete_profile')));
-    await tester.pumpAndSettle();
+    await finishOnboarding(tester);
     await revealReading(tester);
     await tester.pump();
 
-    // The rig's clock is 2026-09-18, so the year column stops at 2026.
-    expect(rig.sentRequest!.profile.birthDate, '2026-01-01');
+    final sent = DateTime.parse(rig.sentRequest!.profile.birthDate);
+    expect(sent.year, DateTime.now().year);
+    expect(sent.isAfter(DateTime.now()), isFalse);
 
     await pumpPastRitual(tester);
   });
@@ -253,15 +295,11 @@ void main() {
       );
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpWidget(rig.app);
-      await tester.pump();
-      await tester.tap(find.byKey(const Key('continue_to_profile')));
-      await tester.pumpAndSettle();
-      await pickOnWheel(tester, days: 0, months: 0, years: 18);
+      await startProfileStep(tester);
+      await pickOnWheel(tester, days: 1, months: 1, years: 19);
       await pickCountryUS(tester);
       await answerBirthTime(tester, null);
-      await tester.ensureVisible(find.byKey(const Key('complete_profile')));
-      await tester.tap(find.byKey(const Key('complete_profile')));
-      await tester.pumpAndSettle();
+      await finishOnboarding(tester);
 
       await revealReading(tester, category: category);
       await tester.pump();
