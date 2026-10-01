@@ -664,54 +664,56 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
                 ],
-                Column(
-                  children: [
-                    Text(
-                      invalid
-                          ? l10n.birthDateInvalid
-                          : selectedDate == null
-                          ? l10n.selectBirthDate
-                          : formatDate(intlLocaleOf(context), selectedDate),
-                      key: const Key('birth_date_feedback'),
-                      textAlign: TextAlign.center,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: invalid
-                            ? theme.colorScheme.error
-                            : CompassColors.text,
-                        fontWeight: FontWeight.w600,
+                const SizedBox(height: 18),
+                if (invalid)
+                  Text(
+                    l10n.birthDateInvalid,
+                    key: const Key('birth_date_feedback'),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.error,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                else if (selectedDate != null)
+                  Center(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: CompassColors.glass,
+                        borderRadius: BorderRadius.circular(22),
+                        border: Border.all(
+                          color: CompassColors.gold.withValues(alpha: 0.35),
+                        ),
+                      ),
+                      child: Text(
+                        chineseZodiacLabel(
+                          intlLocaleOf(context),
+                          selectedDate,
+                        ),
+                        key: const Key('birth_date_feedback'),
+                        textAlign: TextAlign.center,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: CompassColors.gold,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     ),
-                    if (!invalid && selectedDate != null) ...[
-                      const SizedBox(height: 8),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: CompassColors.glass,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                            color: CompassColors.gold.withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: Text(
-                          chineseZodiacLabel(
-                            intlLocaleOf(context),
-                            selectedDate,
-                          ),
-                          textAlign: TextAlign.center,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: CompassColors.gold,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
+                  )
+                else
+                  Text(
+                    l10n.selectBirthDate,
+                    key: const Key('birth_date_feedback'),
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: CompassColors.secondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 const SizedBox(height: 24),
                 Row(
                   children: [

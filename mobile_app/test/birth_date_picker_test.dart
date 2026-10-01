@@ -54,7 +54,7 @@ void main() {
     expect(find.byType(DatePickerDialog), findsNothing);
     expect(
       tester.widget<Text>(find.byKey(const Key('birth_date_feedback'))).data,
-      contains('1998'),
+      contains('Tiger'),
     );
 
     final cancel = tester.getCenter(find.byKey(const Key('birth_date_cancel')));
@@ -77,7 +77,7 @@ void main() {
         .widget<Text>(find.byKey(const Key('birth_date_feedback')))
         .data;
     await tester.drag(
-      find.byKey(const Key('birth_date_day_wheel')),
+      find.byKey(const Key('birth_date_year_wheel')),
       const Offset(0, -90),
     );
     await tester.pumpAndSettle();
