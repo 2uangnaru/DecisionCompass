@@ -365,8 +365,11 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                 child: Text.rich(
                   TextSpan(
                     text: '${l10n.everydayReflection}\n',
-                    style: Theme.of(context).textTheme.bodySmall
-                        ?.copyWith(color: Colors.white60, height: 1.45),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Colors.white60,
+                      fontSize: 11,
+                      height: 1.45,
+                    ),
                     children: [
                       TextSpan(
                         text: l10n.responsibleUseLink,

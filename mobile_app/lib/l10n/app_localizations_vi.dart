@@ -175,7 +175,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get periodPassed => 'Đã qua';
 
   @override
-  String get periodTooLittleTime => 'Không đủ giờ';
+  String get periodTooLittleTime => 'Đã qua';
 
   @override
   String get periodCheckingTimezone => 'Đang xác định múi giờ';

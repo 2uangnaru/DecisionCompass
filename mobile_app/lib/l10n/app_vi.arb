@@ -53,7 +53,7 @@
   "periodAfternoon": "Chiều",
   "periodEvening": "Tối",
   "periodPassed": "Đã qua",
-  "periodTooLittleTime": "Không đủ giờ",
+  "periodTooLittleTime": "Đã qua",
   "periodCheckingTimezone": "Đang xác định múi giờ",
   "periodTimezoneUnknown": "Chưa rõ múi giờ",
   "timezoneUnavailableNotice": "Không đọc được múi giờ của bạn, nên chỉ có thể chọn HIỆN TẠI. Hãy thử lại để chọn một buổi.",
