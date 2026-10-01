@@ -5,8 +5,180 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../l10n/app_localizations.dart';
+import '../local_engine/calendar/chinese_calendar.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
+
+/// Returns localized Chinese zodiac (Con giáp / Can Chi) for the given solar date.
+String chineseZodiacLabel(String localeName, DateTime date) {
+  var year = date.year;
+  try {
+    final lunar = lunarFromSolar(date.year, date.month, date.day);
+    if (lunar.year > 0) {
+      year = lunar.year;
+    }
+  } catch (_) {
+    year = date.year;
+  }
+
+  var branchIndex = (year - 4) % 12;
+  if (branchIndex < 0) branchIndex += 12;
+  var stemIndex = (year - 4) % 10;
+  if (stemIndex < 0) stemIndex += 10;
+
+  const animalsVi = [
+    'Chuột',
+    'Trâu',
+    'Hổ',
+    'Mèo / Thỏ',
+    'Rồng',
+    'Rắn',
+    'Ngựa',
+    'Dê',
+    'Khỉ',
+    'Gà',
+    'Chó',
+    'Lợn',
+  ];
+  const stemsVi = [
+    'Giáp',
+    'Ất',
+    'Bính',
+    'Đinh',
+    'Mậu',
+    'Kỷ',
+    'Canh',
+    'Tân',
+    'Nhâm',
+    'Quý',
+  ];
+  const branchesVi = [
+    'Tý',
+    'Sửu',
+    'Dần',
+    'Mão',
+    'Thìn',
+    'Tỵ',
+    'Ngọ',
+    'Mùi',
+    'Thân',
+    'Dậu',
+    'Tuất',
+    'Hợi',
+  ];
+  const emojis = [
+    '🐀',
+    '🐂',
+    '🐅',
+    '🐱',
+    '🐉',
+    '🐍',
+    '🐎',
+    '🐐',
+    '🐒',
+    '🐓',
+    '🐕',
+    '🐖',
+  ];
+
+  const animalsEn = [
+    'Rat',
+    'Ox',
+    'Tiger',
+    'Rabbit / Cat',
+    'Dragon',
+    'Snake',
+    'Horse',
+    'Goat',
+    'Monkey',
+    'Rooster',
+    'Dog',
+    'Pig',
+  ];
+  const animalsEs = [
+    'Rata',
+    'Buey',
+    'Tigre',
+    'Conejo',
+    'Dragón',
+    'Serpiente',
+    'Caballo',
+    'Cabra',
+    'Mono',
+    'Gallo',
+    'Perro',
+    'Cerdo',
+  ];
+  const stemsZh = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+  const branchesZh = [
+    '子',
+    '丑',
+    '寅',
+    '卯',
+    '辰',
+    '巳',
+    '午',
+    '未',
+    '申',
+    '酉',
+    '戌',
+    '亥',
+  ];
+  const animalsZh = [
+    '鼠',
+    '牛',
+    '虎',
+    '兔',
+    '龙',
+    '蛇',
+    '马',
+    '羊',
+    '猴',
+    '鸡',
+    '狗',
+    '猪',
+  ];
+  const animalsJa = [
+    '子',
+    '丑',
+    '寅',
+    '卯',
+    '辰',
+    '巳',
+    '午',
+    '未',
+    '申',
+    '酉',
+    '戌',
+    '亥',
+  ];
+  const animalsTh = [
+    'ปีชวด (หนู)',
+    'ปีฉลู (วัว)',
+    'ปีขาล (เสือ)',
+    'ปีเถาะ (กระต่าย)',
+    'ปีมะโรง (มังกร)',
+    'ปีมะเส็ง (งูเล็ก)',
+    'ปีมะเมีย (ม้า)',
+    'ปีมะแม (แพะ)',
+    'ปีวอก (ลิง)',
+    'ปีระกา (ไก่)',
+    'ปีจอ (หมา)',
+    'ปีกุน (หมู)',
+  ];
+
+  final lang = localeName.split(RegExp('[-_]')).first.toLowerCase();
+  return switch (lang) {
+    'vi' =>
+      'Tuổi ${stemsVi[stemIndex]} ${branchesVi[branchIndex]} (${animalsVi[branchIndex]}) ${emojis[branchIndex]}',
+    'es' => 'Año del ${animalsEs[branchIndex]} ${emojis[branchIndex]}',
+    'zh' =>
+      '${stemsZh[stemIndex]}${branchesZh[branchIndex]}年 (${animalsZh[branchIndex]}) ${emojis[branchIndex]}',
+    'ja' => '${animalsJa[branchIndex]}年 ${emojis[branchIndex]}',
+    'th' => '${animalsTh[branchIndex]} ${emojis[branchIndex]}',
+    _ => 'Year of the ${animalsEn[branchIndex]} ${emojis[branchIndex]}',
+  };
+}
 
 Future<DateTime?> showBirthDatePicker({
   required BuildContext context,
@@ -353,10 +525,24 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                 SegmentedButton<_EntryMode>(
                   key: const Key('birth_date_mode'),
                   showSelectedIcon: false,
+                  style: SegmentedButton.styleFrom(
+                    backgroundColor: CompassColors.glass,
+                    selectedBackgroundColor: CompassColors.gold.withValues(
+                      alpha: 0.16,
+                    ),
+                    selectedForegroundColor: CompassColors.gold,
+                    foregroundColor: CompassColors.secondary,
+                    side: BorderSide(
+                      color: CompassColors.line.withValues(alpha: 0.6),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                  ),
                   segments: [
                     ButtonSegment(
                       value: _EntryMode.wheel,
-                      icon: const Icon(Icons.swipe_vertical_rounded),
+                      icon: const Icon(Icons.swipe_vertical_rounded, size: 18),
                       label: Text(
                         l10n.birthDateScroll,
                         key: const Key('birth_date_scroll_tab'),
@@ -364,7 +550,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                     ),
                     ButtonSegment(
                       value: _EntryMode.manual,
-                      icon: const Icon(Icons.keyboard_rounded),
+                      icon: const Icon(Icons.keyboard_rounded, size: 18),
                       label: Text(
                         l10n.birthDateType,
                         key: const Key('birth_date_type_tab'),
@@ -383,6 +569,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                       textTheme: CupertinoTextThemeData(
                         pickerTextStyle: theme.textTheme.titleLarge?.copyWith(
                           color: CompassColors.text,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
@@ -401,24 +588,32 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                   textAlign: TextAlign.center,
                                   style: theme.textTheme.labelMedium?.copyWith(
                                     color: CompassColors.gold,
+                                    letterSpacing: 1.2,
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
                               ),
                           ],
                         ),
-                        const SizedBox(height: 4),
+                        const SizedBox(height: 6),
                         SizedBox(
                           height: 200,
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
                               Container(
-                                height: 44,
+                                height: 46,
                                 decoration: BoxDecoration(
-                                  color: CompassColors.blue.withValues(
-                                    alpha: 0.22,
+                                  color: CompassColors.gold.withValues(
+                                    alpha: 0.08,
                                   ),
                                   borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                    color: CompassColors.gold.withValues(
+                                      alpha: 0.45,
+                                    ),
+                                    width: 1.2,
+                                  ),
                                 ),
                               ),
                               // A drag on any column is an answer, even one
@@ -430,6 +625,10 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                               // `dragDetails` is what separates a finger from
                               // the `jumpToItem` calls the columns make on
                               // each other when a month shortens.
+                              //
+                              // Outside the fade: a ShaderMask paints, it does
+                              // not absorb scroll notifications, so the order
+                              // is only about keeping the two concerns apart.
                               NotificationListener<ScrollStartNotification>(
                                 onNotification: (notification) {
                                   if (notification.dragDetails != null &&
@@ -438,37 +637,54 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                   }
                                   return false;
                                 },
-                                child: Row(
-                                  children: [
-                                    _wheelColumn(
-                                      key: const Key('birth_date_day_wheel'),
-                                      controller: _dayWheel,
-                                      count: _dayCount(
-                                        _wheelDate.year,
-                                        _wheelDate.month,
+                                child: ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.transparent,
+                                          Colors.black,
+                                          Colors.black,
+                                          Colors.transparent,
+                                        ],
+                                        stops: [0.0, 0.2, 0.8, 1.0],
+                                      ).createShader(bounds),
+                                  blendMode: BlendMode.dstIn,
+                                  child: Row(
+                                    children: [
+                                      _wheelColumn(
+                                        key: const Key('birth_date_day_wheel'),
+                                        controller: _dayWheel,
+                                        count: _dayCount(
+                                          _wheelDate.year,
+                                          _wheelDate.month,
+                                        ),
+                                        valueAt: (index) => index + 1,
+                                        onSelected: _chooseDay,
+                                        label: l10n.birthDay,
                                       ),
-                                      valueAt: (index) => index + 1,
-                                      onSelected: _chooseDay,
-                                      label: l10n.birthDay,
-                                    ),
-                                    _wheelColumn(
-                                      key: const Key('birth_date_month_wheel'),
-                                      controller: _monthWheel,
-                                      count: _monthCount(_wheelDate.year),
-                                      valueAt: (index) => index + 1,
-                                      onSelected: _chooseMonth,
-                                      label: l10n.birthMonth,
-                                    ),
-                                    _wheelColumn(
-                                      key: const Key('birth_date_year_wheel'),
-                                      controller: _yearWheel,
-                                      count: _lastDate.year - 1899,
-                                      valueAt: (index) => index + 1900,
-                                      onSelected: _chooseYear,
-                                      label: l10n.birthYear,
-                                      digits: 4,
-                                    ),
-                                  ],
+                                      _wheelColumn(
+                                        key: const Key(
+                                          'birth_date_month_wheel',
+                                        ),
+                                        controller: _monthWheel,
+                                        count: _monthCount(_wheelDate.year),
+                                        valueAt: (index) => index + 1,
+                                        onSelected: _chooseMonth,
+                                        label: l10n.birthMonth,
+                                      ),
+                                      _wheelColumn(
+                                        key: const Key('birth_date_year_wheel'),
+                                        controller: _yearWheel,
+                                        count: _lastDate.year - 1899,
+                                        valueAt: (index) => index + 1900,
+                                        onSelected: _chooseYear,
+                                        label: l10n.birthYear,
+                                        digits: 4,
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],
@@ -511,27 +727,68 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 18),
                 ],
+                const SizedBox(height: 18),
+                // One live region around all three states. Without it a reader
+                // using a screen reader presses Continue on an untouched wheel,
+                // nothing moves, and nothing is said — and this line is the
+                // only thing asking them to touch the wheel at all.
                 Semantics(
-                  // Announced when it changes, so somebody using a screen
-                  // reader hears why Continue did nothing rather than getting
-                  // silence. This line is the only thing asking them to
-                  // interact with the wheel.
                   liveRegion: true,
-                  child: Text(
-                    invalid
-                        ? l10n.birthDateInvalid
-                        : selectedDate == null
-                        ? l10n.selectBirthDate
-                        : formatDate(intlLocaleOf(context), selectedDate),
-                    key: const Key('birth_date_feedback'),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: invalid || unanswered
-                          ? theme.colorScheme.error
-                          : CompassColors.secondary,
-                    ),
-                  ),
+                  child: invalid
+                      ? Text(
+                          l10n.birthDateInvalid,
+                          key: const Key('birth_date_feedback'),
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.error,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        )
+                      : selectedDate != null
+                      ? Center(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 18,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              color: CompassColors.glass,
+                              borderRadius: BorderRadius.circular(22),
+                              border: Border.all(
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.35,
+                                ),
+                              ),
+                            ),
+                            child: Text(
+                              chineseZodiacLabel(
+                                intlLocaleOf(context),
+                                selectedDate,
+                              ),
+                              key: const Key('birth_date_feedback'),
+                              textAlign: TextAlign.center,
+                              style: theme.textTheme.bodyMedium?.copyWith(
+                                color: CompassColors.gold,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        )
+                      : Text(
+                          l10n.selectBirthDate,
+                          key: const Key('birth_date_feedback'),
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            // Not "invalid" — nothing is wrong with the
+                            // anchor, it simply has not been chosen. Same
+                            // words, louder, once Continue has been pressed.
+                            color: unanswered
+                                ? theme.colorScheme.error
+                                : CompassColors.secondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                 ),
                 const SizedBox(height: 24),
                 Row(
@@ -539,6 +796,18 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                     Expanded(
                       child: OutlinedButton(
                         key: const Key('birth_date_cancel'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          foregroundColor: CompassColors.secondary,
+                          side: const BorderSide(color: CompassColors.line),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(material.cancelButtonLabel),
                       ),
@@ -547,6 +816,18 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                     Expanded(
                       child: FilledButton(
                         key: const Key('birth_date_confirm'),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          backgroundColor: CompassColors.blue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                         onPressed: _confirm,
                         child: Text(l10n.continueAction),
                       ),

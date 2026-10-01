@@ -54,7 +54,7 @@ void main() {
     expect(find.byType(DatePickerDialog), findsNothing);
     expect(
       tester.widget<Text>(find.byKey(const Key('birth_date_feedback'))).data,
-      contains('1998'),
+      contains('Tiger'),
     );
 
     final cancel = tester.getCenter(find.byKey(const Key('birth_date_cancel')));
@@ -77,7 +77,7 @@ void main() {
         .widget<Text>(find.byKey(const Key('birth_date_feedback')))
         .data;
     await tester.drag(
-      find.byKey(const Key('birth_date_day_wheel')),
+      find.byKey(const Key('birth_date_year_wheel')),
       const Offset(0, -90),
     );
     await tester.pumpAndSettle();
@@ -244,4 +244,41 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets(
+    'displays Vietnamese Con Giap and Can Chi for the selected date',
+    (tester) async {
+      await openPicker(
+        tester,
+        initialDate: DateTime(1998, 8, 25),
+        locale: const Locale('vi'),
+      );
+      expect(find.textContaining('Tuổi Mậu Dần'), findsOneWidget);
+      expect(find.textContaining('Hổ'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'clarifies Mao as Mèo / Thỏ in Vietnamese',
+    (tester) async {
+      await openPicker(
+        tester,
+        initialDate: DateTime(1999, 8, 25),
+        locale: const Locale('vi'),
+      );
+      expect(find.textContaining('Tuổi Kỷ Mão'), findsOneWidget);
+      expect(find.textContaining('Mèo / Thỏ'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'cancel and continue buttons have equal height and width',
+    (tester) async {
+      await openPicker(tester);
+      final cancelSize = tester.getSize(find.byKey(const Key('birth_date_cancel')));
+      final confirmSize = tester.getSize(find.byKey(const Key('birth_date_confirm')));
+      expect(cancelSize.height, equals(confirmSize.height));
+      expect(cancelSize.width, equals(confirmSize.width));
+    },
+  );
 }
