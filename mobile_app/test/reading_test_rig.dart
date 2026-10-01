@@ -70,7 +70,7 @@ class ReadingTestRig {
          location: location,
        ),
        revealInstant =
-           now ?? _utcForLocal(localNow ?? _beforeEveryPeriod, deviceTimezone);
+           now ?? utcForLocal(localNow ?? _beforeEveryPeriod, deviceTimezone);
 
   /// Early enough that no period has closed, so a test that does not care
   /// about the clock can still reach every one of them.
@@ -82,33 +82,6 @@ class ReadingTestRig {
   /// the clock at all.
   static final _beforeEveryPeriod = DateTime(2026, 9, 18, 8, 30);
 
-  /// The UTC instant at which [local]'s wall time occurs in [zone].
-  ///
-  /// The ritual screen decides which periods are still offerable from the
-  /// instant of the tap read in the reader's own resolved zone, so a test that
-  /// pins an hour of the day has to pin it in both clocks or the two disagree
-  /// — which is what they quietly did before this existed.
-  static DateTime _utcForLocal(DateTime local, String zone) {
-    final date =
-        '${local.year.toString().padLeft(4, '0')}-'
-        '${local.month.toString().padLeft(2, '0')}-'
-        '${local.day.toString().padLeft(2, '0')}';
-    final clock =
-        '${local.hour.toString().padLeft(2, '0')}:'
-        '${local.minute.toString().padLeft(2, '0')}';
-    final candidates = localCandidates(date, clock, zone);
-    if (candidates.isEmpty) {
-      throw ArgumentError('$date $clock does not exist in $zone');
-    }
-    // `localCandidates` resolves whole minutes, so the seconds a test pinned
-    // are added back afterwards. Dropping them silently moved a clock set to
-    // 10:29:59 back to 10:29:00, which is a whole minute of slack in any test
-    // that watches for a boundary.
-    return DateTime.fromMillisecondsSinceEpoch(
-      candidates.first.round(),
-      isUtc: true,
-    ).add(Duration(seconds: local.second, milliseconds: local.millisecond));
-  }
 
   final FakeReadingRepository repository;
   final FixedCurrentContextProvider contextProvider;
@@ -173,7 +146,7 @@ class ReadingTestRig {
       final live = liveLocalClock;
       return live == null
           ? revealInstant
-          : _utcForLocal(live(), contextProvider.deviceTimezone);
+          : utcForLocal(live(), contextProvider.deviceTimezone);
     },
     nowLocal: () => liveLocalClock?.call() ?? localClock,
   );
@@ -520,3 +493,31 @@ engine.DailyColors testDailyColors({
     stem: 0,
   ),
 );
+
+/// The UTC instant at which [local]'s wall time occurs in [zone].
+///
+/// The ritual screen decides which periods are still offerable from the
+/// instant of the tap read in the reader's own resolved zone, so a test that
+/// pins an hour of the day has to pin it in both clocks or the two disagree
+/// — which is what they quietly did before this existed.
+DateTime utcForLocal(DateTime local, String zone) {
+  final date =
+      '${local.year.toString().padLeft(4, '0')}-'
+      '${local.month.toString().padLeft(2, '0')}-'
+      '${local.day.toString().padLeft(2, '0')}';
+  final clock =
+      '${local.hour.toString().padLeft(2, '0')}:'
+      '${local.minute.toString().padLeft(2, '0')}';
+  final candidates = localCandidates(date, clock, zone);
+  if (candidates.isEmpty) {
+    throw ArgumentError('$date $clock does not exist in $zone');
+  }
+  // `localCandidates` resolves whole minutes, so the seconds a test pinned
+  // are added back afterwards. Dropping them silently moved a clock set to
+  // 10:29:59 back to 10:29:00, which is a whole minute of slack in any test
+  // that watches for a boundary.
+  return DateTime.fromMillisecondsSinceEpoch(
+    candidates.first.round(),
+    isUtc: true,
+  ).add(Duration(seconds: local.second, milliseconds: local.millisecond));
+}
