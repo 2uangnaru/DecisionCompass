@@ -280,43 +280,46 @@ class _HistoryRow extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
+          Row(
+            children: [
+              Expanded(
+                child: Text(
                   modeLabel(l10n, mode),
                   style: const TextStyle(fontWeight: FontWeight.w700),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  '${categoryLabel(l10n, reading.category)}  •  ${_timeOfDay(localeName, reading)}',
-                  style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _resultLabel(l10n, localeName, reading),
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  color: palette.accent,
+                  fontSize: 17,
+                  fontWeight: FontWeight.w700,
                 ),
-                const SizedBox(height: 2),
-                Text(
-                  _date(localeName, reading),
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: CompassColors.muted,
-                      ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 4),
+              const Icon(
+                Icons.chevron_right_rounded,
+                color: CompassColors.muted,
+              ),
+            ],
           ),
-          const SizedBox(width: 8),
+          const SizedBox(height: 8),
           Text(
-            _resultLabel(l10n, localeName, reading),
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              color: palette.accent,
-              fontSize: 17,
-              fontWeight: FontWeight.w700,
-            ),
+            '${categoryLabel(l10n, reading.category)}  •  ${_timeOfDay(localeName, reading)}',
+            style: Theme.of(context).textTheme.bodySmall,
           ),
-          const SizedBox(width: 4),
-          const Icon(Icons.chevron_right_rounded, color: CompassColors.muted),
+          const SizedBox(height: 2),
+          Text(
+            _date(localeName, reading),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: CompassColors.muted,
+                ),
+          ),
         ],
       ),
     );
