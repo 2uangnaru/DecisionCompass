@@ -208,6 +208,14 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
       ),
     ),
+    outlinedButtonTheme: OutlinedButtonThemeData(
+      style: OutlinedButton.styleFrom(
+        minimumSize: const Size.fromHeight(56),
+        foregroundColor: CompassColors.text,
+        side: const BorderSide(color: CompassColors.line),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
+      ),
+    ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: CompassColors.glass,

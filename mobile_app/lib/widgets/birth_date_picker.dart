@@ -30,7 +30,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     'Chuột',
     'Trâu',
     'Hổ',
-    'Mèo',
+    'Mèo / Thỏ',
     'Rồng',
     'Rắn',
     'Ngựa',
@@ -70,7 +70,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     '🐀',
     '🐂',
     '🐅',
-    '🐈',
+    '🐱',
     '🐉',
     '🐍',
     '🐎',
@@ -85,7 +85,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     'Rat',
     'Ox',
     'Tiger',
-    'Rabbit',
+    'Rabbit / Cat',
     'Dragon',
     'Snake',
     'Horse',
@@ -718,6 +718,18 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                     Expanded(
                       child: OutlinedButton(
                         key: const Key('birth_date_cancel'),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          foregroundColor: CompassColors.secondary,
+                          side: const BorderSide(color: CompassColors.line),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                         child: Text(material.cancelButtonLabel),
                       ),
@@ -726,6 +738,18 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                     Expanded(
                       child: FilledButton(
                         key: const Key('birth_date_confirm'),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size.fromHeight(52),
+                          backgroundColor: CompassColors.blue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          textStyle: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
                         onPressed: _confirm,
                         child: Text(l10n.continueAction),
                       ),

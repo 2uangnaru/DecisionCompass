@@ -257,4 +257,28 @@ void main() {
       expect(find.textContaining('Hổ'), findsOneWidget);
     },
   );
+
+  testWidgets(
+    'clarifies Mao as Mèo / Thỏ in Vietnamese',
+    (tester) async {
+      await openPicker(
+        tester,
+        initialDate: DateTime(1999, 8, 25),
+        locale: const Locale('vi'),
+      );
+      expect(find.textContaining('Tuổi Kỷ Mão'), findsOneWidget);
+      expect(find.textContaining('Mèo / Thỏ'), findsOneWidget);
+    },
+  );
+
+  testWidgets(
+    'cancel and continue buttons have equal height and width',
+    (tester) async {
+      await openPicker(tester);
+      final cancelSize = tester.getSize(find.byKey(const Key('birth_date_cancel')));
+      final confirmSize = tester.getSize(find.byKey(const Key('birth_date_confirm')));
+      expect(cancelSize.height, equals(confirmSize.height));
+      expect(cancelSize.width, equals(confirmSize.width));
+    },
+  );
 }
