@@ -422,6 +422,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get acknowledgementOnce => 'この確認は、最初のリーディング前に一度だけ表示されます。';
 
   @override
+  String get safetyScrollToContinue => '最後までスクロールして内容を読み、続行してください。';
+
+  @override
   String get knowBirthTime => '出生時刻がわかる';
 
   @override

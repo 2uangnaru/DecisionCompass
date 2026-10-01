@@ -450,6 +450,9 @@ class AppLocalizationsVi extends AppLocalizations {
       'Xác nhận này chỉ xuất hiện một lần trước lần phân tích đầu tiên.';
 
   @override
+  String get safetyScrollToContinue => 'Cuộn đến cuối, đọc hết để tiếp tục.';
+
+  @override
   String get knowBirthTime => 'Tôi biết giờ sinh của mình';
 
   @override

@@ -453,6 +453,10 @@ class AppLocalizationsHi extends AppLocalizations {
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
 
   @override
+  String get safetyScrollToContinue =>
+      'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
+
+  @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
 
   @override
@@ -1623,6 +1627,10 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get acknowledgementOnce =>
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
+
+  @override
+  String get safetyScrollToContinue =>
+      'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
 
   @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';

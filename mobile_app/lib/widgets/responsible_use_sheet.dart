@@ -35,7 +35,7 @@ Future<bool> showResponsibleUseSheet(
 /// assume 100% personal responsibility" were removed rather than translated:
 /// the first is a jurisdictional question this prototype has not answered, and
 /// the second is a legal assertion no copy here is in a position to make.
-class ResponsibleUseSheet extends StatelessWidget {
+class ResponsibleUseSheet extends StatefulWidget {
   const ResponsibleUseSheet({
     super.key,
     this.isFirstTimeAcknowledgement = false,
@@ -44,247 +44,443 @@ class ResponsibleUseSheet extends StatelessWidget {
   final bool isFirstTimeAcknowledgement;
 
   @override
+  State<ResponsibleUseSheet> createState() => _ResponsibleUseSheetState();
+}
+
+class _ResponsibleUseSheetState extends State<ResponsibleUseSheet> {
+  final _scrollController = ScrollController();
+
+  /// Whether the reader has had the whole policy on screen.
+  ///
+  /// Latched: once it is true it stays true. Re-locking somebody who has
+  /// already read everything because they rotated the phone would be hostile,
+  /// and the thing worth preventing is a button that can never be reached.
+  var _reachedEnd = false;
+
+  /// Whether the "scroll to the end" hint is showing.
+  var _showHint = false;
+
+  /// How close to the bottom counts as the bottom.
+  ///
+  /// Scroll offsets are doubles produced by layout arithmetic, so `pixels ==
+  /// maxScrollExtent` is not reliably true even when the reader is visibly at
+  /// the end — a fraction of a logical pixel would otherwise leave the button
+  /// locked forever with nothing left to scroll.
+  static const double _endSlack = 2;
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// True when there is nothing left to read below the fold.
+  bool _isAtEnd(ScrollMetrics metrics) =>
+      // Content that fits has no scroll extent at all, which is the "already
+      // fits" case: there is nothing to scroll, so nothing to wait for.
+      metrics.maxScrollExtent <= _endSlack ||
+      metrics.pixels >= metrics.maxScrollExtent - _endSlack;
+
+  void _markEndIfReached(ScrollMetrics metrics) {
+    if (_reachedEnd || !_isAtEnd(metrics)) return;
+    setState(() {
+      _reachedEnd = true;
+      _showHint = false;
+    });
+  }
+
+  /// Re-measures after the frame that laid the content out.
+  ///
+  /// Scheduled from `build`, so it re-runs after anything that can change how
+  /// much there is to scroll — a resize, a rotation, a text-scale change, a
+  /// language with longer copy — without needing to know which of those it
+  /// was. It stops scheduling once the end has been reached.
+  void _scheduleRemeasure() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _reachedEnd || !_scrollController.hasClients) return;
+      _markEndIfReached(_scrollController.position);
+    });
+  }
+
+  void _hideHint() {
+    if (!_showHint) return;
+    setState(() => _showHint = false);
+  }
+
+  /// The locked button's only effect: say why it is locked.
+  ///
+  /// Deliberately not a disabled button. A disabled control gives a reader no
+  /// explanation and no way to ask for one, and on a screen whose whole point
+  /// is that the policy was read, "nothing happens" is the worst answer.
+  void _explainWhyLocked() => setState(() => _showHint = true);
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final maxHeight = mediaQuery.size.height * 0.88;
+    final gated = widget.isFirstTimeAcknowledgement && !_reachedEnd;
+    if (widget.isFirstTimeAcknowledgement && !_reachedEnd) {
+      _scheduleRemeasure();
+    }
 
-    return Container(
-      key: const Key('responsible_use_sheet'),
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      decoration: BoxDecoration(
-        color: CompassColors.raised,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(color: CompassColors.line),
-        boxShadow: const [
-          BoxShadow(color: Colors.black54, blurRadius: 32, spreadRadius: 4),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          // Handle bar
-          Container(
-            width: 42,
-            height: 4,
-            decoration: BoxDecoration(
-              color: Colors.white24,
-              borderRadius: BorderRadius.circular(2),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 4, 22, 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Emblem icon
-                  Center(
-                    child: Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withValues(alpha: 0.07),
-                        border: Border.all(
-                          color: CompassColors.gold.withValues(alpha: 0.4),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.shield_outlined,
-                        color: CompassColors.gold,
-                        size: 28,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 14),
-                  Text(
-                    l10n.safetyHeading,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: CompassColors.gold,
-                      letterSpacing: trackingFor(context, 2.0),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    l10n.safetyTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium,
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    l10n.safetyIntro,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: CompassColors.secondary,
-                      height: 1.45,
-                    ),
-                  ),
-                  const SizedBox(height: 22),
-
-                  // Guardrails header
-                  Text(
-                    l10n.prohibitedUses,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: CompassColors.coral,
-                      letterSpacing: trackingFor(context, 1.5),
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // The seven boundaries. The order is fixed so a reader who
-                  // has seen this before finds the same one in the same place
-                  // whatever language they are reading it in.
-                  _GuardrailTile(
-                    icon: Icons.dangerous_rounded,
-                    title: l10n.harmTitle,
-                    detail: l10n.harmDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.directions_car_rounded,
-                    title: l10n.navigationTitle,
-                    detail: l10n.navigationDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.balance_rounded,
-                    title: l10n.politicsTitle,
-                    detail: l10n.politicsDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.local_hospital_rounded,
-                    title: l10n.medicalTitle,
-                    detail: l10n.medicalDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.gavel_rounded,
-                    title: l10n.legalTitle,
-                    detail: l10n.legalDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.trending_down_rounded,
-                    title: l10n.financeTitle,
-                    detail: l10n.financeDetail,
-                  ),
-                  _GuardrailTile(
-                    icon: Icons.people_outline_rounded,
-                    title: l10n.consentTitle,
-                    detail: l10n.consentDetail,
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  Container(
-                    key: const Key('important_limits'),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.white12),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.info_outline_rounded,
-                              size: 16,
-                              color: CompassColors.gold,
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                l10n.importantLimitsHeading,
-                                style: Theme.of(context).textTheme.labelSmall
-                                    ?.copyWith(
-                                      color: CompassColors.gold,
-                                      letterSpacing: trackingFor(context, 1.2),
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.importantLimitsBody,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(color: Colors.white70, height: 1.5),
-                        ),
-                        if (!isFirstTimeAcknowledgement) ...[
-                          const Divider(height: 18, color: Colors.white12),
-                          Text(
-                            l10n.crisisSupport,
-                            key: const Key('crisis_support'),
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: CompassColors.blueLight,
-                                  height: 1.45,
-                                ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                ],
+    return GestureDetector(
+      // A tap anywhere that is not the button dismisses the hint. Translucent
+      // so the content underneath still receives its own taps and scrolls.
+      behavior: HitTestBehavior.translucent,
+      onTap: _hideHint,
+      child: Container(
+        key: const Key('responsible_use_sheet'),
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        decoration: BoxDecoration(
+          color: CompassColors.raised,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(color: CompassColors.line),
+          boxShadow: const [
+            BoxShadow(color: Colors.black54, blurRadius: 32, spreadRadius: 4),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 12),
+            // Handle bar
+            Container(
+              width: 42,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
               ),
             ),
-          ),
-          // Pinned bottom action bar
-          Container(
-            padding: const EdgeInsets.fromLTRB(22, 10, 22, 14),
-            decoration: const BoxDecoration(
-              color: CompassColors.raised,
-              border: Border(top: BorderSide(color: Colors.white10)),
-            ),
-            child: SafeArea(
-              top: false,
-              child: isFirstTimeAcknowledgement
-                  ? Column(
-                      mainAxisSize: MainAxisSize.min,
+            const SizedBox(height: 16),
+            Expanded(
+              child: NotificationListener<ScrollMetricsNotification>(
+                // Fires when the amount there is to scroll changes without the
+                // reader scrolling — a rotation, a text-scale change — which is
+                // the case `_scheduleRemeasure` would otherwise have to guess at.
+                onNotification: (notification) {
+                  _markEndIfReached(notification.metrics);
+                  return false;
+                },
+                child: NotificationListener<ScrollNotification>(
+                  onNotification: (notification) {
+                    // Starting to scroll is an answer to the hint, so it goes.
+                    if (notification is ScrollStartNotification) _hideHint();
+                    _markEndIfReached(notification.metrics);
+                    return false;
+                  },
+                  child: SingleChildScrollView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.fromLTRB(22, 4, 22, 24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        FilledButton(
-                          key: const Key('agree_safety_boundaries'),
-                          onPressed: () => Navigator.of(context).pop(true),
-                          child: Text(
-                            l10n.acknowledge,
-                            textAlign: TextAlign.center,
+                        // Emblem icon
+                        Center(
+                          child: Container(
+                            width: 58,
+                            height: 58,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.07),
+                              border: Border.all(
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.4,
+                                ),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: const Icon(
+                              Icons.shield_outlined,
+                              color: CompassColors.gold,
+                              size: 28,
+                            ),
                           ),
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          l10n.safetyHeading,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: CompassColors.gold,
+                                letterSpacing: trackingFor(context, 2.0),
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
                         const SizedBox(height: 6),
                         Text(
-                          l10n.acknowledgementOnce,
+                          l10n.safetyTitle,
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall
+                          style: Theme.of(context).textTheme.headlineMedium,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          l10n.safetyIntro,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
-                                color: CompassColors.muted,
-                                fontSize: 11,
+                                color: CompassColors.secondary,
+                                height: 1.45,
                               ),
                         ),
-                      ],
-                    )
-                  : OutlinedButton(
-                      key: const Key('close_safety_sheet'),
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: OutlinedButton.styleFrom(
-                        minimumSize: const Size.fromHeight(50),
-                        side: const BorderSide(color: Colors.white24),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                        const SizedBox(height: 22),
+
+                        // Guardrails header
+                        Text(
+                          l10n.prohibitedUses,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: CompassColors.coral,
+                                letterSpacing: trackingFor(context, 1.5),
+                                fontWeight: FontWeight.w700,
+                              ),
                         ),
-                      ),
-                      child: Text(l10n.closeAction),
+                        const SizedBox(height: 10),
+
+                        // The seven boundaries. The order is fixed so a reader who
+                        // has seen this before finds the same one in the same place
+                        // whatever language they are reading it in.
+                        _GuardrailTile(
+                          icon: Icons.dangerous_rounded,
+                          title: l10n.harmTitle,
+                          detail: l10n.harmDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.directions_car_rounded,
+                          title: l10n.navigationTitle,
+                          detail: l10n.navigationDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.balance_rounded,
+                          title: l10n.politicsTitle,
+                          detail: l10n.politicsDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.local_hospital_rounded,
+                          title: l10n.medicalTitle,
+                          detail: l10n.medicalDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.gavel_rounded,
+                          title: l10n.legalTitle,
+                          detail: l10n.legalDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.trending_down_rounded,
+                          title: l10n.financeTitle,
+                          detail: l10n.financeDetail,
+                        ),
+                        _GuardrailTile(
+                          icon: Icons.people_outline_rounded,
+                          title: l10n.consentTitle,
+                          detail: l10n.consentDetail,
+                        ),
+
+                        const SizedBox(height: 16),
+
+                        Container(
+                          key: const Key('important_limits'),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.04),
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(color: Colors.white12),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  const Icon(
+                                    Icons.info_outline_rounded,
+                                    size: 16,
+                                    color: CompassColors.gold,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      l10n.importantLimitsHeading,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelSmall
+                                          ?.copyWith(
+                                            color: CompassColors.gold,
+                                            letterSpacing: trackingFor(
+                                              context,
+                                              1.2,
+                                            ),
+                                            fontWeight: FontWeight.w700,
+                                          ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                l10n.importantLimitsBody,
+                                style: Theme.of(context).textTheme.bodySmall
+                                    ?.copyWith(
+                                      color: Colors.white70,
+                                      height: 1.5,
+                                    ),
+                              ),
+                              if (!widget.isFirstTimeAcknowledgement) ...[
+                                const Divider(
+                                  height: 18,
+                                  color: Colors.white12,
+                                ),
+                                Text(
+                                  l10n.crisisSupport,
+                                  key: const Key('crisis_support'),
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: CompassColors.blueLight,
+                                        height: 1.45,
+                                      ),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ],
+            // Pinned bottom action bar
+            Container(
+              padding: const EdgeInsets.fromLTRB(22, 10, 22, 14),
+              decoration: const BoxDecoration(
+                color: CompassColors.raised,
+                border: Border(top: BorderSide(color: Colors.white10)),
+              ),
+              child: SafeArea(
+                top: false,
+                child: widget.isFirstTimeAcknowledgement
+                    ? Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Above the button, where a reader looking at the
+                          // button will already be looking.
+                          if (_showHint)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Semantics(
+                                // One node carrying both the words and the
+                                // flag. `Semantics(liveRegion: true)` wrapped
+                                // around a Text produces two nodes — the words
+                                // on one, the flag on the other — and a screen
+                                // reader announces neither as an update.
+                                // `container: true` is load-bearing: without
+                                // it `Semantics` annotates the parent's node
+                                // instead of making one, so the live region
+                                // ends up covering the fixed line below as
+                                // well and a screen reader re-announces that
+                                // line every time the hint appears.
+                                container: true,
+                                liveRegion: true,
+                                label: l10n.safetyScrollToContinue,
+                                excludeSemantics: true,
+                                child: Text(
+                                  l10n.safetyScrollToContinue,
+                                  key: const Key('safety_scroll_hint'),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: CompassColors.gold,
+                                        height: 1.35,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          _AgreeButton(
+                            gated: gated,
+                            label: l10n.acknowledge,
+                            lockedHint: l10n.safetyScrollToContinue,
+                            onLockedTap: _explainWhyLocked,
+                            onAgree: () => Navigator.of(context).pop(true),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            l10n.acknowledgementOnce,
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: CompassColors.muted,
+                                  fontSize: 11,
+                                ),
+                          ),
+                        ],
+                      )
+                    : OutlinedButton(
+                        key: const Key('close_safety_sheet'),
+                        onPressed: () => Navigator.of(context).pop(),
+                        style: OutlinedButton.styleFrom(
+                          minimumSize: const Size.fromHeight(50),
+                          side: const BorderSide(color: Colors.white24),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                        ),
+                        child: Text(l10n.closeAction),
+                      ),
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+/// The acknowledgement button, in its locked and unlocked forms.
+///
+/// Locked, it is still a real tappable control — that tap is the only way to
+/// be told why it is locked — but its semantics are *replaced* rather than
+/// wrapped. Wrapping leaves the button's own node reporting `enabled: true`
+/// beside an ancestor node saying otherwise, and a screen reader reads the
+/// button's. Replacing them makes what assistive technology hears match what
+/// the control looks like and what it actually does.
+class _AgreeButton extends StatelessWidget {
+  const _AgreeButton({
+    required this.gated,
+    required this.label,
+    required this.lockedHint,
+    required this.onLockedTap,
+    required this.onAgree,
+  });
+
+  final bool gated;
+  final String label;
+  final String lockedHint;
+  final VoidCallback onLockedTap;
+  final VoidCallback onAgree;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = FilledButton(
+      key: const Key('agree_safety_boundaries'),
+      style: gated
+          ? FilledButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: 0.10),
+              foregroundColor: CompassColors.muted,
+            )
+          : null,
+      onPressed: gated ? onLockedTap : onAgree,
+      child: Text(label, textAlign: TextAlign.center),
+    );
+    if (!gated) return button;
+    return Semantics(
+      button: true,
+      enabled: false,
+      label: label,
+      hint: lockedHint,
+      onTap: onLockedTap,
+      excludeSemantics: true,
+      child: button,
     );
   }
 }

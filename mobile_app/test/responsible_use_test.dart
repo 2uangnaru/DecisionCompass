@@ -85,9 +85,25 @@ void main() {
       expect(find.textContaining('100%'), findsNothing);
       expect(find.text('LEGAL DISCLAIMER & AGE NOTICE'), findsNothing);
 
-      // Accept agreement
+      // Accept agreement. The first-time button is locked until the policy
+      // has been on screen, so this now has to scroll to the end the way a
+      // reader would — tapping it before that only asks why it is locked.
       final agreeButton = find.byKey(const Key('agree_safety_boundaries'));
       expect(agreeButton, findsOneWidget);
+      for (var i = 0; i < 12; i++) {
+        await tester.drag(
+          find.byType(SingleChildScrollView).first,
+          const Offset(0, -600),
+          warnIfMissed: false,
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 300));
+      }
+      expect(
+        find.byKey(const Key('safety_scroll_hint')),
+        findsNothing,
+        reason: 'still gated after scrolling to the end',
+      );
       await tester.tap(agreeButton);
       await tester.pump(const Duration(milliseconds: 380));
       await tester.pump();

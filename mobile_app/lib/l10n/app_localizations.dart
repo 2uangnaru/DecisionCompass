@@ -913,6 +913,12 @@ abstract class AppLocalizations {
   /// **'This acknowledgement appears once before your first reading.'**
   String get acknowledgementOnce;
 
+  /// Shown just above the first-time acknowledgement button while the safety content has not been scrolled to the end. Also the button's accessibility hint while it is locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to the end and read everything to continue.'**
+  String get safetyScrollToContinue;
+
   /// No description provided for @knowBirthTime.
   ///
   /// In en, this message translates to:

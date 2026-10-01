@@ -444,6 +444,10 @@ class AppLocalizationsTh extends AppLocalizations {
       'การยืนยันนี้จะแสดงเพียงครั้งเดียวก่อนการอ่านครั้งแรก';
 
   @override
+  String get safetyScrollToContinue =>
+      'เลื่อนลงไปจนสุดและอ่านเนื้อหาทั้งหมดเพื่อดำเนินการต่อ';
+
+  @override
   String get knowBirthTime => 'ฉันทราบเวลาเกิดของฉัน';
 
   @override

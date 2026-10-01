@@ -447,6 +447,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This acknowledgement appears once before your first reading.';
 
   @override
+  String get safetyScrollToContinue =>
+      'Scroll to the end and read everything to continue.';
+
+  @override
   String get knowBirthTime => 'I know my birth time';
 
   @override

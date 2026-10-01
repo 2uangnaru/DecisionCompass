@@ -449,6 +449,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esta confirmación aparece una sola vez antes de tu primera lectura.';
 
   @override
+  String get safetyScrollToContinue =>
+      'Desplázate hasta el final y lee todo el contenido para continuar.';
+
+  @override
   String get knowBirthTime => 'Sé mi hora de nacimiento';
 
   @override
