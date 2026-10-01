@@ -67,7 +67,16 @@ try {
         $generated[$icon.filename] = $true
     }
 
-    Write-Output "Generated $($androidSizes.Count) Android and $($generated.Count) iOS launcher icons."
+    $webIcons = Join-Path $appRoot 'web/icons'
+    if (Test-Path $webIcons) {
+        Write-Icon (Join-Path $webIcons 'Icon-192.png') 192
+        Write-Icon (Join-Path $webIcons 'Icon-512.png') 512
+        Write-Icon (Join-Path $webIcons 'Icon-maskable-192.png') 192
+        Write-Icon (Join-Path $webIcons 'Icon-maskable-512.png') 512
+        Write-Icon (Join-Path $appRoot 'web/favicon.png') 16
+    }
+
+    Write-Output "Generated $($androidSizes.Count) Android, $($generated.Count) iOS launcher icons, and Web icons."
 } finally {
     $source.Dispose()
 }
