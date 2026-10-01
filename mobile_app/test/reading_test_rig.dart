@@ -82,7 +82,6 @@ class ReadingTestRig {
   /// the clock at all.
   static final _beforeEveryPeriod = DateTime(2026, 9, 18, 8, 30);
 
-
   final FakeReadingRepository repository;
   final FixedCurrentContextProvider contextProvider;
   final InMemoryHistoryRepository historyRepository =
@@ -224,9 +223,7 @@ Future<void> loadBundledFonts() async {
     final loader = FontLoader(entry.key);
     for (final path in entry.value) {
       loader.addFont(
-        Future.value(
-          ByteData.sublistView(File(path).readAsBytesSync()),
-        ),
+        Future.value(ByteData.sublistView(File(path).readAsBytesSync())),
       );
     }
     await loader.load();
@@ -318,10 +315,31 @@ Future<void> pickBirthTimeByTyping(WidgetTester tester, TimeOfDay time) async {
 
 /// Chooses [time] in an already-open dialog, without confirming it.
 Future<void> chooseTimeInDialog(WidgetTester tester, TimeOfDay time) async {
-  await tester.tap(find.byKey(Key('birth_time_hour_${time.hourOfPeriod}')));
-  await tester.pumpAndSettle();
-  await tester.tap(find.byKey(Key('birth_time_minute_${time.minute}')));
-  await tester.pumpAndSettle();
+  if (find.byKey(const Key('birth_time_type_tab')).evaluate().isNotEmpty) {
+    await tester.tap(find.byKey(const Key('birth_time_type_tab')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('birth_time_hour_field')),
+      '${time.hourOfPeriod}',
+    );
+    await tester.enterText(
+      find.byKey(const Key('birth_time_minute_field')),
+      time.minute.toString().padLeft(2, '0'),
+    );
+    await tester.pumpAndSettle();
+    await tapDayPeriod(tester, time.period);
+    return;
+  }
+  final hourFinder = find.byKey(Key('birth_time_hour_${time.hourOfPeriod}'));
+  if (hourFinder.evaluate().isNotEmpty) {
+    await tester.tap(hourFinder.first);
+    await tester.pumpAndSettle();
+  }
+  final minuteFinder = find.byKey(Key('birth_time_minute_${time.minute}'));
+  if (minuteFinder.evaluate().isNotEmpty) {
+    await tester.tap(minuteFinder.first);
+    await tester.pumpAndSettle();
+  }
   await tapDayPeriod(tester, time.period);
 }
 
