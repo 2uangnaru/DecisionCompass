@@ -244,4 +244,17 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets(
+    'displays Vietnamese Con Giap and Can Chi for the selected date',
+    (tester) async {
+      await openPicker(
+        tester,
+        initialDate: DateTime(1998, 8, 25),
+        locale: const Locale('vi'),
+      );
+      expect(find.textContaining('Tuổi Mậu Dần'), findsOneWidget);
+      expect(find.textContaining('Hổ'), findsOneWidget);
+    },
+  );
 }
