@@ -231,18 +231,17 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
 
   int get _yearPlaceholderIndex => _anchorYear - 1900;
 
-  List<String> get _yearItems {
-    final lastYear = _lastDate.year;
-    final items = <String>[];
-    for (int y = 1900; y < _anchorYear; y++) {
-      items.add(y.toString());
-    }
-    items.add('----');
-    for (int y = _anchorYear; y <= lastYear; y++) {
-      items.add(y.toString());
-    }
-    return items;
-  }
+  static final List<String> _fullMonthItems = [
+    '--',
+    for (int i = 1; i <= 12; i++) i.toString().padLeft(2, '0'),
+  ];
+
+  static final List<String> _fullDayItems = [
+    '--',
+    for (int i = 1; i <= 31; i++) i.toString().padLeft(2, '0'),
+  ];
+
+  late final List<String> _yearItems;
 
   int _yearToIndex(int year) {
     if (year < _anchorYear) {
@@ -264,10 +263,9 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   int get _currentMonthCount =>
       _selectedYear == _lastDate.year ? _lastDate.month : 12;
 
-  List<String> get _monthItems => [
-    '--',
-    for (int i = 1; i <= _currentMonthCount; i++) i.toString().padLeft(2, '0'),
-  ];
+  List<String> get _monthItems => _currentMonthCount == 12
+      ? _fullMonthItems
+      : _fullMonthItems.sublist(0, _currentMonthCount + 1);
 
   int? _indexToMonth(int index, int count) {
     final trueIndex = (index % count + count) % count;
@@ -280,10 +278,9 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     return _dayCount(year, month);
   }
 
-  List<String> get _dayItems => [
-    '--',
-    for (int i = 1; i <= _currentDayCount; i++) i.toString().padLeft(2, '0'),
-  ];
+  List<String> get _dayItems => _currentDayCount == 31
+      ? _fullDayItems
+      : _fullDayItems.sublist(0, _currentDayCount + 1);
 
   int? _indexToDay(int index, int count) {
     final trueIndex = (index % count + count) % count;
@@ -293,6 +290,17 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   @override
   void initState() {
     super.initState();
+    final lastYear = _lastDate.year;
+    final items = <String>[];
+    for (int y = 1900; y < _anchorYear; y++) {
+      items.add(y.toString());
+    }
+    items.add('----');
+    for (int y = _anchorYear; y <= lastYear; y++) {
+      items.add(y.toString());
+    }
+    _yearItems = List.unmodifiable(items);
+
     final initial = widget.initialDate;
     final today = DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
     final adopted =
@@ -508,8 +516,6 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
       key: key,
       scrollController: controller,
       itemExtent: 44,
-      useMagnifier: true,
-      magnification: 1.07,
       selectionOverlay: null,
       looping: looping,
       onSelectedItemChanged: onSelected,
@@ -696,85 +702,82 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Container(
-                                height: 46,
-                                decoration: BoxDecoration(
-                                  color: CompassColors.gold.withValues(
-                                    alpha: 0.08,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: CompassColors.gold.withValues(
-                                      alpha: 0.45,
+                              Row(
+                                children: [
+                                  _wheelColumn(
+                                    key: const Key('birth_date_day_wheel'),
+                                    controller: _dayWheel,
+                                    items: _dayItems,
+                                    onSelected: (i) => _chooseDay(
+                                      _indexToDay(i, _dayItems.length),
                                     ),
-                                    width: 1.2,
+                                    label: l10n.birthDay,
+                                    placeholder: 'DD',
+                                    looping: true,
+                                  ),
+                                  _wheelColumn(
+                                    key: const Key(
+                                      'birth_date_month_wheel',
+                                    ),
+                                    controller: _monthWheel,
+                                    items: _monthItems,
+                                    onSelected: (i) => _chooseMonth(
+                                      _indexToMonth(i, _monthItems.length),
+                                    ),
+                                    label: l10n.birthMonth,
+                                    placeholder: 'MM',
+                                    looping: true,
+                                  ),
+                                  _wheelColumn(
+                                    key: const Key('birth_date_year_wheel'),
+                                    controller: _yearWheel,
+                                    items: _yearItems,
+                                    onSelected: (i) =>
+                                        _chooseYear(_indexToYear(i)),
+                                    label: l10n.birthYear,
+                                    placeholder: 'YYYY',
+                                    looping: false,
+                                  ),
+                                ],
+                              ),
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          CompassColors.raised,
+                                          CompassColors.raised.withValues(
+                                            alpha: 0.0,
+                                          ),
+                                          CompassColors.raised.withValues(
+                                            alpha: 0.0,
+                                          ),
+                                          CompassColors.raised,
+                                        ],
+                                        stops: const [0.0, 0.22, 0.78, 1.0],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                              // A drag on any column is an answer, even one
-                              // that settles back where it started. Without
-                              // this, a reader born on the anchor date would
-                              // have to scroll away and back to be allowed to
-                              // confirm it; `onSelectedItemChanged` only
-                              // fires when the landing index differs.
-                              // `dragDetails` is what separates a finger from
-                              // the `jumpToItem` calls the columns make on
-                              // each other when a month shortens.
-                              //
-                              // Outside the fade: a ShaderMask paints, it does
-                              // not absorb scroll notifications, so the order
-                              // is only about keeping the two concerns apart.
-                              ShaderMask(
-                                shaderCallback: (bounds) =>
-                                    const LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black,
-                                        Colors.black,
-                                        Colors.transparent,
-                                      ],
-                                      stops: [0.0, 0.2, 0.8, 1.0],
-                                    ).createShader(bounds),
-                                blendMode: BlendMode.dstIn,
-                                child: Row(
-                                  children: [
-                                    _wheelColumn(
-                                      key: const Key('birth_date_day_wheel'),
-                                      controller: _dayWheel,
-                                      items: _dayItems,
-                                      onSelected: (i) => _chooseDay(
-                                        _indexToDay(i, _dayItems.length),
-                                      ),
-                                      label: l10n.birthDay,
-                                      placeholder: 'DD',
-                                      looping: true,
+                              IgnorePointer(
+                                child: Container(
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: CompassColors.gold.withValues(
+                                      alpha: 0.08,
                                     ),
-                                    _wheelColumn(
-                                      key: const Key(
-                                        'birth_date_month_wheel',
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: CompassColors.gold.withValues(
+                                        alpha: 0.45,
                                       ),
-                                      controller: _monthWheel,
-                                      items: _monthItems,
-                                      onSelected: (i) => _chooseMonth(
-                                        _indexToMonth(i, _monthItems.length),
-                                      ),
-                                      label: l10n.birthMonth,
-                                      placeholder: 'MM',
-                                      looping: true,
+                                      width: 1.2,
                                     ),
-                                    _wheelColumn(
-                                      key: const Key('birth_date_year_wheel'),
-                                      controller: _yearWheel,
-                                      items: _yearItems,
-                                      onSelected: (i) =>
-                                          _chooseYear(_indexToYear(i)),
-                                      label: l10n.birthYear,
-                                      placeholder: 'YYYY',
-                                      looping: false,
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ],

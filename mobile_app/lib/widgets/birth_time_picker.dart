@@ -266,21 +266,25 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   bool get _manualValid => _manualHour24 != null && _manualMinuteValue != null;
 
-  List<String> get _hourItems => [
+  static final List<String> _staticHourItems = [
     '--',
     for (int i = 1; i <= 12; i++) i.toString().padLeft(2, '0'),
   ];
 
-  List<String> get _minuteItems => [
+  static final List<String> _staticMinuteItems = [
     '--',
     for (int i = 0; i <= 59; i++) i.toString().padLeft(2, '0'),
   ];
 
-  List<String> _periodItems(bool isVi) => [
-    '--',
-    isVi ? 'Sáng' : 'AM',
-    isVi ? 'Tối' : 'PM',
-  ];
+  static const List<String> _staticPeriodItemsVi = ['--', 'Sáng', 'Tối'];
+  static const List<String> _staticPeriodItemsEn = ['--', 'AM', 'PM'];
+
+  List<String> get _hourItems => _staticHourItems;
+
+  List<String> get _minuteItems => _staticMinuteItems;
+
+  List<String> _periodItems(bool isVi) =>
+      isVi ? _staticPeriodItemsVi : _staticPeriodItemsEn;
 
   void _chooseHour(int index) {
     final count = _hourItems.length;
@@ -415,8 +419,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
       key: key,
       scrollController: controller,
       itemExtent: 44,
-      useMagnifier: true,
-      magnification: 1.07,
       selectionOverlay: null,
       looping: looping,
       onSelectedItemChanged: onSelected,
@@ -621,76 +623,86 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                           child: Stack(
                             alignment: Alignment.center,
                             children: [
-                              Container(
-                                height: 46,
-                                decoration: BoxDecoration(
-                                  color: CompassColors.gold.withValues(
-                                    alpha: 0.08,
+                              Row(
+                                children: [
+                                  _wheelColumn(
+                                    key: const Key('birth_time_hour_wheel'),
+                                    controller: _hourWheel,
+                                    items: _hourItems,
+                                    onSelected: _chooseHour,
+                                    label: isVi ? 'Giờ' : 'Hour',
+                                    placeholder: 'HH',
+                                    looping: true,
+                                    itemKeyBuilder: (i, item) => i == 0
+                                        ? null
+                                        : Key('birth_time_hour_$i'),
                                   ),
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(
-                                    color: CompassColors.gold.withValues(
-                                      alpha: 0.45,
+                                  _wheelColumn(
+                                    key: const Key('birth_time_minute_wheel'),
+                                    controller: _minuteWheel,
+                                    items: _minuteItems,
+                                    onSelected: _chooseMinute,
+                                    label: isVi ? 'Phút' : 'Minute',
+                                    placeholder: 'MM',
+                                    looping: true,
+                                    itemKeyBuilder: (i, item) => i == 0
+                                        ? null
+                                        : Key('birth_time_minute_${i - 1}'),
+                                  ),
+                                  _wheelColumn(
+                                    key: const Key('birth_time_period_wheel'),
+                                    controller: _periodWheel,
+                                    items: _periodItems(isVi),
+                                    onSelected: _choosePeriod,
+                                    label: isVi ? 'Buổi' : 'Period',
+                                    placeholder: 'AM/PM',
+                                    looping: false,
+                                    itemKeyBuilder: (i, item) => i == 1
+                                        ? const Key('birth_time_am')
+                                        : (i == 2
+                                            ? const Key('birth_time_pm')
+                                            : null),
+                                  ),
+                                ],
+                              ),
+                              Positioned.fill(
+                                child: IgnorePointer(
+                                  child: DecoratedBox(
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          CompassColors.raised,
+                                          CompassColors.raised.withValues(
+                                            alpha: 0.0,
+                                          ),
+                                          CompassColors.raised.withValues(
+                                            alpha: 0.0,
+                                          ),
+                                          CompassColors.raised,
+                                        ],
+                                        stops: const [0.0, 0.22, 0.78, 1.0],
+                                      ),
                                     ),
-                                    width: 1.2,
                                   ),
                                 ),
                               ),
-                              ShaderMask(
-                                shaderCallback: (bounds) =>
-                                    const LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black,
-                                        Colors.black,
-                                        Colors.transparent,
-                                      ],
-                                      stops: [0.0, 0.2, 0.8, 1.0],
-                                    ).createShader(bounds),
-                                blendMode: BlendMode.dstIn,
-                                child: Row(
-                                  children: [
-                                    _wheelColumn(
-                                      key: const Key('birth_time_hour_wheel'),
-                                      controller: _hourWheel,
-                                      items: _hourItems,
-                                      onSelected: _chooseHour,
-                                      label: isVi ? 'Giờ' : 'Hour',
-                                      placeholder: 'HH',
-                                      looping: true,
-                                      itemKeyBuilder: (i, item) => i == 0
-                                          ? null
-                                          : Key('birth_time_hour_$i'),
+                              IgnorePointer(
+                                child: Container(
+                                  height: 46,
+                                  decoration: BoxDecoration(
+                                    color: CompassColors.gold.withValues(
+                                      alpha: 0.08,
                                     ),
-                                    _wheelColumn(
-                                      key: const Key('birth_time_minute_wheel'),
-                                      controller: _minuteWheel,
-                                      items: _minuteItems,
-                                      onSelected: _chooseMinute,
-                                      label: isVi ? 'Phút' : 'Minute',
-                                      placeholder: 'MM',
-                                      looping: true,
-                                      itemKeyBuilder: (i, item) => i == 0
-                                          ? null
-                                          : Key('birth_time_minute_${i - 1}'),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(
+                                      color: CompassColors.gold.withValues(
+                                        alpha: 0.45,
+                                      ),
+                                      width: 1.2,
                                     ),
-                                    _wheelColumn(
-                                      key: const Key('birth_time_period_wheel'),
-                                      controller: _periodWheel,
-                                      items: _periodItems(isVi),
-                                      onSelected: _choosePeriod,
-                                      label: isVi ? 'Buổi' : 'Period',
-                                      placeholder: 'AM/PM',
-                                      looping: false,
-                                      itemKeyBuilder: (i, item) => i == 1
-                                          ? const Key('birth_time_am')
-                                          : (i == 2
-                                              ? const Key('birth_time_pm')
-                                              : null),
-                                    ),
-                                  ],
+                                  ),
                                 ),
                               ),
                             ],
