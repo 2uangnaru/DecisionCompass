@@ -20,6 +20,8 @@
   "birthDay": "日",
   "birthMonth": "月",
   "birthYear": "年",
+  "birthDateScroll": "滚动",
+  "birthDateType": "输入",
   "birthDateInvalid": "请输入 1900 年至今天之间的有效日期。",
   "birthTimeUnknown": "出生时间未知",
   "birthTimeUnknownDetail": "若不知出生时间，算法将采用与你性格最契合的时段进行测算。",

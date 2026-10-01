@@ -235,6 +235,18 @@ abstract class AppLocalizations {
   /// **'Year'**
   String get birthYear;
 
+  /// No description provided for @birthDateScroll.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll'**
+  String get birthDateScroll;
+
+  /// No description provided for @birthDateType.
+  ///
+  /// In en, this message translates to:
+  /// **'Type'**
+  String get birthDateType;
+
   /// No description provided for @birthDateInvalid.
   ///
   /// In en, this message translates to:

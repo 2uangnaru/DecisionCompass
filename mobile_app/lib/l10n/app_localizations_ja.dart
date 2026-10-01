@@ -70,6 +70,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get birthYear => '年';
 
   @override
+  String get birthDateScroll => 'スクロール';
+
+  @override
+  String get birthDateType => '入力';
+
+  @override
   String get birthDateInvalid => '1900年から今日までの有効な日付を入力してください。';
 
   @override

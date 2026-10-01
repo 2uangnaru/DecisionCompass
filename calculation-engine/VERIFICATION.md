@@ -15,6 +15,128 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.4 — where the cutoff is enforced — 2026-10-01
+
+No engine change. Engine **4.2.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.3-experimental`**, scales
+`v9.3-cohort-2026-09-30`, all unchanged. Everything below is about the app and
+the boundary between the two.
+
+### An unresolved time zone was being read as "every period is fine"
+
+v9.3 resolved the reader's IANA zone once when the ritual screen opened and,
+until it arrived, offered every period. The reasoning recorded at the time was
+that muting a period on a clock the app cannot read is worse than offering it.
+That was the wrong way round. How much of Morning is left is a question about
+the reader's clock; an app that has not read that clock does not have an
+answer, and offering the period anyway is an answer — it says "there is time",
+on the strength of never having looked.
+
+Three states now, and the chip says which: the lookup is in flight
+(*"Checking time zone"*), it failed (*"Time zone unknown"*, with the reason and
+a Try Again control beneath the chips), or it resolved. In the first two, named
+periods cannot be selected and cannot be revealed. **NOW is unaffected in every
+state** — it is the instant of the tap, it has no end, and it needs no clock
+but that one. A reader whose device cannot name its zone can still take a
+reading; they just cannot ask about a part of a day the app cannot measure.
+
+When the zone does resolve, every chip is re-rendered and a selection that has
+since closed drops to NOW with the explanation v9.3 already had.
+
+One production bug came out of writing this. `DeviceCurrentContextProvider`
+resolved the zone through one private helper that returns `'UTC'` when the
+platform cannot name itself. For `capture()` that is right: a reading has to be
+possible. For `currentTimezone()` — which exists only so the ritual screen can
+measure local periods — it meant a failed lookup produced a *valid* zone that
+was not the reader's, silently. Periods would then be withdrawn and offered by
+a clock up to thirteen hours out, with nothing on screen to say so.
+`currentTimezone()` now lets the failure surface, which is what makes the
+state above reachable at all; `capture()` keeps its fallback.
+
+### The cutoff is a product rule, so it is enforced above the engine
+
+Stated plainly, because v9.3 left it implicit:
+
+- **The engine does not know about the cutoff and must not.** It is a pure
+  function of its inputs and will answer for any instant it is given. That is
+  the only reason a reading saved months ago can be replayed, and the only
+  reason the 16 fixtures and the parity suite work at all. A "too little time
+  left today" refusal inside it would make the engine's own verification
+  depend on the hour it was run.
+- **`POST /v1/readings` is not a live entry point.** The shipped Android build
+  calculates on device through the Dart port; `mobile_app/lib/main.dart`
+  constructs `LocalReadingRepository` and never the HTTP one, whose own header
+  says it is a development artifact for regenerating fixtures. The server binds
+  127.0.0.1 only, with no auth. Its purpose is asking the engine what it
+  answers for a given instant, including instants long past. The rule is
+  therefore documented there rather than applied — see the header of
+  `src/server.js`.
+- **The app enforces it twice.** At the Reveal tap, against that tap's own
+  instant and a freshly read zone; and again in `LoadingPage._buildRequest`,
+  the single place in the app where a live reading request comes into
+  existence, against the timezone carried by the captured context — the one
+  the engine will actually resolve the reading in. The second is the one that
+  matters: the first is a check on a chip, the second is a check on the
+  request. Any future way into a live reading — a notification, a deep link, a
+  "read this again" — arrives at the second.
+
+A refusal there raises `ReadingApiFailureKind.periodClosed`, the only kind
+raised without a request leaving the app, and the error screen names the period
+and says whether it is over or merely short, in the reader's language. It
+offers no retry: retrying would re-check the same instant against the same
+clock.
+
+Nothing is ever silently substituted. A closed period becomes NOW with a notice
+naming it, never a different named period.
+
+### What the tests now cover
+
+`test/period_selection_test.dart` (32 tests): a lookup held open for two
+seconds; a lookup that fails and is retried successfully; a lookup that fails
+at the Reveal tap, where the zone read earlier is discarded rather than kept as
+a guess; and a Reveal on each of the four cutoff minutes exactly, with the chip
+painted a minute earlier and no frame in between, asserting that the repository
+was never called and no context was captured. Each is paired with the minute
+before, which still travels.
+
+`test/reading_entry_point_test.dart` (5 tests, new): the same rule at the
+request, with the ritual screen bypassed entirely — including one instant that
+is refused in Asia/Ho_Chi_Minh and sent in Pacific/Auckland, which is the
+captured zone deciding and not the host's.
+
+`test/font_coverage_test.dart` reads its inventory from `pubspec.yaml` instead
+of a hand-written copy. The copy had gone stale when the app's Latin family
+changed, so the suite was measuring Noto Sans under the new family's name and
+the family that had actually started drawing English, Vietnamese and Spanish
+was never checked. It also now asserts that every family the theme asks for is
+one the manifest bundles — a stack naming a family that is not declared renders
+in the platform's own font, and nothing else in the suite would say so.
+
+### Commands executed on 2026-10-01
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **191 passed, 0 failed** |
+| `node scripts/mobile-fixtures.mjs --check` | `All 16 engine fixtures match current engine output.` |
+| `flutter analyze` | **No issues found** |
+| `flutter test` | **822 passed, 0 failed** |
+
+The nine failures recorded in the v9.3 section are fixed: seven were the stale
+font inventory, and two were Home tests still asserting copy that commit
+`76d737c` had deliberately replaced. Both Home tests now assert the current
+localized copy *and* that the string it replaced is absent, rather than being
+deleted.
+
+### Not verified
+
+- **No physical Android device or emulator.** Every cutoff state, the two
+  disabled labels, the time-zone states and the retry control are verified by
+  widget tests only. That establishes the widget tree and its measured layout,
+  not what the pixels look like.
+- Predictive validity. None claimed, none tested.
+- The three new time-zone strings in seven languages are Claude's drafts, like
+  the guidance headlines before them.
+
 ## v9.3 — the timing signal, and a period cutoff — 2026-09-30
 
 Engine **4.2.0-mvp** / ruleset

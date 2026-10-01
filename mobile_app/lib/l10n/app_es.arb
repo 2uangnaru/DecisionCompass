@@ -20,6 +20,8 @@
   "birthDay": "Día",
   "birthMonth": "Mes",
   "birthYear": "Año",
+  "birthDateScroll": "Deslizar",
+  "birthDateType": "Escribir",
   "birthDateInvalid": "Introduce una fecha válida entre 1900 y hoy.",
   "birthTimeUnknown": "No sé mi hora de nacimiento",
   "birthTimeUnknownDetail": "Si no sabes tu hora de nacimiento, el algoritmo usará el horario más cercano a tu personalidad.",

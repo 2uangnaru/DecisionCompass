@@ -529,11 +529,15 @@ void main() {
       await tester.pumpAndSettle();
 
       final material = MaterialLocalizations.of(
-        tester.element(find.byKey(const Key('birth_date_dialog'))),
+        tester.element(find.byKey(const Key('birth_date_sheet'))),
       );
       expect(material.cancelButtonLabel, 'Cancelar');
       expect(find.text(material.cancelButtonLabel), findsOneWidget);
       final es = stringsFor(AppLocale.spanish);
+      expect(find.text(es.birthDateScroll), findsOneWidget);
+      expect(find.text(es.birthDateType), findsOneWidget);
+      await tester.tap(find.byKey(const Key('birth_date_type_tab')));
+      await tester.pumpAndSettle();
       expect(find.text(es.birthDay), findsOneWidget);
       expect(find.text(es.birthMonth), findsOneWidget);
       expect(find.text(es.birthYear), findsOneWidget);

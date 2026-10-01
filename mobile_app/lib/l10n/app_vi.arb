@@ -20,6 +20,8 @@
   "birthDay": "Ngày",
   "birthMonth": "Tháng",
   "birthYear": "Năm",
+  "birthDateScroll": "Cuộn",
+  "birthDateType": "Nhập tay",
   "birthDateInvalid": "Nhập ngày hợp lệ từ năm 1900 đến hôm nay.",
   "birthTimeUnknown": "Không rõ giờ sinh",
   "birthTimeUnknownDetail": "Nếu bạn không nhớ giờ sinh, thuật toán sẽ dùng khung giờ gần với tính cách bạn nhất để tính toán.",

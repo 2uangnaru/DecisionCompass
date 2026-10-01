@@ -20,6 +20,8 @@
   "birthDay": "日",
   "birthMonth": "月",
   "birthYear": "年",
+  "birthDateScroll": "スクロール",
+  "birthDateType": "入力",
   "birthDateInvalid": "1900年から今日までの有効な日付を入力してください。",
   "birthTimeUnknown": "出生時刻が不明",
   "birthTimeUnknownDetail": "出生時刻が分からない場合、あなたの性格に最も近い時間帯を用いて算出します。",

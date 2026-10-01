@@ -74,6 +74,12 @@ class AppLocalizationsVi extends AppLocalizations {
   String get birthYear => 'Năm';
 
   @override
+  String get birthDateScroll => 'Cuộn';
+
+  @override
+  String get birthDateType => 'Nhập tay';
+
+  @override
   String get birthDateInvalid => 'Nhập ngày hợp lệ từ năm 1900 đến hôm nay.';
 
   @override

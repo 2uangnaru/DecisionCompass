@@ -74,6 +74,12 @@ class AppLocalizationsHi extends AppLocalizations {
   String get birthYear => 'वर्ष';
 
   @override
+  String get birthDateScroll => 'स्क्रोल करें';
+
+  @override
+  String get birthDateType => 'टाइप करें';
+
+  @override
   String get birthDateInvalid => '1900 से आज तक की मान्य तारीख दर्ज करें।';
 
   @override
@@ -1238,6 +1244,12 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get birthYear => 'वर्ष';
+
+  @override
+  String get birthDateScroll => 'स्क्रोल करें';
+
+  @override
+  String get birthDateType => 'टाइप करें';
 
   @override
   String get birthDateInvalid => '1900 से आज तक की मान्य तारीख दर्ज करें।';

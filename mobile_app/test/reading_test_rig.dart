@@ -360,6 +360,8 @@ Future<void> fillDateAndCountry(WidgetTester tester) async {
   await tester.ensureVisible(find.byKey(const Key('birth_date_value')));
   await tester.tap(find.byKey(const Key('birth_date_value')));
   await tester.pumpAndSettle();
+  await tester.tap(find.byKey(const Key('birth_date_type_tab')));
+  await tester.pumpAndSettle();
   await tester.enterText(find.byKey(const Key('birth_date_day')), '01');
   await tester.enterText(find.byKey(const Key('birth_date_month')), '01');
   await tester.enterText(find.byKey(const Key('birth_date_year')), '2000');

@@ -70,6 +70,12 @@ class AppLocalizationsTh extends AppLocalizations {
   String get birthYear => 'ปี';
 
   @override
+  String get birthDateScroll => 'เลื่อน';
+
+  @override
+  String get birthDateType => 'พิมพ์';
+
+  @override
   String get birthDateInvalid => 'กรอกวันที่ที่ถูกต้องตั้งแต่ปี 1900 ถึงวันนี้';
 
   @override

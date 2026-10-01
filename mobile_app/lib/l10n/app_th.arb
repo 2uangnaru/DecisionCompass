@@ -20,6 +20,8 @@
   "birthDay": "วัน",
   "birthMonth": "เดือน",
   "birthYear": "ปี",
+  "birthDateScroll": "เลื่อน",
+  "birthDateType": "พิมพ์",
   "birthDateInvalid": "กรอกวันที่ที่ถูกต้องตั้งแต่ปี 1900 ถึงวันนี้",
   "birthTimeUnknown": "ไม่ทราบเวลาเกิด",
   "birthTimeUnknownDetail": "หากคุณไม่ทราบเวลาเกิด ระบบจะใช้ช่วงเวลาที่ใกล้เคียงกับบุคลิกของคุณมากที่สุดในการคำนวณ",

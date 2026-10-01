@@ -404,4 +404,106 @@ void main() {
       expect(first.avoid, again.avoid);
     });
   });
+
+  group('category context lenses differentiate reflections and respect safety', () {
+    ReadingResponse readingWithCategory({
+      required DecisionMode mode,
+      required String winner,
+      required ReadingCategory category,
+    }) {
+      final json = readFixture('ready_yes_no_now.json');
+      json['mode'] = mode.wireValue;
+      json['winner'] = winner;
+      json['category'] = category.wireValue;
+      final percentages = <String, Object?>{};
+      final labels = _pair[mode]!;
+      percentages[labels.$1] = winner == labels.$1 ? 62.5 : 37.5;
+      percentages[labels.$2] = winner == labels.$1 ? 37.5 : 62.5;
+      json['percentages'] = percentages;
+      final snapshot =
+          Map<String, Object?>.from(json['inputSnapshot']! as JsonMap);
+      snapshot['mode'] = mode.wireValue;
+      snapshot['category'] = category.wireValue;
+      json['inputSnapshot'] = snapshot;
+      return ReadingResponse.fromJson(json);
+    }
+
+    test('categories produce differentiated advice from general overview', () {
+      for (final locale in [
+        AppLocale.vietnamese,
+        AppLocale.english,
+        AppLocale.spanish,
+        AppLocale.japanese,
+        AppLocale.simplifiedChinese,
+      ]) {
+        final generalReading = readingWithCategory(
+          mode: DecisionMode.yesNo,
+          winner: 'YES',
+          category: ReadingCategory.general,
+        );
+        final generalGuidance = resolveActionGuidance(
+          locale: locale,
+          reading: generalReading,
+        );
+
+        for (final category in [
+          ReadingCategory.career,
+          ReadingCategory.love,
+          ReadingCategory.money,
+        ]) {
+          final catReading = readingWithCategory(
+            mode: DecisionMode.yesNo,
+            winner: 'YES',
+            category: category,
+          );
+          final catGuidance = resolveActionGuidance(
+            locale: locale,
+            reading: catReading,
+          );
+
+          expect(
+            catGuidance.headline,
+            isNot(generalGuidance.headline),
+            reason: '${locale.tag} ${category.wireValue} headline matched general',
+          );
+          expect(
+            catGuidance.shouldDo,
+            isNot(generalGuidance.shouldDo),
+            reason: '${locale.tag} ${category.wireValue} shouldDo matched general',
+          );
+        }
+      }
+    });
+
+    test('no category lens ever uses forbidden words in any language', () {
+      for (final entry in _forbidden.entries) {
+        final locale = entry.key;
+        for (final category in ReadingCategory.values) {
+          final reading = readingWithCategory(
+            mode: DecisionMode.yesNo,
+            winner: 'YES',
+            category: category,
+          );
+          final guidance = resolveActionGuidance(
+            locale: locale,
+            reading: reading,
+          );
+          final body = <String>[
+            guidance.headline,
+            guidance.shouldDo,
+            guidance.avoid,
+          ].join(' ').toLowerCase();
+
+          for (final word in entry.value) {
+            expect(
+              body.contains(word.toLowerCase()),
+              isFalse,
+              reason:
+                  '${locale.tag} ${category.wireValue} contains forbidden "$word": $body',
+            );
+          }
+        }
+      }
+    });
+  });
 }

@@ -70,6 +70,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get birthYear => '年';
 
   @override
+  String get birthDateScroll => '滚动';
+
+  @override
+  String get birthDateType => '输入';
+
+  @override
   String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';
 
   @override
@@ -1096,6 +1102,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get birthYear => '年';
 
   @override
+  String get birthDateScroll => '滚动';
+
+  @override
+  String get birthDateType => '输入';
+
+  @override
   String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';
 
   @override
@@ -2120,6 +2132,12 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get birthYear => '年';
+
+  @override
+  String get birthDateScroll => '滚动';
+
+  @override
+  String get birthDateType => '输入';
 
   @override
   String get birthDateInvalid => '请输入 1900 年至今天之间的有效日期。';

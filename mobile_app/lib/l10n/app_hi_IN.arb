@@ -20,6 +20,8 @@
   "birthDay": "दिन",
   "birthMonth": "महीना",
   "birthYear": "वर्ष",
+  "birthDateScroll": "स्क्रोल करें",
+  "birthDateType": "टाइप करें",
   "birthDateInvalid": "1900 से आज तक की मान्य तारीख दर्ज करें।",
   "birthTimeUnknown": "जन्म का समय पता नहीं",
   "birthTimeUnknownDetail": "यदि आपको अपना जन्म समय नहीं पता, तो एल्गोरिदम आपके व्यक्तित्व के सबसे करीब के समय का उपयोग करेगा।",

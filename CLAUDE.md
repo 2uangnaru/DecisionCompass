@@ -380,6 +380,13 @@ UI later without editing the same files.
 - Store UTC instant plus IANA timezone and engine/ruleset/provider versions in
   every saved snapshot.
 - Do not rerun old historical readings when formulas change.
+- Do not move the period cutoff into the engine or into
+  `POST /v1/readings`. The engine is a pure function that must answer for any
+  instant, including past ones, or fixtures and replayed readings break. The
+  cutoff is a live-UX rule and is enforced in the app: at the Reveal tap, and
+  again in `LoadingPage._buildRequest`, which is the one place a live request
+  is created. A new entry point to a live reading must go through the second.
+  See the v9.4 section of `calculation-engine/VERIFICATION.md`.
 - Do not commit secrets, signing keys, machine SDK paths, caches or generated
   build directories.
 - When work overlaps another agent, stop and agree on file ownership before

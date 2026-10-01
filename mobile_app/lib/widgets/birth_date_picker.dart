@@ -1,20 +1,27 @@
+import 'dart:math' as math;
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../l10n/app_localizations.dart';
+import '../localized_presentation.dart';
+import '../theme.dart';
 
-/// A birth date is usually known already, so its three parts can be entered
-/// directly. The calendar remains available for readers who prefer tapping.
 Future<DateTime?> showBirthDatePicker({
   required BuildContext context,
   DateTime? initialDate,
-}) => showDialog<DateTime>(
+}) => showModalBottomSheet<DateTime>(
   context: context,
-  builder: (context) => BirthDatePickerDialog(initialDate: initialDate),
+  isScrollControlled: true,
+  backgroundColor: Colors.transparent,
+  builder: (_) => BirthDatePickerSheet(initialDate: initialDate),
 );
 
-class BirthDatePickerDialog extends StatefulWidget {
-  const BirthDatePickerDialog({super.key, this.initialDate, this.lastDate});
+enum _EntryMode { wheel, manual }
+
+class BirthDatePickerSheet extends StatefulWidget {
+  const BirthDatePickerSheet({super.key, this.initialDate, this.lastDate});
 
   final DateTime? initialDate;
 
@@ -22,27 +29,102 @@ class BirthDatePickerDialog extends StatefulWidget {
   final DateTime? lastDate;
 
   @override
-  State<BirthDatePickerDialog> createState() => _BirthDatePickerDialogState();
+  State<BirthDatePickerSheet> createState() => _BirthDatePickerSheetState();
 }
 
-class _BirthDatePickerDialogState extends State<BirthDatePickerDialog> {
-  late final _day = TextEditingController(
-    text: widget.initialDate?.day.toString().padLeft(2, '0') ?? '',
-  );
-  late final _month = TextEditingController(
-    text: widget.initialDate?.month.toString().padLeft(2, '0') ?? '',
-  );
-  late final _year = TextEditingController(
-    text: widget.initialDate?.year.toString() ?? '',
-  );
+class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
+  static final _firstDate = DateTime(1900);
+
+  late DateTime _wheelDate;
+  late FixedExtentScrollController _dayWheel;
+  late FixedExtentScrollController _monthWheel;
+  late FixedExtentScrollController _yearWheel;
+  late final TextEditingController _day;
+  late final TextEditingController _month;
+  late final TextEditingController _year;
   final _monthFocus = FocusNode();
   final _yearFocus = FocusNode();
+  var _mode = _EntryMode.wheel;
+  var _wheelTouched = false;
   var _showError = false;
 
   DateTime get _lastDate =>
       DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
 
-  DateTime? get _candidate {
+  @override
+  void initState() {
+    super.initState();
+    final initial = widget.initialDate;
+    final today = DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
+    final defaultDate = DateTime(2000);
+    _wheelDate =
+        initial != null &&
+            !initial.isBefore(_firstDate) &&
+            !initial.isAfter(today)
+        ? DateUtils.dateOnly(initial)
+        : defaultDate.isAfter(today)
+        ? today
+        : defaultDate;
+    _day = TextEditingController(text: initial?.day.toString().padLeft(2, '0'));
+    _month = TextEditingController(
+      text: initial?.month.toString().padLeft(2, '0'),
+    );
+    _year = TextEditingController(text: initial?.year.toString());
+    _createWheelControllers();
+  }
+
+  void _createWheelControllers() {
+    _dayWheel = FixedExtentScrollController(
+      initialItem: _wheelDate.day - 1,
+      keepScrollOffset: false,
+    );
+    _monthWheel = FixedExtentScrollController(
+      initialItem: _wheelDate.month - 1,
+      keepScrollOffset: false,
+    );
+    _yearWheel = FixedExtentScrollController(
+      initialItem: _wheelDate.year - 1900,
+      keepScrollOffset: false,
+    );
+  }
+
+  int _monthCount(int year) => year == _lastDate.year ? _lastDate.month : 12;
+
+  int _dayCount(int year, int month) {
+    final daysInMonth = DateTime(year, month + 1, 0).day;
+    return year == _lastDate.year && month == _lastDate.month
+        ? math.min(daysInMonth, _lastDate.day)
+        : daysInMonth;
+  }
+
+  void _chooseYear(int year) {
+    final old = _wheelDate;
+    final month = math.min(old.month, _monthCount(year));
+    final day = math.min(old.day, _dayCount(year, month));
+    setState(() {
+      _wheelDate = DateTime(year, month, day);
+      _wheelTouched = true;
+    });
+    if (month != old.month) _monthWheel.jumpToItem(month - 1);
+    if (day != old.day) _dayWheel.jumpToItem(day - 1);
+  }
+
+  void _chooseMonth(int month) {
+    final old = _wheelDate;
+    final day = math.min(old.day, _dayCount(old.year, month));
+    setState(() {
+      _wheelDate = DateTime(old.year, month, day);
+      _wheelTouched = true;
+    });
+    if (day != old.day) _dayWheel.jumpToItem(day - 1);
+  }
+
+  void _chooseDay(int day) => setState(() {
+    _wheelDate = DateTime(_wheelDate.year, _wheelDate.month, day);
+    _wheelTouched = true;
+  });
+
+  DateTime? get _manualDate {
     final day = int.tryParse(_day.text);
     final month = int.tryParse(_month.text);
     final year = int.tryParse(_year.text);
@@ -51,15 +133,42 @@ class _BirthDatePickerDialogState extends State<BirthDatePickerDialog> {
       return null;
     }
     final date = DateTime(year, month, day);
-    if (date.year != year || date.month != month || date.day != day) {
+    if (date.year != year || date.month != month || date.day != day)
       return null;
-    }
     if (date.isAfter(_lastDate)) return null;
     return date;
   }
 
-  bool get _complete =>
+  bool get _manualComplete =>
       _day.text.isNotEmpty && _month.text.isNotEmpty && _year.text.length == 4;
+
+  void _setManualFields(DateTime date) {
+    _day.text = date.day.toString().padLeft(2, '0');
+    _month.text = date.month.toString().padLeft(2, '0');
+    _year.text = date.year.toString();
+  }
+
+  void _setMode(_EntryMode mode) {
+    if (mode == _mode) return;
+    FocusScope.of(context).unfocus();
+    setState(() {
+      if (mode == _EntryMode.manual &&
+          _day.text.isEmpty &&
+          _month.text.isEmpty &&
+          _year.text.isEmpty &&
+          _wheelTouched) {
+        _setManualFields(_wheelDate);
+      } else if (mode == _EntryMode.wheel && _manualDate != null) {
+        _wheelDate = _manualDate!;
+        _dayWheel.dispose();
+        _monthWheel.dispose();
+        _yearWheel.dispose();
+        _createWheelControllers();
+      }
+      _mode = mode;
+      _showError = false;
+    });
+  }
 
   void _onChanged(String value, {FocusNode? next, int? length}) {
     setState(() => _showError = false);
@@ -67,37 +176,12 @@ class _BirthDatePickerDialogState extends State<BirthDatePickerDialog> {
   }
 
   void _confirm() {
-    final date = _candidate;
+    final date = _mode == _EntryMode.wheel ? _wheelDate : _manualDate;
     if (date == null) {
       setState(() => _showError = true);
       return;
     }
     Navigator.of(context).pop(date);
-  }
-
-  Future<void> _openCalendar() async {
-    FocusScope.of(context).unfocus();
-    final current = _candidate ?? widget.initialDate;
-    final initial =
-        current != null &&
-            !current.isBefore(DateTime(1900)) &&
-            !current.isAfter(_lastDate)
-        ? current
-        : DateTime(2000, 1, 1);
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initial,
-      firstDate: DateTime(1900),
-      lastDate: _lastDate,
-      initialDatePickerMode: DatePickerMode.year,
-    );
-    if (picked == null || !mounted) return;
-    setState(() {
-      _day.text = picked.day.toString().padLeft(2, '0');
-      _month.text = picked.month.toString().padLeft(2, '0');
-      _year.text = picked.year.toString();
-      _showError = false;
-    });
   }
 
   @override
@@ -107,8 +191,41 @@ class _BirthDatePickerDialogState extends State<BirthDatePickerDialog> {
     _year.dispose();
     _monthFocus.dispose();
     _yearFocus.dispose();
+    _dayWheel.dispose();
+    _monthWheel.dispose();
+    _yearWheel.dispose();
     super.dispose();
   }
+
+  Widget _wheelColumn({
+    required Key key,
+    required FixedExtentScrollController controller,
+    required int count,
+    required int Function(int) valueAt,
+    required ValueChanged<int> onSelected,
+    required String label,
+    int digits = 2,
+  }) => Expanded(
+    child: CupertinoPicker.builder(
+      key: key,
+      scrollController: controller,
+      itemExtent: 44,
+      useMagnifier: true,
+      magnification: 1.07,
+      selectionOverlay: null,
+      childCount: count,
+      onSelectedItemChanged: (index) => onSelected(valueAt(index)),
+      itemBuilder: (context, index) {
+        final value = valueAt(index);
+        return Center(
+          child: Semantics(
+            label: '$label $value',
+            child: Text(value.toString().padLeft(digits, '0')),
+          ),
+        );
+      },
+    ),
+  );
 
   Widget _part({
     required Key key,
@@ -151,85 +268,233 @@ class _BirthDatePickerDialogState extends State<BirthDatePickerDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final material = MaterialLocalizations.of(context);
-    final candidate = _candidate;
-    final invalid = candidate == null && (_showError || _complete);
+    final theme = Theme.of(context);
+    final media = MediaQuery.of(context);
+    final manualDate = _manualDate;
+    final invalid =
+        _mode == _EntryMode.manual &&
+        manualDate == null &&
+        (_showError || _manualComplete);
+    final selectedDate = _mode == _EntryMode.wheel ? _wheelDate : manualDate;
 
-    return AlertDialog(
-      key: const Key('birth_date_dialog'),
-      scrollable: true,
-      title: Text(l10n.dateOfBirth),
-      contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
-      content: SizedBox(
-        width: 320,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return AnimatedPadding(
+      duration: const Duration(milliseconds: 180),
+      curve: Curves.easeOut,
+      padding: EdgeInsets.only(bottom: media.viewInsets.bottom),
+      child: Container(
+        key: const Key('birth_date_sheet'),
+        constraints: BoxConstraints(
+          maxHeight: (media.size.height - media.viewInsets.bottom) * 0.9,
+        ),
+        decoration: BoxDecoration(
+          color: CompassColors.raised,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
+          border: Border.all(color: CompassColors.line),
+        ),
+        child: SafeArea(
+          top: false,
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _part(
-                  key: const Key('birth_date_day'),
-                  controller: _day,
-                  label: l10n.birthDay,
-                  hint: 'DD',
-                  length: 2,
-                  next: _monthFocus,
+                Center(
+                  child: Container(
+                    width: 42,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white24,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 8),
-                _part(
-                  key: const Key('birth_date_month'),
-                  controller: _month,
-                  label: l10n.birthMonth,
-                  hint: 'MM',
-                  length: 2,
-                  focus: _monthFocus,
-                  next: _yearFocus,
+                const SizedBox(height: 20),
+                Text(l10n.dateOfBirth, style: theme.textTheme.headlineMedium),
+                const SizedBox(height: 18),
+                SegmentedButton<_EntryMode>(
+                  key: const Key('birth_date_mode'),
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(
+                      value: _EntryMode.wheel,
+                      icon: const Icon(Icons.swipe_vertical_rounded),
+                      label: Text(
+                        l10n.birthDateScroll,
+                        key: const Key('birth_date_scroll_tab'),
+                      ),
+                    ),
+                    ButtonSegment(
+                      value: _EntryMode.manual,
+                      icon: const Icon(Icons.keyboard_rounded),
+                      label: Text(
+                        l10n.birthDateType,
+                        key: const Key('birth_date_type_tab'),
+                      ),
+                    ),
+                  ],
+                  selected: {_mode},
+                  onSelectionChanged: (selection) => _setMode(selection.first),
                 ),
-                const SizedBox(width: 8),
-                _part(
-                  key: const Key('birth_date_year'),
-                  controller: _year,
-                  label: l10n.birthYear,
-                  hint: 'YYYY',
-                  length: 4,
-                  focus: _yearFocus,
-                  flex: 3,
+                const SizedBox(height: 12),
+                if (_mode == _EntryMode.wheel)
+                  CupertinoTheme(
+                    data: CupertinoThemeData(
+                      brightness: Brightness.dark,
+                      primaryColor: CompassColors.gold,
+                      textTheme: CupertinoTextThemeData(
+                        pickerTextStyle: theme.textTheme.titleLarge?.copyWith(
+                          color: CompassColors.text,
+                        ),
+                      ),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            for (final label in [
+                              l10n.birthDay,
+                              l10n.birthMonth,
+                              l10n.birthYear,
+                            ])
+                              Expanded(
+                                child: Text(
+                                  label,
+                                  textAlign: TextAlign.center,
+                                  style: theme.textTheme.labelMedium?.copyWith(
+                                    color: CompassColors.gold,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        SizedBox(
+                          height: 200,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Container(
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: CompassColors.blue.withValues(
+                                    alpha: 0.22,
+                                  ),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  _wheelColumn(
+                                    key: const Key('birth_date_day_wheel'),
+                                    controller: _dayWheel,
+                                    count: _dayCount(
+                                      _wheelDate.year,
+                                      _wheelDate.month,
+                                    ),
+                                    valueAt: (index) => index + 1,
+                                    onSelected: _chooseDay,
+                                    label: l10n.birthDay,
+                                  ),
+                                  _wheelColumn(
+                                    key: const Key('birth_date_month_wheel'),
+                                    controller: _monthWheel,
+                                    count: _monthCount(_wheelDate.year),
+                                    valueAt: (index) => index + 1,
+                                    onSelected: _chooseMonth,
+                                    label: l10n.birthMonth,
+                                  ),
+                                  _wheelColumn(
+                                    key: const Key('birth_date_year_wheel'),
+                                    controller: _yearWheel,
+                                    count: _lastDate.year - 1899,
+                                    valueAt: (index) => index + 1900,
+                                    onSelected: _chooseYear,
+                                    label: l10n.birthYear,
+                                    digits: 4,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else ...[
+                  const SizedBox(height: 14),
+                  Row(
+                    children: [
+                      _part(
+                        key: const Key('birth_date_day'),
+                        controller: _day,
+                        label: l10n.birthDay,
+                        hint: 'DD',
+                        length: 2,
+                        next: _monthFocus,
+                      ),
+                      const SizedBox(width: 8),
+                      _part(
+                        key: const Key('birth_date_month'),
+                        controller: _month,
+                        label: l10n.birthMonth,
+                        hint: 'MM',
+                        length: 2,
+                        focus: _monthFocus,
+                        next: _yearFocus,
+                      ),
+                      const SizedBox(width: 8),
+                      _part(
+                        key: const Key('birth_date_year'),
+                        controller: _year,
+                        label: l10n.birthYear,
+                        hint: 'YYYY',
+                        length: 4,
+                        focus: _yearFocus,
+                        flex: 3,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 18),
+                ],
+                Text(
+                  invalid
+                      ? l10n.birthDateInvalid
+                      : selectedDate == null
+                      ? l10n.selectBirthDate
+                      : formatDate(intlLocaleOf(context), selectedDate),
+                  key: const Key('birth_date_feedback'),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: invalid
+                        ? theme.colorScheme.error
+                        : CompassColors.secondary,
+                  ),
+                ),
+                const SizedBox(height: 24),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        key: const Key('birth_date_cancel'),
+                        onPressed: () => Navigator.of(context).pop(),
+                        child: Text(material.cancelButtonLabel),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        key: const Key('birth_date_confirm'),
+                        onPressed: _confirm,
+                        child: Text(l10n.continueAction),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            if (candidate != null || invalid) ...[
-              const SizedBox(height: 12),
-              Text(
-                invalid
-                    ? l10n.birthDateInvalid
-                    : material.formatMediumDate(candidate!),
-                key: const Key('birth_date_feedback'),
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: invalid ? Theme.of(context).colorScheme.error : null,
-                ),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
-      actions: [
-        IconButton(
-          key: const Key('birth_date_calendar'),
-          onPressed: _openCalendar,
-          icon: const Icon(Icons.calendar_month_rounded),
-          tooltip: material.calendarModeButtonLabel,
-        ),
-        TextButton(
-          key: const Key('birth_date_cancel'),
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(material.cancelButtonLabel),
-        ),
-        FilledButton(
-          key: const Key('birth_date_confirm'),
-          onPressed: _confirm,
-          child: Text(material.okButtonLabel),
-        ),
-      ],
     );
   }
 }

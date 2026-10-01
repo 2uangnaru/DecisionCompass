@@ -20,6 +20,8 @@
   "birthDay": "Day",
   "birthMonth": "Month",
   "birthYear": "Year",
+  "birthDateScroll": "Scroll",
+  "birthDateType": "Type",
   "birthDateInvalid": "Enter a valid date from 1900 to today.",
   "birthTimeUnknown": "Birth time unknown",
   "birthTimeUnknownDetail": "If you don't know your birth time, the algorithm will use the time window closest to your personality.",

@@ -72,6 +72,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get birthYear => 'Year';
 
   @override
+  String get birthDateScroll => 'Scroll';
+
+  @override
+  String get birthDateType => 'Type';
+
+  @override
   String get birthDateInvalid => 'Enter a valid date from 1900 to today.';
 
   @override
