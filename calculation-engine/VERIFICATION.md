@@ -15,7 +15,236 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
-## v9.4 — where the cutoff is enforced — 2026-10-01
+## v9.4 ruleset — two mode mixtures — 2026-10-01
+
+Engine **4.3.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.4-experimental`** / scoring
+**`v9.4-experimental`**. Scales deliberately **unchanged** at
+`v9.3-cohort-2026-09-30`.
+
+Two mode mixtures changed. Nothing else did.
+
+| Mode | v9.3 | v9.4 |
+|---|---|---|
+| COMMIT / WITHDRAW | `.80H + .15P + .05L` | `.60H + .25R + .10P + .05L` |
+| LEFT / RIGHT | `.70Y + .20P + .10L` | `.50Y + .35P + .15L` |
+
+### Why
+
+**COMMIT / WITHDRAW named one direction for a whole week.** `H` is the median
+of the eight days ahead, so two consecutive dates share seven of their eight
+terms. At `.80` weight the mode was effectively reading one slow number and
+reprinting it: the held-out simulation put its seven-day same-direction rate at
+**88.4%** and **89.1%** on the two seeds. That is not a reading of the week
+ahead, it is a reading of one statistic. `R` — the day's own support minus
+pressure, which moves daily — now carries a quarter. `H` still leads, because
+the question is still about the durable middle of the week.
+
+**LEFT / RIGHT was the only mode that reached the top of the scale.** `Y` is a
+parity convention whose terms are each exactly +1 or -1, and at `.70` it took
+the mode to 80%+ on **19.5%** and **19.9%** of readings while YES / NO reached
+it on 2.2%. A percentage that means something different depending on which
+question was asked is the thing `MODE_GAIN` exists to prevent, and this was the
+one mode it could not fix, because the problem was the signal's own shape. `Y`
+drops to half and keeps the largest single share, so the polarity convention
+still decides the side; it no longer decides it nearly alone.
+
+### What was not touched
+
+No signal definition (`H`, `R`, `P`, `L`, `Y`, `T` and the rest are
+unchanged), no normalization scale, no category profile, no 14-day contrast, no
+display curve, and none of the other five mixtures. No randomness, no forced
+flips, no floors, no per-mode caps. `MODE_GAIN` is still derived from the
+weights alone and is still verified identical in both languages.
+
+`SCALE_VERSION` still reads `v9.3-cohort-2026-09-30` on purpose: it names the
+cohort the scales were measured on, not the ruleset that consumes them, and
+v9.4 changed only how two modes mix already-normalized signals. Bumping it
+would claim a recalibration that did not happen.
+
+### MODE_GAIN, recomputed and compared
+
+Derived, not chosen. Both engines, to seventeen significant digits:
+
+| Mode | v9.3 | v9.4 |
+|---|---:|---:|
+| COMMIT / WITHDRAW | 1.2262786790 | 1.5161960872 |
+| LEFT / RIGHT | 1.3608276349 | 1.5911145684 |
+
+The other five are unchanged. `test/local_engine/scoring_test.dart` pins all
+seven as strings at full double precision against the values printed from
+`src/scoring.js`, and also recomputes them from the weights — a literal alone
+would still pass if the derivation were replaced by a lookup table.
+
+### The five untouched modes produce identical numbers
+
+`scripts/mode-baseline.mjs` captures every mode's result across 2 birth-hour
+states x 2 contexts (NOW and a future period) x 7 categories x 7 modes = 196
+readings, recording the winner, both percentages, the mode score and basis, the
+coverage, the window status and each lucky window's own start, end, hour branch,
+score and coverage. It deliberately records **no** `readingKey`, ruleset,
+scoring version or engine version, because a ruleset bump rewrites all of those
+in every mode at once and a diff dominated by them answers nothing.
+
+Captured before the change, recaptured after, with the old mixtures temporarily
+restored to get a like-for-like file:
+
+| Mode | identical | changed |
+|---|---:|---:|
+| YES / NO | 28 | 0 |
+| ACT / WAIT | 28 | 0 |
+| ADVANCE / RETREAT | 28 | 0 |
+| STAY / GO | 28 | 0 |
+| KEEP / LET GO | 28 | 0 |
+| COMMIT / WITHDRAW | 0 | 28 |
+| LEFT / RIGHT | 0 | 28 |
+
+`test/mode-baseline.test.js` keeps this true from now on, and asserts that none
+of the version fields has leaked into the baseline.
+
+An untouched mode's regenerated fixture shows the separation directly — the
+whole diff for `ready_yes_no_now.json` is four lines, all metadata:
+
+```
+- "engineVersion": "4.2.0-mvp",          + "engineVersion": "4.3.0-mvp",
+- "rulesetVersion": "...v9.3-...",       + "rulesetVersion": "...v9.4-...",
+- "readingKey": "dc93bb78...",           + "readingKey": "43faf0d6...",
+- "system": "v9.3-experimental",         + "system": "v9.4-experimental",
+```
+
+Daily energy, daily colours and the lucky number are byte-identical across all
+sixteen regenerated fixtures.
+
+### New reading keys, including for modes that did not change
+
+`readingKey` is a SHA-256 over the profile, the ruleset and the request, so
+**every** new reading in **every** mode gets a different key under v9.4 — see
+the YES / NO diff above. That is the intended behaviour and it has one
+consequence worth stating plainly: a key calculated before this change will
+never be produced again, so a v9.3 reading and its v9.4 counterpart cannot be
+mistaken for the same reading. Nothing looks a key up to decide what to show.
+
+### History is untouched
+
+Saved readings are snapshots and are never recalculated or relabelled.
+`test/history_ruleset_immutability_test.dart` makes this concrete on the one
+scenario where it is most visible: the COMMIT / WITHDRAW fixture read **COMMIT
+69.6%** under v9.3 and reads **WITHDRAW 55.2%** under v9.4, a reversal. A
+snapshot stored with the first still shows COMMIT 69.6% after the bump, still
+reports its own `v9.3` ruleset, and sits in History beside a v9.4 reading of
+the same question with different numbers and a different key.
+
+### Held-out simulation
+
+`dart run tool/simulate_v91.dart --profiles 210 --days 28 --seed <seed>` from
+`mobile_app`. 41,160 readings per seed, 0 failures. The cohort seeds are not
+the calibration seed, so these profiles never contributed to the scales.
+
+Seed **77213**:
+
+| Mode | 50-59.9% | 80%+ | adj. repeat | 7-day same direction | mean win % |
+|---|---:|---:|---:|---:|---:|
+| COMMIT / WITHDRAW v9.3 | 22.3% | 0.0% | 2.0% | 88.4% | 64.6 |
+| COMMIT / WITHDRAW v9.4 | **24.9%** | **1.1%** | 0.5% | **48.3%** | 65.1 |
+| LEFT / RIGHT v9.3 | 11.1% | 19.5% | 0.1% | 14.8% | 71.1 |
+| LEFT / RIGHT v9.4 | **13.9%** | **10.8%** | 0.1% | 9.6% | 69.5 |
+
+Seed **88402**:
+
+| Mode | 50-59.9% | 80%+ | adj. repeat | 7-day same direction | mean win % |
+|---|---:|---:|---:|---:|---:|
+| COMMIT / WITHDRAW v9.3 | 24.2% | 0.1% | 1.9% | 89.1% | 64.4 |
+| COMMIT / WITHDRAW v9.4 | **26.4%** | **1.2%** | 0.6% | **45.6%** | 65.0 |
+| LEFT / RIGHT v9.3 | 11.3% | 19.9% | 0.0% | 15.8% | 71.1 |
+| LEFT / RIGHT v9.4 | **13.2%** | **10.6%** | 0.2% | 9.9% | 69.5 |
+
+The five untouched modes report identical rows to the digit on both seeds,
+which is the simulation agreeing with the fixture baseline.
+
+### Where the simulation disagreed with the pre-implementation probe
+
+COMMIT / WITHDRAW landed inside every range the probe gave: seven-day
+same-direction 45-49% (observed 48.3% and 45.6%), 80%+ about 1.2% (1.1% and
+1.2%), 50-59.9% about 25% (24.9% and 26.4%).
+
+**LEFT / RIGHT did not.** The probe expected 80%+ to fall to about 6%; it fell
+to 10.8% and 10.6%. That is a 45% reduction rather than the 69% the probe
+implied, and it was worth understanding rather than closing by moving a weight.
+
+The cause is `MODE_GAIN`. Concentrating weight on one signal *lowers* the
+divisor; spreading it raises it. Moving LEFT / RIGHT from `.70/.20/.10` to
+`.50/.35/.15` takes the derived gain from 1.3608 to 1.5911, and that 17%
+amplification partly offsets the reduction in `Y`'s share. Measured against the
+display curve, 80%+ needs `|adjusted| >= 0.5927`, which is a pre-gain mixture
+value of 0.3725 under the new divisor but would be 0.4356 under the old one.
+
+Tested directly: a throwaway diagnostic run with the new weights and the
+divisor pinned to the v9.3 value put LEFT / RIGHT's 80%+ at **4.2%**, which
+brackets the probe's ~6% while the derived value gives 10.8%. The probe
+therefore appears to have varied the weights without re-deriving the gain.
+
+The gain is required to be derived — pinning it is exactly the "mode-specific
+cosmetic cap" the brief rules out, and the derivation is what puts the seven
+modes on one scale in the first place. So **the probe's ~6% is not reachable
+with these weights and a derived gain**, and no coefficient was moved to chase
+it. 10.7% is what this mixture does.
+
+### Commands executed on 2026-10-01
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **196 passed, 0 failed** |
+| `node scripts/mobile-fixtures.mjs --write` then `--check` | 16 regenerated, all match |
+| `node scripts/port/gen_edge_readings.mjs` | 16 edge scenarios regenerated |
+| `node scripts/mode-baseline.mjs --write` then `--check` | 196 captured, all match |
+| `flutter analyze --no-pub` | **No issues found** |
+| `flutter test --no-pub` | **870 passed, 0 failed** |
+| `dart run tool/simulate_v91.dart --seed 77213` | 41,160 readings, 0 failures |
+| `dart run tool/simulate_v91.dart --seed 88402` | 41,160 readings, 0 failures |
+
+Node-Dart parity holds at v9.4: all 16 standard fixtures and all 16 edge
+readings reproduce byte for byte in the Dart port, `readingKey` included under
+the new ruleset (60 parity tests).
+
+### Tests that were updated, and why
+
+Nine Flutter tests and one Node test pinned the old mixtures or the old
+percentages. Each was a tripwire doing its job, not a failure:
+
+- `calculation-engine/test/category.test.js` — pins mixtures to prove the
+  *category* work never reaches into one. Kept for that purpose, with the two
+  new values and a pointer to the pin that owns them.
+- `test/data/mode_projection_test.dart` — an independent re-implementation of
+  the mixture, duplicated as a tripwire. Updated; it fired on all nine
+  affected fixtures.
+- `test/reading_flow_test.dart` — asserted 69.6% / 82.5% and the old window
+  pair. Updated to the new numbers.
+- `test/localization_test.dart` — asserted the winner label was the mode's
+  *first* label, which made it a test of which side v9.3 happened to pick. Now
+  derived from the snapshot's own `winner` through `localizedChoice`, which is
+  what the test was actually about.
+- `test/local_engine/offline_flow_test.dart` — likewise pinned one direction
+  while testing that a future period reaches the result page with real windows.
+  Now accepts either side and asserts a direction was named.
+
+### Not verified
+
+- **No physical Android device or emulator.**
+- **Predictive validity. None claimed, none tested.** A percentage is symbolic
+  alignment. 55.2% WITHDRAW is not a 55.2% chance of anything.
+- The simulation is an observation about software on synthetic profiles. The
+  COMMIT / WITHDRAW seven-day rate falling from 88% to 47% says the mode now
+  responds to the day it is asked about; it says nothing about whether either
+  number is right.
+- `dart format --set-exit-if-changed` fails on 39 files in `mobile_app`,
+  including files untouched by this work — the committed versions of
+  `lib/pages/home_page.dart`, `lib/theme.dart`, `lib/widgets/celestial_ui.dart`,
+  `lib/data/action_guidance/action_guidance_en.dart` and `test/widget_test.dart`
+  all fail at `HEAD` under Dart 3.13.4. The repository was last formatted with
+  an older formatter. Every file this work touched is formatted; the rest were
+  left alone rather than reflowing thirty files of unrelated code.
+
+## Period cutoff enforcement — app only, ruleset v9.3 — 2026-10-01
 
 No engine change. Engine **4.2.0-mvp** / ruleset
 **`civil-midnight-chinese-calendar-symbolic-v9.3-experimental`**, scales

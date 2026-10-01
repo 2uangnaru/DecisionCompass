@@ -8,9 +8,9 @@ library;
 
 import 'numbers.dart';
 
-const String engineVersion = '4.2.0-mvp';
+const String engineVersion = '4.3.0-mvp';
 const String rulesetVersion =
-    'civil-midnight-chinese-calendar-symbolic-v9.3-experimental';
+    'civil-midnight-chinese-calendar-symbolic-v9.4-experimental';
 
 /// Default module weights: BaZi, Zi Wei, almanac, Western, Vedic, numerology, cosmic.
 const Map<String, double> defaultWeights = <String, double>{

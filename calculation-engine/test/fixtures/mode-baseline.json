@@ -1,0 +1,4412 @@
+{
+  "known_hour|now|general|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 71.9,
+      "NO": 28.1
+    },
+    "modeScore": 0.334208523,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 72.1,
+      "WAIT": 27.9
+    },
+    "modeScore": 0.3405446705,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74,
+      "RETREAT": 26
+    },
+    "modeScore": 0.3940882028,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 12.7,
+      "GO": 87.3
+    },
+    "modeScore": -0.8823790164,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 14.3,
+      "LET GO": 85.7
+    },
+    "modeScore": -0.8134220349,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.3,
+      "WITHDRAW": 62.7
+    },
+    "modeScore": -0.1249540336,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 27.2,
+      "RIGHT": 72.8
+    },
+    "modeScore": -0.3594537462,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 69.9,
+      "NO": 30.1
+    },
+    "modeScore": 0.2814902268,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 72.1,
+      "WAIT": 27.9
+    },
+    "modeScore": 0.338993249,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 70.5,
+      "RETREAT": 29.5
+    },
+    "modeScore": 0.2953881044,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 16.1,
+      "GO": 83.9
+    },
+    "modeScore": -0.7418930387,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 16.9,
+      "LET GO": 83.1
+    },
+    "modeScore": -0.7085043076,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 36,
+      "WITHDRAW": 64
+    },
+    "modeScore": -0.1479983082,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 28.1,
+      "RIGHT": 71.9
+    },
+    "modeScore": -0.3335737155,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 71.6,
+      "NO": 28.4
+    },
+    "modeScore": 0.3249460901,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 74.4,
+      "WAIT": 25.6
+    },
+    "modeScore": 0.4077195981,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74,
+      "RETREAT": 26
+    },
+    "modeScore": 0.3940608682,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 14.8,
+      "GO": 85.2
+    },
+    "modeScore": -0.7926462315,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 17,
+      "LET GO": 83
+    },
+    "modeScore": -0.7064031242,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 40.1,
+      "WITHDRAW": 59.9
+    },
+    "modeScore": -0.078501665,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 27.9,
+      "RIGHT": 72.1
+    },
+    "modeScore": -0.3386903398,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 75.2,
+      "NO": 24.8
+    },
+    "modeScore": 0.430565683,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 76.9,
+      "WAIT": 23.1
+    },
+    "modeScore": 0.4855829919,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 76.2,
+      "RETREAT": 23.8
+    },
+    "modeScore": 0.4630211244,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 16.5,
+      "GO": 83.5
+    },
+    "modeScore": -0.7259463042,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 19.9,
+      "LET GO": 80.1
+    },
+    "modeScore": -0.5950241909,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|commit_withdraw": {
+    "status": "ready",
+    "winner": "COMMIT",
+    "percentages": {
+      "COMMIT": 57.3,
+      "WITHDRAW": 42.7
+    },
+    "modeScore": 0.0449916178,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 30.9,
+      "RIGHT": 69.1
+    },
+    "modeScore": -0.2602228831,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 57.9,
+      "NO": 42.1
+    },
+    "modeScore": 0.0521046877,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 65.6,
+      "WAIT": 34.4
+    },
+    "modeScore": 0.1796227399,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 70.4,
+      "RETREAT": 29.6
+    },
+    "modeScore": 0.2940229374,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 10,
+      "GO": 90
+    },
+    "modeScore": -1,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 10,
+      "LET GO": 90
+    },
+    "modeScore": -1,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 29.2,
+      "WITHDRAW": 70.8
+    },
+    "modeScore": -0.3054743902,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 20.3,
+      "RIGHT": 79.7
+    },
+    "modeScore": -0.5803967746,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 65.7,
+      "NO": 34.3
+    },
+    "modeScore": 0.1817378394,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 69.4,
+      "WAIT": 30.6
+    },
+    "modeScore": 0.2689801082,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 70.7,
+      "RETREAT": 29.3
+    },
+    "modeScore": 0.3006608511,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 10.3,
+      "GO": 89.7
+    },
+    "modeScore": -0.9874015872,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 11.5,
+      "LET GO": 88.5
+    },
+    "modeScore": -0.9329932844,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 33.5,
+      "WITHDRAW": 66.5
+    },
+    "modeScore": -0.2007536894,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 24.6,
+      "RIGHT": 75.4
+    },
+    "modeScore": -0.4372880457,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 71.9,
+      "NO": 28.1
+    },
+    "modeScore": 0.334208523,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 72.1,
+      "WAIT": 27.9
+    },
+    "modeScore": 0.3405446705,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74,
+      "RETREAT": 26
+    },
+    "modeScore": 0.3940882028,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 12.7,
+      "GO": 87.3
+    },
+    "modeScore": -0.8823790164,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 14.3,
+      "LET GO": 85.7
+    },
+    "modeScore": -0.8134220349,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.3,
+      "WITHDRAW": 62.7
+    },
+    "modeScore": -0.1249540336,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 27.2,
+      "RIGHT": 72.8
+    },
+    "modeScore": -0.3594537462,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|future|general|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 66.4,
+      "NO": 33.6
+    },
+    "modeScore": 0.1968565448,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 36.7,
+      "WAIT": 63.3
+    },
+    "modeScore": -0.13579085,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 78,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74,
+      "RETREAT": 26
+    },
+    "modeScore": 0.3960749576,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 74,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 14,
+      "GO": 86
+    },
+    "modeScore": -0.8249726725,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 25,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 16.7,
+      "LET GO": 83.3
+    },
+    "modeScore": -0.7146953247,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 30,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 44.8,
+      "WITHDRAW": 55.2
+    },
+    "modeScore": -0.0243153772,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 64,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 64,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 20.3,
+      "RIGHT": 79.7
+    },
+    "modeScore": -0.5832433195,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 44,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 40,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|love|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 63.6,
+      "NO": 36.4
+    },
+    "modeScore": 0.1410667612,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 72,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 33.9,
+      "WAIT": 66.1
+    },
+    "modeScore": -0.1905102665,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 70.4,
+      "RETREAT": 29.6
+    },
+    "modeScore": 0.2933310104,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 72,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 71,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 17,
+      "GO": 83
+    },
+    "modeScore": -0.7029283855,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 27,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 26,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 18.8,
+      "LET GO": 81.2
+    },
+    "modeScore": -0.6360234429,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 30,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 40.1,
+      "WITHDRAW": 59.9
+    },
+    "modeScore": -0.0784654123,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 58,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 58,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 20.4,
+      "RIGHT": 79.6
+    },
+    "modeScore": -0.5767360477,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 41,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 38,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|career|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 63.8,
+      "NO": 36.2
+    },
+    "modeScore": 0.1438912892,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 73,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 71,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 36.4,
+      "WAIT": 63.6
+    },
+    "modeScore": -0.139887697,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 75,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 73.6,
+      "RETREAT": 26.4
+    },
+    "modeScore": 0.3832729638,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 13.6,
+      "GO": 86.4
+    },
+    "modeScore": -0.8410875964,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 23,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 22,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 16.7,
+      "LET GO": 83.3
+    },
+    "modeScore": -0.7181041513,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 28,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 26,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 46.1,
+      "WITHDRAW": 53.9
+    },
+    "modeScore": -0.0142636525,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 60,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 60,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 19.2,
+      "RIGHT": 80.8
+    },
+    "modeScore": -0.6206805048,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 39,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 35,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|money|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 68.9,
+      "NO": 31.1
+    },
+    "modeScore": 0.2563095825,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 74,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 41.5,
+      "WAIT": 58.5
+    },
+    "modeScore": -0.0604646382,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 77,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 75.8,
+      "RETREAT": 24.2
+    },
+    "modeScore": 0.4518131671,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 74,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 15.6,
+      "GO": 84.4
+    },
+    "modeScore": -0.7603815469,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 26,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 19.7,
+      "LET GO": 80.3
+    },
+    "modeScore": -0.6024877618,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 32,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|commit_withdraw": {
+    "status": "ready",
+    "winner": "COMMIT",
+    "percentages": {
+      "COMMIT": 60.8,
+      "WITHDRAW": 39.2
+    },
+    "modeScore": 0.0927588703,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 66,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.6,
+      "RIGHT": 78.4
+    },
+    "modeScore": -0.5349739166,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 43,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 38,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|study|yes_no": {
+    "status": "ready",
+    "winner": "NO",
+    "percentages": {
+      "YES": 35.5,
+      "NO": 64.5
+    },
+    "modeScore": -0.1579359776,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 64,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 62,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 25.7,
+      "WAIT": 74.3
+    },
+    "modeScore": -0.4053206637,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 68,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 67,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 69.4,
+      "RETREAT": 30.6
+    },
+    "modeScore": 0.2684173024,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 70,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 69,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 10,
+      "GO": 90
+    },
+    "modeScore": -1,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 15,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 14,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 10,
+      "LET GO": 90
+    },
+    "modeScore": -1,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 17,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 16,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 30.2,
+      "WITHDRAW": 69.8
+    },
+    "modeScore": -0.2796544788,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 36,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 36,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 12.8,
+      "RIGHT": 87.2
+    },
+    "modeScore": -0.8778463386,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 29,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 27,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|friends|yes_no": {
+    "status": "ready",
+    "winner": "NO",
+    "percentages": {
+      "YES": 49.1,
+      "NO": 50.9
+    },
+    "modeScore": -0.0010294406,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 70,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 68,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 29.6,
+      "WAIT": 70.4
+    },
+    "modeScore": -0.2945132521,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 71,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 69.7,
+      "RETREAT": 30.3
+    },
+    "modeScore": 0.2763755947,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 71,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 70,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 10,
+      "GO": 90
+    },
+    "modeScore": -1,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 19,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 18,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 11.4,
+      "LET GO": 88.6
+    },
+    "modeScore": -0.9393397046,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 22,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 20,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 34.2,
+      "WITHDRAW": 65.8
+    },
+    "modeScore": -0.1847621738,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 42,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 42,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 16.7,
+      "RIGHT": 83.3
+    },
+    "modeScore": -0.7183888205,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 35,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 32,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|other|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 66.4,
+      "NO": 33.6
+    },
+    "modeScore": 0.1968565448,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 36.7,
+      "WAIT": 63.3
+    },
+    "modeScore": -0.13579085,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 78,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 76,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74,
+      "RETREAT": 26
+    },
+    "modeScore": 0.3960749576,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 74,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 14,
+      "GO": 86
+    },
+    "modeScore": -0.8249726725,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 25,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 16.7,
+      "LET GO": 83.3
+    },
+    "modeScore": -0.7146953247,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 30,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 44.8,
+      "WITHDRAW": 55.2
+    },
+    "modeScore": -0.0243153772,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 64,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 64,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 20.3,
+      "RIGHT": 79.7
+    },
+    "modeScore": -0.5832433195,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 44,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 40,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "unknown_hour|now|general|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 76.8,
+      "NO": 23.2
+    },
+    "modeScore": 0.4812126309,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 79.4,
+      "WAIT": 20.6
+    },
+    "modeScore": 0.5712948087,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 75.4,
+      "RETREAT": 24.6
+    },
+    "modeScore": 0.4378302191,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 19.5,
+      "GO": 80.5
+    },
+    "modeScore": -0.6118471762,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 21.8,
+      "LET GO": 78.2
+    },
+    "modeScore": -0.5283621035,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 38.6,
+      "WITHDRAW": 61.4
+    },
+    "modeScore": -0.102230153,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 31.9,
+      "RIGHT": 68.1
+    },
+    "modeScore": -0.2361950608,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 75.7,
+      "NO": 24.3
+    },
+    "modeScore": 0.4466180016,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 78.8,
+      "WAIT": 21.2
+    },
+    "modeScore": 0.5498126193,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 72.4,
+      "RETREAT": 27.6
+    },
+    "modeScore": 0.3485705651,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 24.2,
+      "GO": 75.8
+    },
+    "modeScore": -0.4520906865,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 26.7,
+      "LET GO": 73.3
+    },
+    "modeScore": -0.3752870651,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 41.7,
+      "WITHDRAW": 58.3
+    },
+    "modeScore": -0.0573889763,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 32.3,
+      "RIGHT": 67.7
+    },
+    "modeScore": -0.2261996283,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 75.6,
+      "NO": 24.4
+    },
+    "modeScore": 0.4447675212,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 78,
+      "WAIT": 22
+    },
+    "modeScore": 0.5241503029,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74.9,
+      "RETREAT": 25.1
+    },
+    "modeScore": 0.4221380469,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 19.2,
+      "GO": 80.8
+    },
+    "modeScore": -0.6232645925,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 21.6,
+      "LET GO": 78.4
+    },
+    "modeScore": -0.5378850079,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 41.5,
+      "WITHDRAW": 58.5
+    },
+    "modeScore": -0.0597936108,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 30.9,
+      "RIGHT": 69.1
+    },
+    "modeScore": -0.2600461267,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 77.2,
+      "NO": 22.8
+    },
+    "modeScore": 0.4958532513,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 79.6,
+      "WAIT": 20.4
+    },
+    "modeScore": 0.5767300519,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 76.1,
+      "RETREAT": 23.9
+    },
+    "modeScore": 0.4591610292,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 20.5,
+      "GO": 79.5
+    },
+    "modeScore": -0.5738901755,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 23.3,
+      "LET GO": 76.7
+    },
+    "modeScore": -0.4787971495,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 40.2,
+      "WITHDRAW": 59.8
+    },
+    "modeScore": -0.0777140541,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 32.5,
+      "RIGHT": 67.5
+    },
+    "modeScore": -0.2228635414,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 77.4,
+      "NO": 22.6
+    },
+    "modeScore": 0.5041942884,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 79.4,
+      "WAIT": 20.6
+    },
+    "modeScore": 0.5697663574,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 76.3,
+      "RETREAT": 23.7
+    },
+    "modeScore": 0.4670068047,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 17.4,
+      "GO": 82.6
+    },
+    "modeScore": -0.6883110705,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 19.8,
+      "LET GO": 80.2
+    },
+    "modeScore": -0.6017135912,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.9,
+      "WITHDRAW": 62.1
+    },
+    "modeScore": -0.1138510547,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 31.6,
+      "RIGHT": 68.4
+    },
+    "modeScore": -0.2438653252,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 76.6,
+      "NO": 23.4
+    },
+    "modeScore": 0.4751232935,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 79.5,
+      "WAIT": 20.5
+    },
+    "modeScore": 0.5735320917,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74.1,
+      "RETREAT": 25.9
+    },
+    "modeScore": 0.3993270919,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 21,
+      "GO": 79
+    },
+    "modeScore": -0.5581669163,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 23.5,
+      "LET GO": 76.5
+    },
+    "modeScore": -0.4744844021,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 38.9,
+      "WITHDRAW": 61.1
+    },
+    "modeScore": -0.0970812418,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 32.1,
+      "RIGHT": 67.9
+    },
+    "modeScore": -0.23067798,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 76.8,
+      "NO": 23.2
+    },
+    "modeScore": 0.4812126309,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 79.4,
+      "WAIT": 20.6
+    },
+    "modeScore": 0.5712948087,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 75.4,
+      "RETREAT": 24.6
+    },
+    "modeScore": 0.4378302191,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 19.5,
+      "GO": 80.5
+    },
+    "modeScore": -0.6118471762,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 21.8,
+      "LET GO": 78.2
+    },
+    "modeScore": -0.5283621035,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 38.6,
+      "WITHDRAW": 61.4
+    },
+    "modeScore": -0.102230153,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 31.9,
+      "RIGHT": 68.1
+    },
+    "modeScore": -0.2361950608,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|future|general|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 69.3,
+      "NO": 30.7
+    },
+    "modeScore": 0.2665510777,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 46,
+      "WAIT": 54
+    },
+    "modeScore": -0.0150926244,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74.4,
+      "RETREAT": 25.6
+    },
+    "modeScore": 0.4069571755,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 73,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 17.5,
+      "GO": 82.5
+    },
+    "modeScore": -0.6851498049,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 24,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 20,
+      "LET GO": 80
+    },
+    "modeScore": -0.5913777897,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 27,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 27,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.3,
+      "WITHDRAW": 62.7
+    },
+    "modeScore": -0.1247913305,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 42,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 42,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.6,
+      "RIGHT": 78.4
+    },
+    "modeScore": -0.5363819242,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 40,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 37,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|love|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 67.3,
+      "NO": 32.7
+    },
+    "modeScore": 0.2170887823,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 73,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 72,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 42.4,
+      "WAIT": 57.6
+    },
+    "modeScore": -0.0487712954,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 70.9,
+      "RETREAT": 29.1
+    },
+    "modeScore": 0.3082557573,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 71,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 70,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 21.5,
+      "GO": 78.5
+    },
+    "modeScore": -0.5402173708,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 28,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 28,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 23.9,
+      "LET GO": 76.1
+    },
+    "modeScore": -0.4611541377,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 31,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 30,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 39.9,
+      "WITHDRAW": 60.1
+    },
+    "modeScore": -0.0818991883,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 45,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 45,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.5,
+      "RIGHT": 78.5
+    },
+    "modeScore": -0.5389244405,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 40,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 36,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|career|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 68.3,
+      "NO": 31.7
+    },
+    "modeScore": 0.2410926104,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 43.5,
+      "WAIT": 56.5
+    },
+    "modeScore": -0.0367510033,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74.4,
+      "RETREAT": 25.6
+    },
+    "modeScore": 0.4075552868,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 17.4,
+      "GO": 82.6
+    },
+    "modeScore": -0.6910072965,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 26,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 25,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 20.5,
+      "LET GO": 79.5
+    },
+    "modeScore": -0.5762684828,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 30,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 41.7,
+      "WITHDRAW": 58.3
+    },
+    "modeScore": -0.0568176276,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 56,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 54,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.3,
+      "RIGHT": 78.7
+    },
+    "modeScore": -0.5451269576,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 41,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 37,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|money|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 69.5,
+      "NO": 30.5
+    },
+    "modeScore": 0.2720653422,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|act_wait": {
+    "status": "ready",
+    "winner": "ACT",
+    "percentages": {
+      "ACT": 52.6,
+      "WAIT": 47.4
+    },
+    "modeScore": 0.0068390972,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 75.5,
+      "RETREAT": 24.5
+    },
+    "modeScore": 0.4406577787,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 18.2,
+      "GO": 81.8
+    },
+    "modeScore": -0.6579102202,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 25,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 25,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 21.5,
+      "LET GO": 78.5
+    },
+    "modeScore": -0.5395298505,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 28,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 28,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 40.4,
+      "WITHDRAW": 59.6
+    },
+    "modeScore": -0.0741931695,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 45,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 45,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 22,
+      "RIGHT": 78
+    },
+    "modeScore": -0.5217100187,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 40,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 36,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|study|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 69.8,
+      "NO": 30.2
+    },
+    "modeScore": 0.279026604,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 74,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 45.2,
+      "WAIT": 54.8
+    },
+    "modeScore": -0.0210934805,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 77,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 75,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 75.6,
+      "RETREAT": 24.4
+    },
+    "modeScore": 0.4452858925,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 15.7,
+      "GO": 84.3
+    },
+    "modeScore": -0.7568196788,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 23,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 22,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 18.3,
+      "LET GO": 81.7
+    },
+    "modeScore": -0.6546353731,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 26,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 25,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.7,
+      "WITHDRAW": 62.3
+    },
+    "modeScore": -0.1175949648,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 43,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 43,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.5,
+      "RIGHT": 78.5
+    },
+    "modeScore": -0.540165442,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 40,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 36,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|friends|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 68.3,
+      "NO": 31.7
+    },
+    "modeScore": 0.2411943938,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 73,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 72,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 43,
+      "WAIT": 57
+    },
+    "modeScore": -0.0421904715,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 72.7,
+      "RETREAT": 27.3
+    },
+    "modeScore": 0.3571092197,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 72,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 71,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 18.3,
+      "GO": 81.7
+    },
+    "modeScore": -0.6556142718,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 25,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 20.7,
+      "LET GO": 79.3
+    },
+    "modeScore": -0.5684999046,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 27,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 27,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.8,
+      "WITHDRAW": 62.2
+    },
+    "modeScore": -0.1146899981,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 42,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 41,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.2,
+      "RIGHT": 78.8
+    },
+    "modeScore": -0.5507840792,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 39,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 35,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|other|yes_no": {
+    "status": "ready",
+    "winner": "YES",
+    "percentages": {
+      "YES": 69.3,
+      "NO": 30.7
+    },
+    "modeScore": 0.2665510777,
+    "modeBasis": "overall_acceptance",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|act_wait": {
+    "status": "ready",
+    "winner": "WAIT",
+    "percentages": {
+      "ACT": 46,
+      "WAIT": 54
+    },
+    "modeScore": -0.0150926244,
+    "modeBasis": "action_timing",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 76,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 74,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|advance_retreat": {
+    "status": "ready",
+    "winner": "ADVANCE",
+    "percentages": {
+      "ADVANCE": 74.4,
+      "RETREAT": 25.6
+    },
+    "modeScore": 0.4069571755,
+    "modeBasis": "tactical_momentum",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 73,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 73,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|stay_go": {
+    "status": "ready",
+    "winner": "GO",
+    "percentages": {
+      "STAY": 17.5,
+      "GO": 82.5
+    },
+    "modeScore": -0.6851498049,
+    "modeBasis": "change_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 24,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 24,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|keep_let_go": {
+    "status": "ready",
+    "winner": "LET GO",
+    "percentages": {
+      "KEEP": 20,
+      "LET GO": 80
+    },
+    "modeScore": -0.5913777897,
+    "modeBasis": "release_alignment",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 27,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 27,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|commit_withdraw": {
+    "status": "ready",
+    "winner": "WITHDRAW",
+    "percentages": {
+      "COMMIT": 37.3,
+      "WITHDRAW": 62.7
+    },
+    "modeScore": -0.1247913305,
+    "modeBasis": "durability_horizon",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 42,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 42,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|left_right": {
+    "status": "ready",
+    "winner": "RIGHT",
+    "percentages": {
+      "LEFT": 21.6,
+      "RIGHT": 78.4
+    },
+    "modeScore": -0.5363819242,
+    "modeBasis": "symbolic_polarity",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 40,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 37,
+        "dataCoverage": 0.6641
+      }
+    ]
+  }
+}

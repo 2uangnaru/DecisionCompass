@@ -19,8 +19,10 @@ const mixtures = <DecisionMode, Map<String, double>>{
   DecisionMode.advanceRetreat: {'P': 0.25, 'M': 0.60, 'L': 0.15},
   DecisionMode.stayGo: {'G': 0.70, 'P': 0.20, 'L': 0.10},
   DecisionMode.keepLetGo: {'R': 0.70, 'P': 0.20, 'L': 0.10},
-  DecisionMode.commitWithdraw: {'H': 0.80, 'P': 0.15, 'L': 0.05},
-  DecisionMode.leftRight: {'Y': 0.70, 'P': 0.20, 'L': 0.10},
+  // v9.4 moved these two, and only these two. The tripwire fired on all nine
+  // affected fixtures, which is what it is for.
+  DecisionMode.commitWithdraw: {'H': 0.60, 'R': 0.25, 'P': 0.10, 'L': 0.05},
+  DecisionMode.leftRight: {'Y': 0.50, 'P': 0.35, 'L': 0.15},
 };
 
 /// The two English labels each mode's percentages are keyed by.

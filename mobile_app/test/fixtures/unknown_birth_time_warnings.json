@@ -1,6 +1,6 @@
 {
-  "engineVersion": "4.2.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+  "engineVersion": "4.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -59,39 +59,41 @@
     "category": "general"
   },
   "status": "ready",
-  "winner": "COMMIT",
+  "winner": "WITHDRAW",
   "percentages": {
-    "COMMIT": 60.7,
-    "WITHDRAW": 39.3
+    "COMMIT": 35.7,
+    "WITHDRAW": 64.3
   },
   "dataCoverage": 0.6641,
-  "modeScore": 0.0908604937,
+  "modeScore": -0.1534255028,
   "modeBasis": "durability_horizon",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "d1e1bb8dc0e5937bb4c4d0fa39d9fcbb7a88ab66c7e9eef7eefe51fd23325092",
+  "readingKey": "217ab48b048888cc0907ed498204b825e294982885a0afa13c406b0ca004fb11",
   "axisScores": {
     "action": 0.0826392675,
     "change": 0.1497050835,
-    "selected": 0.0908604937
+    "selected": -0.1534255028
   },
   "scoring": {
-    "system": "v9.3-experimental",
+    "system": "v9.4-experimental",
     "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T14:00",
     "signals": {
       "H": 0.0132509303,
+      "R": -0.0633688927,
       "P": 0.000482456,
       "L": 0.0781
     },
     "normalized": {
       "H": 0.0747408914,
+      "R": -0.461457869,
       "P": 0.0029226481,
       "L": 0.1022693212
     },
-    "rawModeScore": 0.0801306608,
+    "rawModeScore": -0.0987258976,
     "priorDatesUsed": 14,
-    "priorMedian": 0.0586709949,
-    "adjustedModeScore": 0.0908604937,
+    "priorMedian": 0.0106733127,
+    "adjustedModeScore": -0.1534255028,
     "meaning": "symbolic_alignment_not_success_probability"
   },
   "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
@@ -101,7 +103,7 @@
       "endUtc": "2026-09-18T11:00:00.000Z",
       "startLocal": "2026-09-18T17:00:00+07:00",
       "endLocal": "2026-09-18T18:00:00+07:00",
-      "score": 63,
+      "score": 42,
       "dataCoverage": 0.6641,
       "hourBranch": 9,
       "meaning": "symbolic_timing_score_not_probability"
@@ -111,7 +113,7 @@
       "endUtc": "2026-09-18T10:00:00.000Z",
       "startLocal": "2026-09-18T15:00:00+07:00",
       "endLocal": "2026-09-18T17:00:00+07:00",
-      "score": 62,
+      "score": 41,
       "dataCoverage": 0.6641,
       "hourBranch": 8,
       "meaning": "symbolic_timing_score_not_probability"

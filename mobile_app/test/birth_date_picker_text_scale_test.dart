@@ -47,9 +47,8 @@ void main() {
           AppLocale.forLocale(locale) ?? AppLocale.english,
         ),
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(scale)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
           child: child!,
         ),
         home: Scaffold(
@@ -173,13 +172,24 @@ void main() {
       scale: 2,
     );
     expect(find.byType(CupertinoPicker), findsNWidgets(3));
+
+    // The wheel has to be used, not merely looked at: no initial date was
+    // given, so the anchor it opens on is a starting position rather than an
+    // answer. Scrolling is how that answer is given, and it has to stay
+    // possible at this text scale — the columns are 44dp rows of text that
+    // doubles in height around them.
+    await tester.drag(
+      find.byKey(const Key('birth_date_year_wheel')),
+      const Offset(0, -44),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+
     await tester.ensureVisible(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
 
-    // No initial date was given, so the wheel opens on its own default rather
-    // than on nothing — a reader who just taps Continue still gets a date.
     expect(result(), isNotNull);
   });
 }

@@ -22,7 +22,7 @@ import 'core.dart';
 import 'numbers.dart';
 
 /// Identifies the scoring system itself, independently of the engine build.
-const String scoringVersion = 'v9.3-experimental';
+const String scoringVersion = 'v9.4-experimental';
 
 /// The nine signals, in the order the Node engine lists them.
 const List<String> signalNames = <String>[
@@ -68,6 +68,9 @@ const double displayExponent = 0.55;
 /// of the profiles having no birth hour. Copied here verbatim — the two
 /// engines must normalize identically or the same reading would show a
 /// different percentage depending on where it was calculated.
+// Deliberately still says v9.3 under the v9.4 ruleset. This names the cohort
+// the normalization scales were measured on, not the ruleset that uses them,
+// and v9.4 changed only how two modes mix already-normalized signals.
 const String scaleVersion = 'v9.3-cohort-2026-09-30';
 
 /// Normalization scales, one per signal, each four times the 75th percentile
@@ -103,8 +106,23 @@ const Map<String, Map<String, double>> modeSignals =
       'advance_retreat': <String, double>{'P': 0.25, 'M': 0.60, 'L': 0.15},
       'stay_go': <String, double>{'G': 0.70, 'P': 0.20, 'L': 0.10},
       'keep_let_go': <String, double>{'R': 0.70, 'P': 0.20, 'L': 0.10},
-      'commit_withdraw': <String, double>{'H': 0.80, 'P': 0.15, 'L': 0.05},
-      'left_right': <String, double>{'Y': 0.70, 'P': 0.20, 'L': 0.10},
+      // v9.4 moved these two and nothing else. COMMIT / WITHDRAW was
+      // `.80H + .15P + .05L`: `H` is the median of the eight days ahead, so
+      // consecutive dates shared seven of their eight terms and the mode
+      // named one direction for a whole week on 88-89% of simulated
+      // profiles. `R` — the day's own support minus pressure — now takes a
+      // quarter. LEFT / RIGHT was `.70Y + .20P + .10L`: `Y` is a parity
+      // convention of terms that are each exactly +1 or -1, which made this
+      // the only mode reaching 80%+ on about a fifth of readings. Its share
+      // halves and the personal share nearly doubles. Both still lead their
+      // mode, so neither question changed meaning.
+      'commit_withdraw': <String, double>{
+        'H': 0.60,
+        'R': 0.25,
+        'P': 0.10,
+        'L': 0.05,
+      },
+      'left_right': <String, double>{'Y': 0.50, 'P': 0.35, 'L': 0.15},
     };
 
 /// What each mixture is divided by, so that the seven modes read on one scale.

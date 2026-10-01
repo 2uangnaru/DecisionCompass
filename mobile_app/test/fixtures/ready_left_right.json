@@ -1,6 +1,6 @@
 {
-  "engineVersion": "4.2.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+  "engineVersion": "4.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,21 +58,21 @@
   "status": "ready",
   "winner": "RIGHT",
   "percentages": {
-    "LEFT": 17.5,
-    "RIGHT": 82.5
+    "LEFT": 19.9,
+    "RIGHT": 80.1
   },
   "dataCoverage": 0.973,
-  "modeScore": -0.6845616764,
+  "modeScore": -0.5977707468,
   "modeBasis": "symbolic_polarity",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "c50e62f6e0ee45a5a7aa5e2e112e970c78d6e0b2fd7e829386cce9b605fb12a9",
+  "readingKey": "951d2a9e0108ee5e3886288c1287596ab7d495dd5f8e28543596e3c1718c9fa0",
   "axisScores": {
     "action": 0.0391446956,
     "change": 0.1654057867,
-    "selected": -0.6845616764
+    "selected": -0.5977707468
   },
   "scoring": {
-    "system": "v9.3-experimental",
+    "system": "v9.4-experimental",
     "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T14:00",
     "signals": {
@@ -85,10 +85,10 @@
       "P": 0.0433705967,
       "L": 0.024961962
     },
-    "rawModeScore": -0.4825797974,
+    "rawModeScore": -0.3856168332,
     "priorDatesUsed": 14,
-    "priorMedian": -0.0786160395,
-    "adjustedModeScore": -0.6845616764,
+    "priorMedian": 0.0386909938,
+    "adjustedModeScore": -0.5977707468,
     "meaning": "symbolic_alignment_not_success_probability"
   },
   "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
@@ -98,19 +98,19 @@
       "endUtc": "2026-09-18T10:00:00.000Z",
       "startLocal": "2026-09-18T15:00:00+07:00",
       "endLocal": "2026-09-18T17:00:00+07:00",
-      "score": 34,
+      "score": 37,
       "dataCoverage": 0.973,
       "hourBranch": 8,
       "meaning": "symbolic_timing_score_not_probability"
     },
     {
-      "startUtc": "2026-09-18T07:30:00.000Z",
-      "endUtc": "2026-09-18T08:00:00.000Z",
-      "startLocal": "2026-09-18T14:30:00+07:00",
-      "endLocal": "2026-09-18T15:00:00+07:00",
-      "score": 23,
+      "startUtc": "2026-09-18T10:00:00.000Z",
+      "endUtc": "2026-09-18T11:00:00.000Z",
+      "startLocal": "2026-09-18T17:00:00+07:00",
+      "endLocal": "2026-09-18T18:00:00+07:00",
+      "score": 27,
       "dataCoverage": 0.973,
-      "hourBranch": 7,
+      "hourBranch": 9,
       "meaning": "symbolic_timing_score_not_probability"
     }
   ],

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
-  SIGNALS, SCALES, SCALE_VERSION, SCORING_VERSION, MODE_SIGNALS,
+  SIGNALS, SCALES, SCALE_VERSION, SCORING_VERSION, MODE_SIGNALS, MODE_GAIN,
   LUCK_BASELINE, MEDIAN_PUSH, DISPLAY_EXPONENT,
   prospect, changePressure, luck, alignment, release, polarity, parity,
   timing, momentum, grounding, horizon, median,
@@ -133,6 +133,83 @@ test('normalization never turns thin evidence into strong evidence', () => {
   }
   assert.equal(normalizeSignal('P', 0), 0, 'no evidence is no lean');
   assert.ok(Math.abs(normalizeSignal('P', .05)) < Math.abs(normalizeSignal('P', .5)));
+});
+
+test('the seven mixtures are exactly these, and a change has to be deliberate', () => {
+  // Pinned literally rather than derived, so that editing a weight fails here
+  // first and has to be acknowledged. A mixture is the definition of what a
+  // mode asks; it is not a tuning knob.
+  assert.deepEqual(MODE_SIGNALS, {
+    yes_no: { P: 0.45, C: 0.20, L: 0.35 },
+    act_wait: { P: 0.30, C: 0.10, T: 0.30, L: 0.30 },
+    advance_retreat: { P: 0.25, M: 0.60, L: 0.15 },
+    stay_go: { G: 0.70, P: 0.20, L: 0.10 },
+    keep_let_go: { R: 0.70, P: 0.20, L: 0.10 },
+    // v9.4: was { H: 0.80, P: 0.15, L: 0.05 }.
+    commit_withdraw: { H: 0.60, R: 0.25, P: 0.10, L: 0.05 },
+    // v9.4: was { Y: 0.70, P: 0.20, L: 0.10 }.
+    left_right: { Y: 0.50, P: 0.35, L: 0.15 },
+  });
+
+  // The gain is derived from the weights and nothing else, so it is pinned by
+  // recomputing it rather than by a literal — a literal here would pass even
+  // if the derivation were replaced by a lookup table.
+  for (const [mode, mixture] of Object.entries(MODE_SIGNALS)) {
+    const squares = Object.values(mixture).reduce((s, w) => s + w * w, 0);
+    assert.equal(MODE_GAIN[mode], 1 / Math.sqrt(squares), `${mode} gain`);
+    assert.ok(MODE_GAIN[mode] > 0, `${mode} gain must not flip a winner`);
+  }
+});
+
+test('each mode still leads on a signal no other mode leans on as hard', () => {
+  // v9.4 gave COMMIT / WITHDRAW a quarter-share of `R`, which KEEP / LET GO
+  // leads on. The separation that matters is the *leading* signal, so this
+  // states it that way rather than forbidding any overlap at all.
+  const leader = mixture =>
+    Object.entries(mixture).sort((a, b) => b[1] - a[1])[0];
+  const leaders = Object.fromEntries(
+    Object.entries(MODE_SIGNALS).map(([mode, mix]) => [mode, leader(mix)]),
+  );
+  assert.deepEqual(
+    Object.fromEntries(Object.entries(leaders).map(([m, [s]]) => [m, s])),
+    {
+      yes_no: 'P',
+      act_wait: 'P',
+      advance_retreat: 'M',
+      stay_go: 'G',
+      keep_let_go: 'R',
+      commit_withdraw: 'H',
+      left_right: 'Y',
+    },
+  );
+  // Five of the seven own their leading signal outright: nobody else leans on
+  // it as hard. That ownership is what stops two questions answering each
+  // other, and it is what a careless weight change would break — v9.4 gave
+  // COMMIT / WITHDRAW a quarter of `R`, and this is the line that says a
+  // quarter is allowed while KEEP / LET GO's seventy hundredths is not.
+  const hardestOn = signal => Object.entries(MODE_SIGNALS)
+    .map(([mode, mix]) => [mode, mix[signal] ?? 0])
+    .sort((a, b) => b[1] - a[1]);
+  for (const [signal, owner] of Object.entries({
+    M: 'advance_retreat',
+    G: 'stay_go',
+    R: 'keep_let_go',
+    H: 'commit_withdraw',
+    Y: 'left_right',
+  })) {
+    const ranked = hardestOn(signal);
+    assert.equal(ranked[0][0], owner, `${signal} is no longer led by ${owner}`);
+    assert.ok(
+      ranked[1][1] < ranked[0][1],
+      `${signal} is now shared equally by ${owner} and ${ranked[1][0]}`,
+    );
+  }
+  // The remaining two both lead on `P`, which is the one case this cannot be
+  // stated as ownership. What separates them is that only one reads the clock.
+  assert.equal(leaders.yes_no[0], 'P');
+  assert.equal(leaders.act_wait[0], 'P');
+  assert.ok(MODE_SIGNALS.act_wait.T > 0);
+  assert.equal(MODE_SIGNALS.yes_no.T, undefined);
 });
 
 test('every mode mixes a normalized set that sums to one, and no two agree', () => {

@@ -84,7 +84,19 @@ void main() {
 
     expect(find.byKey(const Key('reading_error')), findsNothing);
     expect(find.byKey(const Key('result_ready')), findsOneWidget);
-    expect(find.text('COMMIT'), findsWidgets);
+    // Either side is a pass: this test is about a future period reaching the
+    // result page with real windows, not about which direction the on-device
+    // engine lands on. Pinning one side made it fail when v9.4 reversed this
+    // scenario, which told us nothing about the offline flow.
+    expect(
+      find.byKey(const Key('result_winner_label')),
+      findsOneWidget,
+      reason: 'the result page named no direction at all',
+    );
+    expect(
+      tester.widget<Text>(find.byKey(const Key('result_winner_label'))).data,
+      anyOf('COMMIT', 'WITHDRAW'),
+    );
     // A future period really does carry engine-calculated windows.
     expect(find.byKey(const Key('result_lucky_windows')), findsOneWidget);
   });

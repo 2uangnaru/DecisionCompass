@@ -17,8 +17,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -112,14 +112,14 @@
         "modeScore": 0.2398035788,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "05ae38aad283d800ba2f36b1e52991e615911463c289796b1b1b0b739230b69c",
+        "readingKey": "33f32438ad382f02cd131dd9313272cf8df5cb1f6f347ab931841548680b078a",
         "axisScores": {
           "action": 0.0336992766,
           "change": -0.0134573997,
           "selected": 0.2398035788
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T03:00",
           "signals": {
@@ -273,8 +273,8 @@
       "mode": "act_wait",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -339,14 +339,14 @@
         "modeScore": 0.1318184744,
         "modeBasis": "action_timing",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "5711aa533bd1f146db0e271f9aaeee8b48d343e9893f4e4a4cfa89eb86602c14",
+        "readingKey": "926531245734ec7cf3929d0b0be2844ca8cb34e21910b360b8497d9c1ff09890",
         "axisScores": {
           "action": 0.0004089387,
           "change": -0.1320873369,
           "selected": 0.1318184744
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-11-01T06:00",
           "signals": {
@@ -778,8 +778,8 @@
       "mode": "advance_retreat",
       "category": "career",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -844,14 +844,14 @@
         "modeScore": -0.3681083992,
         "modeBasis": "tactical_momentum",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "ef9e6b0d2feb96d2c76a0e0375f022b0f4a715d34f8e69650d93f335fade541e",
+        "readingKey": "909a8082b54cd906bf2ffe5b5b74cf82d77c64edb05a33fb23f9a4479ce1188a",
         "axisScores": {
           "action": 0.0073489093,
           "change": -0.0531970169,
           "selected": -0.3681083992
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-03-08T06:00",
           "signals": {
@@ -1281,8 +1281,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1351,14 +1351,14 @@
         "modeScore": 0.4895585577,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "8253469e4eddb671b344b8209af58de8ddcdbde82b6150e4d7d95e9fdb0b47e6",
+        "readingKey": "959f0fbf65798657f2e06d553623abeca6d8708e38e6e90279cd2329855c3cb7",
         "axisScores": {
           "action": 0.0776457356,
           "change": 0.1766342059,
           "selected": 0.4895585577
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T09:00",
           "signals": {
@@ -1512,8 +1512,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1591,14 +1591,14 @@
         "modeScore": 0.3431429531,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "574ad3e58b9cffb1ab608a03cb8421024bd6bf4926197140bb4211070ecdf28c",
+        "readingKey": "1103ea4452f6b7e1f703c9ab04e3d7050d3425dd42bb498348cd516e83daa0aa",
         "axisScores": {
           "action": 0.0400560447,
           "change": -0.0201892421,
           "selected": 0.3431429531
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T19:00",
           "signals": {
@@ -1752,8 +1752,8 @@
       "mode": "stay_go",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -1819,14 +1819,14 @@
         "modeScore": -0.3158923251,
         "modeBasis": "change_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "e50d997ff3604d1eada058937b5531c5d1cd5fb3ca77b8c30192f1714125b071",
+        "readingKey": "8936b7892a601338a0644d5743cc600dd78e3b40bf7c824ae2636a755a48e2ab",
         "axisScores": {
           "action": -0.0642426367,
           "change": 0.050266843,
           "selected": -0.3158923251
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T21:00",
           "signals": {
@@ -2086,8 +2086,8 @@
       "mode": "keep_let_go",
       "category": "love",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2156,14 +2156,14 @@
         "modeScore": -0.3706701751,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "8db6544dd9b3342ce569af888c8455ff659c5fcf5c9459cacb16d746ddcf8a83",
+        "readingKey": "7629995a49f2b0d468a763f53fe51f6b707e69eef3977ffe8ff686f1214459c4",
         "axisScores": {
           "action": 0.0633828003,
           "change": 0.1048846735,
           "selected": -0.3706701751
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T15:00",
           "signals": {
@@ -2317,8 +2317,8 @@
       "mode": "left_right",
       "category": "money",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2376,21 +2376,21 @@
         "status": "ready",
         "winner": "RIGHT",
         "percentages": {
-          "LEFT": 18.5,
-          "RIGHT": 81.5
+          "LEFT": 22.5,
+          "RIGHT": 77.5
         },
         "dataCoverage": 0.97,
-        "modeScore": -0.6485236701,
+        "modeScore": -0.5055589054,
         "modeBasis": "symbolic_polarity",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "ed8c95245b4b34288603f9cfbb6fed8e7d809cf55997c5701f08e4d1a7410be2",
+        "readingKey": "160a8b6099bbd04eb3a5729632b2c75bf3fbeefcec90dcbea5dbb585c51e1468",
         "axisScores": {
           "action": 0.0252162156,
           "change": 0.1465921807,
-          "selected": -0.6485236701
+          "selected": -0.5055589054
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T14:00",
           "signals": {
@@ -2403,10 +2403,10 @@
             "P": 0.0906216613,
             "L": 0.024961962
           },
-          "rawModeScore": -0.4768576228,
+          "rawModeScore": -0.3652645104,
           "priorDatesUsed": 14,
-          "priorMedian": -0.133525528,
-          "adjustedModeScore": -0.6485236701,
+          "priorMedian": -0.0846757202,
+          "adjustedModeScore": -0.5055589054,
           "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T08:15:00.000Z",
@@ -2416,7 +2416,7 @@
             "endUtc": "2026-09-18T11:15:00.000Z",
             "startLocal": "2026-09-18T15:00:00+05:45",
             "endLocal": "2026-09-18T17:00:00+05:45",
-            "score": 35,
+            "score": 39,
             "dataCoverage": 0.97,
             "hourBranch": 8,
             "meaning": "symbolic_timing_score_not_probability"
@@ -2426,7 +2426,7 @@
             "endUtc": "2026-09-18T09:15:00.000Z",
             "startLocal": "2026-09-18T14:15:00+05:45",
             "endLocal": "2026-09-18T15:00:00+05:45",
-            "score": 23,
+            "score": 27,
             "dataCoverage": 0.97,
             "hourBranch": 7,
             "meaning": "symbolic_timing_score_not_probability"
@@ -2735,8 +2735,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2815,8 +2815,8 @@
       "mode": "commit_withdraw",
       "category": "study",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -2872,39 +2872,41 @@
           "category": "study"
         },
         "status": "ready",
-        "winner": "COMMIT",
+        "winner": "WITHDRAW",
         "percentages": {
-          "COMMIT": 61.7,
-          "WITHDRAW": 38.3
+          "COMMIT": 30.2,
+          "WITHDRAW": 69.8
         },
         "dataCoverage": 0.973,
-        "modeScore": 0.1068893008,
+        "modeScore": -0.2796544788,
         "modeBasis": "durability_horizon",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "5fa4c146336828c7fb3fbcc588dfbfdcd70844719a15344152efc3199e64479e",
+        "readingKey": "21b11ab502cdc6fff6914503a007a928730626d9fa08c4f6277e8717e956a97a",
         "axisScores": {
           "action": 0.0323215629,
           "change": 0.204644511,
-          "selected": 0.1068893008
+          "selected": -0.2796544788
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T18:00",
           "signals": {
             "H": 0.0364754412,
+            "R": -0.1212636824,
             "P": -0.0657343103,
             "L": 0.019
           },
           "normalized": {
             "H": 0.2032510869,
+            "R": -0.742129984,
             "P": -0.3784162977,
             "L": 0.024961962
           },
-          "rawModeScore": 0.1313179199,
+          "rawModeScore": -0.1518855124,
           "priorDatesUsed": 14,
-          "priorMedian": 0.1801751581,
-          "adjustedModeScore": 0.1068893008,
+          "priorMedian": 0.1036524204,
+          "adjustedModeScore": -0.2796544788,
           "meaning": "symbolic_alignment_not_success_probability"
         },
         "evaluatedAtUtc": "2026-09-18T11:00:00.000Z",
@@ -2914,7 +2916,7 @@
             "endUtc": "2026-09-18T12:00:00.000Z",
             "startLocal": "2026-09-18T18:00:00+07:00",
             "endLocal": "2026-09-18T19:00:00+07:00",
-            "score": 63,
+            "score": 36,
             "dataCoverage": 0.973,
             "hourBranch": 9,
             "meaning": "symbolic_timing_score_not_probability"
@@ -2924,7 +2926,7 @@
             "endUtc": "2026-09-18T14:00:00.000Z",
             "startLocal": "2026-09-18T19:00:00+07:00",
             "endLocal": "2026-09-18T21:00:00+07:00",
-            "score": 62,
+            "score": 36,
             "dataCoverage": 0.973,
             "hourBranch": 10,
             "meaning": "symbolic_timing_score_not_probability"
@@ -3318,8 +3320,8 @@
       "mode": "keep_let_go",
       "category": "friends",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3384,14 +3386,14 @@
         "modeScore": -0.8361654801,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "3466f41a90909ce38a990a2f13408b4db89bf9ee0485c227796f1bd649ca1da0",
+        "readingKey": "ada31457eb6dd7465c901bb2ea0139bc44cbefbd4ebc3592737ae43308d2af98",
         "axisScores": {
           "action": 0.0089460489,
           "change": 0.1747448918,
           "selected": -0.8361654801
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T21:00",
           "signals": {
@@ -3641,8 +3643,8 @@
       "mode": "keep_let_go",
       "category": "other",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3707,14 +3709,14 @@
         "modeScore": -0.5691531402,
         "modeBasis": "release_alignment",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "a85ff2652496fbb8e72ed4528f93fd3e4dc07f015b85d064211b7953b1b7850c",
+        "readingKey": "302a6aaf732e2db8573dc140f3772dac5ea447a18d39d368459b76a28a8135f3",
         "axisScores": {
           "action": 0.0305325385,
           "change": 0.1607324946,
           "selected": -0.5691531402
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T23:00",
           "signals": {
@@ -3868,8 +3870,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -3933,14 +3935,14 @@
         "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "ed0e4195c594657299fd44f4d275339844c8036abb889d85dff38b27a50fcc3b",
+        "readingKey": "9c45cd0181ffce0451dbcaa9e94604495208d0917c331e9c5033c572b78f4c34",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
           "selected": 0.334208523
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T15:00",
           "signals": {
@@ -4093,8 +4095,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -4158,14 +4160,14 @@
         "modeScore": 0.525330685,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "0e3d6e55fc94cc3319229891d0a2b80a3f0a63b5ed858ba6189aafe0b3474b76",
+        "readingKey": "9d41f5402261be66e1deb98afe53c993ce95ca8f6c933faa2b1ee27286ae46d7",
         "axisScores": {
           "action": 0.1056839231,
           "change": 0.1484292238,
           "selected": 0.525330685
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T15:00",
           "signals": {
@@ -4325,8 +4327,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -4391,14 +4393,14 @@
         "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "dc93bb786f01973a00d34a920a9e9c3bb6934e0451487f6b03395b5d9fffe6a3",
+        "readingKey": "43faf0d68b3b6fd002629e2be21ce12f096fe49c6ec6512e441eeab2e1f927f8",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
           "selected": 0.334208523
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T15:00",
           "signals": {
@@ -4558,8 +4560,8 @@
       "mode": "yes_no",
       "category": "general",
       "result": {
-        "engineVersion": "4.2.0-mvp",
-        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.3-experimental",
+        "engineVersion": "4.3.0-mvp",
+        "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
         "providers": {
           "lunarJavascript": "1.7.7",
           "iztro": "2.6.1",
@@ -4624,14 +4626,14 @@
         "modeScore": 0.334208523,
         "modeBasis": "overall_acceptance",
         "meaning": "symbolic_alignment_not_success_probability",
-        "readingKey": "dc93bb786f01973a00d34a920a9e9c3bb6934e0451487f6b03395b5d9fffe6a3",
+        "readingKey": "43faf0d68b3b6fd002629e2be21ce12f096fe49c6ec6512e441eeab2e1f927f8",
         "axisScores": {
           "action": 0.0536403832,
           "change": 0.1652154457,
           "selected": 0.334208523
         },
         "scoring": {
-          "system": "v9.3-experimental",
+          "system": "v9.4-experimental",
           "scaleVersion": "v9.3-cohort-2026-09-30",
           "anchorLocal": "2026-09-18T15:00",
           "signals": {

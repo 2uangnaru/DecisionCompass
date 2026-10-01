@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:decision_compass/local_engine/core/core.dart';
 import 'package:decision_compass/local_engine/core/scoring.dart';
 import 'package:decision_compass/local_engine/local_reading_engine.dart';
@@ -422,5 +424,81 @@ void main() {
         expect(reading['scoring'], isNull);
       },
     );
+  });
+
+  group('the mixtures are the same seven the reference engine pins', () {
+    // The Dart port is only useful if it is the same engine. These literals
+    // are copied from `calculation-engine/test/scoring.test.js`, so a weight
+    // edited in one language and not the other fails on both sides rather
+    // than drifting quietly until a parity fixture catches it.
+    test('every weight matches, to the digit', () {
+      expect(modeSignals, {
+        'yes_no': {'P': 0.45, 'C': 0.20, 'L': 0.35},
+        'act_wait': {'P': 0.30, 'C': 0.10, 'T': 0.30, 'L': 0.30},
+        'advance_retreat': {'P': 0.25, 'M': 0.60, 'L': 0.15},
+        'stay_go': {'G': 0.70, 'P': 0.20, 'L': 0.10},
+        'keep_let_go': {'R': 0.70, 'P': 0.20, 'L': 0.10},
+        // v9.4: was {'H': 0.80, 'P': 0.15, 'L': 0.05}.
+        'commit_withdraw': {'H': 0.60, 'R': 0.25, 'P': 0.10, 'L': 0.05},
+        // v9.4: was {'Y': 0.70, 'P': 0.20, 'L': 0.10}.
+        'left_right': {'Y': 0.50, 'P': 0.35, 'L': 0.15},
+      });
+    });
+
+    test('the gain is still derived from the weights alone', () {
+      // Recomputed rather than pinned as a literal: a literal would pass even
+      // if the derivation had been replaced by a hard-coded table, and the
+      // whole point of the divisor is that nothing is fitted.
+      modeSignals.forEach((mode, mixture) {
+        final squares = mixture.values.fold<double>(0, (s, w) => s + w * w);
+        expect(modeGain[mode], 1 / math.sqrt(squares), reason: mode);
+        expect(
+          modeGain[mode]!,
+          greaterThan(0),
+          reason: '$mode: a gain must never flip a winner',
+        );
+      });
+    });
+
+    test('the gains match the reference engine bit for bit', () {
+      // Printed by `node -e` against `src/scoring.js` on the same commit.
+      // Seventeen significant digits is a double's full round trip, so these
+      // pin the exact value rather than an approximation of it.
+      expect(modeGain.map((k, v) => MapEntry(k, v.toStringAsPrecision(17))), {
+        'yes_no': '1.6552117772047359',
+        'act_wait': '1.8898223650461359',
+        'advance_retreat': '1.4990633779917231',
+        'stay_go': '1.3608276348795436',
+        'keep_let_go': '1.3608276348795436',
+        'commit_withdraw': '1.5161960871578068',
+        'left_right': '1.5911145683514600',
+      });
+    });
+
+    test('five of the seven still own their leading signal', () {
+      // v9.4 gave COMMIT / WITHDRAW a quarter-share of `R`, which KEEP / LET
+      // GO leads on. A quarter is allowed; matching keep_let_go's 0.70 is
+      // not, because then the two questions would start answering each other.
+      const owners = {
+        'M': 'advance_retreat',
+        'G': 'stay_go',
+        'R': 'keep_let_go',
+        'H': 'commit_withdraw',
+        'Y': 'left_right',
+      };
+      owners.forEach((signal, owner) {
+        final ranked =
+            modeSignals.entries
+                .map((e) => (e.key, e.value[signal] ?? 0.0))
+                .toList()
+              ..sort((a, b) => b.$2.compareTo(a.$2));
+        expect(ranked.first.$1, owner, reason: '$signal changed hands');
+        expect(
+          ranked[1].$2,
+          lessThan(ranked.first.$2),
+          reason: '$signal is now shared equally with ${ranked[1].$1}',
+        );
+      });
+    });
   });
 }

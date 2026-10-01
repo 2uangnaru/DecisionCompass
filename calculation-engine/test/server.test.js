@@ -49,8 +49,8 @@ test('health reports the engine version and ruleset from the engine itself', asy
     service: SERVICE, status: 'ok', engineVersion: VERSION, rulesetVersion: RULESET,
   });
   // Bumped with the expanded full-day energy tones.
-  assert.equal(VERSION, '4.2.0-mvp');
-  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v9.3-experimental');
+  assert.equal(VERSION, '4.3.0-mvp');
+  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v9.4-experimental');
 });
 
 test('a YES/NO NOW request returns a real engine reading', async () => {

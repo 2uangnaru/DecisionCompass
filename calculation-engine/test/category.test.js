@@ -147,14 +147,19 @@ test('unknown hour and unknown convention keep their scenario policy per categor
 });
 
 test('the signal mixtures are untouched by the category work', () => {
+  // Still here for its original purpose: category weights must never reach
+  // into a mode mixture. The two values that changed in v9.4 were changed by
+  // an explicit mixture task, not by anything in this file's subject — see
+  // `test/scoring.test.js` for the pin that owns them and `VERIFICATION.md`
+  // for why they moved.
   assert.deepEqual(MODE_SIGNALS, {
     yes_no: { P: .45, C: .20, L: .35 },
     act_wait: { P: .30, C: .10, T: .30, L: .30 },
     advance_retreat: { P: .25, M: .60, L: .15 },
     stay_go: { G: .70, P: .20, L: .10 },
     keep_let_go: { R: .70, P: .20, L: .10 },
-    commit_withdraw: { H: .80, P: .15, L: .05 },
-    left_right: { Y: 0.70, P: 0.20, L: 0.10 },
+    commit_withdraw: { H: .60, R: .25, P: .10, L: .05 },
+    left_right: { Y: 0.50, P: 0.35, L: 0.15 },
   });
   // Each mixture states relative emphasis and sums to one; the divisor that
   // puts the seven modes on one scale is derived from those same weights.

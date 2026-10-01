@@ -19,7 +19,7 @@
 import { clamp } from './core.js';
 
 /** Identifies the scoring system itself, independently of the engine build. */
-export const SCORING_VERSION = 'v9.3-experimental';
+export const SCORING_VERSION = 'v9.4-experimental';
 
 /**
  * The nine signals, in a fixed order so that diagnostics, tests and the Dart
@@ -71,6 +71,10 @@ export const DISPLAY_EXPONENT = 0.55;
  * per-user adjust them, or two readers would stop being comparable and a
  * reading would stop being reproducible from its saved snapshot.
  */
+// Deliberately still says v9.3 under the v9.4 ruleset. This names the cohort
+// the normalization scales were measured on, not the ruleset that uses them,
+// and v9.4 changed only how two modes mix already-normalized signals. Bumping
+// it would claim a recalibration that did not happen.
 export const SCALE_VERSION = 'v9.3-cohort-2026-09-30';
 
 // Measured by `node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930`:
@@ -112,6 +116,27 @@ export const SCALES = Object.freeze({
  * made it by far the most extreme mode, because `Y` carries half its weight on
  * three terms that are each exactly +1 or -1. It keeps the largest share, so
  * the polarity convention still decides it.
+ *
+ * Two mixtures moved in v9.4, and nothing else did.
+ *
+ * COMMIT / WITHDRAW was `.80H + .15P + .05L`. `H` is the median of the eight
+ * days ahead, so consecutive dates share seven of their eight terms and the
+ * mode named the same direction for a whole week on 88–89% of simulated
+ * profiles. That is not a reading of the week; it is a reading of one slow
+ * number, repeated. `R` — support minus pressure on the day itself — now takes
+ * a quarter of the weight. `H` still leads, because the question is still
+ * about the durable middle of the week ahead; it simply no longer answers
+ * alone.
+ *
+ * LEFT / RIGHT was `.70Y + .20P + .10L`. `Y` is a parity convention whose
+ * terms are each exactly +1 or -1, which made it the only mode reaching 80%+
+ * on roughly a fifth of readings while YES / NO never reached it at all. Its
+ * share drops to half and the personal share nearly doubles. `Y` still carries
+ * the largest single weight, so the polarity convention still decides the
+ * side — it is just no longer close to deciding it alone.
+ *
+ * Both changes are to weights only. No signal definition, scale, category
+ * profile, contrast or display curve moved with them.
  */
 export const MODE_SIGNALS = Object.freeze({
   yes_no: Object.freeze({ P: 0.45, C: 0.20, L: 0.35 }),
@@ -119,8 +144,8 @@ export const MODE_SIGNALS = Object.freeze({
   advance_retreat: Object.freeze({ P: 0.25, M: 0.60, L: 0.15 }),
   stay_go: Object.freeze({ G: 0.70, P: 0.20, L: 0.10 }),
   keep_let_go: Object.freeze({ R: 0.70, P: 0.20, L: 0.10 }),
-  commit_withdraw: Object.freeze({ H: 0.80, P: 0.15, L: 0.05 }),
-  left_right: Object.freeze({ Y: 0.70, P: 0.20, L: 0.10 }),
+  commit_withdraw: Object.freeze({ H: 0.60, R: 0.25, P: 0.10, L: 0.05 }),
+  left_right: Object.freeze({ Y: 0.50, P: 0.35, L: 0.15 }),
 });
 
 /**

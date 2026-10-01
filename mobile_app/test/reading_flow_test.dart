@@ -267,27 +267,33 @@ void main() {
       await revealReading(tester, modeLabel: 'COMMIT', periodName: 'evening');
       await pumpPastRitual(tester);
 
-      expect(find.text('COMMIT'), findsWidgets);
-      // Scoped to the direction block: the window scores are also in the 70s.
+      // v9.4 reversed this fixture: `H` no longer answers almost alone, and
+      // the day's own `R` carries a quarter of the weight, which is enough to
+      // turn 69.6% COMMIT into 55.2% WITHDRAW on these inputs. The mode still
+      // shows its own numbers, which is what this test is about.
+      expect(find.text('WITHDRAW'), findsWidgets);
+      // Scoped to the direction block: the window scores are in the 60s too.
       expect(
         find.descendant(
           of: find.byKey(const Key('result_ready')),
-          matching: find.text('69.6%'),
+          matching: find.text('55.2%'),
         ),
         findsOneWidget,
       );
-      expect(find.text('WITHDRAW  30.4%'), findsOneWidget);
+      expect(find.text('COMMIT  44.8%'), findsOneWidget);
       final windowCard = find.byKey(const Key('result_lucky_windows'));
       expect(windowCard, findsOneWidget);
       // The engine's own local wall clock (19:00–21:00 and 21:00–23:00 in
       // +07:00), rendered without a second timezone conversion.
       String window(int fromHour, int toHour) =>
           '${clock(fromHour)} \u2013 ${clock(toHour)}';
-      expect(find.text(window(18, 19)), findsOneWidget);
+      // The top two moved with the mixture, which is expected: a window is
+      // scored by the same mode weights as the headline.
       expect(find.text(window(19, 21)), findsOneWidget);
-      // Scores read as percentages; both windows scored 71 in this fixture.
+      expect(find.text(window(21, 23)), findsOneWidget);
+      // Scores read as percentages; both windows scored 64 in this fixture.
       expect(
-        find.descendant(of: windowCard, matching: find.text('71%')),
+        find.descendant(of: windowCard, matching: find.text('64%')),
         findsNWidgets(2),
       );
       expect(
@@ -316,11 +322,13 @@ void main() {
       await revealReading(tester, modeLabel: 'LEFT', periodName: 'afternoon');
       await pumpPastRitual(tester);
 
-      // The winner is whichever side the polarity signal lands on; here it
-      // is RIGHT, and LEFT is shown as the counterpart.
+      // The winner is still whichever side the polarity signal lands on —
+      // `Y` keeps the largest share in v9.4 — but at half its old weight it
+      // no longer carries the result nearly alone, so the same inputs read
+      // 80.1% instead of 82.5%.
       expect(find.text('RIGHT'), findsWidgets);
-      expect(find.text('82.5%'), findsOneWidget);
-      expect(find.text('LEFT  17.5%'), findsOneWidget);
+      expect(find.text('80.1%'), findsOneWidget);
+      expect(find.text('LEFT  19.9%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (

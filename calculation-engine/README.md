@@ -124,8 +124,8 @@ có học hoặc chỉnh theo từng người dùng lúc chạy.
 | ADVANCE / RETREAT | `.25P + .60M + .15L` |
 | STAY / GO | `.70G + .20P + .10L` |
 | KEEP / LET GO | `.70R + .20P + .10L` |
-| COMMIT / WITHDRAW | `.80H + .15P + .05L` |
-| LEFT / RIGHT | `.70Y + .20P + .10L` |
+| COMMIT / WITHDRAW | `.60H + .25R + .10P + .05L` |
+| LEFT / RIGHT | `.50Y + .35P + .15L` |
 
 Mỗi mixture được chia cho `sqrt(tổng bình phương trọng số)` của chính nó
 (`MODE_GAIN`). Trung bình có trọng số của nhiều tín hiệu gần độc lập thì hẹp

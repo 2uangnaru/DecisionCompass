@@ -45,7 +45,20 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   final _monthFocus = FocusNode();
   final _yearFocus = FocusNode();
   var _mode = _EntryMode.wheel;
-  var _wheelTouched = false;
+
+  /// Whether the wheel is showing a date somebody chose.
+  ///
+  /// The wheel always *has* a value — it opens anchored on 1 January 2000 so
+  /// the three columns are not blank — but an anchor is a starting position,
+  /// not an answer. Confirming without this set would save a date the reader
+  /// never picked, and a birth date is the one input where a plausible
+  /// default is worse than none: nothing downstream would ever flag it.
+  ///
+  /// Deliberately not "the value differs from the anchor". A reader born on
+  /// 1 January 2000 must be able to confirm that date like anyone else, so
+  /// what is tracked is whether they interacted, not what they landed on.
+  var _wheelAnswered = false;
+
   var _showError = false;
 
   DateTime get _lastDate =>
@@ -57,10 +70,16 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     final initial = widget.initialDate;
     final today = DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
     final defaultDate = DateTime(2000);
-    _wheelDate =
+    // A saved date the wheel can actually show is already an answer — the
+    // reader gave it earlier, and reopening the sheet to confirm it unchanged
+    // must work. One outside the range is not: the wheel falls back to the
+    // anchor, and an anchor is never an answer.
+    final adopted =
         initial != null &&
-            !initial.isBefore(_firstDate) &&
-            !initial.isAfter(today)
+        !initial.isBefore(_firstDate) &&
+        !initial.isAfter(today);
+    _wheelAnswered = adopted;
+    _wheelDate = adopted
         ? DateUtils.dateOnly(initial)
         : defaultDate.isAfter(today)
         ? today
@@ -103,7 +122,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     final day = math.min(old.day, _dayCount(year, month));
     setState(() {
       _wheelDate = DateTime(year, month, day);
-      _wheelTouched = true;
+      _wheelAnswered = true;
     });
     if (month != old.month) _monthWheel.jumpToItem(month - 1);
     if (day != old.day) _dayWheel.jumpToItem(day - 1);
@@ -114,14 +133,14 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     final day = math.min(old.day, _dayCount(old.year, month));
     setState(() {
       _wheelDate = DateTime(old.year, month, day);
-      _wheelTouched = true;
+      _wheelAnswered = true;
     });
     if (day != old.day) _dayWheel.jumpToItem(day - 1);
   }
 
   void _chooseDay(int day) => setState(() {
     _wheelDate = DateTime(_wheelDate.year, _wheelDate.month, day);
-    _wheelTouched = true;
+    _wheelAnswered = true;
   });
 
   DateTime? get _manualDate {
@@ -152,14 +171,20 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     if (mode == _mode) return;
     FocusScope.of(context).unfocus();
     setState(() {
+      // Only a chosen date is carried across. An untouched anchor leaves the
+      // typed fields blank, so switching tabs cannot quietly turn the
+      // starting position into an answer.
       if (mode == _EntryMode.manual &&
           _day.text.isEmpty &&
           _month.text.isEmpty &&
           _year.text.isEmpty &&
-          _wheelTouched) {
+          _wheelAnswered) {
         _setManualFields(_wheelDate);
       } else if (mode == _EntryMode.wheel && _manualDate != null) {
         _wheelDate = _manualDate!;
+        // Typed and complete: the reader answered, and moving that answer to
+        // the wheel keeps it theirs.
+        _wheelAnswered = true;
         _dayWheel.dispose();
         _monthWheel.dispose();
         _yearWheel.dispose();
@@ -175,9 +200,17 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     if (next != null && value.length == length) next.requestFocus();
   }
 
+  /// The date this sheet would return right now, or null when nobody has
+  /// given one yet.
+  DateTime? get _chosenDate => _mode == _EntryMode.wheel
+      ? (_wheelAnswered ? _wheelDate : null)
+      : _manualDate;
+
   void _confirm() {
-    final date = _mode == _EntryMode.wheel ? _wheelDate : _manualDate;
+    final date = _chosenDate;
     if (date == null) {
+      // Nothing closes and nothing is saved; the feedback line says what is
+      // missing, and announces itself to a screen reader.
       setState(() => _showError = true);
       return;
     }
@@ -275,7 +308,12 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
         _mode == _EntryMode.manual &&
         manualDate == null &&
         (_showError || _manualComplete);
-    final selectedDate = _mode == _EntryMode.wheel ? _wheelDate : manualDate;
+    final selectedDate = _chosenDate;
+    // Not "invalid" — nothing is wrong with the anchor, it simply has not
+    // been chosen. The wording stays the same prompt it always was; only its
+    // colour changes, so a Continue that cannot proceed is not silent.
+    final unanswered =
+        _mode == _EntryMode.wheel && !_wheelAnswered && _showError;
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
@@ -383,37 +421,55 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                               ),
-                              Row(
-                                children: [
-                                  _wheelColumn(
-                                    key: const Key('birth_date_day_wheel'),
-                                    controller: _dayWheel,
-                                    count: _dayCount(
-                                      _wheelDate.year,
-                                      _wheelDate.month,
+                              // A drag on any column is an answer, even one
+                              // that settles back where it started. Without
+                              // this, a reader born on the anchor date would
+                              // have to scroll away and back to be allowed to
+                              // confirm it; `onSelectedItemChanged` only
+                              // fires when the landing index differs.
+                              // `dragDetails` is what separates a finger from
+                              // the `jumpToItem` calls the columns make on
+                              // each other when a month shortens.
+                              NotificationListener<ScrollStartNotification>(
+                                onNotification: (notification) {
+                                  if (notification.dragDetails != null &&
+                                      !_wheelAnswered) {
+                                    setState(() => _wheelAnswered = true);
+                                  }
+                                  return false;
+                                },
+                                child: Row(
+                                  children: [
+                                    _wheelColumn(
+                                      key: const Key('birth_date_day_wheel'),
+                                      controller: _dayWheel,
+                                      count: _dayCount(
+                                        _wheelDate.year,
+                                        _wheelDate.month,
+                                      ),
+                                      valueAt: (index) => index + 1,
+                                      onSelected: _chooseDay,
+                                      label: l10n.birthDay,
                                     ),
-                                    valueAt: (index) => index + 1,
-                                    onSelected: _chooseDay,
-                                    label: l10n.birthDay,
-                                  ),
-                                  _wheelColumn(
-                                    key: const Key('birth_date_month_wheel'),
-                                    controller: _monthWheel,
-                                    count: _monthCount(_wheelDate.year),
-                                    valueAt: (index) => index + 1,
-                                    onSelected: _chooseMonth,
-                                    label: l10n.birthMonth,
-                                  ),
-                                  _wheelColumn(
-                                    key: const Key('birth_date_year_wheel'),
-                                    controller: _yearWheel,
-                                    count: _lastDate.year - 1899,
-                                    valueAt: (index) => index + 1900,
-                                    onSelected: _chooseYear,
-                                    label: l10n.birthYear,
-                                    digits: 4,
-                                  ),
-                                ],
+                                    _wheelColumn(
+                                      key: const Key('birth_date_month_wheel'),
+                                      controller: _monthWheel,
+                                      count: _monthCount(_wheelDate.year),
+                                      valueAt: (index) => index + 1,
+                                      onSelected: _chooseMonth,
+                                      label: l10n.birthMonth,
+                                    ),
+                                    _wheelColumn(
+                                      key: const Key('birth_date_year_wheel'),
+                                      controller: _yearWheel,
+                                      count: _lastDate.year - 1899,
+                                      valueAt: (index) => index + 1900,
+                                      onSelected: _chooseYear,
+                                      label: l10n.birthYear,
+                                      digits: 4,
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),
@@ -457,17 +513,24 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                   ),
                   const SizedBox(height: 18),
                 ],
-                Text(
-                  invalid
-                      ? l10n.birthDateInvalid
-                      : selectedDate == null
-                      ? l10n.selectBirthDate
-                      : formatDate(intlLocaleOf(context), selectedDate),
-                  key: const Key('birth_date_feedback'),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: invalid
-                        ? theme.colorScheme.error
-                        : CompassColors.secondary,
+                Semantics(
+                  // Announced when it changes, so somebody using a screen
+                  // reader hears why Continue did nothing rather than getting
+                  // silence. This line is the only thing asking them to
+                  // interact with the wheel.
+                  liveRegion: true,
+                  child: Text(
+                    invalid
+                        ? l10n.birthDateInvalid
+                        : selectedDate == null
+                        ? l10n.selectBirthDate
+                        : formatDate(intlLocaleOf(context), selectedDate),
+                    key: const Key('birth_date_feedback'),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: invalid || unanswered
+                          ? theme.colorScheme.error
+                          : CompassColors.secondary,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 24),

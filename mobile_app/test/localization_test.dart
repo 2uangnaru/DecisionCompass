@@ -737,10 +737,18 @@ void main() {
       allowCountryNameGap(tester);
 
       final ja = stringsFor(AppLocale.japanese);
+      // Derived from the snapshot's own winner rather than hard-coded to the
+      // mode's first label. The point of this test is that a saved reading is
+      // shown in the new language on the side the engine actually chose, and
+      // pinning "first" made it a test of which side v9.3 happened to pick —
+      // v9.4 reversed this fixture and it failed for the wrong reason.
       expect(
         tester.widget<Text>(find.byKey(const Key('result_winner_label'))).data,
-        modeFirstLabel(ja, DecisionMode.commitWithdraw),
+        localizedChoice(ja, DecisionMode.commitWithdraw, reading.winner!),
       );
+      // And it is genuinely one of the two sides, not a passthrough of an
+      // unrecognised token.
+      expect(reading.winner, anyOf('COMMIT', 'WITHDRAW'));
       // The heading is one complete Japanese sentence, not a frame.
       expect(find.text(ja.luckyTimesEvening), findsOneWidget);
       expect(
