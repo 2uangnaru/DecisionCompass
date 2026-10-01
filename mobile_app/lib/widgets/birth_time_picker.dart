@@ -30,7 +30,7 @@ String birthHourZodiacLabel(String localeName, int hour24) {
     'Chuột 🐀',
     'Trâu 🐂',
     'Hổ 🐅',
-    'Mão 🐱',
+    'Mèo 🐱',
     'Rồng 🐲',
     'Rắn 🐍',
     'Ngựa 🐎',
@@ -41,11 +41,99 @@ String birthHourZodiacLabel(String localeName, int hour24) {
     'Lợn 🐖',
   ];
 
+  const branchesZh = [
+    '子',
+    '丑',
+    '寅',
+    '卯',
+    '辰',
+    '巳',
+    '午',
+    '未',
+    '申',
+    '酉',
+    '戌',
+    '亥',
+  ];
+  const animalsZh = [
+    '鼠 🐀',
+    '牛 🐂',
+    '虎 🐅',
+    '兔 🐇',
+    '龙 🐲',
+    '蛇 🐍',
+    '马 🐎',
+    '羊 🐐',
+    '猴 🐒',
+    '鸡 🐓',
+    '狗 🐕',
+    '猪 🐖',
+  ];
+
+  const branchesJa = [
+    '子',
+    '丑',
+    '寅',
+    '卯',
+    '辰',
+    '巳',
+    '午',
+    '未',
+    '申',
+    '酉',
+    '戌',
+    '亥',
+  ];
+  const animalsJa = [
+    '子 🐀',
+    '丑 🐂',
+    '寅 🐅',
+    '卯 🐇',
+    '辰 🐲',
+    '巳 🐍',
+    '午 🐎',
+    '未 🐐',
+    '申 🐒',
+    '酉 🐓',
+    '戌 🐕',
+    '亥 🐖',
+  ];
+
+  const animalsEs = [
+    'Rata 🐀',
+    'Buey 🐂',
+    'Tigre 🐅',
+    'Conejo 🐇',
+    'Dragón 🐲',
+    'Serpiente 🐍',
+    'Caballo 🐎',
+    'Cabra 🐐',
+    'Mono 🐒',
+    'Gallo 🐓',
+    'Perro 🐕',
+    'Cerdo 🐖',
+  ];
+
+  const branchesTh = [
+    'ชวด (หนู 🐀)',
+    'ฉลู (วัว 🐂)',
+    'ขาล (เสือ 🐅)',
+    'เถาะ (กระต่าย 🐇)',
+    'มะโรง (มังกร 🐲)',
+    'มะเส็ง (งู 🐍)',
+    'มะเมีย (ม้า 🐎)',
+    'มะแม (แพะ 🐐)',
+    'วอก (ลิง 🐒)',
+    'ระกา (ไก่ 🐓)',
+    'จอ (หมา 🐕)',
+    'กุน (หมู 🐖)',
+  ];
+
   const animalsEn = [
     'Rat 🐀',
     'Ox 🐂',
     'Tiger 🐅',
-    'Rabbit / Cat 🐱',
+    'Rabbit 🐇',
     'Dragon 🐲',
     'Snake 🐍',
     'Horse 🐎',
@@ -56,10 +144,14 @@ String birthHourZodiacLabel(String localeName, int hour24) {
     'Pig 🐖',
   ];
 
-  if (lang == 'vi') {
-    return 'Giờ ${branchesVi[branchIndex]} (${animalsVi[branchIndex]})';
-  }
-  return 'Hour of the ${animalsEn[branchIndex]}';
+  return switch (lang) {
+    'vi' => 'Giờ ${branchesVi[branchIndex]} (${animalsVi[branchIndex]})',
+    'zh' => '${branchesZh[branchIndex]}时 (${animalsZh[branchIndex]})',
+    'ja' => '${branchesJa[branchIndex]}の刻 (${animalsJa[branchIndex]})',
+    'es' => 'Hora del ${animalsEs[branchIndex]}',
+    'th' => 'ยาม${branchesTh[branchIndex]}',
+    _ => 'Hour of the ${animalsEn[branchIndex]}',
+  };
 }
 
 /// Asks for a birth time using a celestial wheel bottom sheet or manual input.
