@@ -206,8 +206,12 @@ class BirthDatePickerSheet extends StatefulWidget {
 
 class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   static final _firstDate = DateTime(1900);
+  static const int _anchorYear = 2000;
 
-  late DateTime _wheelDate;
+  int? _selectedDay;
+  int? _selectedMonth;
+  int? _selectedYear;
+
   late FixedExtentScrollController _dayWheel;
   late FixedExtentScrollController _monthWheel;
   late FixedExtentScrollController _yearWheel;
@@ -218,63 +222,121 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   final _yearFocus = FocusNode();
   var _mode = _EntryMode.wheel;
 
-  /// Whether the wheel is showing a date somebody chose.
-  ///
-  /// The wheel always *has* a value — it opens anchored on 1 January 2000 so
-  /// the three columns are not blank — but an anchor is a starting position,
-  /// not an answer. Confirming without this set would save a date the reader
-  /// never picked, and a birth date is the one input where a plausible
-  /// default is worse than none: nothing downstream would ever flag it.
-  ///
-  /// Deliberately not "the value differs from the anchor". A reader born on
-  /// 1 January 2000 must be able to confirm that date like anyone else, so
-  /// what is tracked is whether they interacted, not what they landed on.
-  var _wheelAnswered = false;
-
   var _showError = false;
 
   DateTime get _lastDate =>
       DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
+
+  int get _yearPlaceholderIndex => _anchorYear - 1900;
+
+  List<String> get _yearItems {
+    final lastYear = _lastDate.year;
+    final items = <String>[];
+    for (int y = 1900; y < _anchorYear; y++) {
+      items.add(y.toString());
+    }
+    items.add('----');
+    for (int y = _anchorYear; y <= lastYear; y++) {
+      items.add(y.toString());
+    }
+    return items;
+  }
+
+  int _yearToIndex(int year) {
+    if (year < _anchorYear) {
+      return year - 1900;
+    }
+    return year - _anchorYear + _yearPlaceholderIndex + 1;
+  }
+
+  int? _indexToYear(int index) {
+    if (index == _yearPlaceholderIndex) {
+      return null;
+    }
+    if (index < _yearPlaceholderIndex) {
+      return 1900 + index;
+    }
+    return _anchorYear + (index - _yearPlaceholderIndex - 1);
+  }
+
+  int get _currentMonthCount =>
+      _selectedYear == _lastDate.year ? _lastDate.month : 12;
+
+  List<String> get _monthItems => [
+    '--',
+    for (int i = 1; i <= _currentMonthCount; i++) i.toString().padLeft(2, '0'),
+  ];
+
+  int? _indexToMonth(int index, int count) {
+    final trueIndex = (index % count + count) % count;
+    return trueIndex == 0 ? null : trueIndex;
+  }
+
+  int get _currentDayCount {
+    final year = _selectedYear ?? 2000;
+    final month = _selectedMonth ?? 1;
+    return _dayCount(year, month);
+  }
+
+  List<String> get _dayItems => [
+    '--',
+    for (int i = 1; i <= _currentDayCount; i++) i.toString().padLeft(2, '0'),
+  ];
+
+  int? _indexToDay(int index, int count) {
+    final trueIndex = (index % count + count) % count;
+    return trueIndex == 0 ? null : trueIndex;
+  }
 
   @override
   void initState() {
     super.initState();
     final initial = widget.initialDate;
     final today = DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
-    final defaultDate = DateTime(2000);
-    // A saved date the wheel can actually show is already an answer — the
-    // reader gave it earlier, and reopening the sheet to confirm it unchanged
-    // must work. One outside the range is not: the wheel falls back to the
-    // anchor, and an anchor is never an answer.
     final adopted =
         initial != null &&
         !initial.isBefore(_firstDate) &&
         !initial.isAfter(today);
-    _wheelAnswered = adopted;
-    _wheelDate = adopted
-        ? DateUtils.dateOnly(initial)
-        : defaultDate.isAfter(today)
-        ? today
-        : defaultDate;
-    _day = TextEditingController(text: initial?.day.toString().padLeft(2, '0'));
-    _month = TextEditingController(
-      text: initial?.month.toString().padLeft(2, '0'),
+
+    if (adopted) {
+      _selectedDay = initial.day;
+      _selectedMonth = initial.month;
+      _selectedYear = initial.year;
+    } else {
+      _selectedDay = null;
+      _selectedMonth = null;
+      _selectedYear = null;
+    }
+
+    _day = TextEditingController(
+      text: adopted ? initial.day.toString().padLeft(2, '0') : '',
     );
-    _year = TextEditingController(text: initial?.year.toString());
+    _month = TextEditingController(
+      text: adopted ? initial.month.toString().padLeft(2, '0') : '',
+    );
+    _year = TextEditingController(
+      text: adopted ? initial.year.toString() : '',
+    );
     _createWheelControllers();
   }
 
   void _createWheelControllers() {
     _dayWheel = FixedExtentScrollController(
-      initialItem: _wheelDate.day - 1,
+      initialItem: _selectedDay != null
+          ? math.min(_selectedDay!, _currentDayCount)
+          : 0,
       keepScrollOffset: false,
     );
     _monthWheel = FixedExtentScrollController(
-      initialItem: _wheelDate.month - 1,
+      initialItem: _selectedMonth != null
+          ? math.min(_selectedMonth!, _currentMonthCount)
+          : 0,
       keepScrollOffset: false,
     );
     _yearWheel = FixedExtentScrollController(
-      initialItem: _wheelDate.year - 1900,
+      initialItem: _selectedYear != null
+          ? _yearToIndex(_selectedYear!)
+          : _yearPlaceholderIndex,
       keepScrollOffset: false,
     );
   }
@@ -288,31 +350,41 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
         : daysInMonth;
   }
 
-  void _chooseYear(int year) {
-    final old = _wheelDate;
-    final month = math.min(old.month, _monthCount(year));
-    final day = math.min(old.day, _dayCount(year, month));
+  void _chooseYear(int? year) {
     setState(() {
-      _wheelDate = DateTime(year, month, day);
-      _wheelAnswered = true;
+      _selectedYear = year;
+      if (year != null) {
+        if (_selectedMonth != null && _selectedMonth! > _monthCount(year)) {
+          final maxMonth = _monthCount(year);
+          _selectedMonth = maxMonth;
+          _monthWheel.jumpToItem(maxMonth);
+        }
+        if (_selectedMonth != null && _selectedDay != null) {
+          final days = _dayCount(year, _selectedMonth!);
+          if (_selectedDay! > days) {
+            _selectedDay = days;
+            _dayWheel.jumpToItem(days);
+          }
+        }
+      }
     });
-    if (month != old.month) _monthWheel.jumpToItem(month - 1);
-    if (day != old.day) _dayWheel.jumpToItem(day - 1);
   }
 
-  void _chooseMonth(int month) {
-    final old = _wheelDate;
-    final day = math.min(old.day, _dayCount(old.year, month));
+  void _chooseMonth(int? month) {
     setState(() {
-      _wheelDate = DateTime(old.year, month, day);
-      _wheelAnswered = true;
+      _selectedMonth = month;
+      if (month != null && _selectedDay != null) {
+        final days = _dayCount(_selectedYear ?? 2000, month);
+        if (_selectedDay! > days) {
+          _selectedDay = days;
+          _dayWheel.jumpToItem(days);
+        }
+      }
     });
-    if (day != old.day) _dayWheel.jumpToItem(day - 1);
   }
 
-  void _chooseDay(int day) => setState(() {
-    _wheelDate = DateTime(_wheelDate.year, _wheelDate.month, day);
-    _wheelAnswered = true;
+  void _chooseDay(int? day) => setState(() {
+    _selectedDay = day;
   });
 
   DateTime? get _manualDate {
@@ -343,20 +415,16 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     if (mode == _mode) return;
     FocusScope.of(context).unfocus();
     setState(() {
-      // Only a chosen date is carried across. An untouched anchor leaves the
-      // typed fields blank, so switching tabs cannot quietly turn the
-      // starting position into an answer.
       if (mode == _EntryMode.manual &&
           _day.text.isEmpty &&
           _month.text.isEmpty &&
           _year.text.isEmpty &&
-          _wheelAnswered) {
-        _setManualFields(_wheelDate);
+          _wheelDate != null) {
+        _setManualFields(_wheelDate!);
       } else if (mode == _EntryMode.wheel && _manualDate != null) {
-        _wheelDate = _manualDate!;
-        // Typed and complete: the reader answered, and moving that answer to
-        // the wheel keeps it theirs.
-        _wheelAnswered = true;
+        _selectedDay = _manualDate!.day;
+        _selectedMonth = _manualDate!.month;
+        _selectedYear = _manualDate!.year;
         _dayWheel.dispose();
         _monthWheel.dispose();
         _yearWheel.dispose();
@@ -372,17 +440,21 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     if (next != null && value.length == length) next.requestFocus();
   }
 
+  DateTime? get _wheelDate =>
+      (_selectedDay != null &&
+              _selectedMonth != null &&
+              _selectedYear != null)
+          ? DateTime(_selectedYear!, _selectedMonth!, _selectedDay!)
+          : null;
+
   /// The date this sheet would return right now, or null when nobody has
   /// given one yet.
-  DateTime? get _chosenDate => _mode == _EntryMode.wheel
-      ? (_wheelAnswered ? _wheelDate : null)
-      : _manualDate;
+  DateTime? get _chosenDate =>
+      _mode == _EntryMode.wheel ? _wheelDate : _manualDate;
 
   void _confirm() {
     final date = _chosenDate;
     if (date == null) {
-      // Nothing closes and nothing is saved; the feedback line says what is
-      // missing, and announces itself to a screen reader.
       setState(() => _showError = true);
       return;
     }
@@ -405,30 +477,36 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   Widget _wheelColumn({
     required Key key,
     required FixedExtentScrollController controller,
-    required int count,
-    required int Function(int) valueAt,
+    required List<String> items,
     required ValueChanged<int> onSelected,
     required String label,
-    int digits = 2,
+    bool looping = true,
   }) => Expanded(
-    child: CupertinoPicker.builder(
+    child: CupertinoPicker(
       key: key,
       scrollController: controller,
       itemExtent: 44,
       useMagnifier: true,
       magnification: 1.07,
       selectionOverlay: null,
-      childCount: count,
-      onSelectedItemChanged: (index) => onSelected(valueAt(index)),
-      itemBuilder: (context, index) {
-        final value = valueAt(index);
-        return Center(
-          child: Semantics(
-            label: '$label $value',
-            child: Text(value.toString().padLeft(digits, '0')),
+      looping: looping,
+      onSelectedItemChanged: onSelected,
+      children: [
+        for (final item in items)
+          Center(
+            child: Semantics(
+              label: '$label $item',
+              child: Text(
+                item,
+                style: TextStyle(
+                  color: item.startsWith('-')
+                      ? CompassColors.secondary.withValues(alpha: 0.7)
+                      : null,
+                ),
+              ),
+            ),
           ),
-        );
-      },
+      ],
     ),
   );
 
@@ -485,7 +563,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     // been chosen. The wording stays the same prompt it always was; only its
     // colour changes, so a Continue that cannot proceed is not silent.
     final unanswered =
-        _mode == _EntryMode.wheel && !_wheelAnswered && _showError;
+        _mode == _EntryMode.wheel && _wheelDate == null && _showError;
 
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
@@ -629,62 +707,54 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                               // Outside the fade: a ShaderMask paints, it does
                               // not absorb scroll notifications, so the order
                               // is only about keeping the two concerns apart.
-                              NotificationListener<ScrollStartNotification>(
-                                onNotification: (notification) {
-                                  if (notification.dragDetails != null &&
-                                      !_wheelAnswered) {
-                                    setState(() => _wheelAnswered = true);
-                                  }
-                                  return false;
-                                },
-                                child: ShaderMask(
-                                  shaderCallback: (bounds) =>
-                                      const LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          Colors.transparent,
-                                          Colors.black,
-                                          Colors.black,
-                                          Colors.transparent,
-                                        ],
-                                        stops: [0.0, 0.2, 0.8, 1.0],
-                                      ).createShader(bounds),
-                                  blendMode: BlendMode.dstIn,
-                                  child: Row(
-                                    children: [
-                                      _wheelColumn(
-                                        key: const Key('birth_date_day_wheel'),
-                                        controller: _dayWheel,
-                                        count: _dayCount(
-                                          _wheelDate.year,
-                                          _wheelDate.month,
-                                        ),
-                                        valueAt: (index) => index + 1,
-                                        onSelected: _chooseDay,
-                                        label: l10n.birthDay,
+                              ShaderMask(
+                                shaderCallback: (bounds) =>
+                                    const LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black,
+                                        Colors.black,
+                                        Colors.transparent,
+                                      ],
+                                      stops: [0.0, 0.2, 0.8, 1.0],
+                                    ).createShader(bounds),
+                                blendMode: BlendMode.dstIn,
+                                child: Row(
+                                  children: [
+                                    _wheelColumn(
+                                      key: const Key('birth_date_day_wheel'),
+                                      controller: _dayWheel,
+                                      items: _dayItems,
+                                      onSelected: (i) => _chooseDay(
+                                        _indexToDay(i, _dayItems.length),
                                       ),
-                                      _wheelColumn(
-                                        key: const Key(
-                                          'birth_date_month_wheel',
-                                        ),
-                                        controller: _monthWheel,
-                                        count: _monthCount(_wheelDate.year),
-                                        valueAt: (index) => index + 1,
-                                        onSelected: _chooseMonth,
-                                        label: l10n.birthMonth,
+                                      label: l10n.birthDay,
+                                      looping: true,
+                                    ),
+                                    _wheelColumn(
+                                      key: const Key(
+                                        'birth_date_month_wheel',
                                       ),
-                                      _wheelColumn(
-                                        key: const Key('birth_date_year_wheel'),
-                                        controller: _yearWheel,
-                                        count: _lastDate.year - 1899,
-                                        valueAt: (index) => index + 1900,
-                                        onSelected: _chooseYear,
-                                        label: l10n.birthYear,
-                                        digits: 4,
+                                      controller: _monthWheel,
+                                      items: _monthItems,
+                                      onSelected: (i) => _chooseMonth(
+                                        _indexToMonth(i, _monthItems.length),
                                       ),
-                                    ],
-                                  ),
+                                      label: l10n.birthMonth,
+                                      looping: true,
+                                    ),
+                                    _wheelColumn(
+                                      key: const Key('birth_date_year_wheel'),
+                                      controller: _yearWheel,
+                                      items: _yearItems,
+                                      onSelected: (i) =>
+                                          _chooseYear(_indexToYear(i)),
+                                      label: l10n.birthYear,
+                                      looping: false,
+                                    ),
+                                  ],
                                 ),
                               ),
                             ],
@@ -820,6 +890,9 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                           minimumSize: const Size.fromHeight(52),
                           backgroundColor: CompassColors.blue,
                           foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              CompassColors.blue.withValues(alpha: 0.35),
+                          disabledForegroundColor: Colors.white38,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -828,7 +901,10 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        onPressed: _confirm,
+                        onPressed:
+                            (_mode == _EntryMode.wheel && _wheelDate == null)
+                            ? null
+                            : _confirm,
                         child: Text(l10n.continueAction),
                       ),
                     ),

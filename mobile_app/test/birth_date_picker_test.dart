@@ -283,4 +283,53 @@ void main() {
       expect(cancelSize.width, equals(confirmSize.width));
     },
   );
+
+  testWidgets(
+    'unselected state displays placeholder dashes and disables continue',
+    (tester) async {
+      final result = await openPicker(tester);
+      expect(find.text('--'), findsWidgets);
+      expect(find.text('----'), findsOneWidget);
+
+      final confirmButton = tester.widget<FilledButton>(
+        find.byKey(const Key('birth_date_confirm')),
+      );
+      expect(confirmButton.onPressed, isNull);
+
+      final feedback = tester
+          .widget<Text>(find.byKey(const Key('birth_date_feedback')))
+          .data;
+      expect(feedback, 'Select your date of birth');
+
+      // Scroll day wheel to select day
+      await tester.drag(
+        find.byKey(const Key('birth_date_day_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // Scroll month wheel to select month
+      await tester.drag(
+        find.byKey(const Key('birth_date_month_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // Scroll year wheel to select year
+      await tester.drag(
+        find.byKey(const Key('birth_date_year_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      final updatedConfirmButton = tester.widget<FilledButton>(
+        find.byKey(const Key('birth_date_confirm')),
+      );
+      expect(updatedConfirmButton.onPressed, isNotNull);
+
+      await tester.tap(find.byKey(const Key('birth_date_confirm')));
+      await tester.pumpAndSettle();
+      expect(result(), isNotNull);
+    },
+  );
 }

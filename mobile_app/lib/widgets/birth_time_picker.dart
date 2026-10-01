@@ -90,9 +90,9 @@ class BirthTimePickerSheet extends StatefulWidget {
 }
 
 class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
-  late int _hour12;
-  late int _minute;
-  late DayPeriod _period;
+  int? _hour12;
+  int? _minute;
+  DayPeriod? _period;
 
   late FixedExtentScrollController _hourWheel;
   late FixedExtentScrollController _minuteWheel;
@@ -106,23 +106,22 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
   final _minuteFocus = FocusNode();
 
   var _mode = _EntryMode.wheel;
-  var _wheelTouched = false;
   var _showError = false;
 
   @override
   void initState() {
     super.initState();
     final initial = widget.initialTime;
-    _hour12 = initial != null ? initial.hourOfPeriod : 8;
-    _minute = initial != null ? initial.minute : 0;
-    _period = initial != null ? initial.period : DayPeriod.am;
+    _hour12 = initial?.hourOfPeriod;
+    _minute = initial?.minute;
+    _period = initial?.period;
 
-    _manualPeriod = _period;
+    _manualPeriod = _period ?? DayPeriod.am;
     _hourController = TextEditingController(
       text: initial != null ? '$_hour12' : '',
     );
     _minuteController = TextEditingController(
-      text: initial != null ? _minute.toString().padLeft(2, '0') : '',
+      text: initial != null ? _minute!.toString().padLeft(2, '0') : '',
     );
 
     _createWheelControllers();
@@ -130,24 +129,30 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   void _createWheelControllers() {
     _hourWheel = FixedExtentScrollController(
-      initialItem: _hour12 - 1,
+      initialItem: _hour12 ?? 0,
       keepScrollOffset: false,
     );
     _minuteWheel = FixedExtentScrollController(
-      initialItem: _minute,
+      initialItem: _minute != null ? _minute! + 1 : 0,
       keepScrollOffset: false,
     );
     _periodWheel = FixedExtentScrollController(
-      initialItem: _period == DayPeriod.am ? 0 : 1,
+      initialItem: _period == null
+          ? 0
+          : (_period == DayPeriod.am ? 1 : 2),
       keepScrollOffset: false,
     );
   }
 
-  int get _wheelHour24 {
+  bool get _isComplete =>
+      _hour12 != null && _minute != null && _period != null;
+
+  int? get _wheelHour24 {
+    if (!_isComplete) return null;
     if (_period == DayPeriod.am) {
-      return _hour12 == 12 ? 0 : _hour12;
+      return _hour12 == 12 ? 0 : _hour12!;
     } else {
-      return _hour12 == 12 ? 12 : _hour12 + 12;
+      return _hour12 == 12 ? 12 : _hour12! + 12;
     }
   }
 
@@ -169,20 +174,52 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   bool get _manualValid => _manualHour24 != null && _manualMinuteValue != null;
 
-  void _chooseHour(int hour) => setState(() {
-    _hour12 = hour;
-    _wheelTouched = true;
-  });
+  List<String> get _hourItems => [
+    '--',
+    for (int i = 1; i <= 12; i++) i.toString().padLeft(2, '0'),
+  ];
 
-  void _chooseMinute(int minute) => setState(() {
-    _minute = minute;
-    _wheelTouched = true;
-  });
+  List<String> get _minuteItems => [
+    '--',
+    for (int i = 0; i <= 59; i++) i.toString().padLeft(2, '0'),
+  ];
 
-  void _choosePeriod(DayPeriod period) => setState(() {
-    _period = period;
-    _wheelTouched = true;
-  });
+  List<String> _periodItems(bool isVi) => [
+    '--',
+    isVi ? 'Sáng' : 'AM',
+    isVi ? 'Tối' : 'PM',
+  ];
+
+  void _chooseHour(int index) {
+    final count = _hourItems.length;
+    final trueIndex = (index % count + count) % count;
+    setState(() {
+      _hour12 = trueIndex == 0 ? null : trueIndex;
+      _showError = false;
+    });
+  }
+
+  void _chooseMinute(int index) {
+    final count = _minuteItems.length;
+    final trueIndex = (index % count + count) % count;
+    setState(() {
+      _minute = trueIndex == 0 ? null : trueIndex - 1;
+      _showError = false;
+    });
+  }
+
+  void _choosePeriod(int index) {
+    setState(() {
+      if (index == 0) {
+        _period = null;
+      } else if (index == 1) {
+        _period = DayPeriod.am;
+      } else {
+        _period = DayPeriod.pm;
+      }
+      _showError = false;
+    });
+  }
 
   void _setManualFields(int hour12, int minute, DayPeriod period) {
     _hourController.text = '$hour12';
@@ -195,8 +232,10 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     FocusScope.of(context).unfocus();
     setState(() {
       if (mode == _EntryMode.manual) {
-        if (_hourController.text.isEmpty && _minuteController.text.isEmpty) {
-          _setManualFields(_hour12, _minute, _period);
+        if (_hourController.text.isEmpty &&
+            _minuteController.text.isEmpty &&
+            _isComplete) {
+          _setManualFields(_hour12!, _minute!, _period!);
         }
       } else if (mode == _EntryMode.wheel && _manualValid) {
         final h = int.parse(_hourController.text);
@@ -221,7 +260,11 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   void _confirm() {
     if (_mode == _EntryMode.wheel) {
-      final time = TimeOfDay(hour: _wheelHour24, minute: _minute);
+      if (!_isComplete) {
+        setState(() => _showError = true);
+        return;
+      }
+      final time = TimeOfDay(hour: _wheelHour24!, minute: _minute!);
       Navigator.of(context).pop(time);
       return;
     }
@@ -247,91 +290,52 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     super.dispose();
   }
 
-  Widget _wheelNumberColumn({
+  Widget _wheelColumn({
     required Key key,
     required FixedExtentScrollController controller,
-    required int count,
-    required int Function(int) valueAt,
+    required List<String> items,
     required ValueChanged<int> onSelected,
     required String label,
-    int digits = 2,
-    String Function(int)? itemKeyPrefix,
+    bool looping = true,
+    Key? Function(int index, String item)? itemKeyBuilder,
   }) => Expanded(
-    child: CupertinoPicker.builder(
+    child: CupertinoPicker(
       key: key,
       scrollController: controller,
       itemExtent: 44,
       useMagnifier: true,
       magnification: 1.07,
       selectionOverlay: null,
-      childCount: count,
-      onSelectedItemChanged: (index) => onSelected(valueAt(index)),
-      itemBuilder: (context, index) {
-        final value = valueAt(index);
-        final itemKey = itemKeyPrefix != null
-            ? Key('${itemKeyPrefix(value)}')
-            : null;
-        return GestureDetector(
-          key: itemKey,
-          onTap: () {
-            controller.animateToItem(
-              index,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-            );
-            onSelected(value);
-          },
-          child: Center(
-            child: Semantics(
-              label: '$label $value',
-              child: Text(value.toString().padLeft(digits, '0')),
+      looping: looping,
+      onSelectedItemChanged: onSelected,
+      children: [
+        for (int i = 0; i < items.length; i++)
+          GestureDetector(
+            key: itemKeyBuilder != null ? itemKeyBuilder(i, items[i]) : null,
+            behavior: HitTestBehavior.opaque,
+            onTap: () {
+              controller.animateToItem(
+                i,
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+              );
+              onSelected(i);
+            },
+            child: Center(
+              child: Semantics(
+                label: '$label ${items[i]}',
+                child: Text(
+                  items[i],
+                  style: TextStyle(
+                    color: items[i].startsWith('-')
+                        ? CompassColors.secondary.withValues(alpha: 0.7)
+                        : null,
+                  ),
+                ),
+              ),
             ),
           ),
-        );
-      },
-    ),
-  );
-
-  Widget _wheelPeriodColumn({
-    required Key key,
-    required FixedExtentScrollController controller,
-    required ValueChanged<DayPeriod> onSelected,
-    required String label,
-    required bool isVi,
-  }) => Expanded(
-    child: CupertinoPicker.builder(
-      key: key,
-      scrollController: controller,
-      itemExtent: 44,
-      useMagnifier: true,
-      magnification: 1.07,
-      selectionOverlay: null,
-      childCount: 2,
-      onSelectedItemChanged: (index) =>
-          onSelected(index == 0 ? DayPeriod.am : DayPeriod.pm),
-      itemBuilder: (context, index) {
-        final period = index == 0 ? DayPeriod.am : DayPeriod.pm;
-        final text = index == 0
-            ? (isVi ? 'Sáng' : 'AM')
-            : (isVi ? 'Tối' : 'PM');
-        final itemKey = Key(
-          period == DayPeriod.am ? 'birth_time_am' : 'birth_time_pm',
-        );
-        return GestureDetector(
-          key: itemKey,
-          onTap: () {
-            controller.animateToItem(
-              index,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeInOut,
-            );
-            onSelected(period);
-          },
-          child: Center(
-            child: Semantics(label: '$label $text', child: Text(text)),
-          ),
-        );
-      },
+      ],
     ),
   );
 
@@ -541,32 +545,40 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                                 blendMode: BlendMode.dstIn,
                                 child: Row(
                                   children: [
-                                    _wheelNumberColumn(
+                                    _wheelColumn(
                                       key: const Key('birth_time_hour_wheel'),
                                       controller: _hourWheel,
-                                      count: 12,
-                                      valueAt: (index) => index + 1,
+                                      items: _hourItems,
                                       onSelected: _chooseHour,
                                       label: isVi ? 'Giờ' : 'Hour',
-                                      itemKeyPrefix: (val) =>
-                                          'birth_time_hour_$val',
+                                      looping: true,
+                                      itemKeyBuilder: (i, item) => i == 0
+                                          ? null
+                                          : Key('birth_time_hour_$i'),
                                     ),
-                                    _wheelNumberColumn(
+                                    _wheelColumn(
                                       key: const Key('birth_time_minute_wheel'),
                                       controller: _minuteWheel,
-                                      count: 60,
-                                      valueAt: (index) => index,
+                                      items: _minuteItems,
                                       onSelected: _chooseMinute,
                                       label: isVi ? 'Phút' : 'Minute',
-                                      itemKeyPrefix: (val) =>
-                                          'birth_time_minute_$val',
+                                      looping: true,
+                                      itemKeyBuilder: (i, item) => i == 0
+                                          ? null
+                                          : Key('birth_time_minute_${i - 1}'),
                                     ),
-                                    _wheelPeriodColumn(
+                                    _wheelColumn(
                                       key: const Key('birth_time_period_wheel'),
                                       controller: _periodWheel,
+                                      items: _periodItems(isVi),
                                       onSelected: _choosePeriod,
                                       label: isVi ? 'Buổi' : 'Period',
-                                      isVi: isVi,
+                                      looping: false,
+                                      itemKeyBuilder: (i, item) => i == 1
+                                          ? const Key('birth_time_am')
+                                          : (i == 2
+                                              ? const Key('birth_time_pm')
+                                              : null),
                                     ),
                                   ],
                                 ),
@@ -741,6 +753,9 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                           minimumSize: const Size.fromHeight(52),
                           backgroundColor: CompassColors.blue,
                           foregroundColor: Colors.white,
+                          disabledBackgroundColor:
+                              CompassColors.blue.withValues(alpha: 0.35),
+                          disabledForegroundColor: Colors.white38,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(16),
                           ),
@@ -749,7 +764,9 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                             fontWeight: FontWeight.w700,
                           ),
                         ),
-                        onPressed: _confirm,
+                        onPressed: (_mode == _EntryMode.wheel && !_isComplete)
+                            ? null
+                            : _confirm,
                         child: Text(l10n.continueAction),
                       ),
                     ),

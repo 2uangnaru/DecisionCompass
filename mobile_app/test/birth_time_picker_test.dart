@@ -216,4 +216,52 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets(
+    'unselected state displays placeholder dashes and disables continue',
+    (tester) async {
+      final result = await openPicker(tester);
+      expect(find.text('--'), findsWidgets);
+
+      final confirmButton = tester.widget<FilledButton>(
+        find.byKey(const Key('birth_time_confirm')),
+      );
+      expect(confirmButton.onPressed, isNull);
+
+      final feedback = tester
+          .widget<Text>(find.byKey(const Key('birth_time_feedback')))
+          .data;
+      expect(feedback, 'Select your time of birth');
+
+      // Scroll hour wheel
+      await tester.drag(
+        find.byKey(const Key('birth_time_hour_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // Scroll minute wheel
+      await tester.drag(
+        find.byKey(const Key('birth_time_minute_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      // Scroll period wheel
+      await tester.drag(
+        find.byKey(const Key('birth_time_period_wheel')),
+        const Offset(0, -50),
+      );
+      await tester.pumpAndSettle();
+
+      final updatedConfirmButton = tester.widget<FilledButton>(
+        find.byKey(const Key('birth_time_confirm')),
+      );
+      expect(updatedConfirmButton.onPressed, isNotNull);
+
+      await tester.tap(find.byKey(const Key('birth_time_confirm')));
+      await tester.pumpAndSettle();
+      expect(result(), isNotNull);
+    },
+  );
 }

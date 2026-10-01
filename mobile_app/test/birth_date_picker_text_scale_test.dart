@@ -179,6 +179,18 @@ void main() {
     // possible at this text scale — the columns are 44dp rows of text that
     // doubles in height around them.
     await tester.drag(
+      find.byKey(const Key('birth_date_day_wheel')),
+      const Offset(0, -44),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+    await tester.drag(
+      find.byKey(const Key('birth_date_month_wheel')),
+      const Offset(0, -44),
+      warnIfMissed: false,
+    );
+    await tester.pumpAndSettle();
+    await tester.drag(
       find.byKey(const Key('birth_date_year_wheel')),
       const Offset(0, -44),
       warnIfMissed: false,

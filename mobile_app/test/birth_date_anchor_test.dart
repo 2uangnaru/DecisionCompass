@@ -139,28 +139,26 @@ void main() {
   });
 
   group('an intentional choice', () {
-    testWidgets('spinning a wheel and back confirms the anchor date itself', (
+    testWidgets('spinning each wheel confirms the chosen date', (
       tester,
     ) async {
-      // The case the fix must not break: somebody born on 1 January 2000.
-      // They move the wheel and land back where it started, so the value is
-      // identical to the anchor — but they chose it, and it must go through.
+      // The case the fix must handle: somebody born on 1 January 2000.
+      // They move each wheel from placeholder '--' to 1 / 1 / 2000.
       final result = await openSheet(tester);
-      await spinWheel(tester, 'day', rows: 4);
-      await spinWheel(tester, 'day', rows: -4);
+      await spinWheel(tester, 'day', rows: 1);
+      await spinWheel(tester, 'month', rows: 1);
+      await spinWheel(tester, 'year', rows: 1);
 
       expect(feedback(tester), isNot('Select your date of birth'));
       await tapContinue(tester);
       expect(result(), anchor);
     });
 
-    testWidgets('a drag that settles back on its own row still counts', (
+    testWidgets('a drag that settles back on placeholder keeps it unselected', (
       tester,
     ) async {
       // A nudge too small to change the selected index: 20 is under half the
-      // 44dp itemExtent, so the column snaps back to the row it started on.
-      // `onSelectedItemChanged` never fires, so only the drag itself can mark
-      // this answered.
+      // 44dp itemExtent, so the column snaps back to '--'.
       final result = await openSheet(tester);
       await tester.drag(
         find.byKey(const Key('birth_date_day_wheel')),
@@ -170,14 +168,17 @@ void main() {
       await tester.pumpAndSettle();
 
       await tapContinue(tester);
-      expect(result(), anchor);
+      expect(result(), isNull);
+      expect(feedback(tester), 'Select your date of birth');
     });
 
     testWidgets('spinning to a different date confirms that date', (
       tester,
     ) async {
       final result = await openSheet(tester);
-      await spinWheel(tester, 'day', rows: 20);
+      await spinWheel(tester, 'day', rows: 21);
+      await spinWheel(tester, 'month', rows: 1);
+      await spinWheel(tester, 'year', rows: 1);
       await tapContinue(tester);
       expect(result(), DateTime(2000, 1, 21));
     });
@@ -201,7 +202,15 @@ void main() {
         reason: 'no column offered an accessible way to change its value',
       );
       tester.semantics.performAction(
-        adjustable.first,
+        adjustable.at(0),
+        SemanticsAction.increase,
+      );
+      tester.semantics.performAction(
+        adjustable.at(1),
+        SemanticsAction.increase,
+      );
+      tester.semantics.performAction(
+        adjustable.at(2),
         SemanticsAction.increase,
       );
       await tester.pumpAndSettle();
