@@ -50,4 +50,23 @@ void main() {
     expect(orbitProgress(tester), 0.1);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('orbit painter inherits display font family', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData(fontFamily: 'Montserrat'),
+        home: const Scaffold(body: OrbitVisual(labels: ['BaZi'])),
+      ),
+    );
+    final paint = tester.widget<CustomPaint>(
+      find
+          .descendant(
+            of: find.byType(OrbitVisual),
+            matching: find.byType(CustomPaint),
+          )
+          .first,
+    );
+    final painter = paint.painter as dynamic;
+    expect(painter.textStyle?.fontFamily, 'Montserrat');
+  });
 }

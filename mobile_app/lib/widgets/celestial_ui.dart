@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 
+import '../app_locale.dart';
 import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../models.dart';
@@ -220,6 +221,19 @@ class _OrbitVisualState extends State<OrbitVisual>
       widget.size,
       math.max(180.0, MediaQuery.sizeOf(context).width - 48),
     );
+    final theme = Theme.of(context);
+    final textStyle = TextStyle(
+      fontFamily: theme.textTheme.displayLarge?.fontFamily ??
+          theme.textTheme.bodyMedium?.fontFamily ??
+          CompassFonts.display,
+      fontFamilyFallback: theme.textTheme.displayLarge?.fontFamilyFallback ??
+          theme.textTheme.bodyMedium?.fontFamilyFallback ??
+          CompassFonts.fallbackFor(AppLocale.english),
+      color: CompassColors.secondary.withValues(alpha: 0.86),
+      fontSize: 8,
+      letterSpacing: 1.1,
+      fontWeight: FontWeight.w600,
+    );
     return SizedBox.square(
       dimension: dimension,
       child: AnimatedBuilder(
@@ -228,6 +242,7 @@ class _OrbitVisualState extends State<OrbitVisual>
           painter: _OrbitPainter(
             progress: reduceMotion ? 0.1 : _progress.value,
             labels: widget.labels,
+            textStyle: textStyle,
           ),
           child: child,
         ),
@@ -246,10 +261,15 @@ class _OrbitVisualState extends State<OrbitVisual>
 }
 
 class _OrbitPainter extends CustomPainter {
-  const _OrbitPainter({required this.progress, required this.labels});
+  const _OrbitPainter({
+    required this.progress,
+    required this.labels,
+    this.textStyle,
+  });
 
   final double progress;
   final List<String> labels;
+  final TextStyle? textStyle;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -278,11 +298,12 @@ class _OrbitPainter extends CustomPainter {
       canvas.drawCircle(dot, dotRadius, glow);
     }
 
-    final textStyle = TextStyle(
-      color: CompassColors.secondary.withValues(alpha: 0.86),
-      fontSize: 8,
-      letterSpacing: 1.1,
-      fontWeight: FontWeight.w600,
+    final effectiveTextStyle = (textStyle ?? const TextStyle()).copyWith(
+      color: textStyle?.color ?? CompassColors.secondary.withValues(alpha: 0.86),
+      fontSize: textStyle?.fontSize ?? 8,
+      letterSpacing: textStyle?.letterSpacing ?? 1.1,
+      fontWeight: textStyle?.fontWeight ?? FontWeight.w600,
+      fontFamily: textStyle?.fontFamily ?? CompassFonts.display,
     );
     final count = labels.length;
     for (var i = 0; i < count; i++) {
@@ -293,7 +314,7 @@ class _OrbitPainter extends CustomPainter {
         center.dy + math.sin(angle) * radius,
       );
       final painter = TextPainter(
-        text: TextSpan(text: labels[i], style: textStyle),
+        text: TextSpan(text: labels[i], style: effectiveTextStyle),
         textDirection: TextDirection.ltr,
       )..layout();
       painter.paint(canvas, offset - Offset(painter.width / 2, 5));
@@ -302,7 +323,9 @@ class _OrbitPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _OrbitPainter oldDelegate) =>
-      oldDelegate.progress != progress || oldDelegate.labels != labels;
+      oldDelegate.progress != progress ||
+      oldDelegate.labels != labels ||
+      oldDelegate.textStyle != textStyle;
 }
 
 class _StarsPainter extends CustomPainter {
