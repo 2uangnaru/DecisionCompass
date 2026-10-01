@@ -292,10 +292,15 @@ class _HistoryRow extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${categoryLabel(l10n, reading.category)}  •  '
-                  '${_timeOfDay(localeName, reading)}  •  '
-                  '${_date(localeName, reading)}',
+                  '${categoryLabel(l10n, reading.category)}  •  ${_timeOfDay(localeName, reading)}',
                   style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  _date(localeName, reading),
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: CompassColors.muted,
+                      ),
                 ),
               ],
             ),
