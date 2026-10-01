@@ -115,13 +115,15 @@ void main() {
     await tester.tap(find.byKey(const Key('birth_time_cancel')));
     await tester.pumpAndSettle();
 
-    // 05:15 AM -> Giờ Mão (Mèo / Thỏ 🐱)
+    // 05:15 AM -> Giờ Mão (Mão 🐱)
     await openPicker(
       tester,
       initialTime: const TimeOfDay(hour: 5, minute: 15),
       locale: const Locale('vi'),
     );
-    expect(find.text('Giờ Mão (Mèo / Thỏ 🐱)'), findsOneWidget);
+    expect(find.text('Giờ Mão (Mão 🐱)'), findsOneWidget);
+    expect(find.textContaining('Mèo'), findsNothing);
+    expect(find.textContaining('Thỏ'), findsNothing);
 
     await tester.tap(find.byKey(const Key('birth_time_cancel')));
     await tester.pumpAndSettle();
