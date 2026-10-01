@@ -12,9 +12,21 @@ import '../widgets/celestial_ui.dart';
 import 'result_page.dart';
 
 class HistoryPage extends StatefulWidget {
-  const HistoryPage({super.key, required this.dependencies});
+  const HistoryPage({
+    super.key,
+    required this.dependencies,
+    this.openedFromCurrentReading = false,
+  });
 
   final ReadingDependencies dependencies;
+
+  /// Whether the reading the app just calculated is still on the stack below
+  /// this page.
+  ///
+  /// It is when History was opened from that reading, and it is not when
+  /// History was opened from Home. A snapshot opened from here inherits the
+  /// answer, because only then does closing it have somewhere to go.
+  final bool openedFromCurrentReading;
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -100,6 +112,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     entries: entries,
                     today: _isoDate(widget.dependencies.nowLocal()),
                     dependencies: widget.dependencies,
+                    closesToCurrentReading: widget.openedFromCurrentReading,
                   );
                 },
               ),
@@ -212,11 +225,16 @@ class _HistoryList extends StatelessWidget {
     required this.entries,
     required this.today,
     required this.dependencies,
+    required this.closesToCurrentReading,
   });
 
   final List<HistoryEntry> entries;
   final String today;
   final ReadingDependencies dependencies;
+
+  /// Passed straight through to the snapshot a row opens; see
+  /// [ResultPage.closesToCurrentReading].
+  final bool closesToCurrentReading;
 
   @override
   Widget build(BuildContext context) {
@@ -246,17 +264,30 @@ class _HistoryList extends StatelessWidget {
       } else {
         children.add(const SizedBox(height: 10));
       }
-      children.add(_HistoryRow(entry: entry, dependencies: dependencies));
+      children.add(
+        _HistoryRow(
+          entry: entry,
+          dependencies: dependencies,
+          closesToCurrentReading: closesToCurrentReading,
+        ),
+      );
     }
     return ListView(key: const Key('history_list'), children: children);
   }
 }
 
 class _HistoryRow extends StatelessWidget {
-  const _HistoryRow({required this.entry, required this.dependencies});
+  const _HistoryRow({
+    required this.entry,
+    required this.dependencies,
+    required this.closesToCurrentReading,
+  });
 
   final HistoryEntry entry;
   final ReadingDependencies dependencies;
+
+  /// See [ResultPage.closesToCurrentReading].
+  final bool closesToCurrentReading;
 
   @override
   Widget build(BuildContext context) {
@@ -276,6 +307,7 @@ class _HistoryRow extends StatelessWidget {
             reading: reading,
             dependencies: dependencies,
             autoSave: false,
+            closesToCurrentReading: closesToCurrentReading,
           ),
         ),
       ),
@@ -325,9 +357,9 @@ class _HistoryRow extends StatelessWidget {
               Text(
                 categoryLabel(l10n, reading.category),
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: CompassColors.secondary,
-                      fontWeight: FontWeight.w500,
-                    ),
+                  color: CompassColors.secondary,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
               const SizedBox(width: 8),
               Flexible(
@@ -336,9 +368,8 @@ class _HistoryRow extends StatelessWidget {
                   textAlign: TextAlign.right,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: CompassColors.muted,
-                      ),
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: CompassColors.muted),
                 ),
               ),
             ],
