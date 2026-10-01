@@ -445,6 +445,11 @@ void main() {
             .data,
         AppLocale.english.nativeName,
       );
+      // The language hint is displayed in the prominent upper slot above the title.
+      final hintTop = tester.getTopLeft(find.byKey(const Key('onboarding_language_hint'))).dy;
+      final titleTop = tester.getTopLeft(find.byKey(const Key('onboarding_title'))).dy;
+      expect(hintTop, lessThan(titleTop));
+
       // No unsolicited startup popup, and no extra required screen.
       expect(find.byKey(const Key('language_sheet')), findsNothing);
       expect(find.byKey(const Key('continue_to_profile')), findsOneWidget);
