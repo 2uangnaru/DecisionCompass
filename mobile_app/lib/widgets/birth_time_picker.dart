@@ -382,37 +382,24 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     super.dispose();
   }
 
-  Widget _wheelPlaceholder(String item) {
-    const count = 2;
-    const pillWidth = 13.0;
-    const gap = 5.0;
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Opacity(
-          opacity: 0.0,
-          child: Text(item),
+  Widget _wheelPlaceholder(String item, String placeholder) => Stack(
+    alignment: Alignment.center,
+    children: [
+      Opacity(
+        opacity: 0.0,
+        child: Text(item),
+      ),
+      Text(
+        placeholder,
+        style: TextStyle(
+          color: CompassColors.secondary.withValues(alpha: 0.6),
+          fontSize: placeholder.length > 4 ? 14 : 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: placeholder.length > 4 ? 0.8 : 1.5,
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < count; i++) ...[
-              if (i > 0) const SizedBox(width: gap),
-              Container(
-                width: pillWidth,
-                height: 3.5,
-                decoration: BoxDecoration(
-                  color: CompassColors.secondary.withValues(alpha: 0.75),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   Widget _wheelColumn({
     required Key key,
@@ -420,6 +407,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     required List<String> items,
     required ValueChanged<int> onSelected,
     required String label,
+    required String placeholder,
     bool looping = true,
     Key? Function(int index, String item)? itemKeyBuilder,
   }) => Expanded(
@@ -449,7 +437,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
               child: Semantics(
                 label: '$label ${items[i]}',
                 child: items[i].startsWith('-')
-                    ? _wheelPlaceholder(items[i])
+                    ? _wheelPlaceholder(items[i], placeholder)
                     : Text(items[i]),
               ),
             ),
@@ -670,6 +658,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                                       items: _hourItems,
                                       onSelected: _chooseHour,
                                       label: isVi ? 'Giờ' : 'Hour',
+                                      placeholder: 'HH',
                                       looping: true,
                                       itemKeyBuilder: (i, item) => i == 0
                                           ? null
@@ -681,6 +670,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                                       items: _minuteItems,
                                       onSelected: _chooseMinute,
                                       label: isVi ? 'Phút' : 'Minute',
+                                      placeholder: 'MM',
                                       looping: true,
                                       itemKeyBuilder: (i, item) => i == 0
                                           ? null
@@ -692,6 +682,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                                       items: _periodItems(isVi),
                                       onSelected: _choosePeriod,
                                       label: isVi ? 'Buổi' : 'Period',
+                                      placeholder: 'AM/PM',
                                       looping: false,
                                       itemKeyBuilder: (i, item) => i == 1
                                           ? const Key('birth_time_am')

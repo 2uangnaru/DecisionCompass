@@ -476,37 +476,24 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     super.dispose();
   }
 
-  Widget _wheelPlaceholder(String item) {
-    final count = item.length >= 4 ? 4 : 2;
-    final pillWidth = count == 4 ? 7.0 : 13.0;
-    final gap = count == 4 ? 4.0 : 5.0;
-    return Stack(
-      alignment: Alignment.center,
-      children: [
-        Opacity(
-          opacity: 0.0,
-          child: Text(item),
+  Widget _wheelPlaceholder(String item, String placeholder) => Stack(
+    alignment: Alignment.center,
+    children: [
+      Opacity(
+        opacity: 0.0,
+        child: Text(item),
+      ),
+      Text(
+        placeholder,
+        style: TextStyle(
+          color: CompassColors.secondary.withValues(alpha: 0.6),
+          fontSize: placeholder.length >= 4 ? 15 : 18,
+          fontWeight: FontWeight.w700,
+          letterSpacing: placeholder.length >= 4 ? 1.2 : 1.5,
         ),
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            for (int i = 0; i < count; i++) ...[
-              if (i > 0) SizedBox(width: gap),
-              Container(
-                width: pillWidth,
-                height: 3.5,
-                decoration: BoxDecoration(
-                  color: CompassColors.secondary.withValues(alpha: 0.75),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-            ],
-          ],
-        ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 
   Widget _wheelColumn({
     required Key key,
@@ -514,6 +501,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     required List<String> items,
     required ValueChanged<int> onSelected,
     required String label,
+    required String placeholder,
     bool looping = true,
   }) => Expanded(
     child: CupertinoPicker(
@@ -531,7 +519,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
             child: Semantics(
               label: '$label $item',
               child: item.startsWith('-')
-                  ? _wheelPlaceholder(item)
+                  ? _wheelPlaceholder(item, placeholder)
                   : Text(item),
             ),
           ),
@@ -760,6 +748,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                         _indexToDay(i, _dayItems.length),
                                       ),
                                       label: l10n.birthDay,
+                                      placeholder: 'DD',
                                       looping: true,
                                     ),
                                     _wheelColumn(
@@ -772,6 +761,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                         _indexToMonth(i, _monthItems.length),
                                       ),
                                       label: l10n.birthMonth,
+                                      placeholder: 'MM',
                                       looping: true,
                                     ),
                                     _wheelColumn(
@@ -781,6 +771,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                                       onSelected: (i) =>
                                           _chooseYear(_indexToYear(i)),
                                       label: l10n.birthYear,
+                                      placeholder: 'YYYY',
                                       looping: false,
                                     ),
                                   ],
