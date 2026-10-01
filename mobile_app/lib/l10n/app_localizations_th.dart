@@ -471,6 +471,18 @@ class AppLocalizationsTh extends AppLocalizations {
   String get changeLanguage => 'เปลี่ยนภาษา';
 
   @override
+  String languageSetFromBirthCountry(String language) {
+    return 'ตั้งค่าภาษาเป็น $language ตามประเทศที่คุณเกิด';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'บันทึกการตั้งค่าภาษาไม่สำเร็จ จึงอาจไม่ถูกจดจำในครั้งถัดไป';
+
+  @override
+  String get profileNotSaved => 'บันทึกโปรไฟล์ของคุณไม่สำเร็จ โปรดลองอีกครั้ง';
+
+  @override
   String get choiceYes => 'ใช่';
 
   @override

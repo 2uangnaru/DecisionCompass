@@ -476,6 +476,19 @@ class AppLocalizationsEs extends AppLocalizations {
   String get changeLanguage => 'Cambiar idioma';
 
   @override
+  String languageSetFromBirthCountry(String language) {
+    return 'Idioma configurado en $language según tu país de nacimiento.';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'No se pudo guardar tu preferencia de idioma, así que puede no recordarse la próxima vez.';
+
+  @override
+  String get profileNotSaved =>
+      'No se pudo guardar tu perfil. Inténtalo de nuevo.';
+
+  @override
   String get choiceYes => 'SÍ';
 
   @override

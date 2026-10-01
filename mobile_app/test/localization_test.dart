@@ -446,8 +446,12 @@ void main() {
         AppLocale.english.nativeName,
       );
       // The language hint is displayed in the prominent upper slot above the title.
-      final hintTop = tester.getTopLeft(find.byKey(const Key('onboarding_language_hint'))).dy;
-      final titleTop = tester.getTopLeft(find.byKey(const Key('onboarding_title'))).dy;
+      final hintTop = tester
+          .getTopLeft(find.byKey(const Key('onboarding_language_hint')))
+          .dy;
+      final titleTop = tester
+          .getTopLeft(find.byKey(const Key('onboarding_title')))
+          .dy;
       expect(hintTop, lessThan(titleTop));
 
       // No unsolicited startup popup, and no extra required screen.
@@ -604,14 +608,25 @@ void main() {
       },
     );
 
-    test('selecting the language already shown writes nothing', () async {
+    test('selecting the language already shown is still recorded', () async {
+      // This used to assert the opposite — that tapping the current language
+      // wrote nothing — which was reasonable while the only thing a write
+      // carried was the language itself. It now also carries *who chose it*,
+      // and tapping English while reading English is a reader saying "this
+      // one", which has to outrank the country-of-birth rule. Writing nothing
+      // would throw that away and let the rule change their language later.
       final store = InMemoryLocaleStore();
       final controller = LocaleController(store: store);
       await controller.ensureLoaded();
+
       await controller.select(AppLocale.english);
-      expect(store.saves, 0);
-      await controller.select(AppLocale.thai);
       expect(store.saves, 1);
+      expect(store.provenanceName, 'manual');
+      expect(controller.provenance, LocaleProvenance.manual);
+
+      await controller.select(AppLocale.thai);
+      expect(store.saves, 2);
+      expect(store.tag, 'th');
     });
   });
 
