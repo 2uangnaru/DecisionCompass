@@ -106,7 +106,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
   final _minuteFocus = FocusNode();
 
   var _mode = _EntryMode.wheel;
-  var _wheelTouched = false;
   var _showError = false;
 
   @override
@@ -171,17 +170,14 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   void _chooseHour(int hour) => setState(() {
     _hour12 = hour;
-    _wheelTouched = true;
   });
 
   void _chooseMinute(int minute) => setState(() {
     _minute = minute;
-    _wheelTouched = true;
   });
 
   void _choosePeriod(DayPeriod period) => setState(() {
     _period = period;
-    _wheelTouched = true;
   });
 
   void _setManualFields(int hour12, int minute, DayPeriod period) {
