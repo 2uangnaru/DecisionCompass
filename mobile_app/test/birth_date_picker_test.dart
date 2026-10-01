@@ -259,7 +259,7 @@ void main() {
   );
 
   testWidgets(
-    'clarifies Mao as Mèo / Thỏ in Vietnamese',
+    'names Mao as Mão in Vietnamese',
     (tester) async {
       await openPicker(
         tester,
@@ -267,7 +267,9 @@ void main() {
         locale: const Locale('vi'),
       );
       expect(find.textContaining('Tuổi Kỷ Mão'), findsOneWidget);
-      expect(find.textContaining('Mèo / Thỏ'), findsOneWidget);
+      expect(find.textContaining('Mão'), findsWidgets);
+      expect(find.textContaining('Mèo'), findsNothing);
+      expect(find.textContaining('Thỏ'), findsNothing);
     },
   );
 
