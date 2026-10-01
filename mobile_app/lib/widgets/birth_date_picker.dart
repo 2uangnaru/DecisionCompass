@@ -476,6 +476,38 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     super.dispose();
   }
 
+  Widget _wheelPlaceholder(String item) {
+    final count = item.length >= 4 ? 4 : 2;
+    final pillWidth = count == 4 ? 7.0 : 13.0;
+    final gap = count == 4 ? 4.0 : 5.0;
+    return Stack(
+      alignment: Alignment.center,
+      children: [
+        Opacity(
+          opacity: 0.0,
+          child: Text(item),
+        ),
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            for (int i = 0; i < count; i++) ...[
+              if (i > 0) SizedBox(width: gap),
+              Container(
+                width: pillWidth,
+                height: 3.5,
+                decoration: BoxDecoration(
+                  color: CompassColors.secondary.withValues(alpha: 0.75),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+
   Widget _wheelColumn({
     required Key key,
     required FixedExtentScrollController controller,
@@ -498,14 +530,9 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
           Center(
             child: Semantics(
               label: '$label $item',
-              child: Text(
-                item,
-                style: TextStyle(
-                  color: item.startsWith('-')
-                      ? CompassColors.secondary.withValues(alpha: 0.7)
-                      : null,
-                ),
-              ),
+              child: item.startsWith('-')
+                  ? _wheelPlaceholder(item)
+                  : Text(item),
             ),
           ),
       ],
