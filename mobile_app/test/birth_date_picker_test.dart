@@ -259,17 +259,43 @@ void main() {
   );
 
   testWidgets(
-    'names Mao as Mão in Vietnamese',
+    'names Mao as Mão (Cat 🐱) in Vietnamese, and Rabbit 🐇 in Chinese and English',
     (tester) async {
       await openPicker(
         tester,
         initialDate: DateTime(1999, 8, 25),
         locale: const Locale('vi'),
       );
-      expect(find.textContaining('Tuổi Kỷ Mão'), findsOneWidget);
-      expect(find.textContaining('Mão'), findsWidgets);
+      expect(find.textContaining('Tuổi Kỷ Mão (Mão) 🐱'), findsOneWidget);
       expect(find.textContaining('Mèo'), findsNothing);
       expect(find.textContaining('Thỏ'), findsNothing);
+      expect(find.textContaining('🐇'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('birth_date_cancel')));
+      await tester.pumpAndSettle();
+
+      await openPicker(
+        tester,
+        initialDate: DateTime(1999, 8, 25),
+        locale: const Locale.fromSubtags(
+          languageCode: 'zh',
+          scriptCode: 'Hans',
+          countryCode: 'CN',
+        ),
+      );
+      expect(find.textContaining('卯年 (兔) 🐇'), findsOneWidget);
+      expect(find.textContaining('🐱'), findsNothing);
+
+      await tester.tap(find.byKey(const Key('birth_date_cancel')));
+      await tester.pumpAndSettle();
+
+      await openPicker(
+        tester,
+        initialDate: DateTime(1999, 8, 25),
+        locale: const Locale('en'),
+      );
+      expect(find.textContaining('Year of the Rabbit 🐇'), findsOneWidget);
+      expect(find.textContaining('🐱'), findsNothing);
     },
   );
 

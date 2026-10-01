@@ -124,6 +124,36 @@ void main() {
     expect(find.text('Giờ Mão (Mão 🐱)'), findsOneWidget);
     expect(find.textContaining('Mèo'), findsNothing);
     expect(find.textContaining('Thỏ'), findsNothing);
+    expect(find.textContaining('🐇'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('birth_time_cancel')));
+    await tester.pumpAndSettle();
+
+    // Chinese: 05:15 AM -> 卯时 (兔 🐇)
+    await openPicker(
+      tester,
+      initialTime: const TimeOfDay(hour: 5, minute: 15),
+      locale: const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hans',
+        countryCode: 'CN',
+      ),
+    );
+    expect(find.text('卯时 (兔 🐇)'), findsOneWidget);
+    expect(find.textContaining('🐱'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('birth_time_cancel')));
+    await tester.pumpAndSettle();
+
+    // English: 05:15 AM -> Hour of the Rabbit 🐇
+    await openPicker(
+      tester,
+      initialTime: const TimeOfDay(hour: 5, minute: 15),
+      locale: const Locale('en'),
+    );
+    expect(find.text('Hour of the Rabbit 🐇'), findsOneWidget);
+    expect(find.textContaining('🐱'), findsNothing);
+    expect(find.textContaining('Cat'), findsNothing);
 
     await tester.tap(find.byKey(const Key('birth_time_cancel')));
     await tester.pumpAndSettle();

@@ -70,7 +70,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     '🐀',
     '🐂',
     '🐅',
-    '🐱',
+    '🐇',
     '🐉',
     '🐍',
     '🐎',
@@ -85,7 +85,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     'Rat',
     'Ox',
     'Tiger',
-    'Rabbit / Cat',
+    'Rabbit',
     'Dragon',
     'Snake',
     'Horse',
@@ -168,15 +168,17 @@ String chineseZodiacLabel(String localeName, DateTime date) {
   ];
 
   final lang = localeName.split(RegExp('[-_]')).first.toLowerCase();
+  final isVi = lang == 'vi';
+  final emoji = (branchIndex == 3 && isVi) ? '🐱' : emojis[branchIndex];
   return switch (lang) {
     'vi' =>
-      'Tuổi ${stemsVi[stemIndex]} ${branchesVi[branchIndex]} (${animalsVi[branchIndex]}) ${emojis[branchIndex]}',
-    'es' => 'Año del ${animalsEs[branchIndex]} ${emojis[branchIndex]}',
+      'Tuổi ${stemsVi[stemIndex]} ${branchesVi[branchIndex]} (${animalsVi[branchIndex]}) $emoji',
+    'es' => 'Año del ${animalsEs[branchIndex]} $emoji',
     'zh' =>
-      '${stemsZh[stemIndex]}${branchesZh[branchIndex]}年 (${animalsZh[branchIndex]}) ${emojis[branchIndex]}',
-    'ja' => '${animalsJa[branchIndex]}年 ${emojis[branchIndex]}',
-    'th' => '${animalsTh[branchIndex]} ${emojis[branchIndex]}',
-    _ => 'Year of the ${animalsEn[branchIndex]} ${emojis[branchIndex]}',
+      '${stemsZh[stemIndex]}${branchesZh[branchIndex]}年 (${animalsZh[branchIndex]}) $emoji',
+    'ja' => '${animalsJa[branchIndex]}年 $emoji',
+    'th' => '${animalsTh[branchIndex]} $emoji',
+    _ => 'Year of the ${animalsEn[branchIndex]} $emoji',
   };
 }
 

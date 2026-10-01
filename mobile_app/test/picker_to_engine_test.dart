@@ -54,9 +54,10 @@ void main() {
       findsOneWidget,
       reason: 'the sheet no longer opens on the wheel',
     );
-    await spin(tester, 'year', years);
-    await spin(tester, 'month', months);
-    await spin(tester, 'day', days);
+    // Each column starts on placeholder dashes, so offset by 1 row from anchor.
+    await spin(tester, 'year', years + 1);
+    await spin(tester, 'month', months + 1);
+    await spin(tester, 'day', days + 1);
 
     await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
