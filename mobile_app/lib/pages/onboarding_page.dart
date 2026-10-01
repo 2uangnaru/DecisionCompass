@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 
+import '../app_locale.dart';
 import '../app_profile.dart';
 import '../l10n/app_localizations.dart';
 import '../local_engine/time/tzdb.dart';
@@ -65,6 +66,18 @@ class _OnboardingPageState extends State<OnboardingPage> {
 
   Country? _birthCountry;
   var _showRequiredErrors = false;
+
+  /// True while the profile is being written.
+  ///
+  /// Creating a compass is one button and one outcome. Without this, a double
+  /// tap writes the profile twice and runs the country-language rule twice,
+  /// and the second run would find the provenance the first one set and read
+  /// as "somebody already chose".
+  var _finishing = false;
+
+  /// Set when writing the profile failed. The reader stays on this screen with
+  /// the form intact, and nothing about their language is touched.
+  var _profileSaveFailed = false;
 
   /// Set when the reader closed the time dialog without answering it, as well
   /// as when they try to continue. Separate from [_showRequiredErrors] so
@@ -180,10 +193,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _continueToProfile() => setState(() => _step = 1);
 
   Future<void> _finish() async {
+    // A second tap while the first is in flight does nothing at all.
+    if (_finishing) return;
     final birthDate = _birthDate;
     final birthCountry = _birthCountry;
     // Continuing with the control on but no time chosen is what the
     // validation message is for: it must not fall through to a default hour.
+    //
+    // An incomplete form returns here, before anything is saved and before
+    // the language rule is consulted: a form that was not accepted must not
+    // change the app's language as a side effect.
     if (birthDate == null || birthCountry == null || _birthTimeMissing) {
       setState(() {
         _showRequiredErrors = true;
@@ -204,12 +223,84 @@ class _OnboardingPageState extends State<OnboardingPage> {
       safetyAcknowledged: widget.initialSafetyAcknowledged,
       createdAt: widget.dependencies.nowLocal(),
     );
-    await widget.dependencies.profileRepository.save(profile);
+    setState(() {
+      _finishing = true;
+      _profileSaveFailed = false;
+    });
+    try {
+      await widget.dependencies.profileRepository.save(profile);
+    } catch (_) {
+      // The profile is not saved, so nothing has happened yet — including to
+      // the language. The reader keeps their form and can try again.
+      if (!mounted) return;
+      setState(() {
+        _finishing = false;
+        _profileSaveFailed = true;
+      });
+      return;
+    }
     if (!mounted) return;
+
+    // Held across the navigation: `ScaffoldMessenger` lives above the
+    // navigator, so a notice shown through it survives onto Home, but this
+    // page's own context does not.
+    final messenger = ScaffoldMessenger.of(context);
+    // The notice's action opens a modal sheet, which needs a context with a
+    // Navigator above it. `messenger.context` has none — ScaffoldMessenger
+    // sits *above* the navigator in MaterialApp — so the navigator's own
+    // overlay is captured instead, which outlives this page.
+    final navigator = Navigator.of(context);
+
+    // Applied before Home is pushed. The controller notifies synchronously,
+    // so the app is already rebuilding in the new language by the time Home
+    // is constructed — it is never built in English and then swapped.
+    final language = await widget.dependencies.localeController
+        .applyBirthCountryDefault(profile.birthCountryCode);
+    if (!mounted) return;
+
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) =>
             HomePage(profile: profile, dependencies: widget.dependencies),
+      ),
+    );
+    _announceLanguage(messenger, navigator, language);
+  }
+
+  /// Says what just happened to the language, once, and only when something
+  /// did happen.
+  ///
+  /// Nothing is announced when the country suggested the language already on
+  /// screen — which is every country that maps to English. Telling a reader
+  /// their language was "set to English" when they have been reading English
+  /// the whole time is noise about a decision they never saw being made.
+  void _announceLanguage(
+    ScaffoldMessengerState messenger,
+    NavigatorState navigator,
+    ({AppLocale? changedTo, bool saved}) outcome,
+  ) {
+    final changedTo = outcome.changedTo;
+    if (changedTo == null || changedTo == AppLocale.english) return;
+    // Written in the language that was just adopted, which is the one the
+    // reader is now looking at.
+    final l10n = lookupAppLocalizations(changedTo.locale);
+    messenger.showSnackBar(
+      SnackBar(
+        key: const Key('language_auto_notice'),
+        duration: const Duration(seconds: 6),
+        content: Text(
+          outcome.saved
+              ? l10n.languageSetFromBirthCountry(changedTo.nativeName)
+              : l10n.languageNotSaved,
+        ),
+        action: SnackBarAction(
+          label: l10n.changeLanguage,
+          onPressed: () {
+            final host = navigator.overlay?.context;
+            if (host == null) return;
+            showLanguageSheet(host, widget.dependencies.localeController);
+          },
+        ),
       ),
     );
   }
@@ -553,9 +644,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
               ),
             ),
           const SizedBox(height: 28),
+          if (_profileSaveFailed) ...[
+            Text(
+              l10n.profileNotSaved,
+              key: const Key('profile_save_failed'),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: Theme.of(context).colorScheme.error),
+            ),
+            const SizedBox(height: 10),
+          ],
           FilledButton(
             key: const Key('complete_profile'),
-            onPressed: _finish,
+            // Null while a save is in flight: the guard in `_finish` already
+            // ignores a second tap, and a dead-looking button says so.
+            onPressed: _finishing ? null : _finish,
             child: Text(l10n.createCompass),
           ),
           const SizedBox(height: 12),

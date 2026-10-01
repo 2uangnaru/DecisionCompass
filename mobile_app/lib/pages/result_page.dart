@@ -29,13 +29,30 @@ class ResultPage extends StatefulWidget {
     required this.reading,
     required this.dependencies,
     this.autoSave = true,
+    this.closesToCurrentReading = false,
   });
+
+  /// Names the route holding the reading the app just calculated.
+  ///
+  /// A saved reading opened from History sits two routes above it — History,
+  /// then the snapshot — so leaving the snapshot has to skip the page in
+  /// between rather than reveal it. Naming the route is what makes that one
+  /// action instead of two.
+  static const String currentReadingRouteName = 'result/current';
 
   final engine.ReadingResponse reading;
   final ReadingDependencies dependencies;
 
   /// False when reopening an immutable snapshot from History.
   final bool autoSave;
+
+  /// Whether leaving this page should go back to the reading the app just
+  /// calculated rather than to the page that pushed it.
+  ///
+  /// Only true for a snapshot opened from a History that was itself opened
+  /// from that reading. Reached from Home instead, there is no such route to
+  /// return to and leaving means going back to History as before.
+  final bool closesToCurrentReading;
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -194,9 +211,42 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   void _openHistory() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => HistoryPage(dependencies: widget.dependencies),
+        builder: (_) => HistoryPage(
+          dependencies: widget.dependencies,
+          // This page is the current reading, so a snapshot opened from the
+          // History about to be pushed has somewhere to come back to.
+          openedFromCurrentReading: true,
+        ),
       ),
     );
+  }
+
+  /// Leaves this page the way its close control and the system Back button
+  /// should: in one action.
+  void _close() {
+    if (widget.closesToCurrentReading) {
+      Navigator.of(context)
+          .popUntil(ModalRoute.withName(ResultPage.currentReadingRouteName));
+      return;
+    }
+    Navigator.of(context).pop();
+  }
+
+  /// Back to where a new reading is started.
+  ///
+  /// A single `pop` already lands on Home from the current reading, and on
+  /// History from a snapshot opened there — which is the behaviour that path
+  /// has always had, and is left alone.
+  ///
+  /// The one case that needs more is a snapshot reached *through* the current
+  /// reading: two or three routes are in the way, and popping one of them
+  /// lands on History rather than anywhere a direction can be chosen.
+  void _tryAnotherDirection() {
+    if (widget.closesToCurrentReading) {
+      Navigator.of(context).popUntil((route) => route.isFirst);
+      return;
+    }
+    Navigator.of(context).pop();
   }
 
   @override
@@ -209,183 +259,199 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       status: reading.status,
       winner: reading.winner,
     );
-    return CelestialScaffold(
-      topColor: palette.top,
-      bottomColor: palette.bottom,
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(22, 12, 22, 30),
-        child: Column(
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  icon: const Icon(Icons.close_rounded),
-                ),
-                Expanded(
+    return PopScope(
+      // The system Back gesture has to agree with the close control: from a
+      // saved snapshot both mean "back to the reading I was looking at", and
+      // letting Back fall through would reveal History on the way and need a
+      // second press. `canPop` stays true everywhere else, so nothing is
+      // trapped — this only redirects a pop that was going to happen anyway.
+      canPop: !widget.closesToCurrentReading,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        _close();
+      },
+      child: CelestialScaffold(
+        topColor: palette.top,
+        bottomColor: palette.bottom,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(22, 12, 22, 30),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    key: const Key('result_close'),
+                    onPressed: _close,
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                  Expanded(
+                    child: Text(
+                      modeLabel(l10n, _mode),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: CompassColors.gold,
+                        letterSpacing: trackingFor(context, 1.7),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    key: const Key('result_share'),
+                    tooltip: l10n.shareTooltip,
+                    onPressed:
+                        reading.status == engine.ReadingStatus.ready ||
+                            reading.status == engine.ReadingStatus.balanced
+                        ? _shareReading
+                        : null,
+                    icon: const Icon(Icons.ios_share_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 14),
+              // Sourced from the response, so a server that evaluated a
+              // different legal category is shown truthfully.
+              Semantics(
+                label: l10n.readingAreaSemantics(category),
+                child: Container(
+                  key: const Key('result_category_badge'),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 13,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.09),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(color: Colors.white24),
+                  ),
                   child: Text(
-                    modeLabel(l10n, _mode),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: CompassColors.gold,
-                      letterSpacing: trackingFor(context, 1.7),
+                    category,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: Colors.white,
+                      letterSpacing: trackingFor(context, 0.9),
                     ),
                   ),
                 ),
-                IconButton(
-                  key: const Key('result_share'),
-                  tooltip: l10n.shareTooltip,
-                  onPressed:
-                      reading.status == engine.ReadingStatus.ready ||
-                          reading.status == engine.ReadingStatus.balanced
-                      ? _shareReading
-                      : null,
-                  icon: const Icon(Icons.ios_share_rounded),
-                ),
-              ],
-            ),
-            const SizedBox(height: 14),
-            // Sourced from the response, so a server that evaluated a
-            // different legal category is shown truthfully.
-            Semantics(
-              label: l10n.readingAreaSemantics(category),
-              child: Container(
-                key: const Key('result_category_badge'),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 13,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.09),
-                  borderRadius: BorderRadius.circular(999),
-                  border: Border.all(color: Colors.white24),
-                ),
-                child: Text(
-                  category,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Colors.white,
-                    letterSpacing: trackingFor(context, 0.9),
-                  ),
-                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            switch (reading.status) {
-              engine.ReadingStatus.ready => _Direction(
-                winnerLabel: splits.isEmpty
-                    ? ''
-                    : localizedChoice(
-                        l10n,
-                        _mode,
-                        reading.winner ?? _englishFirst,
-                      ),
-                splits: splits,
-                accent: palette.accent,
-              ),
-              engine.ReadingStatus.balanced => _Balanced(splits: splits),
-              engine.ReadingStatus.insufficientData => _Explanation(
-                key: const Key('result_insufficient_data'),
-                headline: l10n.insufficientHeading,
-                body: l10n.insufficientBody,
-              ),
-              // The heading and body are complete sentences that do not name
-              // the period: dropping a translated chip label into a sentence
-              // frame is ungrammatical in several of these languages, and the
-              // period is already on the badge above.
-              engine.ReadingStatus.periodElapsed => _Explanation(
-                key: const Key('result_period_elapsed'),
-                headline: l10n.periodElapsedHeading,
-                body: l10n.periodElapsedBody,
-              ),
-            },
-            const SizedBox(height: 24),
-            if (reading.status == engine.ReadingStatus.ready ||
-                reading.status == engine.ReadingStatus.balanced) ...[
-              _ActionGuidanceCard(
-                guidance: resolveActionGuidance(
-                  locale: widget.dependencies.localeController.locale,
-                  reading: reading,
-                ),
-              ),
-              if (_period != TimePeriod.now &&
-                  reading.luckyWindows.isNotEmpty) ...[
-                const SizedBox(height: 14),
-                _LuckyWindows(reading: reading, period: _period),
-              ],
-            ],
-            const SizedBox(height: 22),
-            FilledButton.icon(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.explore_rounded),
-              label: Text(l10n.tryAnotherDirection),
-            ),
-            const SizedBox(height: 10),
-            OutlinedButton.icon(
-              key: const Key('result_history_action'),
-              onPressed: !widget.autoSave
-                  ? () => Navigator.of(context).pop()
-                  : _saveFailed
-                  ? _saveToHistory
-                  : _saved
-                  ? _openHistory
-                  : null,
-              style: OutlinedButton.styleFrom(
-                minimumSize: const Size.fromHeight(52),
-                side: const BorderSide(color: Colors.white30),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(18),
-                ),
-              ),
-              icon: Icon(
-                _saveFailed
-                    ? Icons.refresh_rounded
-                    : Icons.bookmark_added_rounded,
-              ),
-              label: Text(
-                !widget.autoSave
-                    ? l10n.backToHistory
-                    : _saveFailed
-                    ? l10n.saveFailedRetry
-                    : _saving
-                    ? l10n.savingToHistory
-                    : l10n.viewHistory,
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 18),
-            InkWell(
-              key: const Key('result_responsible_use_link'),
-              onTap: () => showResponsibleUseSheet(context),
-              borderRadius: BorderRadius.circular(10),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 6,
-                ),
-                child: Text.rich(
-                  TextSpan(
-                    text: '${l10n.everydayReflection}\n',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Colors.white60,
-                      fontSize: 11,
-                      height: 1.45,
-                    ),
-                    children: [
-                      TextSpan(
-                        text: l10n.responsibleUseLink,
-                        style: const TextStyle(
-                          color: CompassColors.gold,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
+              const SizedBox(height: 18),
+              switch (reading.status) {
+                engine.ReadingStatus.ready => _Direction(
+                  winnerLabel: splits.isEmpty
+                      ? ''
+                      : localizedChoice(
+                          l10n,
+                          _mode,
+                          reading.winner ?? _englishFirst,
                         ),
-                      ),
-                    ],
+                  splits: splits,
+                  accent: palette.accent,
+                ),
+                engine.ReadingStatus.balanced => _Balanced(splits: splits),
+                engine.ReadingStatus.insufficientData => _Explanation(
+                  key: const Key('result_insufficient_data'),
+                  headline: l10n.insufficientHeading,
+                  body: l10n.insufficientBody,
+                ),
+                // The heading and body are complete sentences that do not name
+                // the period: dropping a translated chip label into a sentence
+                // frame is ungrammatical in several of these languages, and the
+                // period is already on the badge above.
+                engine.ReadingStatus.periodElapsed => _Explanation(
+                  key: const Key('result_period_elapsed'),
+                  headline: l10n.periodElapsedHeading,
+                  body: l10n.periodElapsedBody,
+                ),
+              },
+              const SizedBox(height: 24),
+              if (reading.status == engine.ReadingStatus.ready ||
+                  reading.status == engine.ReadingStatus.balanced) ...[
+                _ActionGuidanceCard(
+                  guidance: resolveActionGuidance(
+                    locale: widget.dependencies.localeController.locale,
+                    reading: reading,
                   ),
+                ),
+                if (_period != TimePeriod.now &&
+                    reading.luckyWindows.isNotEmpty) ...[
+                  const SizedBox(height: 14),
+                  _LuckyWindows(reading: reading, period: _period),
+                ],
+              ],
+              const SizedBox(height: 22),
+              FilledButton.icon(
+                key: const Key('result_try_another'),
+                onPressed: _tryAnotherDirection,
+                icon: const Icon(Icons.explore_rounded),
+                label: Text(l10n.tryAnotherDirection),
+              ),
+              const SizedBox(height: 10),
+              OutlinedButton.icon(
+                key: const Key('result_history_action'),
+                // Back to History is deliberately still a single pop: it is
+                // the one control that is *meant* to reveal the page underneath.
+                onPressed: !widget.autoSave
+                    ? () => Navigator.of(context).pop()
+                    : _saveFailed
+                    ? _saveToHistory
+                    : _saved
+                    ? _openHistory
+                    : null,
+                style: OutlinedButton.styleFrom(
+                  minimumSize: const Size.fromHeight(52),
+                  side: const BorderSide(color: Colors.white30),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                ),
+                icon: Icon(
+                  _saveFailed
+                      ? Icons.refresh_rounded
+                      : Icons.bookmark_added_rounded,
+                ),
+                label: Text(
+                  !widget.autoSave
+                      ? l10n.backToHistory
+                      : _saveFailed
+                      ? l10n.saveFailedRetry
+                      : _saving
+                      ? l10n.savingToHistory
+                      : l10n.viewHistory,
                   textAlign: TextAlign.center,
                 ),
               ),
-            ),
-          ],
+              const SizedBox(height: 18),
+              InkWell(
+                key: const Key('result_responsible_use_link'),
+                onTap: () => showResponsibleUseSheet(context),
+                borderRadius: BorderRadius.circular(10),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  child: Text.rich(
+                    TextSpan(
+                      text: '${l10n.everydayReflection}\n',
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.white60,
+                        fontSize: 11,
+                        height: 1.45,
+                      ),
+                      children: [
+                        TextSpan(
+                          text: l10n.responsibleUseLink,
+                          style: const TextStyle(
+                            color: CompassColors.gold,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                      ],
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -510,8 +576,10 @@ class _WinnerHeadline extends StatelessWidget {
     final scaler = MediaQuery.textScalerOf(context);
     final direction = Directionality.of(context);
     final displayFamily = Theme.of(context).textTheme.displayLarge?.fontFamily;
-    final displayFallback =
-        Theme.of(context).textTheme.displayLarge?.fontFamilyFallback;
+    final displayFallback = Theme.of(context)
+        .textTheme
+        .displayLarge
+        ?.fontFamilyFallback;
     return LayoutBuilder(
       builder: (context, constraints) {
         final width = constraints.maxWidth;
@@ -887,4 +955,3 @@ class _LuckyWindows extends StatelessWidget {
     );
   }
 }
-

@@ -422,6 +422,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get acknowledgementOnce => 'この確認は、最初のリーディング前に一度だけ表示されます。';
 
   @override
+  String get safetyScrollToContinue => '最後までスクロールして内容を読み、続行してください。';
+
+  @override
   String get knowBirthTime => '出生時刻がわかる';
 
   @override
@@ -441,6 +444,17 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get changeLanguage => '言語を変更';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return '出生国に基づいて、言語を$languageに設定しました。';
+  }
+
+  @override
+  String get languageNotSaved => '言語設定を保存できなかったため、次回は記憶されない可能性があります。';
+
+  @override
+  String get profileNotSaved => 'プロフィールを保存できませんでした。もう一度お試しください。';
 
   @override
   String get choiceYes => 'はい';

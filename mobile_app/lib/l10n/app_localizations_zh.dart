@@ -418,6 +418,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
 
   @override
+  String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
+
+  @override
   String get knowBirthTime => '我知道自己的出生时间';
 
   @override
@@ -437,6 +440,17 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get changeLanguage => '切换语言';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return '已根据你的出生国家/地区将语言设置为$language。';
+  }
+
+  @override
+  String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';
+
+  @override
+  String get profileNotSaved => '无法保存你的资料，请重试。';
 
   @override
   String get choiceYes => '是';
@@ -1450,6 +1464,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
 
   @override
+  String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
+
+  @override
   String get knowBirthTime => '我知道自己的出生时间';
 
   @override
@@ -1469,6 +1486,17 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get changeLanguage => '切换语言';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return '已根据你的出生国家/地区将语言设置为$language。';
+  }
+
+  @override
+  String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';
+
+  @override
+  String get profileNotSaved => '无法保存你的资料，请重试。';
 
   @override
   String get choiceYes => '是';
@@ -2482,6 +2510,9 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get acknowledgementOnce => '此确认仅会在第一次解读前出现一次。';
 
   @override
+  String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
+
+  @override
   String get knowBirthTime => '我知道自己的出生时间';
 
   @override
@@ -2501,6 +2532,17 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get changeLanguage => '切换语言';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return '已根据你的出生国家/地区将语言设置为$language。';
+  }
+
+  @override
+  String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';
+
+  @override
+  String get profileNotSaved => '无法保存你的资料，请重试。';
 
   @override
   String get choiceYes => '是';

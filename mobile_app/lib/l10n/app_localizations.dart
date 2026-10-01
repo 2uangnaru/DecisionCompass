@@ -913,6 +913,12 @@ abstract class AppLocalizations {
   /// **'This acknowledgement appears once before your first reading.'**
   String get acknowledgementOnce;
 
+  /// Shown just above the first-time acknowledgement button while the safety content has not been scrolled to the end. Also the button's accessibility hint while it is locked.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll to the end and read everything to continue.'**
+  String get safetyScrollToContinue;
+
   /// No description provided for @knowBirthTime.
   ///
   /// In en, this message translates to:
@@ -954,6 +960,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Change language'**
   String get changeLanguage;
+
+  /// Brief notice after the first profile is created, when the country of birth selected a different UI language. Never shown when the result is English.
+  ///
+  /// In en, this message translates to:
+  /// **'Language set to {language} based on your country of birth.'**
+  String languageSetFromBirthCountry(String language);
+
+  /// Shown instead of the notice above when the language was applied but could not be written to storage. It must not claim the preference was saved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your language preference could not be saved, so it may not be remembered next time.'**
+  String get languageNotSaved;
+
+  /// No description provided for @profileNotSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your profile could not be saved. Please try again.'**
+  String get profileNotSaved;
 
   /// No description provided for @choiceYes.
   ///

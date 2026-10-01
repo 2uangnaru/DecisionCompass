@@ -450,6 +450,9 @@ class AppLocalizationsVi extends AppLocalizations {
       'Xác nhận này chỉ xuất hiện một lần trước lần phân tích đầu tiên.';
 
   @override
+  String get safetyScrollToContinue => 'Cuộn đến cuối, đọc hết để tiếp tục.';
+
+  @override
   String get knowBirthTime => 'Tôi biết giờ sinh của mình';
 
   @override
@@ -471,6 +474,19 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get changeLanguage => 'Đổi ngôn ngữ';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'Đã đặt ngôn ngữ thành $language theo quốc gia nơi sinh của bạn.';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'Không lưu được lựa chọn ngôn ngữ, nên lần sau có thể không được ghi nhớ.';
+
+  @override
+  String get profileNotSaved =>
+      'Không lưu được hồ sơ của bạn. Vui lòng thử lại.';
 
   @override
   String get choiceYes => 'CÓ';

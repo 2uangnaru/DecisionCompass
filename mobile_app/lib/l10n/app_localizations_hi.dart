@@ -453,6 +453,10 @@ class AppLocalizationsHi extends AppLocalizations {
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
 
   @override
+  String get safetyScrollToContinue =>
+      'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
+
+  @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
 
   @override
@@ -474,6 +478,19 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get changeLanguage => 'भाषा बदलें';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'आपके जन्म के देश के आधार पर भाषा $language पर सेट की गई।';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'आपकी भाषा पसंद सहेजी नहीं जा सकी, इसलिए अगली बार याद न रखी जाए।';
+
+  @override
+  String get profileNotSaved =>
+      'आपकी प्रोफ़ाइल सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।';
 
   @override
   String get choiceYes => 'हाँ';
@@ -1625,6 +1642,10 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
       'यह पुष्टि पहले विश्लेषण से पहले केवल एक बार दिखाई देगी।';
 
   @override
+  String get safetyScrollToContinue =>
+      'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
+
+  @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
 
   @override
@@ -1646,6 +1667,19 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get changeLanguage => 'भाषा बदलें';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'आपके जन्म के देश के आधार पर भाषा $language पर सेट की गई।';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'आपकी भाषा पसंद सहेजी नहीं जा सकी, इसलिए अगली बार याद न रखी जाए।';
+
+  @override
+  String get profileNotSaved =>
+      'आपकी प्रोफ़ाइल सहेजी नहीं जा सकी। कृपया फिर से कोशिश करें।';
 
   @override
   String get choiceYes => 'हाँ';

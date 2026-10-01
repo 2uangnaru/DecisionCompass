@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../app_locale.dart';
@@ -150,10 +152,19 @@ class _LanguageSheet extends StatelessWidget {
                   option: option,
                   selected: option == controller.locale,
                   onTap: () {
-                    // Persisting is the controller's business; closing is this
-                    // sheet's. The switch itself repaints the page behind.
-                    controller.select(option);
+                    // The sheet closes immediately — the switch itself
+                    // repaints the page behind it, and waiting on storage
+                    // before closing would make a slow write look like a
+                    // stuck tap.
+                    //
+                    // The write is then awaited rather than dropped. An
+                    // unawaited `select` whose save throws becomes an
+                    // unhandled Future: the language changes, the failure is
+                    // swallowed, and the reader finds their choice gone after
+                    // a restart with nothing ever having said why.
+                    final messenger = ScaffoldMessenger.of(context);
                     Navigator.of(context).pop();
+                    unawaited(_selectAndReport(controller, option, messenger));
                   },
                 ),
             ],
@@ -211,6 +222,32 @@ class _LanguageOption extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Applies the reader's choice, and says so when it could not be remembered.
+///
+/// The language stays switched either way. Reverting it would be a second
+/// surprise on top of the first, and the choice is still correct for this
+/// session — what is lost is only its survival across a restart, which is
+/// exactly what the message says.
+Future<void> _selectAndReport(
+  LocaleController controller,
+  AppLocale option,
+  ScaffoldMessengerState messenger,
+) async {
+  try {
+    await controller.select(option);
+  } catch (_) {
+    // Written in the language just chosen, which is the one now on screen.
+    final l10n = lookupAppLocalizations(option.locale);
+    messenger.showSnackBar(
+      SnackBar(
+        key: const Key('language_not_saved_notice'),
+        duration: const Duration(seconds: 6),
+        content: Text(l10n.languageNotSaved),
       ),
     );
   }

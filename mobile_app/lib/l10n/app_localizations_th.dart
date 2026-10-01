@@ -444,6 +444,10 @@ class AppLocalizationsTh extends AppLocalizations {
       'การยืนยันนี้จะแสดงเพียงครั้งเดียวก่อนการอ่านครั้งแรก';
 
   @override
+  String get safetyScrollToContinue =>
+      'เลื่อนลงไปจนสุดและอ่านเนื้อหาทั้งหมดเพื่อดำเนินการต่อ';
+
+  @override
   String get knowBirthTime => 'ฉันทราบเวลาเกิดของฉัน';
 
   @override
@@ -465,6 +469,18 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get changeLanguage => 'เปลี่ยนภาษา';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'ตั้งค่าภาษาเป็น $language ตามประเทศที่คุณเกิด';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'บันทึกการตั้งค่าภาษาไม่สำเร็จ จึงอาจไม่ถูกจดจำในครั้งถัดไป';
+
+  @override
+  String get profileNotSaved => 'บันทึกโปรไฟล์ของคุณไม่สำเร็จ โปรดลองอีกครั้ง';
 
   @override
   String get choiceYes => 'ใช่';

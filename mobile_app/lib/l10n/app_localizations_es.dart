@@ -449,6 +449,10 @@ class AppLocalizationsEs extends AppLocalizations {
       'Esta confirmación aparece una sola vez antes de tu primera lectura.';
 
   @override
+  String get safetyScrollToContinue =>
+      'Desplázate hasta el final y lee todo el contenido para continuar.';
+
+  @override
   String get knowBirthTime => 'Sé mi hora de nacimiento';
 
   @override
@@ -470,6 +474,19 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get changeLanguage => 'Cambiar idioma';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'Idioma configurado en $language según tu país de nacimiento.';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'No se pudo guardar tu preferencia de idioma, así que puede no recordarse la próxima vez.';
+
+  @override
+  String get profileNotSaved =>
+      'No se pudo guardar tu perfil. Inténtalo de nuevo.';
 
   @override
   String get choiceYes => 'SÍ';

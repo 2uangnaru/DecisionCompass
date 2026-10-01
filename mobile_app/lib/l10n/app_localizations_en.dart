@@ -447,6 +447,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'This acknowledgement appears once before your first reading.';
 
   @override
+  String get safetyScrollToContinue =>
+      'Scroll to the end and read everything to continue.';
+
+  @override
   String get knowBirthTime => 'I know my birth time';
 
   @override
@@ -468,6 +472,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changeLanguage => 'Change language';
+
+  @override
+  String languageSetFromBirthCountry(String language) {
+    return 'Language set to $language based on your country of birth.';
+  }
+
+  @override
+  String get languageNotSaved =>
+      'Your language preference could not be saved, so it may not be remembered next time.';
+
+  @override
+  String get profileNotSaved =>
+      'Your profile could not be saved. Please try again.';
 
   @override
   String get choiceYes => 'YES';

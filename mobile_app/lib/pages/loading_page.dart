@@ -231,6 +231,9 @@ class _LoadingPageState extends State<LoadingPage> {
   void _showResult(engine.ReadingResponse reading) {
     Navigator.of(context).pushReplacement(
       PageRouteBuilder<void>(
+        // Named so a snapshot opened from History can come straight back to
+        // it in one action instead of revealing History on the way.
+        settings: const RouteSettings(name: ResultPage.currentReadingRouteName),
         transitionDuration: const Duration(milliseconds: 400),
         pageBuilder: (_, animation, secondaryAnimation) =>
             ResultPage(reading: reading, dependencies: widget.dependencies),
@@ -404,9 +407,10 @@ class _ReadingErrorView extends StatelessWidget {
     ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedDetail,
     ReadingApiFailureKind.invalidResponse => l10n.errorInvalidDetail,
     ReadingApiFailureKind.configuration => l10n.errorConfigurationDetail,
-    ReadingApiFailureKind.periodClosed => failure.safeCode.endsWith('passed')
-        ? l10n.periodHasPassed(periodLabel(l10n, period))
-        : l10n.periodNotEnoughTimeLeft(periodLabel(l10n, period)),
+    ReadingApiFailureKind.periodClosed =>
+      failure.safeCode.endsWith('passed')
+          ? l10n.periodHasPassed(periodLabel(l10n, period))
+          : l10n.periodNotEnoughTimeLeft(periodLabel(l10n, period)),
   };
 
   /// Only the transient kinds can be retried; a rejected request or a contract

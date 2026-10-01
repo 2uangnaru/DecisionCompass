@@ -163,6 +163,10 @@
   "crisisSupport": "If you or someone else is in immediate danger or emotional crisis, contact local emergency services or a trusted local crisis helpline now.",
   "acknowledge": "I Understand & Agree",
   "acknowledgementOnce": "This acknowledgement appears once before your first reading.",
+  "safetyScrollToContinue": "Scroll to the end and read everything to continue.",
+  "@safetyScrollToContinue": {
+    "description": "Shown just above the first-time acknowledgement button while the safety content has not been scrolled to the end. Also the button's accessibility hint while it is locked."
+  },
   "knowBirthTime": "I know my birth time",
   "knowBirthTimeDetail": "An exact time sharpens the hour-based cycles.",
   "selectBirthTime": "Select your time of birth",
@@ -170,6 +174,18 @@
   "languageSetting": "Language",
   "chooseLanguage": "Choose your language",
   "changeLanguage": "Change language",
+  "languageSetFromBirthCountry": "Language set to {language} based on your country of birth.",
+  "@languageSetFromBirthCountry": {
+    "description": "Brief notice after the first profile is created, when the country of birth selected a different UI language. Never shown when the result is English.",
+    "placeholders": {
+      "language": { "type": "String", "example": "Tiếng Việt" }
+    }
+  },
+  "languageNotSaved": "Your language preference could not be saved, so it may not be remembered next time.",
+  "profileNotSaved": "Your profile could not be saved. Please try again.",
+  "@languageNotSaved": {
+    "description": "Shown instead of the notice above when the language was applied but could not be written to storage. It must not claim the preference was saved."
+  },
   "choiceYes": "YES",
   "choiceNo": "NO",
   "choiceAct": "ACT",
