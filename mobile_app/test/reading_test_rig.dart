@@ -26,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FontLoader;
 import 'package:flutter_test/flutter_test.dart';
 
+import 'bundled_fonts.dart';
 import 'data/fixture_loader.dart';
 
 /// Injected fakes for the reading flow. No network, GPS or platform channel is
@@ -40,6 +41,8 @@ class ReadingTestRig {
     DateTime? localNow,
     this.liveLocalClock,
     String deviceTimezone = 'Asia/Ho_Chi_Minh',
+    Duration? timezoneDelay,
+    int timezoneFailures = 0,
     CurrentLocation? location,
     this.safetyAcknowledged = true,
     InMemoryHomeDescriptionStore? descriptionStore,
@@ -62,6 +65,8 @@ class ReadingTestRig {
        ),
        contextProvider = FixedCurrentContextProvider(
          deviceTimezone: deviceTimezone,
+         timezoneDelay: timezoneDelay,
+         timezoneFailures: timezoneFailures,
          location: location,
        ),
        revealInstant =
@@ -69,7 +74,13 @@ class ReadingTestRig {
 
   /// Early enough that no period has closed, so a test that does not care
   /// about the clock can still reach every one of them.
-  static final _beforeEveryPeriod = DateTime(2026, 9, 18, 5, 30);
+  ///
+  /// 08:30 rather than 05:30 so that the UTC instant it converts to still
+  /// falls on 2026-09-18 in the default zone: the reading's own date is what
+  /// the daily brief and the rotating copy are dealt from, and dragging it
+  /// back to the 17th would change them for every test that never asked about
+  /// the clock at all.
+  static final _beforeEveryPeriod = DateTime(2026, 9, 18, 8, 30);
 
   /// The UTC instant at which [local]'s wall time occurs in [zone].
   ///
@@ -89,10 +100,14 @@ class ReadingTestRig {
     if (candidates.isEmpty) {
       throw ArgumentError('$date $clock does not exist in $zone');
     }
+    // `localCandidates` resolves whole minutes, so the seconds a test pinned
+    // are added back afterwards. Dropping them silently moved a clock set to
+    // 10:29:59 back to 10:29:00, which is a whole minute of slack in any test
+    // that watches for a boundary.
     return DateTime.fromMillisecondsSinceEpoch(
       candidates.first.round(),
       isUtc: true,
-    );
+    ).add(Duration(seconds: local.second, milliseconds: local.millisecond));
   }
 
   final FakeReadingRepository repository;
@@ -232,30 +247,12 @@ void useScreen(
 /// that asserts something fits has to use the fonts the app actually ships.
 Future<void> loadBundledFonts() async {
   TestWidgetsFlutterBinding.ensureInitialized();
-  for (final entry in const {
-    'Montserrat': [
-      'Montserrat-Regular.ttf',
-      'Montserrat-SemiBold.ttf',
-      'Montserrat-Bold.ttf',
-    ],
-    'CormorantGaramond': [
-      'CormorantGaramond-Regular.ttf',
-      'CormorantGaramond-Bold.ttf',
-    ],
-    'NotoSans': ['NotoSans-Regular.ttf', 'NotoSans-Bold.ttf'],
-    'NotoSansThai': ['NotoSansThai-Regular.ttf', 'NotoSansThai-Bold.ttf'],
-    'NotoSansDevanagari': [
-      'NotoSansDevanagari-Regular.ttf',
-      'NotoSansDevanagari-Bold.ttf',
-    ],
-    'NotoSansJP': ['NotoSansJP-Regular.otf', 'NotoSansJP-Bold.otf'],
-    'NotoSansSC': ['NotoSansSC-Regular.otf', 'NotoSansSC-Bold.otf'],
-  }.entries) {
+  for (final entry in bundledFontFamilies().entries) {
     final loader = FontLoader(entry.key);
-    for (final file in entry.value) {
+    for (final path in entry.value) {
       loader.addFont(
         Future.value(
-          ByteData.sublistView(File('assets/fonts/$file').readAsBytesSync()),
+          ByteData.sublistView(File(path).readAsBytesSync()),
         ),
       );
     }

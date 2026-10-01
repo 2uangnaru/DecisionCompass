@@ -386,3 +386,85 @@ test('the requested signal set is part of the score cache identity', () => {
   assert.deepEqual(normalSecond, normalFirst);
   assert.equal(probeSecond.modeScore, normalFirst.modeScore);
 });
+
+// ---------------------------------------------------------------------------
+// NOW's timing signal
+// ---------------------------------------------------------------------------
+
+const TIMING_PROFILE = {
+  birthDate: '1998-06-21', birthTime: '14:30', birthCountry: 'VN', traditionalProfile: 'male',
+};
+/** A NOW reading at [localHour] on 18 September 2026 in Ho Chi Minh City (UTC+7). */
+const nowAt = (localHour, zone = 'Asia/Ho_Chi_Minh', offset = 7) =>
+  createCalculator(TIMING_PROFILE).calculate({
+    context: {
+      instantUtc: new Date(Date.UTC(2026, 8, 18, localHour - offset, 0)).toISOString(),
+      deviceTimezone: zone,
+    },
+    mode: 'act_wait', period: 'now', category: 'general',
+  });
+
+test('NOW reads the rest of the day, not just the periods still to start', () => {
+  // The defect: NOW compared itself only against periods that had not begun,
+  // so after 18:00 there was nothing left to compare against and the timing
+  // signal was exactly zero for the whole evening.
+  for (const hour of [7, 9, 11, 13, 15, 17, 19, 21]) {
+    const reading = nowAt(hour);
+    assert.notEqual(reading.scoring.signals.T, 0,
+      `a NOW reading at ${hour}:00 has no timing signal`);
+  }
+});
+
+test('the last hour of the day has nothing left to compare against', () => {
+  // 23:00 is the final earthly-branch segment of the local date. Zero here is
+  // the honest answer, not the bug above: there is no later moment today.
+  assert.equal(nowAt(23).scoring.signals.T, 0);
+});
+
+test('midnight compares against the whole day ahead', () => {
+  const reading = nowAt(0);
+  assert.notEqual(reading.scoring.signals.T, 0);
+  assert.ok(Math.abs(reading.scoring.signals.T) <= 1);
+});
+
+test('every named period keeps a timing signal too', () => {
+  const engine = createCalculator(TIMING_PROFILE);
+  for (const period of ['morning', 'midday', 'afternoon', 'evening']) {
+    const reading = engine.calculate({
+      // 05:00 local, so every period is still ahead and none is elapsed.
+      context: { instantUtc: '2026-09-17T22:00:00Z', deviceTimezone: 'Asia/Ho_Chi_Minh' },
+      mode: 'act_wait', period, category: 'general',
+    });
+    assert.equal(reading.status, 'ready', period);
+    assert.notEqual(reading.scoring.signals.T, 0, `${period} has no timing signal`);
+  }
+});
+
+test('the timing signal survives a daylight-saving transition', () => {
+  // America/New_York loses an hour on 2026-03-08 and gains one on 2026-11-01.
+  // The comparison set is built from the hours that actually exist, so a
+  // reading on either date still has a timing signal and still scores.
+  const engine = createCalculator({
+    birthDate: '1990-03-14', birthTime: '08:25', birthCountry: 'US', traditionalProfile: 'female',
+  });
+  for (const [date, hourUtc] of [['2026-03-08', 14], ['2026-11-01', 15]]) {
+    const reading = engine.calculate({
+      context: { instantUtc: `${date}T${String(hourUtc).padStart(2, '0')}:00:00Z`, deviceTimezone: 'America/New_York' },
+      mode: 'act_wait', period: 'now', category: 'general',
+    });
+    assert.equal(reading.status, 'ready', date);
+    assert.ok(Number.isFinite(reading.scoring.signals.T), date);
+    assert.ok(Math.abs(reading.scoring.signals.T) <= 1, date);
+  }
+});
+
+test('ACT can win while its own timing signal is negative', () => {
+  // This is why the result guidance may not say "this is the most aligned
+  // moment" merely because ACT won: the mixture also reads prospect, change
+  // pressure and luck, and they can outweigh a negative timing.
+  // `.map(nowAt)` would hand the index in as the timezone.
+  const found = [7, 8, 9, 10, 11, 12, 13].map(hour => nowAt(hour)).find(
+    reading => reading.scoring.signals.T < 0 && reading.winner === 'ACT');
+  assert.ok(found, 'no instant produced an ACT win on a negative timing signal');
+  assert.ok(found.percentages.ACT > 50);
+});

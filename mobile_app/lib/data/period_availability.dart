@@ -14,6 +14,15 @@ enum PeriodStatus {
 
   /// Over. Its local end is behind the reader.
   passed,
+
+  /// The reader's zone is not known yet, so how much of the period is left
+  /// cannot be answered at all.
+  ///
+  /// Not produced by [periodAvailability], which is given a zone. It is what
+  /// a screen holds while the lookup is in flight or after it failed. Treating
+  /// an unknown zone as "available" would be claiming the period has time left
+  /// on the strength of never having looked.
+  unknownTimezone,
 }
 
 /// How much of a period is left, and whether that is enough.
@@ -27,6 +36,18 @@ class PeriodAvailability {
   final Duration? remaining;
 
   bool get selectable => status == PeriodStatus.available;
+
+  /// NOW: no end, nothing to run out of, no zone needed to say so.
+  static const now = PeriodAvailability(
+    status: PeriodStatus.available,
+    remaining: null,
+  );
+
+  /// A named period while the reader's zone is still unknown.
+  static const unknownTimezone = PeriodAvailability(
+    status: PeriodStatus.unknownTimezone,
+    remaining: null,
+  );
 }
 
 /// How little may remain before a period stops being offered.

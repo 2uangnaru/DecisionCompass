@@ -40,6 +40,12 @@ abstract interface class CurrentContextProvider {
   ///
   /// Separate from [capture] so that asking the time of day is not recorded as
   /// a reading's context capture.
+  ///
+  /// **Throws when the platform cannot name its zone.** [capture] falls back
+  /// to UTC there, because a reading must still be possible; this must not,
+  /// because its answer is used to measure the reader's own local periods. A
+  /// silent UTC would withdraw periods that are open and offer periods that
+  /// are over, and say nothing — the caller needs to know it does not know.
   Future<String> currentTimezone();
 }
 
@@ -62,7 +68,16 @@ class DeviceCurrentContextProvider implements CurrentContextProvider {
   static const Duration maxFixAge = Duration(minutes: 15);
 
   @override
-  Future<String> currentTimezone() => _timezone();
+  Future<String> currentTimezone() async {
+    // Deliberately not `_timezone()`: its UTC fallback is for [capture],
+    // where a reading has to happen regardless. Here, not knowing has to
+    // surface as not knowing.
+    final zone = await FlutterTimezone.getLocalTimezone();
+    if (zone.identifier.isEmpty) {
+      throw StateError('the platform named no local time zone');
+    }
+    return zone.identifier;
+  }
 
   @override
   Future<CurrentContext> capture({
@@ -136,6 +151,8 @@ class FixedCurrentContextProvider implements CurrentContextProvider {
     this.deviceTimezone = 'Asia/Ho_Chi_Minh',
     this.location,
     this.delay = Duration.zero,
+    this.timezoneDelay,
+    this.timezoneFailures = 0,
   });
 
   final String deviceTimezone;
@@ -145,6 +162,19 @@ class FixedCurrentContextProvider implements CurrentContextProvider {
   final CurrentLocation? location;
 
   final Duration delay;
+
+  /// How long a zone lookup takes, when it should differ from [delay].
+  ///
+  /// The ritual screen reads the zone on open and reads it again at the tap,
+  /// so a test needs to hold the first one open without also slowing the
+  /// capture that follows the second.
+  final Duration? timezoneDelay;
+
+  /// How many of the next zone lookups throw before one succeeds.
+  ///
+  /// A platform that cannot name its own zone is the case the screen has to
+  /// survive; counting them down is what lets a test prove the retry works.
+  int timezoneFailures;
 
   /// Every capture this provider was asked for, for assertions.
   final List<({DateTime instantUtc, bool includeLocation})> captures = [];
@@ -157,7 +187,12 @@ class FixedCurrentContextProvider implements CurrentContextProvider {
   @override
   Future<String> currentTimezone() async {
     timezoneLookups++;
-    if (delay > Duration.zero) await Future<void>.delayed(delay);
+    final wait = timezoneDelay ?? delay;
+    if (wait > Duration.zero) await Future<void>.delayed(wait);
+    if (timezoneFailures > 0) {
+      timezoneFailures--;
+      throw StateError('the platform could not name its time zone');
+    }
     return deviceTimezone;
   }
 

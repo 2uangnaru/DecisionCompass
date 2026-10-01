@@ -168,6 +168,16 @@ class AppLocalizationsTh extends AppLocalizations {
   String get periodTooLittleTime => 'เวลาไม่พอ';
 
   @override
+  String get periodCheckingTimezone => 'กำลังตรวจสอบเขตเวลา';
+
+  @override
+  String get periodTimezoneUnknown => 'ไม่ทราบเขตเวลา';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'อ่านเขตเวลาของคุณไม่ได้ จึงเลือกได้เฉพาะ ตอนนี้ ลองอีกครั้งเพื่อเลือกช่วงเวลา';
+
+  @override
   String periodHasPassed(String period) {
     return 'ช่วง$periodผ่านไปแล้ว โปรดเลือกช่วงเวลาอื่น';
   }

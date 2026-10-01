@@ -31,7 +31,13 @@ void main() {
     expect(find.byKey(const Key('daily_color_lead')), findsOneWidget);
     // The name only shows once the swatch is tapped.
     expect(find.text('Ocean Blue'), findsNothing);
-    expect(find.text('Daily energy'), findsOneWidget);
+    // One header carries the label now: the card's own `TODAY’S SIGNALS`
+    // heading and the `Daily energy` row beneath it were merged into a single
+    // uppercase line in the Home layout revision (76d737c). Both of the
+    // strings it replaced must be gone, not merely moved.
+    expect(find.text('DAILY ENERGY'), findsOneWidget);
+    expect(find.text('Daily energy'), findsNothing);
+    expect(find.text('TODAY’S SIGNALS'), findsNothing);
     expect(find.text('STEADY'), findsOneWidget);
     expect(find.text('7'), findsNothing);
   });

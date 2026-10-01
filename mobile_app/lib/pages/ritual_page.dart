@@ -47,11 +47,21 @@ class _RitualPageState extends State<RitualPage>
 
   /// The IANA zone a reading taken now would resolve to.
   ///
-  /// Resolved once when the screen opens. Until it arrives every period is
-  /// offered: muting one on the strength of the host machine's clock, which
-  /// may be a different zone entirely, would take away a period the reader can
-  /// still use and give no reason for it.
+  /// The reader's IANA zone, once it is known.
+  ///
+  /// Until it is, no named period can be chosen. How much of Morning is left
+  /// is a question about the reader's clock, and an app that has not read that
+  /// clock does not know the answer — offering the period anyway would be
+  /// claiming it has time left on the strength of never having looked.
   String? _timezone;
+
+  /// Whether the lookup is in flight, done, or failed. Drives the chip suffix
+  /// and the retry control.
+  _ZoneLookup _zoneLookup = _ZoneLookup.resolving;
+
+  /// Guards against a Reveal tap starting a second lookup on top of the one
+  /// the screen started when it opened.
+  bool _resolvingZone = false;
 
   /// When the reading is for. Chosen here, beside the Reveal tap, so the
   /// moment and the period are picked together.
@@ -76,49 +86,84 @@ class _RitualPageState extends State<RitualPage>
     super.dispose();
   }
 
-  Future<void> _resolveTimezone() async {
-    String zone;
+  /// Reads the reader's zone, and re-reads it on demand.
+  ///
+  /// Returns the zone, or null when it could not be established — either
+  /// because the platform refused, or because it named a zone this build's tz
+  /// database has never heard of, which is the same thing as far as working
+  /// out how much of a local period is left.
+  Future<String?> _resolveTimezone() async {
+    if (_resolvingZone) return _timezone;
+    _resolvingZone = true;
+    if (mounted && _timezone == null) {
+      setState(() => _zoneLookup = _ZoneLookup.resolving);
+    }
+    String? zone;
     try {
       zone = await widget.dependencies.contextProvider.currentTimezone();
+      if (!validZone(zone)) zone = null;
     } catch (_) {
-      // A zone lookup that fails leaves every period selectable. The engine
-      // still resolves its own zone at Reveal and still answers
-      // `period_elapsed` on its own segments, so nothing invents a reading.
-      return;
+      zone = null;
+    } finally {
+      _resolvingZone = false;
     }
-    // A platform can name a zone this build's tz database has never heard of.
-    // Muting periods by a clock we cannot read would be worse than offering
-    // them: the engine rejects the zone at Reveal, with a message, which is
-    // the honest place for that failure to surface.
-    if (!validZone(zone)) return;
-    if (!mounted) return;
-    setState(() => _timezone = zone);
+    if (!mounted) return zone;
+    if (zone == null) {
+      // Not "every period is fine": every named period is unanswerable, and
+      // the chips say so, with a way to ask again. Any zone read earlier is
+      // discarded rather than kept as a best guess — a lookup that fails at
+      // the Reveal tap may be failing because the device's zone just changed.
+      setState(() {
+        _timezone = null;
+        _zoneLookup = _ZoneLookup.failed;
+      });
+      _periodRefreshTimer?.cancel();
+      _dropSelectionIfClosed();
+      return null;
+    }
+    setState(() {
+      _timezone = zone;
+      _zoneLookup = _ZoneLookup.resolved;
+    });
+    // Every chip is now answerable, and a selection made before the zone
+    // arrived may already be closed on the reader's own clock.
     _dropSelectionIfClosed();
     _schedulePeriodRefresh();
+    return zone;
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     // Coming back from the background can land well past a cutoff the timer
-    // never got to fire for.
+    // never got to fire for. The repaint is unconditional: a period the reader
+    // did *not* pick can close while they are away, and only redrawing when
+    // their own choice expired would leave the other chips lying.
     if (state != AppLifecycleState.resumed) return;
+    if (!mounted) return;
+    setState(() {});
     _dropSelectionIfClosed();
     _schedulePeriodRefresh();
   }
 
   /// The availability of [period] at this instant, by the reader's own zone.
-  PeriodAvailability _availability(TimePeriod period, {DateTime? at}) {
-    final zone = _timezone;
-    if (zone == null) {
-      return const PeriodAvailability(
-        status: PeriodStatus.available,
-        remaining: null,
-      );
-    }
+  ///
+  /// [zone] overrides the resolved one, so the Reveal tap can judge the
+  /// selection by the zone the reading itself is about to use rather than by
+  /// the one this screen happened to read when it opened.
+  PeriodAvailability _availability(
+    TimePeriod period, {
+    DateTime? at,
+    String? zone,
+  }) {
+    // NOW is the instant of the tap. It has no end and needs no clock, so it
+    // survives a zone that never resolves.
+    if (period.localHours == null) return PeriodAvailability.now;
+    final resolved = zone ?? _timezone;
+    if (resolved == null) return PeriodAvailability.unknownTimezone;
     return periodAvailability(
       period,
       instantUtc: at ?? widget.dependencies.nowUtc(),
-      timezone: zone,
+      timezone: resolved,
     );
   }
 
@@ -127,9 +172,9 @@ class _RitualPageState extends State<RitualPage>
   /// Quietly leaving a closed period selected would let the reader tap Reveal
   /// on something that cannot produce a reading; quietly swapping in a
   /// different named period would answer a question they did not ask.
-  void _dropSelectionIfClosed() {
+  void _dropSelectionIfClosed({DateTime? at, String? zone}) {
     if (!mounted || _locked) return;
-    final availability = _availability(_period);
+    final availability = _availability(_period, at: at, zone: zone);
     if (availability.selectable) return;
     final closed = _period;
     setState(() => _period = TimePeriod.now);
@@ -140,11 +185,11 @@ class _RitualPageState extends State<RitualPage>
       SnackBar(
         key: const Key('ritual_period_closed_notice'),
         duration: const Duration(seconds: 4),
-        content: Text(
-          availability.status == PeriodStatus.passed
-              ? l10n.periodHasPassed(label)
-              : l10n.periodNotEnoughTimeLeft(label),
-        ),
+        content: Text(switch (availability.status) {
+          PeriodStatus.passed => l10n.periodHasPassed(label),
+          PeriodStatus.unknownTimezone => l10n.timezoneUnavailableNotice,
+          _ => l10n.periodNotEnoughTimeLeft(label),
+        }),
       ),
     );
   }
@@ -177,17 +222,35 @@ class _RitualPageState extends State<RitualPage>
   /// `nowUtc()` rather than the last render, is what stops a stale selection
   /// producing a reading — and it runs before anything is captured, saved or
   /// unlocked.
-  bool _rejectClosedPeriod() {
-    if (_availability(_period, at: widget.dependencies.nowUtc()).selectable) {
+  bool _rejectClosedPeriod({DateTime? at, String? zone}) {
+    final instant = at ?? widget.dependencies.nowUtc();
+    if (_availability(_period, at: instant, zone: zone).selectable) {
       return false;
     }
-    _dropSelectionIfClosed();
+    _dropSelectionIfClosed(at: instant, zone: zone);
     return true;
   }
 
   Future<void> _reveal() async {
     if (_locked) return;
-    if (_rejectClosedPeriod()) return;
+    // The reading's moment is this tap, taken before any lookup, so a slow
+    // one cannot move it — and it is also the instant every check below
+    // judges the selection against.
+    final instantUtc = widget.dependencies.nowUtc();
+    // Cheap rejection first, against what the screen already knows.
+    if (_rejectClosedPeriod(at: instantUtc)) return;
+    // Then against the zone the reading is actually about to use. The screen
+    // may have read its zone minutes ago, and a reader who has crossed a
+    // border or whose device changed zone since then would otherwise have
+    // their period judged by a clock that is no longer theirs.
+    if (_period.localHours != null) {
+      final zone = await _resolveTimezone();
+      if (!mounted || _locked) return;
+      // Unresolvable: `_resolveTimezone` has already dropped the selection
+      // and shown why, so the period simply does not travel.
+      if (zone == null) return;
+      if (_rejectClosedPeriod(at: instantUtc, zone: zone)) return;
+    }
     if (!_profile.safetyAcknowledged) {
       final agreed = await showResponsibleUseSheet(
         context,
@@ -197,12 +260,10 @@ class _RitualPageState extends State<RitualPage>
       setState(() => _profile = _profile.copyWith(safetyAcknowledged: true));
       widget.onSafetyAcknowledged?.call(_profile);
     }
-    // Checked again: the responsible-use sheet can sit open across a cutoff.
-    if (_rejectClosedPeriod()) return;
+    // Checked again: the responsible-use sheet can sit open across a cutoff,
+    // and this time against the tap's own instant, not the sheet's.
+    if (_rejectClosedPeriod(at: instantUtc)) return;
     setState(() => _locked = true);
-    // The reading's moment is this tap, recorded before the transition and
-    // before any timezone or GPS lookup, so a slow lookup cannot move it.
-    final instantUtc = widget.dependencies.nowUtc();
     await Future<void>.delayed(const Duration(milliseconds: 360));
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
@@ -494,6 +555,12 @@ class _RitualPageState extends State<RitualPage>
               PeriodStatus.available => null,
               PeriodStatus.tooLittleTime => l10n.periodTooLittleTime,
               PeriodStatus.passed => l10n.periodPassed,
+              // Not a claim about the period — a claim about this screen. It
+              // has no clock to measure the period against yet.
+              PeriodStatus.unknownTimezone =>
+                _zoneLookup == _ZoneLookup.resolving
+                    ? l10n.periodCheckingTimezone
+                    : l10n.periodTimezoneUnknown,
             };
             return ChoiceChip(
               key: Key('ritual_period_${period.name}'),
@@ -535,10 +602,42 @@ class _RitualPageState extends State<RitualPage>
             );
           }).toList(),
         ),
+        if (_zoneLookup == _ZoneLookup.failed) _zoneRetry(l10n),
       ],
     );
   }
+
+  /// Says why the named periods are unavailable, and offers to look again.
+  ///
+  /// Without this the chips would simply be dead, which reads as a bug. The
+  /// reading itself is not blocked: NOW is still there, and still correct,
+  /// because it needs no clock but the tap's own.
+  Widget _zoneRetry(AppLocalizations l10n) {
+    return Padding(
+      key: const Key('ritual_timezone_retry'),
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: [
+          Text(
+            l10n.timezoneUnavailableNotice,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: CompassColors.muted,
+            ),
+          ),
+          TextButton(
+            key: const Key('ritual_timezone_retry_button'),
+            onPressed: _locked ? null : _resolveTimezone,
+            child: Text(l10n.tryAgain),
+          ),
+        ],
+      ),
+    );
+  }
 }
+
+/// How far the screen has got in reading the reader's own time zone.
+enum _ZoneLookup { resolving, resolved, failed }
 
 /// Compact, calm badge naming the area the reading concerns.
 class _CategoryBadge extends StatelessWidget {

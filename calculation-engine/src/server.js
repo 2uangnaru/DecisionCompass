@@ -13,6 +13,19 @@
  * logged, echoed back, or included in an error response. Engine exception
  * messages stay inside this process; clients only ever see the generic codes in
  * ERRORS below.
+ *
+ * Not a live reading entry point, and deliberately not subject to the period
+ * cutoff the app enforces. The shipped Android build calculates on device
+ * through the Dart port; `mobile_app/lib/main.dart` never constructs the HTTP
+ * repository, and the one that exists says in its own header that it is a
+ * development artifact for regenerating fixtures. What this endpoint is for is
+ * asking the engine what it answers for a given instant — including instants
+ * long past, which is how fixtures and the parity suite work at all. Adding a
+ * "too little time left today" refusal here would make the engine's own
+ * verification depend on the hour it was run. The cutoff belongs above the
+ * engine, in the client that creates a live reading, and the app enforces it
+ * twice: at the Reveal tap and again where the request is built. See the
+ * v9.4 section of VERIFICATION.md.
  */
 import { createServer } from 'node:http';
 import { pathToFileURL } from 'node:url';

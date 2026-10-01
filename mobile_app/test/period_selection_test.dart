@@ -1,8 +1,8 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/localized_presentation.dart';
-import 'package:decision_compass/data/period_availability.dart';
 import 'package:decision_compass/models.dart';
+import 'package:decision_compass/reading_mapping.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -225,16 +225,9 @@ void main() {
 
       clock = DateTime(2026, 9, 18, 10, 30);
       await tester.pump(const Duration(seconds: 1));
-      final labels = tester
-          .widgetList<ChoiceChip>(find.byType(ChoiceChip))
-          .map((c) => (c.label as Text).data)
-          .toList();
+      await tester.pump();
       // Still running, so it must not claim to have passed.
-      expect(find.text('Morning · Too little time'), findsOneWidget,
-          reason:
-              'chips were $labels, lookups=${rig.contextProvider.timezoneLookups}, '
-              'now=${rig.dependencies.nowUtc()}, '
-              'direct=${periodAvailability(TimePeriod.morning, instantUtc: rig.dependencies.nowUtc(), timezone: 'Asia/Ho_Chi_Minh').status}');
+      expect(find.text('Morning · Too little time'), findsOneWidget);
       expect(find.text('Morning · Passed'), findsNothing);
       expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
       // The selection falls back to NOW rather than to another named period.
@@ -245,14 +238,10 @@ void main() {
         ),
         findsOneWidget,
       );
-
-      await tester.tap(
-        find.byKey(const Key('reveal_button')),
-        warnIfMissed: false,
-      );
-      await tester.pump();
+      // Nothing was asked of the engine on the strength of the expired choice.
       expect(rig.repository.requests, isEmpty);
 
+      // A period that has not started is unaffected, and still travels.
       await tester.tap(periodChip(TimePeriod.midday));
       await tester.pump();
       expect(chipFor(tester, TimePeriod.midday).selected, isTrue);
@@ -261,6 +250,76 @@ void main() {
       await tester.pump();
       expect(rig.sentRequest!.period, engine.TimePeriod.midday);
       await pumpPastRitual(tester);
+    });
+
+    testWidgets('a Reveal tap revalidates against its own instant', (
+      tester,
+    ) async {
+      // The chips were painted while morning was still open. The clock then
+      // crosses the cutoff with no frame in between, so the screen is stale
+      // and morning is still the selection when the tap lands.
+      var clock = DateTime(2026, 9, 18, 10, 29, 59);
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_study_morning.json'),
+        liveLocalClock: () => clock,
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
+
+      // No pump: the UI still believes morning is available.
+      clock = DateTime(2026, 9, 18, 10, 31);
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump();
+
+      // Nothing was asked of the engine and nothing was captured — so nothing
+      // could have consumed an unlock or played an ad either.
+      expect(rig.repository.requests, isEmpty);
+      expect(rig.contextProvider.captures, isEmpty);
+      // The stale choice was dropped for NOW rather than quietly swapped for
+      // a different named period.
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+      expect(
+        find.text(
+          'There is not enough time left in Morning today. Choose another time.',
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('returning from the background drops an expired choice', (
+      tester,
+    ) async {
+      var clock = DateTime(2026, 9, 18, 10, 0);
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_study_morning.json'),
+        liveLocalClock: () => clock,
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
+
+      // Away for an hour, back after morning closed. No timer fired while the
+      // app was not running.
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
+      clock = DateTime(2026, 9, 18, 11, 0);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pump();
+
+      expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
+      expect(find.text('Morning · Too little time'), findsOneWidget);
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+      expect(
+        find.text(
+          'There is not enough time left in Morning today. Choose another time.',
+        ),
+        findsOneWidget,
+      );
+      expect(rig.repository.requests, isEmpty);
     });
 
     testWidgets('a stale chip cannot select morning after noon', (
@@ -514,5 +573,226 @@ void main() {
         );
       }
     });
+  });
+
+  group('until the reader\'s own time zone is known', () {
+    /// How much of Morning is left is a question about the reader's clock.
+    /// Until the app has read that clock it has no answer, and the one answer
+    /// it must not give is "plenty".
+    testWidgets('a slow lookup withholds the named periods, not NOW', (
+      tester,
+    ) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        timezoneDelay: const Duration(seconds: 2),
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+
+      for (final period in TimePeriod.values) {
+        if (period == TimePeriod.now) continue;
+        expect(
+          chipFor(tester, period).onSelected,
+          isNull,
+          reason: '${label(period)} was offered before the zone was known',
+        );
+        expect(
+          find.text('${label(period)} · Checking time zone'),
+          findsOneWidget,
+        );
+        // And it does not claim a reason it has not established.
+        expect(find.text('${label(period)} · Passed'), findsNothing);
+        expect(find.text('${label(period)} · Too little time'), findsNothing);
+      }
+      // NOW needs no clock but the tap's own, so it is never withheld.
+      expect(chipFor(tester, TimePeriod.now).onSelected, isNotNull);
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+      // Still in flight, so nothing to retry yet.
+      expect(find.byKey(const Key('ritual_timezone_retry')), findsNothing);
+
+      // The zone arrives and every chip becomes answerable.
+      await tester.pump(const Duration(seconds: 2));
+      await tester.pump();
+      for (final period in TimePeriod.values) {
+        expect(
+          chipFor(tester, period).onSelected,
+          isNotNull,
+          reason: '${label(period)} stayed shut after the zone resolved',
+        );
+      }
+      expect(find.textContaining('Checking time zone'), findsNothing);
+    });
+
+    testWidgets('a Reveal during the lookup sends nothing but NOW', (
+      tester,
+    ) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        timezoneDelay: const Duration(seconds: 2),
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+
+      // NOW is the selection and it is valid, so this is a real reading.
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump(const Duration(milliseconds: 380));
+      await tester.pump();
+      expect(rig.sentRequest!.period, engine.TimePeriod.now);
+      await pumpPastRitual(tester);
+    });
+
+    testWidgets('a failed lookup says so and offers to look again', (
+      tester,
+    ) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_study_morning.json'),
+        localNow: DateTime(2026, 9, 18, 9),
+        timezoneFailures: 1,
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+      await tester.pump();
+
+      expect(
+        find.text('${label(TimePeriod.morning)} · Time zone unknown'),
+        findsOneWidget,
+      );
+      expect(chipFor(tester, TimePeriod.morning).onSelected, isNull);
+      expect(find.byKey(const Key('ritual_timezone_retry')), findsOneWidget);
+      expect(
+        find.text(
+          'Your time zone could not be read, so only NOW is available. '
+          'Try again to choose a period.',
+        ),
+        findsOneWidget,
+      );
+      // NOW survives: it is the one period that needs no clock.
+      expect(chipFor(tester, TimePeriod.now).onSelected, isNotNull);
+
+      // The second lookup succeeds, and morning — open at 09:00 — comes back.
+      await tester.tap(find.byKey(const Key('ritual_timezone_retry_button')));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(const Key('ritual_timezone_retry')), findsNothing);
+      expect(chipFor(tester, TimePeriod.morning).onSelected, isNotNull);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
+    });
+
+    testWidgets('a lookup that fails at the tap stops the reading', (
+      tester,
+    ) async {
+      // The zone resolves when the screen opens, so Morning is selectable and
+      // genuinely open at 09:00. The lookup at the Reveal tap then fails —
+      // which is how a device whose zone has just changed behaves — and the
+      // screen no longer knows which clock to judge Morning by.
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_study_morning.json'),
+        localNow: DateTime(2026, 9, 18, 9),
+      );
+      await tester.pumpWidget(rig.app);
+      await openRitual(tester);
+      await tester.tap(periodChip(TimePeriod.morning));
+      await tester.pump();
+      expect(chipFor(tester, TimePeriod.morning).selected, isTrue);
+
+      rig.contextProvider.timezoneFailures = 1;
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump();
+      await tester.pump();
+
+      // Nothing was calculated and nothing was captured, so nothing could
+      // have consumed an unlock or played an ad either.
+      expect(rig.repository.requests, isEmpty);
+      expect(rig.contextProvider.captures, isEmpty);
+      // The selection fell back to NOW rather than to another named period,
+      // and the screen says why instead of looking broken.
+      expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+      expect(find.byKey(const Key('ritual_timezone_retry')), findsOneWidget);
+      // The zone read before the tap is discarded rather than kept as a
+      // guess: every named period is unanswerable again.
+      expect(
+        find.text('${label(TimePeriod.morning)} · Time zone unknown'),
+        findsOneWidget,
+      );
+    });
+  });
+
+  group('a Reveal exactly at a cutoff', () {
+    /// (period, the local minute its cutoff falls on).
+    const cutoffs = <(TimePeriod, (int, int))>[
+      (TimePeriod.morning, (10, 30)),
+      (TimePeriod.midday, (13, 0)),
+      (TimePeriod.afternoon, (16, 30)),
+      (TimePeriod.evening, (22, 30)),
+    ];
+
+    for (final (period, (hour, minute)) in cutoffs) {
+      testWidgets('${period.name} is refused on its cutoff minute', (
+        tester,
+      ) async {
+        // Selected a minute before the cutoff, revealed exactly on it, with
+        // no frame in between. The chips were painted while it was open, so
+        // only the tap's own revalidation can catch this.
+        var clock = DateTime(
+          2026,
+          9,
+          18,
+          hour,
+          minute,
+        ).subtract(const Duration(minutes: 1));
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_study_morning.json'),
+          liveLocalClock: () => clock,
+        );
+        await tester.pumpWidget(rig.app);
+        await openRitual(tester);
+        await tester.tap(periodChip(period));
+        await tester.pump();
+        expect(chipFor(tester, period).selected, isTrue);
+
+        clock = DateTime(2026, 9, 18, hour, minute);
+        await tester.tap(find.byKey(const Key('reveal_button')));
+        await tester.pump();
+        await tester.pump();
+
+        expect(rig.repository.requests, isEmpty);
+        expect(rig.contextProvider.captures, isEmpty);
+        expect(chipFor(tester, TimePeriod.now).selected, isTrue);
+        expect(
+          find.text(
+            'There is not enough time left in ${label(period)} today. '
+            'Choose another time.',
+          ),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('${period.name} still travels a minute before it', (
+        tester,
+      ) async {
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_study_morning.json'),
+          localNow: DateTime(
+            2026,
+            9,
+            18,
+            hour,
+            minute,
+          ).subtract(const Duration(minutes: 1)),
+        );
+        await tester.pumpWidget(rig.app);
+        await openRitual(tester);
+        await tester.tap(periodChip(period));
+        await tester.pump();
+        await tester.tap(find.byKey(const Key('reveal_button')));
+        await tester.pump(const Duration(milliseconds: 380));
+        await tester.pump();
+
+        expect(rig.sentRequest!.period, toEnginePeriod(period));
+        await pumpPastRitual(tester);
+      });
+    }
   });
 }

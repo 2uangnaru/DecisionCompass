@@ -166,6 +166,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get periodTooLittleTime => '時間が足りません';
 
   @override
+  String get periodCheckingTimezone => 'タイムゾーンを確認中';
+
+  @override
+  String get periodTimezoneUnknown => 'タイムゾーン不明';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'タイムゾーンを読み取れなかったため、「今」のみ選べます。時間帯を選ぶにはもう一度お試しください。';
+
+  @override
   String periodHasPassed(String period) {
     return '$periodは過ぎました。別の時間帯を選んでください。';
   }

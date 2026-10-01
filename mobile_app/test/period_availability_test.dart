@@ -11,13 +11,16 @@ const _vn = 'Asia/Ho_Chi_Minh';
 DateTime _vnLocal(int hour, int minute) =>
     DateTime.utc(2026, 9, 18, hour, minute).subtract(const Duration(hours: 7));
 
-PeriodStatus _statusAt(TimePeriod period, int hour, int minute,
-        {String zone = _vn}) =>
-    periodAvailability(
-      period,
-      instantUtc: _vnLocal(hour, minute),
-      timezone: zone,
-    ).status;
+PeriodStatus _statusAt(
+  TimePeriod period,
+  int hour,
+  int minute, {
+  String zone = _vn,
+}) => periodAvailability(
+  period,
+  instantUtc: _vnLocal(hour, minute),
+  timezone: zone,
+).status;
 
 void main() {
   group('a period closes before it ends', () {
@@ -42,22 +45,31 @@ void main() {
 
       test('$name is closed exactly at its cutoff', () {
         // The specification is explicit that the boundary itself is closed.
-        expect(_statusAt(period, cutoff.$1, cutoff.$2),
-            PeriodStatus.tooLittleTime);
+        expect(
+          _statusAt(period, cutoff.$1, cutoff.$2),
+          PeriodStatus.tooLittleTime,
+        );
       });
 
       test('$name is closed a minute after its cutoff', () {
-        expect(_statusAt(period, cutoff.$1, cutoff.$2 + 1),
-            PeriodStatus.tooLittleTime);
+        expect(
+          _statusAt(period, cutoff.$1, cutoff.$2 + 1),
+          PeriodStatus.tooLittleTime,
+        );
       });
 
-      test('$name still says "too little time", not "passed", until it ends',
-          () {
-        // A minute before the end there is still time on the clock. Calling
-        // that "Passed" would be false.
-        final (endHour, _) = end;
-        expect(_statusAt(period, endHour - 1, 59), PeriodStatus.tooLittleTime);
-      });
+      test(
+        '$name still says "too little time", not "passed", until it ends',
+        () {
+          // A minute before the end there is still time on the clock. Calling
+          // that "Passed" would be false.
+          final (endHour, _) = end;
+          expect(
+            _statusAt(period, endHour - 1, 59),
+            PeriodStatus.tooLittleTime,
+          );
+        },
+      );
 
       test('$name is passed once its end arrives', () {
         final (endHour, endMinute) = end;
@@ -67,12 +79,13 @@ void main() {
           // *next* day's evening, a full day away from its own end. The day
           // resetting is the behaviour; there is no moment where evening reads
           // as passed.
-          expect(_statusAt(period, endHour, endMinute),
-              PeriodStatus.available);
+          expect(_statusAt(period, endHour, endMinute), PeriodStatus.available);
           expect(
-            periodAvailability(period,
-                    instantUtc: _vnLocal(endHour, endMinute), timezone: _vn)
-                .remaining,
+            periodAvailability(
+              period,
+              instantUtc: _vnLocal(endHour, endMinute),
+              timezone: _vn,
+            ).remaining,
             const Duration(hours: 24),
           );
           return;
@@ -123,10 +136,10 @@ void main() {
       // host clock would give all three the same answer.
       final instant = DateTime.utc(2026, 9, 18, 4);
       PeriodStatus status(String zone) => periodAvailability(
-            TimePeriod.afternoon,
-            instantUtc: instant,
-            timezone: zone,
-          ).status;
+        TimePeriod.afternoon,
+        instantUtc: instant,
+        timezone: zone,
+      ).status;
 
       expect(status('Pacific/Auckland'), PeriodStatus.available);
       expect(status('America/Los_Angeles'), PeriodStatus.passed);
@@ -137,16 +150,20 @@ void main() {
       final instant = DateTime.utc(2026, 9, 18, 4);
       // 16:00 in Auckland leaves two hours of afternoon.
       expect(
-        periodAvailability(TimePeriod.afternoon,
-                instantUtc: instant, timezone: 'Pacific/Auckland')
-            .remaining,
+        periodAvailability(
+          TimePeriod.afternoon,
+          instantUtc: instant,
+          timezone: 'Pacific/Auckland',
+        ).remaining,
         const Duration(hours: 2),
       );
       // 11:00 in Ho Chi Minh City leaves seven.
       expect(
-        periodAvailability(TimePeriod.afternoon,
-                instantUtc: instant, timezone: _vn)
-            .remaining,
+        periodAvailability(
+          TimePeriod.afternoon,
+          instantUtc: instant,
+          timezone: _vn,
+        ).remaining,
         const Duration(hours: 7),
       );
     });
@@ -168,14 +185,22 @@ void main() {
     test('a short, a long and a half-hour day are all their real length', () {
       // Evening runs to the next local midnight, so its end is the point where
       // a 24-hour assumption would be wrong.
-      expect(dayLength('2026-03-08', 'America/New_York'),
-          const Duration(hours: 23));
-      expect(dayLength('2026-11-01', 'America/New_York'),
-          const Duration(hours: 25));
-      expect(dayLength('2026-10-04', 'Australia/Lord_Howe'),
-          const Duration(hours: 23, minutes: 30));
-      expect(dayLength('2026-09-27', 'Pacific/Chatham'),
-          const Duration(hours: 23));
+      expect(
+        dayLength('2026-03-08', 'America/New_York'),
+        const Duration(hours: 23),
+      );
+      expect(
+        dayLength('2026-11-01', 'America/New_York'),
+        const Duration(hours: 25),
+      );
+      expect(
+        dayLength('2026-10-04', 'Australia/Lord_Howe'),
+        const Duration(hours: 23, minutes: 30),
+      );
+      expect(
+        dayLength('2026-09-27', 'Pacific/Chatham'),
+        const Duration(hours: 23),
+      );
     });
 
     test('a transition outside a period does not shorten that period', () {
@@ -210,15 +235,19 @@ void main() {
         isUtc: true,
       );
       expect(
-        periodAvailability(TimePeriod.evening,
-                instantUtc: justOpen, timezone: zone)
-            .status,
+        periodAvailability(
+          TimePeriod.evening,
+          instantUtc: justOpen,
+          timezone: zone,
+        ).status,
         PeriodStatus.available,
       );
       expect(
-        periodAvailability(TimePeriod.evening,
-                instantUtc: justClosed, timezone: zone)
-            .status,
+        periodAvailability(
+          TimePeriod.evening,
+          instantUtc: justClosed,
+          timezone: zone,
+        ).status,
         PeriodStatus.tooLittleTime,
       );
     });
@@ -233,8 +262,10 @@ void main() {
         timezone: _vn,
       );
       expect(next, isNotNull);
-      expect(localAt(next!.millisecondsSinceEpoch.toDouble(), _vn).clock,
-          '10:30:00');
+      expect(
+        localAt(next!.millisecondsSinceEpoch.toDouble(), _vn).clock,
+        '10:30:00',
+      );
     });
 
     test('after the last period closes, the next change is the new day', () {

@@ -173,6 +173,16 @@ class AppLocalizationsEs extends AppLocalizations {
   String get periodTooLittleTime => 'Queda poco tiempo';
 
   @override
+  String get periodCheckingTimezone => 'Comprobando la zona horaria';
+
+  @override
+  String get periodTimezoneUnknown => 'Zona horaria desconocida';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'No se pudo leer tu zona horaria, así que solo está disponible AHORA. Vuelve a intentarlo para elegir un periodo.';
+
+  @override
   String periodHasPassed(String period) {
     return '$period ya pasó. Elige otro momento.';
   }

@@ -119,25 +119,13 @@ void main() {
       expect(tester.takeException(), isNull, reason: 'Result failed at $size');
       expect(find.text('YOUR DIRECTION'), findsOneWidget);
 
-      // The day's own signals sit on Result at every one of these widths,
-      // with Action Guidance still below them rather than squeezed out.
-      final brief = find.byKey(const Key('result_daily_brief'));
-      await tester.ensureVisible(brief);
-      expect(brief, findsOneWidget, reason: 'daily brief missing at $size');
-      expect(
-        find.byKey(const Key('result_daily_lucky_number')),
-        findsOneWidget,
-        reason: 'lucky number missing at $size',
-      );
-      expect(
-        find.byKey(const Key('result_daily_energy_label')),
-        findsOneWidget,
-        reason: 'daily energy missing at $size',
-      );
-      await tester.ensureVisible(
-        find.byKey(const Key('result_action_guidance')),
-      );
-      expect(tester.takeException(), isNull, reason: 'brief failed at $size');
+      // Action guidance card sits directly on Result, without duplicate daily
+      // brief elements that belong exclusively on Home.
+      expect(find.byKey(const Key('result_daily_brief')), findsNothing);
+      final guidance = find.byKey(const Key('result_action_guidance'));
+      await tester.ensureVisible(guidance);
+      expect(guidance, findsOneWidget, reason: 'guidance missing at $size');
+      expect(tester.takeException(), isNull, reason: 'guidance failed at $size');
     }
   });
 }

@@ -5,8 +5,10 @@ import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
 import '../data/models/models.dart' as engine;
+import '../data/period_availability.dart';
 import '../data/reading_api_exception.dart';
 import '../l10n/app_localizations.dart';
+import '../local_engine/time/local_time.dart' show validZone;
 import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
@@ -151,6 +153,12 @@ class _LoadingPageState extends State<LoadingPage> {
       // geometry ships. Ignore even a previously saved opt-in in this build.
       includeLocation: false,
     );
+    // The last gate before a live reading exists, and the only one that can
+    // use the zone the reading itself is about to be calculated in. The
+    // ritual screen checks the same thing at the tap, but it checks a chip;
+    // this checks the request. Any future way into a live reading — a
+    // notification, a deep link, a "read this again" — arrives here too.
+    _refuseClosedPeriod(context.deviceTimezone);
     // `diagnostics` is intentionally omitted: the API rejects it, and module
     // internals must never reach the app.
     return engine.ReadingRequest(
@@ -159,6 +167,29 @@ class _LoadingPageState extends State<LoadingPage> {
       mode: toEngineMode(widget.mode),
       period: toEnginePeriod(widget.period),
       category: widget.category,
+    );
+  }
+
+  /// Throws rather than calculating when the chosen period has closed.
+  ///
+  /// [zone] is the timezone carried by the captured context, which is the one
+  /// the engine will resolve the reading in — not whatever this screen or the
+  /// host machine believes.
+  void _refuseClosedPeriod(String zone) {
+    if (widget.period == TimePeriod.now) return;
+    if (!validZone(zone)) return; // The engine rejects it, with its own error.
+    final availability = periodAvailability(
+      widget.period,
+      instantUtc: widget.instantUtc,
+      timezone: zone,
+    );
+    if (availability.selectable) return;
+    throw ReadingApiException(
+      kind: ReadingApiFailureKind.periodClosed,
+      safeCode: 'period_closed_${availability.status.name}',
+      // Developer-facing only; the reader sees `_ReadingErrorView`'s localized
+      // copy. It names no zone, no instant and nothing about the reader.
+      safeMessage: 'The selected period had closed when Reveal was tapped.',
     );
   }
 
@@ -227,7 +258,11 @@ class _LoadingPageState extends State<LoadingPage> {
   Widget build(BuildContext context) {
     final failure = _failure;
     if (failure != null)
-      return _ReadingErrorView(failure: failure, onRetry: _retry);
+      return _ReadingErrorView(
+        failure: failure,
+        period: widget.period,
+        onRetry: _retry,
+      );
 
     final l10n = AppLocalizations.of(context);
     final phrases = loadingPhrases(l10n, widget.mode);
@@ -338,9 +373,17 @@ class _LoadingPageState extends State<LoadingPage> {
 /// In-theme failure state. Shows only app-owned copy: never the exception's
 /// own text, a server body, birth data or coordinates.
 class _ReadingErrorView extends StatelessWidget {
-  const _ReadingErrorView({required this.failure, required this.onRetry});
+  const _ReadingErrorView({
+    required this.failure,
+    required this.period,
+    required this.onRetry,
+  });
 
   final ReadingApiException failure;
+
+  /// Only used by [ReadingApiFailureKind.periodClosed], which names the
+  /// period it refused rather than saying something went wrong.
+  final TimePeriod period;
   final VoidCallback onRetry;
 
   String _headline(AppLocalizations l10n) => switch (failure.kind) {
@@ -350,6 +393,8 @@ class _ReadingErrorView extends StatelessWidget {
     ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedHeadline,
     ReadingApiFailureKind.invalidResponse => l10n.errorInvalidHeadline,
     ReadingApiFailureKind.configuration => l10n.errorConfigurationHeadline,
+    // Not a failure to say sorry for: the day simply moved on.
+    ReadingApiFailureKind.periodClosed => l10n.periodTooLittleTime,
   };
 
   String _detail(AppLocalizations l10n) => switch (failure.kind) {
@@ -359,6 +404,9 @@ class _ReadingErrorView extends StatelessWidget {
     ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedDetail,
     ReadingApiFailureKind.invalidResponse => l10n.errorInvalidDetail,
     ReadingApiFailureKind.configuration => l10n.errorConfigurationDetail,
+    ReadingApiFailureKind.periodClosed => failure.safeCode.endsWith('passed')
+        ? l10n.periodHasPassed(periodLabel(l10n, period))
+        : l10n.periodNotEnoughTimeLeft(periodLabel(l10n, period)),
   };
 
   /// Only the transient kinds can be retried; a rejected request or a contract
@@ -369,7 +417,9 @@ class _ReadingErrorView extends StatelessWidget {
     ReadingApiFailureKind.server => true,
     ReadingApiFailureKind.rejectedRequest ||
     ReadingApiFailureKind.invalidResponse ||
-    ReadingApiFailureKind.configuration => false,
+    ReadingApiFailureKind.configuration ||
+    // Retrying would only re-check the same instant against the same clock.
+    ReadingApiFailureKind.periodClosed => false,
   };
 
   @override

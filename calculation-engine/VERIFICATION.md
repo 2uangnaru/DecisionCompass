@@ -15,6 +15,133 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.3 — the timing signal, and a period cutoff — 2026-09-30
+
+Engine **4.2.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.3-experimental`**, scales
+`v9.3-cohort-2026-09-30`.
+
+### The timing signal was still blind in the evening
+
+v9.2 fixed `T` for a named period by adding the rest of that period to the
+comparison set, but left NOW comparing only against periods that had not
+started. After 18:00 no period starts, so every NOW reading from six in the
+evening to midnight scored a timing of exactly zero — for ACT / WAIT, the mode
+that is mostly timing, that is most of an evening's readings decided without
+the thing they are about.
+
+Rather than special-case NOW, the comparison set is now the same for every
+period: **every boundary hour of the local day after the anchor's own hour**.
+"This moment against the rest of today" only ever meant the rest of today.
+
+A consequence: `T` no longer depends on the selected period at all, only on the
+anchor's wall hour, so `period` left the signal functions and the score-cache
+key again. `periodBoundaryHours` and the period-anchor helper went with it.
+
+Measured across the calibration cohort, `T`'s median absolute raw value moved
+0.011 (v9.1) → 0.089 (v9.2) → 0.090 (v9.3), with a tighter upper quartile
+(0.129 → 0.109) now that NOW contributes real values all day instead of zeros.
+Only `T`'s scale changed; the other eight are byte-identical to v9.2.
+
+Tested at 07:00, 09:00, 11:00, 13:00, 15:00, 17:00, 19:00 and 21:00 local; at
+23:00, where zero is the honest answer because nothing follows it; at midnight,
+where the whole day is ahead; across all four named periods; and across both
+America/New_York daylight-saving transitions. Node and Dart, in both suites.
+
+### The result guidance was claiming a signal it could not know
+
+`act_wait:first` read *"Of the moments this day still offers, this one reads as
+the most aligned."* ACT wins on a mixture — `.30P + .10C + .30T + .30L` — so it
+can and does win while `T` is negative. `test/scoring.test.js` and
+`test/local_engine/scoring_test.dart` both pin a real instant where that
+happens.
+
+Five modes made the same class of claim, one per leading signal, and all ten of
+their headlines were rewritten in all seven languages. Each now names the
+signal the mode leads on, says it was weighed with the rest, and states only
+the leaning the mixture actually produced — for example *"Timing counted
+alongside everything else, the reading leans toward acting."* YES/NO and
+KEEP/LET GO already said "the signals lean toward…", which was always accurate,
+and were left alone. `test/action_guidance_test.dart` now fails on a list of
+overclaiming phrases.
+
+### Period selection now closes before a period ends
+
+A reading for a period that has twenty minutes left produces windows mostly
+behind the reader by the time they read them. Periods are therefore withdrawn
+before they end:
+
+| Period | Local span | Withdrawn when this much is left |
+|---|---|---:|
+| Morning | 06:00–12:00 | 90 minutes |
+| Midday | 12:00–14:00 | 60 minutes |
+| Afternoon | 14:00–18:00 | 90 minutes |
+| Evening | 18:00–local midnight | 90 minutes |
+
+At exactly the cutoff the period is closed. Before it starts it is open. NOW
+never closes.
+
+The remaining time is measured to the **local** end in the reader's own
+resolved IANA zone, resolved once when the ritual screen opens and never from
+the host machine's clock — `period_availability_test.dart` asserts that one UTC
+instant reads as open in Auckland and passed in Los Angeles. Evening ends at
+the next local midnight rather than at "24:00", so a 23-, 25- or 23.5-hour day
+is exactly as long as it really was; the tests pin all three against
+America/New_York and Australia/Lord_Howe.
+
+A closed period is labelled **"Too little time"**, never "Passed", while it is
+still running. If the chosen period closes while the screen is open, or while
+the app is in the background, the selection drops to NOW with a notice naming
+the period — it is never silently swapped for a different named period. The
+Reveal tap revalidates against its own instant, so a stale chip cannot produce
+a reading: `period_selection_test.dart` covers the timer crossing a cutoff, a
+return from the background, and a tap on a selection that expired between the
+last paint and the tap, asserting in each case that the repository was never
+called and no context was captured.
+
+Boundary coverage is a minute before, exactly at, and a minute after each of
+the four cutoffs, plus each period's end, plus a period that has not started.
+
+An unresolvable timezone leaves every period offered. Muting a period on a
+clock the app cannot read would be worse than offering it, and the engine still
+rejects the zone at Reveal with a message.
+
+### Commands executed on 2026-09-30
+
+| Command | Result |
+|---|---|
+| `node --test test/*.test.js` | **191 passed, 0 failed** |
+| `node scripts/mobile-fixtures.mjs --check` | `All 16 engine fixtures match current engine output.` |
+| `node scripts/port/gen_edge_readings.mjs` | 16 edge scenarios regenerated |
+| `node scripts/calibrate-v91.mjs --profiles 120 --seed 20260930` | only `T` moved; held-out saturation 0% on every signal |
+| `flutter analyze` | **No issues found** |
+| `flutter test` | 795 passed, 9 failed — every failure in code this work did not touch; see below |
+
+Node–Dart parity holds at v9.3: all 16 standard fixtures and all 16 edge
+readings reproduce byte for byte in the Dart port, `readingKey` included.
+
+### The nine failing Flutter tests are not from this work
+
+At the time of this run another agent was editing the same working tree. Its
+commit `76d737c` ("Switch primary app typography to Montserrat and refine home
+page layout") removed `homeEyebrow` from every locale and replaced the
+`todaySignals` label, but left three test files asserting the old copy:
+
+- `font_coverage_test.dart` (7) — loads fonts by family name and has no entry
+  for Montserrat, so the coverage set is null.
+- `category_flow_test.dart` (1) — asserts the removed `homeEyebrow` copy.
+- `home_signals_test.dart` (1) — asserts the replaced "Daily energy" label.
+
+None of them touches the engine, the guidance or the period selector. Every
+test this work added or changed passes.
+
+### Not verified
+
+- **No physical Android device or emulator.** The period cutoff, its two
+  disabled states and the notice are verified by widget tests only.
+- Predictive validity. None claimed, none tested.
+- The rewritten guidance headlines in seven languages are Claude's drafts.
+
 ## v9.2 — fixing what the v9.1 review found — 2026-09-30
 
 Engine **4.1.0-mvp** / ruleset

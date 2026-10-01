@@ -172,6 +172,16 @@ class AppLocalizationsVi extends AppLocalizations {
   String get periodTooLittleTime => 'Không đủ giờ';
 
   @override
+  String get periodCheckingTimezone => 'Đang xác định múi giờ';
+
+  @override
+  String get periodTimezoneUnknown => 'Chưa rõ múi giờ';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'Không đọc được múi giờ của bạn, nên chỉ có thể chọn HIỆN TẠI. Hãy thử lại để chọn một buổi.';
+
+  @override
   String periodHasPassed(String period) {
     return '$period đã qua. Hãy chọn thời điểm khác.';
   }

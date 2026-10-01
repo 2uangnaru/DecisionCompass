@@ -18,6 +18,17 @@ enum ReadingApiFailureKind {
 
   /// The server failed while handling a valid request (5xx).
   server,
+
+  /// This client refused to send the request: the selected local period had
+  /// closed by the instant of the tap.
+  ///
+  /// The only kind raised without a request ever leaving the app, and the one
+  /// that is not about the API at all. The cutoff is a product rule, not an
+  /// engine rule — the engine is a pure function and will answer for any
+  /// period it is asked about, which is what lets it replay a reading saved
+  /// months ago. Something above it therefore has to hold the line for *live*
+  /// readings, and this is where that refusal is named.
+  periodClosed,
 }
 
 /// A transport/contract failure from the calculation API.

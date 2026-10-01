@@ -297,6 +297,56 @@ void main() {
     });
   });
 
+  group('it only claims what the reading established', () {
+    /// Phrases that assert the direction of one signal. A mode score is a
+    /// mixture, so the winning side does not establish any of these.
+    const overclaims = <AppLocale, List<String>>{
+      AppLocale.english: <String>[
+        'most aligned',
+        'more aligned',
+        'best moment',
+        'reads as the most',
+      ],
+      AppLocale.vietnamese: <String>['hợp nhịp nhất', 'tốt nhất'],
+      AppLocale.spanish: <String>['más alineado', 'mejor momento'],
+    };
+
+    test('no headline claims a single signal it cannot know', () {
+      for (final entry in overclaims.entries) {
+        for (final mode in DecisionMode.selectable) {
+          for (final winner in <String>[_pair[mode]!.$1, _pair[mode]!.$2]) {
+            final headline = resolveActionGuidance(
+              locale: entry.key,
+              reading: _reading(base, mode: mode, winner: winner),
+            ).headline.toLowerCase();
+            for (final phrase in entry.value) {
+              expect(
+                headline.contains(phrase.toLowerCase()),
+                isFalse,
+                reason:
+                    '${entry.key.tag} ${mode.wireValue} $winner claims '
+                    '"$phrase": $headline',
+              );
+            }
+          }
+        }
+      }
+    });
+
+    test('ACT/WAIT says the reading leaned, not that the moment is best', () {
+      // ACT can win on a negative timing signal — the engine tests pin a real
+      // instant where it does — so the headline must describe the mixture.
+      final act = resolveActionGuidance(
+        locale: AppLocale.english,
+        reading: _reading(base, mode: DecisionMode.actWait, winner: 'ACT'),
+      ).headline;
+      expect(act.toLowerCase(), contains('leans toward acting'));
+      expect(act.toLowerCase(), contains('timing'));
+      // It names timing as one input among others rather than as the verdict.
+      expect(act.toLowerCase(), contains('everything else'));
+    });
+  });
+
   group('resolution rules', () {
     test('a balanced reading gets the balanced reflection', () {
       for (final locale in AppLocale.values) {

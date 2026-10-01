@@ -172,6 +172,16 @@ class AppLocalizationsHi extends AppLocalizations {
   String get periodTooLittleTime => 'समय कम है';
 
   @override
+  String get periodCheckingTimezone => 'समय क्षेत्र जाँचा जा रहा है';
+
+  @override
+  String get periodTimezoneUnknown => 'समय क्षेत्र अज्ञात';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'आपका समय क्षेत्र पढ़ा नहीं जा सका, इसलिए केवल अभी चुना जा सकता है। कोई अवधि चुनने के लिए फिर से कोशिश करें।';
+
+  @override
   String periodHasPassed(String period) {
     return '$period का समय बीत चुका है। कोई दूसरा समय चुनें।';
   }
@@ -1326,6 +1336,16 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get periodTooLittleTime => 'समय कम है';
+
+  @override
+  String get periodCheckingTimezone => 'समय क्षेत्र जाँचा जा रहा है';
+
+  @override
+  String get periodTimezoneUnknown => 'समय क्षेत्र अज्ञात';
+
+  @override
+  String get timezoneUnavailableNotice =>
+      'आपका समय क्षेत्र पढ़ा नहीं जा सका, इसलिए केवल अभी चुना जा सकता है। कोई अवधि चुनने के लिए फिर से कोशिश करें।';
 
   @override
   String periodHasPassed(String period) {

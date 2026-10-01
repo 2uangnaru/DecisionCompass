@@ -290,6 +290,120 @@ void main() {
       expect(probeSecond['modeScore'], normalFirst['modeScore']);
     });
 
+    /// A NOW reading at [localHour] on 18 September 2026 in Ho Chi Minh City.
+    Map<String, Object?> nowAt(int localHour) =>
+        ReadingCalculator(profile).calculate(
+          context: <String, Object?>{
+            'instantUtc': DateTime.utc(
+              2026,
+              9,
+              18,
+              localHour - 7,
+            ).toIso8601String(),
+            'deviceTimezone': 'Asia/Ho_Chi_Minh',
+          },
+          mode: 'act_wait',
+          period: 'now',
+        );
+
+    /// `jsNumber` types an integral value as an `int`, so a timing of exactly
+    /// zero arrives as `0` rather than `0.0`.
+    double timingOf(Map<String, Object?> reading) =>
+        (((reading['scoring']! as Map<String, Object?>)['signals']!
+                    as Map<String, Object?>)['T']!
+                as num)
+            .toDouble();
+
+    test('NOW reads the rest of the day, not only the periods to come', () {
+      // The defect: NOW compared itself only against periods that had not
+      // begun, so after 18:00 nothing was left and the signal was zero all
+      // evening.
+      for (final hour in <int>[7, 9, 11, 13, 15, 17, 19, 21]) {
+        expect(
+          timingOf(nowAt(hour)),
+          isNot(0),
+          reason: 'a NOW reading at $hour:00 has no timing signal',
+        );
+      }
+    });
+
+    test('the last hour of the day has nothing left to compare against', () {
+      // Zero here is the honest answer rather than the bug above: 23:00 is the
+      // final segment of the local date.
+      expect(timingOf(nowAt(23)), 0);
+    });
+
+    test('midnight compares against the whole day ahead', () {
+      expect(timingOf(nowAt(0)), isNot(0));
+      expect(timingOf(nowAt(0)).abs(), lessThanOrEqualTo(1));
+    });
+
+    test('every named period keeps a timing signal too', () {
+      for (final period in <String>[
+        'morning',
+        'midday',
+        'afternoon',
+        'evening',
+      ]) {
+        final reading = ReadingCalculator(profile).calculate(
+          // 05:00 local, so none of them has started or elapsed.
+          context: const <String, Object?>{
+            'instantUtc': '2026-09-17T22:00:00Z',
+            'deviceTimezone': 'Asia/Ho_Chi_Minh',
+          },
+          mode: 'act_wait',
+          period: period,
+        );
+        expect(reading['status'], 'ready', reason: period);
+        expect(timingOf(reading), isNot(0), reason: period);
+      }
+    });
+
+    test('the timing signal survives a daylight-saving transition', () {
+      // New York loses an hour on 2026-03-08 and gains one on 2026-11-01. The
+      // comparison set is built from the hours that actually exist.
+      for (final instant in <String>[
+        '2026-03-08T14:00:00Z',
+        '2026-11-01T15:00:00Z',
+      ]) {
+        final reading = calculateReading(
+          profile: const <String, Object?>{
+            'birthDate': '1990-03-14',
+            'birthTime': '08:25',
+            'birthCountry': 'US',
+            'traditionalProfile': 'female',
+            'revision': 1,
+          },
+          context: <String, Object?>{
+            'instantUtc': instant,
+            'deviceTimezone': 'America/New_York',
+          },
+          mode: 'act_wait',
+          period: 'now',
+        );
+        expect(reading['status'], 'ready', reason: instant);
+        expect(timingOf(reading).isFinite, isTrue, reason: instant);
+        expect(timingOf(reading).abs(), lessThanOrEqualTo(1), reason: instant);
+      }
+    });
+
+    test('ACT can win while its own timing signal is negative', () {
+      // Why the result guidance may not claim "the most aligned moment"
+      // merely because ACT won: the mixture also reads prospect, change
+      // pressure and luck, and they can outweigh a negative timing.
+      final found = <int>[7, 8, 9, 10, 11, 12, 13]
+          .map(nowAt)
+          .where(
+            (reading) => timingOf(reading) < 0 && reading['winner'] == 'ACT',
+          )
+          .toList();
+      expect(
+        found,
+        isNotEmpty,
+        reason: 'no instant produced an ACT win on a negative timing signal',
+      );
+    });
+
     test(
       'an elapsed period refuses to score rather than borrowing another',
       () {

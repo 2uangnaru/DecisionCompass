@@ -52,6 +52,18 @@
   "periodEvening": "Evening",
   "periodPassed": "Passed",
   "periodTooLittleTime": "Too little time",
+  "periodCheckingTimezone": "Checking time zone",
+  "periodTimezoneUnknown": "Time zone unknown",
+  "timezoneUnavailableNotice": "Your time zone could not be read, so only NOW is available. Try again to choose a period.",
+  "@periodCheckingTimezone": {
+    "description": "Chip suffix while the reader's IANA zone is still being resolved. Named periods cannot be chosen until it is."
+  },
+  "@periodTimezoneUnknown": {
+    "description": "Chip suffix after the zone lookup failed. The period may well have time left; the app simply cannot say."
+  },
+  "@timezoneUnavailableNotice": {
+    "description": "Shown beside a retry control when the zone could not be resolved."
+  },
   "periodHasPassed": "{period} has passed. Choose another time.",
   "periodNotEnoughTimeLeft": "There is not enough time left in {period} today. Choose another time.",
   "@periodNotEnoughTimeLeft": {

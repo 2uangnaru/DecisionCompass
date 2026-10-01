@@ -427,6 +427,24 @@ abstract class AppLocalizations {
   /// **'Too little time'**
   String get periodTooLittleTime;
 
+  /// Chip suffix while the reader's IANA zone is still being resolved. Named periods cannot be chosen until it is.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking time zone'**
+  String get periodCheckingTimezone;
+
+  /// Chip suffix after the zone lookup failed. The period may well have time left; the app simply cannot say.
+  ///
+  /// In en, this message translates to:
+  /// **'Time zone unknown'**
+  String get periodTimezoneUnknown;
+
+  /// Shown beside a retry control when the zone could not be resolved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your time zone could not be read, so only NOW is available. Try again to choose a period.'**
+  String get timezoneUnavailableNotice;
+
   /// No description provided for @periodHasPassed.
   ///
   /// In en, this message translates to:

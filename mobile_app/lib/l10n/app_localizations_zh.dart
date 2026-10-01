@@ -166,6 +166,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get periodTooLittleTime => '时间不够';
 
   @override
+  String get periodCheckingTimezone => '正在确认时区';
+
+  @override
+  String get periodTimezoneUnknown => '时区未知';
+
+  @override
+  String get timezoneUnavailableNotice => '无法读取你的时区，因此只能选择现在。请重试以选择时段。';
+
+  @override
   String periodHasPassed(String period) {
     return '$period已经过去，请选择其他时段。';
   }
@@ -1183,6 +1192,15 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get periodTooLittleTime => '时间不够';
 
   @override
+  String get periodCheckingTimezone => '正在确认时区';
+
+  @override
+  String get periodTimezoneUnknown => '时区未知';
+
+  @override
+  String get timezoneUnavailableNotice => '无法读取你的时区，因此只能选择现在。请重试以选择时段。';
+
+  @override
   String periodHasPassed(String period) {
     return '$period已经过去，请选择其他时段。';
   }
@@ -2198,6 +2216,15 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get periodTooLittleTime => '时间不够';
+
+  @override
+  String get periodCheckingTimezone => '正在确认时区';
+
+  @override
+  String get periodTimezoneUnknown => '时区未知';
+
+  @override
+  String get timezoneUnavailableNotice => '无法读取你的时区，因此只能选择现在。请重试以选择时段。';
 
   @override
   String periodHasPassed(String period) {

@@ -9,6 +9,8 @@ import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/theme.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'bundled_fonts.dart';
+
 /// Proves the bundled fonts actually contain the characters the app ships.
 ///
 /// This is glyph coverage read out of each font's own `cmap` table, not an
@@ -20,28 +22,39 @@ void main() {
   final fonts = <String, Set<int>>{};
 
   setUpAll(() {
-    for (final entry in const {
-      CompassFonts.latin: ['NotoSans-Regular.ttf', 'NotoSans-Bold.ttf'],
-      CompassFonts.thai: ['NotoSansThai-Regular.ttf', 'NotoSansThai-Bold.ttf'],
-      CompassFonts.devanagari: [
-        'NotoSansDevanagari-Regular.ttf',
-        'NotoSansDevanagari-Bold.ttf',
-      ],
-      CompassFonts.japanese: ['NotoSansJP-Regular.otf', 'NotoSansJP-Bold.otf'],
-      CompassFonts.simplifiedChinese: [
-        'NotoSansSC-Regular.otf',
-        'NotoSansSC-Bold.otf',
-      ],
-    }.entries) {
-      // Both weights, intersected: a character the Bold lacks would fall
+    // The inventory is the shipped manifest, not a copy of it. When the app
+    // switched its Latin family from Noto Sans to Montserrat, a hand-written
+    // copy here went on measuring Noto Sans under the new family's name, and
+    // the family that had actually started drawing English, Vietnamese and
+    // Spanish was never checked at all.
+    for (final entry in bundledFontFamilies().entries) {
+      // Every weight, intersected: a character the Bold lacks would fall
       // through to another family mid-sentence and change shape.
       Set<int>? shared;
-      for (final file in entry.value) {
-        final covered = _coverage(File('assets/fonts/$file'));
+      for (final path in entry.value) {
+        final covered = _coverage(File(path));
         shared = shared == null ? covered : shared.intersection(covered);
       }
       fonts[entry.key] = shared!;
     }
+  });
+
+  test('every family the app asks for is a family it bundles', () {
+    // The check that would have caught the switch: a stack naming a family
+    // that pubspec does not declare renders in the platform's own font, and
+    // nothing else in the suite would say so.
+    final declared = fonts.keys.toSet();
+    final asked = <String>{
+      for (final locale in AppLocale.values) ...[
+        ...CompassFonts.fallbackFor(locale),
+        ...CompassFonts.displayFallbackFor(locale),
+      ],
+    };
+    expect(
+      asked.difference(declared),
+      isEmpty,
+      reason: 'the theme asks for families pubspec.yaml does not bundle',
+    );
   });
 
   test('every bundled family parses and carries a real repertoire', () {
@@ -63,14 +76,22 @@ void main() {
     expect(fonts[CompassFonts.devanagari], contains(0x0915)); // क
     expect(fonts[CompassFonts.japanese], contains(0x3042)); // あ
     expect(fonts[CompassFonts.simplifiedChinese], contains(0x4E2D)); // 中
+    // Both Latin faces: the lead one draws Vietnamese, the fallback catches
+    // whatever it misses, so each has to carry the stacked diacritics.
     expect(fonts[CompassFonts.latin], contains(0x1EC7)); // ệ
+    expect(fonts[CompassFonts.latinFallback], contains(0x1EC7)); // ệ
   });
 
   for (final locale in AppLocale.values) {
     test('${locale.tag} renders with the fonts the app bundles for it', () {
       final stack = CompassFonts.fallbackFor(locale);
       final covered = stack
-          .map((family) => fonts[family]!)
+          .map(
+            (family) =>
+                fonts[family] ??
+                fail('$family is in the ${locale.tag} stack but is not '
+                    'bundled'),
+          )
           .reduce((a, b) => a.union(b));
 
       final missing = <int>{};
@@ -105,12 +126,18 @@ void main() {
       // do not carry Latin, and `fontFamilyFallback` is what covers it.
       final leadFamily = CompassFonts.fallbackFor(locale).first;
       final lead = fonts[leadFamily]!;
-      final latin = fonts[CompassFonts.latin]!;
+      // The Latin run is whatever either Latin face can draw. There are two
+      // of them now — the geometric one that leads, and Noto Sans behind it —
+      // and `fontFamilyFallback` reaches both.
+      const latinFamilies = [CompassFonts.latin, CompassFonts.latinFallback];
+      final latin = latinFamilies
+          .map((family) => fonts[family]!)
+          .reduce((a, b) => a.union(b));
       final ownScript = <int>{};
       for (final value in _arbStrings(locale)) {
         for (final rune in value.runes) {
           if (rune < 0x20 || rune == 0x00A0 || rune == 0x202F) continue;
-          if (latin.contains(rune) && leadFamily != CompassFonts.latin) {
+          if (latin.contains(rune) && !latinFamilies.contains(leadFamily)) {
             continue;
           }
           ownScript.add(rune);

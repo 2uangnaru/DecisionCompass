@@ -106,7 +106,7 @@ hiệu — xem `src/scoring.js` để biết công thức đầy đủ:
 | `P` | Prospect: B, Z, W nâng đỡ tới đâu, mẫu số cố định nên module thiếu kéo về 0 |
 | `C` | Change pressure: trục thay đổi của cả bảy module |
 | `L` | Luck: almanac/Vedic/numerology của chính khoảnh khắc, trừ baseline 0.05 |
-| `T` | Timing: khoảnh khắc này so với phần còn lại của ngày — cả các khung giờ còn lại của chính period đang chọn lẫn các period chưa bắt đầu |
+| `T` | Timing: khoảnh khắc này so với phần còn lại của ngày — mọi mốc giờ còn lại của ngày địa phương, giống nhau cho mọi period kể cả NOW |
 | `M` | Momentum: `C` hôm nay so với ba ngày trước |
 | `R` | Release: `.50P − .35C + .15·qZ·aZ` |
 | `G` | Grounding: `.35P − .45C − .20·(P cuối tuần tới − P hôm nay)` |
@@ -142,6 +142,10 @@ phần mười nên hai vế luôn cộng đúng 100.0.
 
 Không có random, không ép khác nhau, không ép đổi chiều, không có sàn 60% và
 không có phần thưởng daily-energy cộng thêm sau điểm.
+
+`T` không phụ thuộc period: chỉ phụ thuộc giờ của anchor. Ở v9.1 một bài đọc
+buổi tối không có gì để so nên `T` luôn bằng 0; v9.2 sửa cho period có tên
+nhưng NOW vẫn bị vậy sau 18:00; v9.3 so với toàn bộ phần còn lại của ngày.
 
 Top 2 time windows được chấm lại **từ đầu tại chính khoảnh khắc của từng
 window**, kể cả tín hiệu `T`. Ở v9.1 mỗi window dùng lại `T` của phần đầu bài

@@ -72,7 +72,11 @@ void main() {
       await completeOnboarding(tester);
 
       expect(find.byKey(const Key('home_positioning')), findsOneWidget);
-      expect(find.text('A COMPASS TO GUIDE YOUR PATH'), findsOneWidget);
+      // The eyebrow line above the title was dropped in the Home layout
+      // revision (76d737c) and the title now leads on its own. `homeEyebrow`
+      // is still in every ARB file, so the check stays as a check that it has
+      // not crept back onto the screen.
+      expect(find.text('A COMPASS TO GUIDE YOUR PATH'), findsNothing);
       expect(find.text('Caught between choices?'), findsOneWidget);
       // The description below rotates daily; whichever one landed must be one
       // of the approved thirty.

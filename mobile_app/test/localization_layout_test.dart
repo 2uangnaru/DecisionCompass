@@ -225,39 +225,17 @@ void main() {
             reason: 'counterpart choice must use subtle white70, $at',
           );
 
-          // The day's own signals are back on Result, compactly: both
-          // colours, the lucky number and the energy label. Each row is a
-          // caption free to wrap beside a value, so a long caption in this
-          // language at this scale must not push its value off the card.
-          final brief = find.byKey(const Key('result_daily_brief'));
-          await tester.ensureVisible(brief);
-          expect(
-            brief,
-            findsOneWidget,
-            reason: 'the daily brief is missing, $at',
-          );
-          expect(
-            tester.getSize(brief).width,
-            lessThanOrEqualTo(narrow.width),
-            reason: 'the daily brief is wider than the screen, $at',
-          );
-          for (final key in const <String>[
-            'result_daily_color_lead',
-            'result_daily_color_supporting',
-            'result_daily_lucky_number',
-            'result_daily_energy_label',
-          ]) {
-            expect(
-              find.byKey(Key(key)),
-              findsOneWidget,
-              reason: '$key is missing from the daily brief, $at',
-            );
-          }
-          // Action Guidance still fits underneath it rather than being
-          // crowded out by it.
+          // Action Guidance is displayed directly beneath the verdict,
+          // without redundant daily signals that belong exclusively on Home.
+          expect(find.byKey(const Key('result_daily_brief')), findsNothing);
           final guidance = find.byKey(const Key('result_action_guidance'));
           await tester.ensureVisible(guidance);
-          expect(guidance, findsOneWidget, reason: 'guidance crowded out, $at');
+          expect(guidance, findsOneWidget, reason: 'guidance missing, $at');
+          expect(
+            tester.getSize(guidance).width,
+            lessThanOrEqualTo(narrow.width),
+            reason: 'the action guidance card is wider than the screen, $at',
+          );
 
           final caveat = find.byKey(const Key('result_lucky_times_caveat'));
           await tester.ensureVisible(caveat);
