@@ -314,6 +314,45 @@ void main() {
     expect(find.text('YES / NO'), findsNothing);
     expect(find.text('STAY / GO'), findsNothing);
   });
+
+  testWidgets('long decision mode like GẮN BÓ / CHẤM DỨT fits on 1 line at 360dp', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(360, 640);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final rig = ReadingTestRig();
+    final json = fixtureResponse('ready_yes_no_now.json').toJson();
+    json['mode'] = 'commit_withdraw';
+    json['winner'] = 'COMMIT';
+    json['percentages'] = {'COMMIT': 74.0, 'WITHDRAW': 26.0};
+    await rig.historyRepository.save(
+      HistoryEntry(
+        id: 'commit-reading',
+        reading: engine.ReadingResponse.fromJson(json),
+        savedAtUtc: DateTime.utc(2026, 10, 1, 8, 50),
+      ),
+    );
+
+    await tester.pumpWidget(
+      localizedApp(
+        locale: AppLocale.vietnamese,
+        home: HistoryPage(dependencies: rig.dependencies),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final modeFinder = find.text('GẮN BÓ / CHẤM DỨT');
+    expect(modeFinder, findsOneWidget);
+    final modeWidget = tester.widget<Text>(modeFinder);
+    expect(modeWidget.maxLines, 1);
+    expect(modeWidget.softWrap, isFalse);
+
+    final resultFinder = find.textContaining('GẮN BÓ');
+    expect(resultFinder, findsWidgets);
+  });
 }
 
 ReadingDependencies _withHistory(

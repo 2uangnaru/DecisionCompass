@@ -279,26 +279,41 @@ class _HistoryRow extends StatelessWidget {
           ),
         ),
       ),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
               Expanded(
-                child: Text(
-                  modeLabel(l10n, mode),
-                  style: const TextStyle(fontWeight: FontWeight.w700),
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    modeLabel(l10n, mode),
+                    maxLines: 1,
+                    softWrap: false,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
-              Text(
-                _resultLabel(l10n, localeName, reading),
-                textAlign: TextAlign.right,
-                style: TextStyle(
-                  color: palette.accent,
-                  fontSize: 17,
-                  fontWeight: FontWeight.w700,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerRight,
+                child: Text(
+                  _resultLabel(l10n, localeName, reading),
+                  maxLines: 1,
+                  softWrap: false,
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: palette.accent,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
               ),
               const SizedBox(width: 4),
@@ -309,16 +324,29 @@ class _HistoryRow extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 8),
-          Text(
-            '${categoryLabel(l10n, reading.category)}  •  ${_timeOfDay(localeName, reading)}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 2),
-          Text(
-            _date(localeName, reading),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: CompassColors.muted,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                categoryLabel(l10n, reading.category),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: CompassColors.secondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+              ),
+              const SizedBox(width: 8),
+              Flexible(
+                child: Text(
+                  '${_timeOfDay(localeName, reading)}  •  ${_date(localeName, reading)}',
+                  textAlign: TextAlign.right,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: CompassColors.muted,
+                      ),
                 ),
+              ),
+            ],
           ),
         ],
       ),
