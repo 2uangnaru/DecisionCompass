@@ -266,8 +266,7 @@ void main() {
         initialDate: DateTime(1999, 8, 25),
         locale: const Locale('vi'),
       );
-      expect(find.textContaining('Tuổi Kỷ Mão (Mão) 🐱'), findsOneWidget);
-      expect(find.textContaining('Mèo'), findsNothing);
+      expect(find.textContaining('Tuổi Kỷ Mão (Mèo) 🐱'), findsOneWidget);
       expect(find.textContaining('Thỏ'), findsNothing);
       expect(find.textContaining('🐇'), findsNothing);
 

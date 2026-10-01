@@ -30,7 +30,7 @@ String birthHourZodiacLabel(String localeName, int hour24) {
     'Chuột 🐀',
     'Trâu 🐂',
     'Hổ 🐅',
-    'Mão 🐱',
+    'Mèo 🐱',
     'Rồng 🐲',
     'Rắn 🐍',
     'Ngựa 🐎',

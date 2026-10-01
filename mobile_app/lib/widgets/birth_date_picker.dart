@@ -30,7 +30,7 @@ String chineseZodiacLabel(String localeName, DateTime date) {
     'Chuột',
     'Trâu',
     'Hổ',
-    'Mão',
+    'Mèo',
     'Rồng',
     'Rắn',
     'Ngựa',
