@@ -38,7 +38,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   ).animate(
     CurvedAnimation(
       parent: _entrance,
-      curve: const Interval(0.08, 0.35, curve: Curves.easeInOutCubic),
+      curve: const Interval(0.08, 0.40, curve: Curves.easeInOutCubic),
     ),
   );
 
@@ -46,7 +46,7 @@ class _StartupLoadingViewState extends State<StartupLoadingView>
   /// creating a 3-star constellation with organic celestial breathing (completing at 1.0s).
   late final Animation<double> _subStarsBloom = CurvedAnimation(
     parent: _entrance,
-    curve: const Interval(0.12, 0.36, curve: Curves.easeOutCubic),
+    curve: const Interval(0.12, 0.40, curve: Curves.easeOutCubic),
   );
 
   late final Animation<double> _leadFade = CurvedAnimation(
