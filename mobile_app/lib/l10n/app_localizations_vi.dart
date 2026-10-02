@@ -112,7 +112,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get homeEyebrow => 'LA BÀN CHỈ HƯỚNG GIÚP BẠN';
 
   @override
-  String get homeTitle => 'Bạn đang phân vân giữa những lựa chọn?';
+  String get homeTitle => 'Bạn đang phân vân?';
 
   @override
   String get areaQuestion => 'Điều bạn đang nghĩ đến thuộc lĩnh vực nào?';
