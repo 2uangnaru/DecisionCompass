@@ -188,6 +188,7 @@ Future<DateTime?> showBirthDatePicker({
 }) => showModalBottomSheet<DateTime>(
   context: context,
   isScrollControlled: true,
+  enableDrag: false,
   backgroundColor: Colors.transparent,
   builder: (_) => BirthDatePickerSheet(initialDate: initialDate),
 );
@@ -225,6 +226,11 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   var _mode = _EntryMode.wheel;
 
   var _showError = false;
+
+  Widget? _cachedWheels;
+  int? _cachedDayCount;
+  int? _cachedMonthCount;
+  String? _cachedLocale;
 
   DateTime get _lastDate =>
       DateUtils.dateOnly(widget.lastDate ?? DateTime.now());
@@ -331,6 +337,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   }
 
   void _createWheelControllers() {
+    _cachedWheels = null;
     _dayWheel = FixedExtentScrollController(
       initialItem: _selectedDay != null
           ? math.min(_selectedDay!, _currentDayCount)
@@ -424,6 +431,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   void _setMode(_EntryMode mode) {
     if (mode == _mode) return;
     FocusScope.of(context).unfocus();
+    _cachedWheels = null;
     setState(() {
       if (mode == _EntryMode.manual &&
           _day.text.isEmpty &&
@@ -516,6 +524,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
       key: key,
       scrollController: controller,
       itemExtent: 44,
+      diameterRatio: 1.15,
       selectionOverlay: null,
       looping: looping,
       onSelectedItemChanged: onSelected,
@@ -532,6 +541,122 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
       ],
     ),
   );
+
+  Widget _buildWheels(AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return CupertinoTheme(
+      data: CupertinoThemeData(
+        brightness: Brightness.dark,
+        primaryColor: CompassColors.gold,
+        textTheme: CupertinoTextThemeData(
+          pickerTextStyle: theme.textTheme.titleLarge?.copyWith(
+            color: CompassColors.text,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              for (final label in [
+                l10n.birthDay,
+                l10n.birthMonth,
+                l10n.birthYear,
+              ])
+                Expanded(
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                    style: theme.textTheme.labelMedium?.copyWith(
+                      color: CompassColors.gold,
+                      letterSpacing: 1.2,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          SizedBox(
+            height: 200,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                Row(
+                  children: [
+                    _wheelColumn(
+                      key: const Key('birth_date_day_wheel'),
+                      controller: _dayWheel,
+                      items: _dayItems,
+                      onSelected: (i) => _chooseDay(
+                        _indexToDay(i, _dayItems.length),
+                      ),
+                      label: l10n.birthDay,
+                      placeholder: 'DD',
+                      looping: true,
+                    ),
+                    _wheelColumn(
+                      key: const Key('birth_date_month_wheel'),
+                      controller: _monthWheel,
+                      items: _monthItems,
+                      onSelected: (i) => _chooseMonth(
+                        _indexToMonth(i, _monthItems.length),
+                      ),
+                      label: l10n.birthMonth,
+                      placeholder: 'MM',
+                      looping: true,
+                    ),
+                    _wheelColumn(
+                      key: const Key('birth_date_year_wheel'),
+                      controller: _yearWheel,
+                      items: _yearItems,
+                      onSelected: (i) => _chooseYear(_indexToYear(i)),
+                      label: l10n.birthYear,
+                      placeholder: 'YYYY',
+                      looping: false,
+                    ),
+                  ],
+                ),
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            CompassColors.raised,
+                            CompassColors.raised.withValues(alpha: 0.0),
+                            CompassColors.raised.withValues(alpha: 0.0),
+                            CompassColors.raised,
+                          ],
+                          stops: const [0.0, 0.22, 0.78, 1.0],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                IgnorePointer(
+                  child: Container(
+                    height: 46,
+                    decoration: BoxDecoration(
+                      color: CompassColors.gold.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: CompassColors.gold.withValues(alpha: 0.45),
+                        width: 1.2,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget _part({
     required Key key,
@@ -588,6 +713,19 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
     final unanswered =
         _mode == _EntryMode.wheel && _wheelDate == null && _showError;
 
+    final dayCount = _currentDayCount;
+    final monthCount = _currentMonthCount;
+    final currentLocale = Localizations.localeOf(context).languageCode;
+    if (_cachedWheels == null ||
+        _cachedDayCount != dayCount ||
+        _cachedMonthCount != monthCount ||
+        _cachedLocale != currentLocale) {
+      _cachedDayCount = dayCount;
+      _cachedMonthCount = monthCount;
+      _cachedLocale = currentLocale;
+      _cachedWheels = _buildWheels(l10n);
+    }
+
     return AnimatedPadding(
       duration: const Duration(milliseconds: 180),
       curve: Curves.easeOut,
@@ -605,6 +743,9 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
         child: SafeArea(
           top: false,
           child: SingleChildScrollView(
+            physics: _mode == _EntryMode.wheel
+                ? const ClampingScrollPhysics()
+                : const BouncingScrollPhysics(),
             padding: const EdgeInsets.fromLTRB(24, 12, 24, 24),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -663,129 +804,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                 ),
                 const SizedBox(height: 12),
                 if (_mode == _EntryMode.wheel)
-                  CupertinoTheme(
-                    data: CupertinoThemeData(
-                      brightness: Brightness.dark,
-                      primaryColor: CompassColors.gold,
-                      textTheme: CupertinoTextThemeData(
-                        pickerTextStyle: theme.textTheme.titleLarge?.copyWith(
-                          color: CompassColors.text,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            for (final label in [
-                              l10n.birthDay,
-                              l10n.birthMonth,
-                              l10n.birthYear,
-                            ])
-                              Expanded(
-                                child: Text(
-                                  label,
-                                  textAlign: TextAlign.center,
-                                  style: theme.textTheme.labelMedium?.copyWith(
-                                    color: CompassColors.gold,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                          ],
-                        ),
-                        const SizedBox(height: 6),
-                        SizedBox(
-                          height: 200,
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Row(
-                                children: [
-                                  _wheelColumn(
-                                    key: const Key('birth_date_day_wheel'),
-                                    controller: _dayWheel,
-                                    items: _dayItems,
-                                    onSelected: (i) => _chooseDay(
-                                      _indexToDay(i, _dayItems.length),
-                                    ),
-                                    label: l10n.birthDay,
-                                    placeholder: 'DD',
-                                    looping: true,
-                                  ),
-                                  _wheelColumn(
-                                    key: const Key(
-                                      'birth_date_month_wheel',
-                                    ),
-                                    controller: _monthWheel,
-                                    items: _monthItems,
-                                    onSelected: (i) => _chooseMonth(
-                                      _indexToMonth(i, _monthItems.length),
-                                    ),
-                                    label: l10n.birthMonth,
-                                    placeholder: 'MM',
-                                    looping: true,
-                                  ),
-                                  _wheelColumn(
-                                    key: const Key('birth_date_year_wheel'),
-                                    controller: _yearWheel,
-                                    items: _yearItems,
-                                    onSelected: (i) =>
-                                        _chooseYear(_indexToYear(i)),
-                                    label: l10n.birthYear,
-                                    placeholder: 'YYYY',
-                                    looping: false,
-                                  ),
-                                ],
-                              ),
-                              Positioned.fill(
-                                child: IgnorePointer(
-                                  child: DecoratedBox(
-                                    decoration: BoxDecoration(
-                                      gradient: LinearGradient(
-                                        begin: Alignment.topCenter,
-                                        end: Alignment.bottomCenter,
-                                        colors: [
-                                          CompassColors.raised,
-                                          CompassColors.raised.withValues(
-                                            alpha: 0.0,
-                                          ),
-                                          CompassColors.raised.withValues(
-                                            alpha: 0.0,
-                                          ),
-                                          CompassColors.raised,
-                                        ],
-                                        stops: const [0.0, 0.22, 0.78, 1.0],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              IgnorePointer(
-                                child: Container(
-                                  height: 46,
-                                  decoration: BoxDecoration(
-                                    color: CompassColors.gold.withValues(
-                                      alpha: 0.08,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                    border: Border.all(
-                                      color: CompassColors.gold.withValues(
-                                        alpha: 0.45,
-                                      ),
-                                      width: 1.2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  )
+                  _cachedWheels!
                 else ...[
                   const SizedBox(height: 14),
                   Row(
