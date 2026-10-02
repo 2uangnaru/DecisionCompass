@@ -13,6 +13,7 @@ import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/daily_energy_capsule_bar.dart';
 import '../widgets/daily_energy_info.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/responsible_use_sheet.dart';
@@ -409,14 +410,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
               final brief = snapshot.data;
               final colors = brief?.colors;
               final energy = brief?.energy;
-              final energyAccent = switch (energy?.level) {
-                'quiet' || 'soft' => CompassColors.blueLight,
-                'steady' => CompassColors.teal,
-                'lively' || 'focused' => CompassColors.teal,
-                'flowing' => CompassColors.violet,
-                'bright' || 'radiant' => CompassColors.gold,
-                _ => CompassColors.muted,
-              };
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -460,21 +453,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           ],
                         ),
                       ),
-                      Container(
-                        width: 34,
-                        height: 34,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: energyAccent.withValues(alpha: 0.12),
-                          border: Border.all(
-                            color: energyAccent.withValues(alpha: 0.35),
-                          ),
-                        ),
-                        child: Icon(
-                          Icons.auto_awesome_rounded,
-                          size: 17,
-                          color: energyAccent,
-                        ),
+                      DailyEnergyCapsuleBar(
+                        key: const Key('daily_energy_capsule_bar'),
+                        energy: energy,
                       ),
                     ],
                   ),
