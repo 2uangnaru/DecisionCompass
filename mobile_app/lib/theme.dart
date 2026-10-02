@@ -37,7 +37,9 @@ abstract final class CompassFonts {
       // Latin-script languages, Vietnamese included: Montserrat carries
       // beautiful geometric curves with full Vietnamese diacritics coverage,
       // backed by Noto Sans.
-      AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => geometric,
+      AppLocale.english ||
+      AppLocale.vietnamese ||
+      AppLocale.spanish => geometric,
     };
     return [
       preferred,
@@ -60,10 +62,9 @@ abstract final class CompassFonts {
   /// family leads so glyphs always render faithfully.
   static List<String> displayFallbackFor(AppLocale locale) {
     return switch (locale) {
-      AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => [
-        display,
-        ...fallbackFor(locale),
-      ],
+      AppLocale.english ||
+      AppLocale.vietnamese ||
+      AppLocale.spanish => [display, ...fallbackFor(locale)],
       _ => fallbackFor(locale),
     };
   }
@@ -125,13 +126,8 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
   ) = switch (locale) {
     AppLocale.vietnamese => (44.0, 23.0, 19.5, 15.0, 13.5),
     AppLocale.thai || AppLocale.hindi => (44.0, 23.5, 20.0, 15.0, 13.5),
-    AppLocale.japanese || AppLocale.simplifiedChinese => (
-      44.0,
-      23.5,
-      20.0,
-      15.0,
-      13.5,
-    ),
+    AppLocale.japanese ||
+    AppLocale.simplifiedChinese => (44.0, 23.5, 20.0, 15.0, 13.5),
     AppLocale.spanish => (46.0, 23.5, 20.5, 15.0, 13.5),
     AppLocale.english => (46.0, 23.5, 20.5, 15.5, 14.0),
   };
@@ -229,6 +225,34 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
         borderSide: const BorderSide(color: CompassColors.blueLight),
       ),
     ),
+    // Without this, a SnackBar takes `colorScheme.inverseSurface`, which on a
+    // dark theme is a *light* colour: every notice in the app arrived as a
+    // near-white box over a near-black screen. Material's reasoning is that an
+    // inverted surface draws the eye, which is true on a light app and wrong
+    // here — the notices say small things ("the language changed", "that
+    // period is nearly over") and should read as part of the app rather than
+    // as an alarm.
+    //
+    // `raised` with a `line` border is what the sheets and cards already use,
+    // so a notice now looks like the surfaces it floats above.
+    snackBarTheme: SnackBarThemeData(
+      backgroundColor: CompassColors.raised,
+      contentTextStyle: const TextStyle(
+        color: CompassColors.text,
+        fontSize: 13.5,
+        height: 1.35,
+      ),
+      // Gold is the app's accent; the action is the only tappable thing in
+      // the bar and has to be findable without being louder than the message.
+      actionTextColor: CompassColors.gold,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: CompassColors.line),
+      ),
+      behavior: SnackBarBehavior.floating,
+      insetPadding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+      elevation: 6,
+    ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
         TargetPlatform.android: CelestialPageTransitionsBuilder(),
@@ -277,18 +301,17 @@ class CelestialPageTransitionsBuilder extends PageTransitionsBuilder {
       curve: Curves.easeOutCubic,
       reverseCurve: Curves.easeInCubic,
     );
-    final fadeOut = Tween<double>(begin: 1.0, end: 0.88).animate(secondaryCurved);
+    final fadeOut = Tween<double>(
+      begin: 1.0,
+      end: 0.88,
+    ).animate(secondaryCurved);
 
     return FadeTransition(
       opacity: fadeOut,
       child: FadeTransition(
         opacity: fadeIn,
-        child: SlideTransition(
-          position: slideIn,
-          child: child,
-        ),
+        child: SlideTransition(position: slideIn, child: child),
       ),
     );
   }
 }
-

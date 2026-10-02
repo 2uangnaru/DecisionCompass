@@ -1,4 +1,5 @@
 import 'package:decision_compass/app_locale.dart';
+import 'package:decision_compass/data/locale_controller.dart';
 import 'package:decision_compass/data/locale_store.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -96,17 +97,17 @@ void main() {
       await fillProfile(tester, countryCode: 'VN', flag: vnFlag);
       await completeProfile(tester);
 
-      expect(notice, findsOneWidget);
-      final vi = stringsFor(AppLocale.vietnamese);
-      expect(
-        find.text(
-          vi.languageSetFromBirthCountry(AppLocale.vietnamese.nativeName),
-        ),
-        findsOneWidget,
-      );
+      // The switch is silent. A notice used to name the new language and
+      // offer the selector; it was dropped on request, so the only thing that
+      // announces the change is the app being in it.
+      expect(notice, findsNothing);
+      expect(find.byType(SnackBar), findsNothing);
+      expect(rig.localeController.locale, AppLocale.vietnamese);
 
-      // Its action opens the language sheet the app already has.
-      await tester.tap(find.text(vi.changeLanguage));
+      // The globe is still on Home, so the switch is still undoable — that is
+      // what makes a silent change recoverable rather than a trap.
+      final vi = stringsFor(AppLocale.vietnamese);
+      await tester.tap(find.byKey(const Key('language_button')).first);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.text(vi.chooseLanguage), findsOneWidget);
@@ -282,7 +283,9 @@ void main() {
       expect(rig.profileRepository.saves, 1);
       expect(rig.localeStore.saves, 1);
       expect(rig.localeController.locale, AppLocale.vietnamese);
-      expect(notice, findsOneWidget);
+      // Four taps, one of everything — and nothing announced, because the
+      // switch is silent now.
+      expect(notice, findsNothing);
     });
   });
 
@@ -301,17 +304,20 @@ void main() {
       // The profile is saved and the reader reached Home.
       expect(rig.profileRepository.saves, 1);
       expect(find.byKey(const Key('find_direction')), findsOneWidget);
-      // The language applied for this session.
+      // The language applied for this session, and nothing was said about it
+      // — including about the write having failed.
       expect(rig.localeController.locale, AppLocale.vietnamese);
-      // And the notice says it was not saved rather than claiming it was.
-      final vi = stringsFor(AppLocale.vietnamese);
-      expect(find.text(vi.languageNotSaved), findsOneWidget);
-      expect(
-        find.text(
-          vi.languageSetFromBirthCountry(AppLocale.vietnamese.nativeName),
-        ),
-        findsNothing,
-      );
+      expect(find.byType(SnackBar), findsNothing);
+      expect(rig.localeStore.tag, isNull);
+
+      // Which has a consequence worth naming: nothing reached storage, so the
+      // next launch finds no record and decides again. It reaches the same
+      // answer from the same country, so the reader sees no difference — but
+      // it is a retry, not a memory.
+      final restarted = LocaleController(store: rig.localeStore);
+      await restarted.ensureLoaded();
+      expect(restarted.locale, AppLocale.english);
+      expect(restarted.provenance, LocaleProvenance.unset);
     });
   });
 

@@ -474,11 +474,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changeLanguage => 'Change language';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return 'Language set to $language based on your country of birth.';
-  }
-
-  @override
   String get languageNotSaved =>
       'Your language preference could not be saved, so it may not be remembered next time.';
 

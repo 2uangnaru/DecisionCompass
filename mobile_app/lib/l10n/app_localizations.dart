@@ -961,12 +961,6 @@ abstract class AppLocalizations {
   /// **'Change language'**
   String get changeLanguage;
 
-  /// Brief notice after the first profile is created, when the country of birth selected a different UI language. Never shown when the result is English.
-  ///
-  /// In en, this message translates to:
-  /// **'Language set to {language} based on your country of birth.'**
-  String languageSetFromBirthCountry(String language);
-
   /// Shown instead of the notice above when the language was applied but could not be written to storage. It must not claim the preference was saved.
   ///
   /// In en, this message translates to:

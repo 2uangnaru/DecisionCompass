@@ -476,11 +476,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get changeLanguage => 'Đổi ngôn ngữ';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return 'Đã đặt ngôn ngữ thành $language theo quốc gia nơi sinh của bạn.';
-  }
-
-  @override
   String get languageNotSaved =>
       'Không lưu được lựa chọn ngôn ngữ, nên lần sau có thể không được ghi nhớ.';
 

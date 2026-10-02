@@ -141,7 +141,6 @@
   "languageSetting": "语言",
   "chooseLanguage": "选择语言",
   "changeLanguage": "切换语言",
-  "languageSetFromBirthCountry": "已根据你的出生国家/地区将语言设置为{language}。",
   "languageNotSaved": "无法保存你的语言偏好，下次可能不会记住。",
   "profileNotSaved": "无法保存你的资料，请重试。",
   "choiceYes": "是",

@@ -442,11 +442,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get changeLanguage => '切换语言';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return '已根据你的出生国家/地区将语言设置为$language。';
-  }
-
-  @override
   String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';
 
   @override
@@ -1488,11 +1483,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get changeLanguage => '切换语言';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return '已根据你的出生国家/地区将语言设置为$language。';
-  }
-
-  @override
   String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';
 
   @override
@@ -2532,11 +2522,6 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get changeLanguage => '切换语言';
-
-  @override
-  String languageSetFromBirthCountry(String language) {
-    return '已根据你的出生国家/地区将语言设置为$language。';
-  }
 
   @override
   String get languageNotSaved => '无法保存你的语言偏好，下次可能不会记住。';

@@ -141,7 +141,6 @@
   "languageSetting": "Idioma",
   "chooseLanguage": "Elige tu idioma",
   "changeLanguage": "Cambiar idioma",
-  "languageSetFromBirthCountry": "Idioma configurado en {language} según tu país de nacimiento.",
   "languageNotSaved": "No se pudo guardar tu preferencia de idioma, así que puede no recordarse la próxima vez.",
   "profileNotSaved": "No se pudo guardar tu perfil. Inténtalo de nuevo.",
   "choiceYes": "SÍ",

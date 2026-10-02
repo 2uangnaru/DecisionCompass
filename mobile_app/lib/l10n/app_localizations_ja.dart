@@ -446,11 +446,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get changeLanguage => '言語を変更';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return '出生国に基づいて、言語を$languageに設定しました。';
-  }
-
-  @override
   String get languageNotSaved => '言語設定を保存できなかったため、次回は記憶されない可能性があります。';
 
   @override

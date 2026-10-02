@@ -480,11 +480,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get changeLanguage => 'भाषा बदलें';
 
   @override
-  String languageSetFromBirthCountry(String language) {
-    return 'आपके जन्म के देश के आधार पर भाषा $language पर सेट की गई।';
-  }
-
-  @override
   String get languageNotSaved =>
       'आपकी भाषा पसंद सहेजी नहीं जा सकी, इसलिए अगली बार याद न रखी जाए।';
 
@@ -1667,11 +1662,6 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get changeLanguage => 'भाषा बदलें';
-
-  @override
-  String languageSetFromBirthCountry(String language) {
-    return 'आपके जन्म के देश के आधार पर भाषा $language पर सेट की गई।';
-  }
 
   @override
   String get languageNotSaved =>

@@ -141,7 +141,6 @@
   "languageSetting": "ภาษา",
   "chooseLanguage": "เลือกภาษา",
   "changeLanguage": "เปลี่ยนภาษา",
-  "languageSetFromBirthCountry": "ตั้งค่าภาษาเป็น {language} ตามประเทศที่คุณเกิด",
   "languageNotSaved": "บันทึกการตั้งค่าภาษาไม่สำเร็จ จึงอาจไม่ถูกจดจำในครั้งถัดไป",
   "profileNotSaved": "บันทึกโปรไฟล์ของคุณไม่สำเร็จ โปรดลองอีกครั้ง",
   "choiceYes": "ใช่",

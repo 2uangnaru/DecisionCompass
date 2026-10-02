@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:country_picker/country_picker.dart';
 
-import '../app_locale.dart';
 import '../app_profile.dart';
 import '../l10n/app_localizations.dart';
 import '../local_engine/time/tzdb.dart';
@@ -244,63 +243,25 @@ class _OnboardingPageState extends State<OnboardingPage> {
     // Held across the navigation: `ScaffoldMessenger` lives above the
     // navigator, so a notice shown through it survives onto Home, but this
     // page's own context does not.
-    final messenger = ScaffoldMessenger.of(context);
-    // The notice's action opens a modal sheet, which needs a context with a
-    // Navigator above it. `messenger.context` has none — ScaffoldMessenger
-    // sits *above* the navigator in MaterialApp — so the navigator's own
-    // overlay is captured instead, which outlives this page.
-    final navigator = Navigator.of(context);
-
     // Applied before Home is pushed. The controller notifies synchronously,
     // so the app is already rebuilding in the new language by the time Home
     // is constructed — it is never built in English and then swapped.
-    final language = await widget.dependencies.localeController
-        .applyBirthCountryDefault(profile.birthCountryCode);
+    //
+    // The result is deliberately unused. The switch is silent: a notice used
+    // to name the new language and offer the selector, and it was dropped on
+    // request. The trade is real and worth knowing — a reader whose app comes
+    // up in a language they did not pick is given no reason for it and is not
+    // pointed at the globe that undoes it — so if that turns out to be the
+    // wrong call, `git log` has the notice intact.
+    await widget.dependencies.localeController.applyBirthCountryDefault(
+      profile.birthCountryCode,
+    );
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
       MaterialPageRoute<void>(
         builder: (_) =>
             HomePage(profile: profile, dependencies: widget.dependencies),
-      ),
-    );
-    _announceLanguage(messenger, navigator, language);
-  }
-
-  /// Says what just happened to the language, once, and only when something
-  /// did happen.
-  ///
-  /// Nothing is announced when the country suggested the language already on
-  /// screen — which is every country that maps to English. Telling a reader
-  /// their language was "set to English" when they have been reading English
-  /// the whole time is noise about a decision they never saw being made.
-  void _announceLanguage(
-    ScaffoldMessengerState messenger,
-    NavigatorState navigator,
-    ({AppLocale? changedTo, bool saved}) outcome,
-  ) {
-    final changedTo = outcome.changedTo;
-    if (changedTo == null || changedTo == AppLocale.english) return;
-    // Written in the language that was just adopted, which is the one the
-    // reader is now looking at.
-    final l10n = lookupAppLocalizations(changedTo.locale);
-    messenger.showSnackBar(
-      SnackBar(
-        key: const Key('language_auto_notice'),
-        duration: const Duration(seconds: 6),
-        content: Text(
-          outcome.saved
-              ? l10n.languageSetFromBirthCountry(changedTo.nativeName)
-              : l10n.languageNotSaved,
-        ),
-        action: SnackBarAction(
-          label: l10n.changeLanguage,
-          onPressed: () {
-            final host = navigator.overlay?.context;
-            if (host == null) return;
-            showLanguageSheet(host, widget.dependencies.localeController);
-          },
-        ),
       ),
     );
   }
