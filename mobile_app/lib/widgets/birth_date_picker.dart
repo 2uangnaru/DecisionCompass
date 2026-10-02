@@ -185,13 +185,17 @@ String chineseZodiacLabel(String localeName, DateTime date) {
 Future<DateTime?> showBirthDatePicker({
   required BuildContext context,
   DateTime? initialDate,
-}) => showModalBottomSheet<DateTime>(
-  context: context,
-  isScrollControlled: true,
-  enableDrag: false,
-  backgroundColor: Colors.transparent,
-  builder: (_) => BirthDatePickerSheet(initialDate: initialDate),
-);
+}) {
+  FocusScope.of(context).unfocus();
+  SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+  return showModalBottomSheet<DateTime>(
+    context: context,
+    isScrollControlled: true,
+    enableDrag: false,
+    backgroundColor: Colors.transparent,
+    builder: (_) => BirthDatePickerSheet(initialDate: initialDate),
+  );
+}
 
 enum _EntryMode { wheel, manual }
 
@@ -431,6 +435,7 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
   void _setMode(_EntryMode mode) {
     if (mode == _mode) return;
     FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
     _cachedWheels = null;
     setState(() {
       if (mode == _EntryMode.manual &&
@@ -471,6 +476,8 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
       _mode == _EntryMode.wheel ? _wheelDate : _manualDate;
 
   void _confirm() {
+    FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
     final date = _chosenDate;
     if (date == null) {
       setState(() => _showError = true);
@@ -920,7 +927,12 @@ class _BirthDatePickerSheetState extends State<BirthDatePickerSheet> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          SystemChannels.textInput
+                              .invokeMethod<void>('TextInput.hide');
+                          Navigator.of(context).pop();
+                        },
                         child: Text(material.cancelButtonLabel),
                       ),
                     ),

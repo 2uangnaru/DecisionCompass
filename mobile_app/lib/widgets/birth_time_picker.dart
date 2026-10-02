@@ -159,14 +159,18 @@ Future<TimeOfDay?> showBirthTimePicker({
   required BuildContext context,
   TimeOfDay? current,
   String? helpText,
-}) => showModalBottomSheet<TimeOfDay>(
-  context: context,
-  isScrollControlled: true,
-  enableDrag: false,
-  backgroundColor: Colors.transparent,
-  builder: (_) =>
-      BirthTimePickerSheet(initialTime: current, helpText: helpText),
-);
+}) {
+  FocusScope.of(context).unfocus();
+  SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+  return showModalBottomSheet<TimeOfDay>(
+    context: context,
+    isScrollControlled: true,
+    enableDrag: false,
+    backgroundColor: Colors.transparent,
+    builder: (_) =>
+        BirthTimePickerSheet(initialTime: current, helpText: helpText),
+  );
+}
 
 typedef BirthTimePickerDialog = BirthTimePickerSheet;
 
@@ -331,6 +335,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
   void _setMode(_EntryMode mode) {
     if (mode == _mode) return;
     FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
     _cachedWheels = null;
     setState(() {
       if (mode == _EntryMode.manual) {
@@ -361,6 +366,8 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
   }
 
   void _confirm() {
+    FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
     if (_mode == _EntryMode.wheel) {
       if (!_isComplete) {
         setState(() => _showError = true);
@@ -880,7 +887,12 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: () {
+                          FocusScope.of(context).unfocus();
+                          SystemChannels.textInput
+                              .invokeMethod<void>('TextInput.hide');
+                          Navigator.of(context).pop();
+                        },
                         child: Text(material.cancelButtonLabel),
                       ),
                     ),

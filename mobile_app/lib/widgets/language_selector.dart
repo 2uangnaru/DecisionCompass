@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../app_locale.dart';
 import '../data/locale_controller.dart';
@@ -94,6 +95,8 @@ Future<void> showLanguageSheet(
   BuildContext context,
   LocaleController controller,
 ) {
+  FocusScope.of(context).unfocus();
+  SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
   return showModalBottomSheet<void>(
     context: context,
     backgroundColor: Colors.transparent,
