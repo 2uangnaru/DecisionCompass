@@ -394,4 +394,79 @@ void main() {
       );
     });
   });
+
+  group('keyboard dismissal and focus', () {
+    testWidgets(
+      'tapping outside or opening a picker unfocuses the name field',
+      (tester) async {
+        await openProfileStep(tester);
+
+        final nameField = find.byKey(const Key('name_field'));
+        expect(nameField, findsOneWidget);
+
+        // Focus the name field
+        await tester.tap(nameField);
+        await tester.pump();
+        final textField = tester.widget<TextField>(nameField);
+        expect(textField.focusNode?.hasFocus, isTrue);
+
+        // Tap on the container/background outside
+        await tester.tap(find.byType(SingleChildScrollView));
+        await tester.pump();
+        expect(textField.focusNode?.hasFocus, isFalse);
+
+        // Re-focus name field
+        await tester.tap(nameField);
+        await tester.pump();
+        expect(textField.focusNode?.hasFocus, isTrue);
+
+        // Tap birth date picker
+        await tester.tap(find.byKey(const Key('birth_date_picker')));
+        await tester.pumpAndSettle();
+        expect(textField.focusNode?.hasFocus, isFalse);
+
+        // Dismiss picker
+        await tester.tap(find.byKey(const Key('birth_date_cancel')));
+        await tester.pumpAndSettle();
+        expect(textField.focusNode?.hasFocus, isFalse);
+      },
+    );
+
+    testWidgets('dragging profile scrollview unfocuses the name field', (
+      tester,
+    ) async {
+      await openProfileStep(tester);
+
+      final nameField = find.byKey(const Key('name_field'));
+      await tester.tap(nameField);
+      await tester.pump();
+      final textField = tester.widget<TextField>(nameField);
+      expect(textField.focusNode?.hasFocus, isTrue);
+
+      // Drag the scroll view
+      await tester.drag(
+        find.byKey(const ValueKey('profile')),
+        const Offset(0, -100),
+      );
+      await tester.pump();
+      expect(textField.focusNode?.hasFocus, isFalse);
+    });
+
+    testWidgets('toggling birth time switch unfocuses the name field', (
+      tester,
+    ) async {
+      await openProfileStep(tester);
+
+      final nameField = find.byKey(const Key('name_field'));
+      await tester.tap(nameField);
+      await tester.pump();
+      final textField = tester.widget<TextField>(nameField);
+      expect(textField.focusNode?.hasFocus, isTrue);
+
+      // Toggle knows_birth_time switch
+      await tester.tap(find.byKey(const Key('knows_birth_time')));
+      await tester.pump();
+      expect(textField.focusNode?.hasFocus, isFalse);
+    });
+  });
 }

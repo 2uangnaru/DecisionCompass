@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:country_picker/country_picker.dart';
 
 import '../app_profile.dart';
@@ -45,6 +46,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   late final _nameController = TextEditingController(
     text: widget.initialProfile?.userName ?? '',
   );
+  final _nameFocusNode = FocusNode();
   var _step = 0;
   late DateTime? _birthDate = widget.initialProfile?.birthDate;
 
@@ -96,13 +98,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
     return TimeOfDay(hour: hour, minute: minute);
   }
 
+  void _unfocus() {
+    _nameFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
+    _nameFocusNode.dispose();
     super.dispose();
   }
 
   Future<void> _pickBirthDate() async {
+    _unfocus();
     final picked = await showBirthDatePicker(
       context: context,
       initialDate: _birthDate,
@@ -111,6 +121,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   }
 
   void _pickBirthCountry() {
+    _unfocus();
     final l10n = AppLocalizations.of(context);
     showCountryPicker(
       context: context,
@@ -128,11 +139,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
           prefixIcon: const Icon(Icons.search_rounded),
         ),
       ),
-      onSelect: (country) => setState(() => _birthCountry = country),
+      onSelect: (country) {
+        _unfocus();
+        setState(() => _birthCountry = country);
+      },
     );
   }
 
   Future<void> _pickBirthTime() async {
+    _unfocus();
     final l10n = AppLocalizations.of(context);
     // A twelve-hour dial with an AM/PM selector, whose selection starts empty
     // — see `showBirthTimePicker`. Null means the reader gave no answer:
@@ -160,12 +175,15 @@ class _OnboardingPageState extends State<OnboardingPage> {
   /// The previously chosen time is dropped rather than held aside, so a
   /// reader who says they do not know their birth time and then changes their
   /// mind cannot have an earlier answer restored on their behalf.
-  void _setKnowsBirthTime(bool value) => setState(() {
-    _knowsBirthTime = value;
-    _birthTime = null;
-    _showRequiredErrors = false;
-    _showBirthTimeError = false;
-  });
+  void _setKnowsBirthTime(bool value) {
+    _unfocus();
+    setState(() {
+      _knowsBirthTime = value;
+      _birthTime = null;
+      _showRequiredErrors = false;
+      _showBirthTimeError = false;
+    });
+  }
 
   /// The engine's `HH:mm`, always 24-hour and never localized: it is a wire
   /// value, not something the reader reads.
@@ -192,6 +210,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
   void _continueToProfile() => setState(() => _step = 1);
 
   Future<void> _finish() async {
+    _unfocus();
     // A second tap while the first is in flight does nothing at all.
     if (_finishing) return;
     final birthDate = _birthDate;
@@ -372,92 +391,102 @@ class _OnboardingPageState extends State<OnboardingPage> {
   Widget _profileStep() {
     final l10n = AppLocalizations.of(context);
     final localeName = intlLocaleOf(context);
-    return SingleChildScrollView(
-      key: const ValueKey('profile'),
-      padding: const EdgeInsets.fromLTRB(24, 26, 24, 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              IconButton(
-                onPressed: () => setState(() => _step = 0),
-                icon: const Icon(Icons.arrow_back_rounded),
-                tooltip: l10n.backAction,
-              ),
-              // Expanded rather than a pair of Spacers: the eyebrow is a
-              // single word in English and four in Japanese, and at a large
-              // text scale the fixed-width version pushed the language
-              // control off the right edge.
-              Expanded(
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    l10n.yourProfile,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: CompassColors.gold,
-                      letterSpacing: trackingFor(context, 1.8),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: _unfocus,
+      child: SingleChildScrollView(
+        key: const ValueKey('profile'),
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        padding: const EdgeInsets.fromLTRB(24, 26, 24, 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    _unfocus();
+                    setState(() => _step = 0);
+                  },
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  tooltip: l10n.backAction,
+                ),
+                // Expanded rather than a pair of Spacers: the eyebrow is a
+                // single word in English and four in Japanese, and at a large
+                // text scale the fixed-width version pushed the language
+                // control off the right edge.
+                Expanded(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      l10n.yourProfile,
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                        color: CompassColors.gold,
+                        letterSpacing: trackingFor(context, 1.8),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              // Still reachable while entering a profile: a reader who only
-              // now realises the app speaks their language should not have to
-              // back out to change it.
-              LanguageButton(
-                controller: widget.dependencies.localeController,
-                compact: true,
-              ),
-            ],
-          ),
-          const SizedBox(height: 28),
-          Center(
-            child: _birthDate == null
-                ? const Icon(
-                    Icons.auto_awesome_rounded,
-                    size: 72,
-                    color: CompassColors.gold,
-                  )
-                : Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ZodiacAvatar(
-                        size: 92,
-                        glow: true,
-                        sign: zodiacForDate(_birthDate!),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        zodiacLabel(l10n, zodiacForDate(_birthDate!)),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: CompassColors.gold,
-                          letterSpacing: 1.7,
+                // Still reachable while entering a profile: a reader who only
+                // now realises the app speaks their language should not have to
+                // back out to change it.
+                LanguageButton(
+                  controller: widget.dependencies.localeController,
+                  compact: true,
+                ),
+              ],
+            ),
+            const SizedBox(height: 28),
+            Center(
+              child: _birthDate == null
+                  ? const Icon(
+                      Icons.auto_awesome_rounded,
+                      size: 72,
+                      color: CompassColors.gold,
+                    )
+                  : Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ZodiacAvatar(
+                          size: 92,
+                          glow: true,
+                          sign: zodiacForDate(_birthDate!),
                         ),
-                      ),
-                    ],
-                  ),
-          ),
-          const SizedBox(height: 20),
-          Text(
-            l10n.buildPattern,
-            style: Theme.of(context).textTheme.headlineLarge,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            l10n.profileExplainer,
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 26),
-          TextField(
-            key: const Key('name_field'),
-            controller: _nameController,
-            textInputAction: TextInputAction.next,
-            decoration: InputDecoration(labelText: l10n.nameField),
-          ),
+                        const SizedBox(height: 8),
+                        Text(
+                          zodiacLabel(l10n, zodiacForDate(_birthDate!)),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: CompassColors.gold,
+                            letterSpacing: 1.7,
+                          ),
+                        ),
+                      ],
+                    ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              l10n.buildPattern,
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 10),
+            Text(
+              l10n.profileExplainer,
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 26),
+            TextField(
+              key: const Key('name_field'),
+              controller: _nameController,
+              focusNode: _nameFocusNode,
+              onTapOutside: (_) => _unfocus(),
+              textInputAction: TextInputAction.next,
+              decoration: InputDecoration(labelText: l10n.nameField),
+            ),
           const SizedBox(height: 14),
           GlassCard(
+            key: const Key('birth_date_picker'),
             onTap: _pickBirthDate,
             padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
             child: Row(
@@ -633,6 +662,7 @@ class _OnboardingPageState extends State<OnboardingPage> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 }
