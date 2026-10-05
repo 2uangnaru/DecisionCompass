@@ -42,7 +42,8 @@ class LoadingPage extends StatefulWidget {
   State<LoadingPage> createState() => _LoadingPageState();
 }
 
-class _LoadingPageState extends State<LoadingPage> {
+class _LoadingPageState extends State<LoadingPage>
+    with SingleTickerProviderStateMixin {
   /// How many narration lines the ritual steps through. The text itself is
   /// resolved at build time from the active language, so only the position in
   /// the sequence is state.
@@ -58,6 +59,42 @@ class _LoadingPageState extends State<LoadingPage> {
   var _showingReassurance = false;
   var _reassuranceShown = false;
   DateTime? _lastTapAt;
+
+  /// Aperture expansion transition when analysis finishes and reveals result.
+  late final AnimationController _apertureController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 550),
+  );
+
+  late final Animation<double> _orbitScale = Tween<double>(
+    begin: 1.0,
+    end: 2.2,
+  ).animate(
+    CurvedAnimation(
+      parent: _apertureController,
+      curve: Curves.easeInCubic,
+    ),
+  );
+
+  late final Animation<double> _orbitOpacity = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  ).animate(
+    CurvedAnimation(
+      parent: _apertureController,
+      curve: const Interval(0.25, 1.0, curve: Curves.easeOut),
+    ),
+  );
+
+  late final Animation<double> _ambientOpacity = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  ).animate(
+    CurvedAnimation(
+      parent: _apertureController,
+      curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+    ),
+  );
 
   /// Built once and reused, so a retry replays the original Reveal moment
   /// instead of quietly moving it.
@@ -77,6 +114,7 @@ class _LoadingPageState extends State<LoadingPage> {
   @override
   void dispose() {
     _cancelTimers();
+    _apertureController.dispose();
     super.dispose();
   }
 
@@ -112,6 +150,13 @@ class _LoadingPageState extends State<LoadingPage> {
       final request = _request ??= await _buildRequest();
       final reading = await widget.dependencies.repository.calculate(request);
       await ritualFloor;
+      if (!mounted) return;
+      final reduceMotion =
+          MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+      if (!reduceMotion) {
+        _apertureController.forward();
+        await Future<void>.delayed(const Duration(milliseconds: 350));
+      }
       if (!mounted) return;
       _attemptRunning = false;
       _showResult(reading);
@@ -200,6 +245,7 @@ class _LoadingPageState extends State<LoadingPage> {
       _phraseIndex = 0;
       _showingReassurance = false;
     });
+    _apertureController.reset();
     _startPhraseCycle();
     _runAttempt();
   }
@@ -234,7 +280,7 @@ class _LoadingPageState extends State<LoadingPage> {
         // Named so a snapshot opened from History can come straight back to
         // it in one action instead of revealing History on the way.
         settings: const RouteSettings(name: ResultPage.currentReadingRouteName),
-        transitionDuration: const Duration(milliseconds: 400),
+        transitionDuration: const Duration(milliseconds: 450),
         pageBuilder: (_, animation, secondaryAnimation) =>
             ResultPage(reading: reading, dependencies: widget.dependencies),
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
@@ -244,11 +290,8 @@ class _LoadingPageState extends State<LoadingPage> {
           );
           return FadeTransition(
             opacity: curved,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.0, 0.03),
-                end: Offset.zero,
-              ).animate(curved),
+            child: ScaleTransition(
+              scale: Tween<double>(begin: 0.93, end: 1.0).animate(curved),
               child: child,
             ),
           );
@@ -281,88 +324,112 @@ class _LoadingPageState extends State<LoadingPage> {
           padding: const EdgeInsets.fromLTRB(24, 28, 24, 30),
           child: Column(
             children: [
-              Text(
-                modeLabel(l10n, widget.mode),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                  color: CompassColors.gold,
-                  letterSpacing: trackingFor(context, 1.8),
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: Text(
+                  modeLabel(l10n, widget.mode),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: CompassColors.gold,
+                    letterSpacing: trackingFor(context, 1.8),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Semantics(
-                label: l10n.readingAreaSemantics(category),
-                child: Text(
-                  key: const Key('loading_category_label'),
-                  l10n.readingForCategory(category),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.blueLight,
-                    letterSpacing: trackingFor(context, 1),
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: Semantics(
+                  label: l10n.readingAreaSemantics(category),
+                  child: Text(
+                    key: const Key('loading_category_label'),
+                    l10n.readingForCategory(category),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: CompassColors.blueLight,
+                      letterSpacing: trackingFor(context, 1),
+                    ),
                   ),
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                key: const Key('loading_period_label'),
-                periodLabel(l10n, widget.period),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: CompassColors.muted,
-                  letterSpacing: trackingFor(context, 1.1),
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: Text(
+                  key: const Key('loading_period_label'),
+                  periodLabel(l10n, widget.period),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.muted,
+                    letterSpacing: trackingFor(context, 1.1),
+                  ),
                 ),
               ),
               const Spacer(),
-              OrbitVisual(
-                size: compact ? 220 : 300,
-                sign: widget.profile.zodiacSign,
-                labels: loadingOrbitLabels(l10n),
+              FadeTransition(
+                opacity: _orbitOpacity,
+                child: ScaleTransition(
+                  scale: _orbitScale,
+                  child: OrbitVisual(
+                    size: compact ? 220 : 300,
+                    sign: widget.profile.zodiacSign,
+                    labels: loadingOrbitLabels(l10n),
+                  ),
+                ),
               ),
               SizedBox(height: compact ? 22 : 38),
-              SizedBox(
-                height: 66,
-                child: AnimatedSwitcher(
-                  duration: const Duration(milliseconds: 150),
-                  child: Text(
-                    _showingReassurance
-                        ? l10n.loadingReassurance
-                        : phrases[_phraseIndex],
-                    key: ValueKey('${_showingReassurance}_$_phraseIndex'),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: _showingReassurance
-                          ? CompassColors.blueLight
-                          : CompassColors.text,
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: SizedBox(
+                  height: 66,
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 150),
+                    child: Text(
+                      _showingReassurance
+                          ? l10n.loadingReassurance
+                          : phrases[_phraseIndex],
+                      key: ValueKey('${_showingReassurance}_$_phraseIndex'),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: _showingReassurance
+                            ? CompassColors.blueLight
+                            : CompassColors.text,
+                      ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 18),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _phraseCount,
-                  (index) => AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    width: index == _phraseIndex ? 20 : 5,
-                    height: 5,
-                    margin: const EdgeInsets.symmetric(horizontal: 3),
-                    decoration: BoxDecoration(
-                      color: index <= _phraseIndex
-                          ? CompassColors.blueLight
-                          : CompassColors.line,
-                      borderRadius: BorderRadius.circular(9),
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    _phraseCount,
+                    (index) => AnimatedContainer(
+                      duration: const Duration(milliseconds: 180),
+                      width: index == _phraseIndex ? 20 : 5,
+                      height: 5,
+                      margin: const EdgeInsets.symmetric(horizontal: 3),
+                      decoration: BoxDecoration(
+                        color: index <= _phraseIndex
+                            ? CompassColors.blueLight
+                            : CompassColors.line,
+                        borderRadius: BorderRadius.circular(9),
+                      ),
                     ),
                   ),
                 ),
               ),
               const Spacer(),
-              Text(
-                l10n.loadingLocalMoment,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: CompassColors.muted,
-                  letterSpacing: trackingFor(context, 1.3),
+              FadeTransition(
+                opacity: _ambientOpacity,
+                child: Text(
+                  l10n.loadingLocalMoment,
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.muted,
+                    letterSpacing: trackingFor(context, 1.3),
+                  ),
                 ),
               ),
             ],
