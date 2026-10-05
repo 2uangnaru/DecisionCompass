@@ -35,7 +35,7 @@ void main() {
   }
 
   group('HeaderSettingsCapsule', () {
-    testWidgets('starts collapsed as a 40x40 circle with golden 6-tooth gear', (
+    testWidgets('starts collapsed as a 40x40 circle with 6-tooth gear', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -57,7 +57,7 @@ void main() {
       expect(find.byIcon(Icons.settings_rounded), findsOneWidget);
 
       final icon = tester.widget<Icon>(find.byIcon(Icons.settings_rounded));
-      expect(icon.color, CompassColors.gold);
+      expect(icon.color, CompassColors.secondary);
 
       // The 3 action buttons are present in tree but ignored for pointer events
       final ignoreWidgets = tester.widgetList<IgnorePointer>(find.ancestor(

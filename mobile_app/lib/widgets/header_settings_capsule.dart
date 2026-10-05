@@ -219,6 +219,11 @@ class _SettingsGearButton extends StatelessWidget {
           child: InkWell(
             key: const Key('home_settings_button'),
             onTap: onPressed,
+            splashColor: Colors.transparent,
+            highlightColor: Colors.transparent,
+            hoverColor: Colors.transparent,
+            focusColor: Colors.transparent,
+            splashFactory: NoSplash.splashFactory,
             child: Center(
               child: TweenAnimationBuilder<double>(
                 tween: Tween<double>(
@@ -238,7 +243,7 @@ class _SettingsGearButton extends StatelessWidget {
                   child: const Icon(
                     Icons.settings_rounded,
                     size: 25,
-                    color: CompassColors.gold,
+                    color: CompassColors.secondary,
                   ),
                 ),
               ),
