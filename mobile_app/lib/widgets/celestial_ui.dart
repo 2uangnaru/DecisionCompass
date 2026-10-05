@@ -178,11 +178,19 @@ class OrbitVisual extends StatefulWidget {
     this.size = 250,
     this.labels = const [],
     this.sign,
+    this.ringScale = 1.0,
+    this.ringOpacity = 1.0,
+    this.avatarScale = 1.0,
+    this.avatarOpacity = 1.0,
   });
 
   final double size;
   final List<String> labels;
   final ZodiacSign? sign;
+  final double ringScale;
+  final double ringOpacity;
+  final double avatarScale;
+  final double avatarOpacity;
 
   @override
   State<OrbitVisual> createState() => _OrbitVisualState();
@@ -234,27 +242,47 @@ class _OrbitVisualState extends State<OrbitVisual>
       letterSpacing: 1.1,
       fontWeight: FontWeight.w600,
     );
+    final centerChild = Center(
+      child: widget.sign == null
+          ? const Icon(
+              Icons.auto_awesome_rounded,
+              size: 48,
+              color: CompassColors.gold,
+            )
+          : ZodiacAvatar(size: 86, glow: true, sign: widget.sign!),
+    );
+
     return SizedBox.square(
       dimension: dimension,
-      child: AnimatedBuilder(
-        animation: _progress,
-        builder: (context, child) => CustomPaint(
-          painter: _OrbitPainter(
-            progress: reduceMotion ? 0.1 : _progress.value,
-            labels: widget.labels,
-            textStyle: textStyle,
+      child: Stack(
+        alignment: Alignment.center,
+        clipBehavior: Clip.none,
+        children: [
+          Transform.scale(
+            scale: widget.ringScale,
+            child: Opacity(
+              opacity: widget.ringOpacity.clamp(0.0, 1.0),
+              child: AnimatedBuilder(
+                animation: _progress,
+                builder: (context, _) => CustomPaint(
+                  size: Size.square(dimension),
+                  painter: _OrbitPainter(
+                    progress: reduceMotion ? 0.1 : _progress.value,
+                    labels: widget.labels,
+                    textStyle: textStyle,
+                  ),
+                ),
+              ),
+            ),
           ),
-          child: child,
-        ),
-        child: Center(
-          child: widget.sign == null
-              ? const Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 48,
-                  color: CompassColors.gold,
-                )
-              : ZodiacAvatar(size: 86, glow: true, sign: widget.sign!),
-        ),
+          Transform.scale(
+            scale: widget.avatarScale,
+            child: Opacity(
+              opacity: widget.avatarOpacity.clamp(0.0, 1.0),
+              child: centerChild,
+            ),
+          ),
+        ],
       ),
     );
   }

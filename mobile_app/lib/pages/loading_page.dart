@@ -66,9 +66,9 @@ class _LoadingPageState extends State<LoadingPage>
     duration: const Duration(milliseconds: 550),
   );
 
-  late final Animation<double> _orbitScale = Tween<double>(
+  late final Animation<double> _ringScale = Tween<double>(
     begin: 1.0,
-    end: 2.2,
+    end: 3.2,
   ).animate(
     CurvedAnimation(
       parent: _apertureController,
@@ -76,13 +76,35 @@ class _LoadingPageState extends State<LoadingPage>
     ),
   );
 
-  late final Animation<double> _orbitOpacity = Tween<double>(
+  late final Animation<double> _ringOpacity = Tween<double>(
     begin: 1.0,
     end: 0.0,
   ).animate(
     CurvedAnimation(
       parent: _apertureController,
-      curve: const Interval(0.25, 1.0, curve: Curves.easeOut),
+      curve: const Interval(0.20, 1.0, curve: Curves.easeOut),
+    ),
+  );
+
+  /// Central zodiac avatar contracts subtly into celestial depth (1.0 -> 0.95)
+  /// without blowing up in size, staying centered until result arrives.
+  late final Animation<double> _avatarScale = Tween<double>(
+    begin: 1.0,
+    end: 0.95,
+  ).animate(
+    CurvedAnimation(
+      parent: _apertureController,
+      curve: Curves.easeInOutCubic,
+    ),
+  );
+
+  late final Animation<double> _avatarOpacity = Tween<double>(
+    begin: 1.0,
+    end: 0.0,
+  ).animate(
+    CurvedAnimation(
+      parent: _apertureController,
+      curve: const Interval(0.30, 1.0, curve: Curves.easeOut),
     ),
   );
 
@@ -92,7 +114,7 @@ class _LoadingPageState extends State<LoadingPage>
   ).animate(
     CurvedAnimation(
       parent: _apertureController,
-      curve: const Interval(0.0, 0.5, curve: Curves.easeOut),
+      curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
     ),
   );
 
@@ -365,15 +387,16 @@ class _LoadingPageState extends State<LoadingPage>
                 ),
               ),
               const Spacer(),
-              FadeTransition(
-                opacity: _orbitOpacity,
-                child: ScaleTransition(
-                  scale: _orbitScale,
-                  child: OrbitVisual(
-                    size: compact ? 220 : 300,
-                    sign: widget.profile.zodiacSign,
-                    labels: loadingOrbitLabels(l10n),
-                  ),
+              AnimatedBuilder(
+                animation: _apertureController,
+                builder: (context, _) => OrbitVisual(
+                  size: compact ? 220 : 300,
+                  sign: widget.profile.zodiacSign,
+                  labels: loadingOrbitLabels(l10n),
+                  ringScale: _ringScale.value,
+                  ringOpacity: _ringOpacity.value,
+                  avatarScale: _avatarScale.value,
+                  avatarOpacity: _avatarOpacity.value,
                 ),
               ),
               SizedBox(height: compact ? 22 : 38),
