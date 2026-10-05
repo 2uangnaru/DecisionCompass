@@ -37,7 +37,7 @@ void main() {
   }
 
   group('HeaderSettingsCapsule', () {
-    testWidgets('starts collapsed as a 42x42 circle with 6-tooth gear', (
+    testWidgets('starts collapsed as a 40x40 circle with 6-tooth gear', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -72,7 +72,7 @@ void main() {
       expect(find.text('│'), findsNothing);
     });
 
-    testWidgets('expands to 164px width when open and enables action buttons', (
+    testWidgets('expands to 156px width when open and enables action buttons', (
       tester,
     ) async {
       var toggled = false;

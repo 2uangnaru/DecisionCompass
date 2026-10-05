@@ -31,9 +31,9 @@ class HeaderSettingsCapsule extends StatelessWidget {
   final VoidCallback onOpenResponsibleUse;
   final VoidCallback onOpenHistory;
 
-  static const double collapsedWidth = 42.0;
-  static const double expandedWidth = 164.0;
-  static const double capsuleHeight = 42.0;
+  static const double collapsedWidth = 40.0;
+  static const double expandedWidth = 156.0;
+  static const double capsuleHeight = 40.0;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: const Color(0xF5111B2E), // 96% opacity CompassColors.raised
-          borderRadius: BorderRadius.circular(21),
+          borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isOpen
                 ? CompassColors.gold.withValues(alpha: 0.85)
@@ -77,7 +77,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
           children: [
             // 3 Action Buttons (🌐, 🛡️, 📜) sliding to the left of the gear
             Positioned(
-              right: 45,
+              right: 43,
               top: 4,
               bottom: 4,
               child: AnimatedSlide(
@@ -96,7 +96,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                           key: const Key('language_button'),
                           tooltip:
                               '${l10n.changeLanguage} · ${localeController.locale.nativeName}',
-                          icon: const Icon(Icons.language_rounded, size: 23),
+                          icon: const Icon(Icons.language_rounded, size: 21),
                           onPressed: () {
                             onClose();
                             showLanguageSheet(context, localeController);
@@ -106,7 +106,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                         _CapsuleIconButton(
                           key: const Key('home_responsible_use_button'),
                           tooltip: l10n.responsibleUse,
-                          icon: const Icon(Icons.shield_outlined, size: 23),
+                          icon: const Icon(Icons.shield_outlined, size: 21),
                           onPressed: () {
                             onClose();
                             onOpenResponsibleUse();
@@ -116,7 +116,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                         _CapsuleIconButton(
                           key: const Key('home_history_button'),
                           tooltip: l10n.history,
-                          icon: const Icon(Icons.history_rounded, size: 23),
+                          icon: const Icon(Icons.history_rounded, size: 21),
                           onPressed: () {
                             onClose();
                             onOpenHistory();
@@ -161,8 +161,8 @@ class _CapsuleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 34,
-      height: 34,
+      width: 32,
+      height: 32,
       child: Tooltip(
         message: tooltip,
         child: Material(
@@ -179,7 +179,7 @@ class _CapsuleIconButton extends StatelessWidget {
             child: IconTheme(
               data: const IconThemeData(
                 color: CompassColors.secondary,
-                size: 23,
+                size: 21,
               ),
               child: Center(child: icon),
             ),
@@ -202,8 +202,8 @@ class _SettingsGearButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 36,
-      height: 36,
+      width: 34,
+      height: 34,
       child: Tooltip(
         message: isOpen
             ? (Localizations.localeOf(context).languageCode == 'vi'
@@ -242,7 +242,7 @@ class _SettingsGearButton extends StatelessWidget {
                   offset: const Offset(1.0, 0.0),
                   child: const Icon(
                     Icons.settings_rounded,
-                    size: 26,
+                    size: 24,
                     color: CompassColors.secondary,
                   ),
                 ),
