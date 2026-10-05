@@ -70,7 +70,7 @@ void main() {
       expect(find.text('│'), findsNothing);
     });
 
-    testWidgets('expands to 148px width when open and enables action buttons', (
+    testWidgets('expands to 154px width when open and enables action buttons', (
       tester,
     ) async {
       var toggled = false;

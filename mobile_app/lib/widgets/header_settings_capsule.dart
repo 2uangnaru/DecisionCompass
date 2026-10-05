@@ -32,7 +32,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
   final VoidCallback onOpenHistory;
 
   static const double collapsedWidth = 40.0;
-  static const double expandedWidth = 148.0;
+  static const double expandedWidth = 154.0;
   static const double capsuleHeight = 40.0;
 
   @override
@@ -78,8 +78,8 @@ class HeaderSettingsCapsule extends StatelessWidget {
             // 3 Action Buttons (🌐, 🛡️, 📜) sliding to the left of the gear
             Positioned(
               right: 44,
-              top: 6,
-              bottom: 6,
+              top: 5,
+              bottom: 5,
               child: AnimatedSlide(
                 offset: isOpen ? Offset.zero : const Offset(0.18, 0),
                 duration: const Duration(milliseconds: 280),
@@ -96,7 +96,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                           key: const Key('language_button'),
                           tooltip:
                               '${l10n.changeLanguage} · ${localeController.locale.nativeName}',
-                          icon: const Icon(Icons.language_rounded, size: 18),
+                          icon: const Icon(Icons.language_rounded, size: 20),
                           onPressed: () {
                             onClose();
                             showLanguageSheet(context, localeController);
@@ -106,7 +106,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                         _CapsuleIconButton(
                           key: const Key('home_responsible_use_button'),
                           tooltip: l10n.responsibleUse,
-                          icon: const Icon(Icons.shield_outlined, size: 18),
+                          icon: const Icon(Icons.shield_outlined, size: 20),
                           onPressed: () {
                             onClose();
                             onOpenResponsibleUse();
@@ -116,7 +116,7 @@ class HeaderSettingsCapsule extends StatelessWidget {
                         _CapsuleIconButton(
                           key: const Key('home_history_button'),
                           tooltip: l10n.history,
-                          icon: const Icon(Icons.history_rounded, size: 18),
+                          icon: const Icon(Icons.history_rounded, size: 20),
                           onPressed: () {
                             onClose();
                             onOpenHistory();
@@ -131,9 +131,9 @@ class HeaderSettingsCapsule extends StatelessWidget {
 
             // 6-Toothed Settings Gear Button (⚙️) fixed at the far right
             Positioned(
-              right: 4,
-              top: 4,
-              bottom: 4,
+              right: 3,
+              top: 3,
+              bottom: 3,
               child: _SettingsGearButton(
                 isOpen: isOpen,
                 onPressed: onToggle,
@@ -161,8 +161,8 @@ class _CapsuleIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 28,
-      height: 28,
+      width: 30,
+      height: 30,
       child: Tooltip(
         message: tooltip,
         child: Material(
@@ -179,7 +179,7 @@ class _CapsuleIconButton extends StatelessWidget {
             child: IconTheme(
               data: const IconThemeData(
                 color: CompassColors.secondary,
-                size: 18,
+                size: 20,
               ),
               child: Center(child: icon),
             ),
@@ -202,8 +202,8 @@ class _SettingsGearButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 32,
-      height: 32,
+      width: 34,
+      height: 34,
       child: Tooltip(
         message: isOpen
             ? (Localizations.localeOf(context).languageCode == 'vi'
@@ -219,7 +219,7 @@ class _SettingsGearButton extends StatelessWidget {
           shape: CircleBorder(
             side: BorderSide(
               color: isOpen ? CompassColors.gold : Colors.transparent,
-              width: 1.5,
+              width: isOpen ? 1.5 : 0.0,
             ),
           ),
           clipBehavior: Clip.antiAlias,
@@ -240,10 +240,13 @@ class _SettingsGearButton extends StatelessWidget {
                     child: child,
                   );
                 },
-                child: const Icon(
-                  Icons.settings_rounded,
-                  size: 20,
-                  color: CompassColors.gold,
+                child: Transform.translate(
+                  offset: const Offset(1.0, 0.0),
+                  child: const Icon(
+                    Icons.settings_rounded,
+                    size: 22,
+                    color: CompassColors.gold,
+                  ),
                 ),
               ),
             ),
