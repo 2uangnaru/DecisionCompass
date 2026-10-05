@@ -15,6 +15,7 @@ import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_capsule_bar.dart';
 import '../widgets/daily_energy_info.dart';
+import '../widgets/header_settings_capsule.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
@@ -52,6 +53,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   engine.ReadingCategory _category = engine.ReadingCategory.general;
 
   late AppProfile _profile = widget.profile;
+  bool _isSettingsOpen = false;
 
   /// Ambient preview, refreshed when the device's local calendar day changes.
   /// It never enters reading history; an actual Reveal has its own snapshot.
@@ -170,48 +172,56 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(l10n),
-            const SizedBox(height: 24),
-            _dailySignals(l10n),
-            const SizedBox(height: 28),
-            _positioning(l10n),
-            const SizedBox(height: 22),
-            // No heading here: the positioning copy above already asks for
-            // this, and a second one made the screen read as a wall of
-            // headings.
-            _modeGrid(l10n),
-            const SizedBox(height: 28),
-            Text(
-              l10n.areaQuestion,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 14),
-            _categorySelector(l10n),
-            const SizedBox(height: 28),
-            FilledButton.icon(
-              key: const Key('find_direction'),
-              onPressed: _beginReading,
-              icon: const Icon(Icons.auto_awesome_rounded),
-              label: Text(l10n.findDirection),
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Text(
-                '${categoryLabel(l10n, _category)}  •  '
-                '${modeLabel(l10n, _mode)}',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: CompassColors.muted,
-                  letterSpacing: trackingFor(context, 0.8),
+      child: GestureDetector(
+        behavior: HitTestBehavior.translucent,
+        onTap: () {
+          if (_isSettingsOpen) {
+            setState(() => _isSettingsOpen = false);
+          }
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _header(l10n),
+              const SizedBox(height: 24),
+              _dailySignals(l10n),
+              const SizedBox(height: 28),
+              _positioning(l10n),
+              const SizedBox(height: 22),
+              // No heading here: the positioning copy above already asks for
+              // this, and a second one made the screen read as a wall of
+              // headings.
+              _modeGrid(l10n),
+              const SizedBox(height: 28),
+              Text(
+                l10n.areaQuestion,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+              const SizedBox(height: 14),
+              _categorySelector(l10n),
+              const SizedBox(height: 28),
+              FilledButton.icon(
+                key: const Key('find_direction'),
+                onPressed: _beginReading,
+                icon: const Icon(Icons.auto_awesome_rounded),
+                label: Text(l10n.findDirection),
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: Text(
+                  '${categoryLabel(l10n, _category)}  •  '
+                  '${modeLabel(l10n, _mode)}',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.muted,
+                    letterSpacing: trackingFor(context, 0.8),
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -248,28 +258,25 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ],
           ),
         ),
-        // The same language control the welcome screen offers, so the choice
-        // stays changeable after onboarding.
-        LanguageButton(
-          controller: widget.dependencies.localeController,
-          compact: true,
-        ),
-        const SizedBox(width: 2),
-        IconButton.filledTonal(
-          key: const Key('home_responsible_use_button'),
-          tooltip: l10n.responsibleUse,
-          onPressed: () => showResponsibleUseSheet(context),
-          icon: const Icon(Icons.shield_outlined, size: 20),
-        ),
-        const SizedBox(width: 2),
-        IconButton.filledTonal(
-          tooltip: l10n.history,
-          onPressed: () => Navigator.of(context).push(
+        const SizedBox(width: 8),
+        HeaderSettingsCapsule(
+          isOpen: _isSettingsOpen,
+          onToggle: () {
+            setState(() => _isSettingsOpen = !_isSettingsOpen);
+          },
+          onClose: () {
+            if (_isSettingsOpen) {
+              setState(() => _isSettingsOpen = false);
+            }
+          },
+          localeController: widget.dependencies.localeController,
+          onOpenResponsibleUse: () => showResponsibleUseSheet(context),
+          onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (_) => HistoryPage(dependencies: widget.dependencies),
+              builder: (_) =>
+                  HistoryPage(dependencies: widget.dependencies),
             ),
           ),
-          icon: const Icon(Icons.history_rounded),
         ),
       ],
     );

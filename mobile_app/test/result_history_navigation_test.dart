@@ -191,6 +191,12 @@ void main() {
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
 
+      final settingsFinder = find.byKey(const Key('home_settings_button'));
+      if (settingsFinder.evaluate().isNotEmpty) {
+        await tester.tap(settingsFinder);
+        await tester.pumpAndSettle();
+      }
+
       await tester.ensureVisible(find.byIcon(Icons.history_rounded));
       await tester.tap(find.byIcon(Icons.history_rounded));
       await tester.pumpAndSettle();
