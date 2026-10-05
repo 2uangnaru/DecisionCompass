@@ -6,6 +6,8 @@ import 'package:decision_compass/widgets/header_settings_capsule.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'reading_test_rig.dart';
+
 void main() {
   Widget buildTestCapsule({
     required bool isOpen,
@@ -35,7 +37,7 @@ void main() {
   }
 
   group('HeaderSettingsCapsule', () {
-    testWidgets('starts collapsed as a 40x40 circle with 6-tooth gear', (
+    testWidgets('starts collapsed as a 44x44 circle with 6-tooth gear', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -70,7 +72,7 @@ void main() {
       expect(find.text('│'), findsNothing);
     });
 
-    testWidgets('expands to 158px width when open and enables action buttons', (
+    testWidgets('expands to 172px width when open and enables action buttons', (
       tester,
     ) async {
       var toggled = false;
@@ -121,5 +123,65 @@ void main() {
       expect(openedHistory, isTrue);
       expect(closed, isTrue);
     });
+
+    testWidgets(
+      'on HomePage, opening settings does not shrink the name, and tapping outside or scrolling closes it',
+      (tester) async {
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          localNow: DateTime(2026, 9, 18, 7),
+        );
+        await tester.pumpWidget(rig.app);
+        await completeOnboarding(tester);
+        await tester.pump();
+
+        // Find the name text widget
+        final nameFinder = find.text('Explorer');
+        expect(nameFinder, findsOneWidget);
+        final sizeBefore = tester.getSize(nameFinder);
+
+        // Open settings capsule
+        await tester.tap(find.byKey(const Key('home_settings_button')));
+        await tester.pumpAndSettle();
+
+        // The name size does NOT change when settings is open
+        final sizeAfter = tester.getSize(nameFinder);
+        expect(sizeAfter, equals(sizeBefore));
+
+        // Capsule is open (172px width)
+        final capsuleFinder = find.byKey(const Key('header_actions_capsule'));
+        expect(
+          tester.getSize(capsuleFinder).width,
+          HeaderSettingsCapsule.expandedWidth,
+        );
+
+        // Tapping outside (e.g. nameFinder) closes it automatically
+        await tester.tap(nameFinder);
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSize(capsuleFinder).width,
+          HeaderSettingsCapsule.collapsedWidth,
+        );
+
+        // Re-open settings capsule
+        await tester.tap(find.byKey(const Key('home_settings_button')));
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSize(capsuleFinder).width,
+          HeaderSettingsCapsule.expandedWidth,
+        );
+
+        // Scrolling closes it automatically
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -100),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          tester.getSize(capsuleFinder).width,
+          HeaderSettingsCapsule.collapsedWidth,
+        );
+      },
+    );
   });
 }

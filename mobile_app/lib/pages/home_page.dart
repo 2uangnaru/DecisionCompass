@@ -54,6 +54,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
 
   late AppProfile _profile = widget.profile;
   bool _isSettingsOpen = false;
+  final GlobalKey _settingsCapsuleKey = GlobalKey();
 
   /// Ambient preview, refreshed when the device's local calendar day changes.
   /// It never enters reading history; an actual Reveal has its own snapshot.
@@ -172,55 +173,76 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
-      child: GestureDetector(
-        behavior: HitTestBehavior.translucent,
-        onTap: () {
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
           if (_isSettingsOpen) {
-            setState(() => _isSettingsOpen = false);
+            if (notification is ScrollStartNotification ||
+                notification is ScrollUpdateNotification) {
+              setState(() => _isSettingsOpen = false);
+            }
           }
+          return false;
         },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _header(l10n),
-              const SizedBox(height: 24),
-              _dailySignals(l10n),
-              const SizedBox(height: 28),
-              _positioning(l10n),
-              const SizedBox(height: 22),
-              // No heading here: the positioning copy above already asks for
-              // this, and a second one made the screen read as a wall of
-              // headings.
-              _modeGrid(l10n),
-              const SizedBox(height: 28),
-              Text(
-                l10n.areaQuestion,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 14),
-              _categorySelector(l10n),
-              const SizedBox(height: 28),
-              FilledButton.icon(
-                key: const Key('find_direction'),
-                onPressed: _beginReading,
-                icon: const Icon(Icons.auto_awesome_rounded),
-                label: Text(l10n.findDirection),
-              ),
-              const SizedBox(height: 12),
-              Center(
-                child: Text(
-                  '${categoryLabel(l10n, _category)}  •  '
-                  '${modeLabel(l10n, _mode)}',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.muted,
-                    letterSpacing: trackingFor(context, 0.8),
+        child: Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (event) {
+            if (_isSettingsOpen) {
+              final renderBox = _settingsCapsuleKey.currentContext
+                  ?.findRenderObject() as RenderBox?;
+              if (renderBox != null && renderBox.hasSize) {
+                final capsuleBox =
+                    renderBox.localToGlobal(Offset.zero) & renderBox.size;
+                if (!capsuleBox.contains(event.position)) {
+                  setState(() => _isSettingsOpen = false);
+                }
+              } else {
+                setState(() => _isSettingsOpen = false);
+              }
+            }
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _header(l10n),
+                const SizedBox(height: 24),
+                _dailySignals(l10n),
+                const SizedBox(height: 28),
+                _positioning(l10n),
+                const SizedBox(height: 22),
+                // No heading here: the positioning copy above already asks for
+                // this, and a second one made the screen read as a wall of
+                // headings.
+                _modeGrid(l10n),
+                const SizedBox(height: 28),
+                Text(
+                  l10n.areaQuestion,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(height: 14),
+                _categorySelector(l10n),
+                const SizedBox(height: 28),
+                FilledButton.icon(
+                  key: const Key('find_direction'),
+                  onPressed: _beginReading,
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                  label: Text(l10n.findDirection),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    '${categoryLabel(l10n, _category)}  •  '
+                    '${modeLabel(l10n, _mode)}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: CompassColors.muted,
+                      letterSpacing: trackingFor(context, 0.8),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -228,38 +250,45 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _header(AppLocalizations l10n) {
-    return Row(
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.centerRight,
       children: [
-        ZodiacAvatar(size: 52, sign: widget.profile.zodiacSign),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _greeting(l10n, widget.dependencies.nowLocal()),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              // Scaled down rather than ellipsized: the default name (no
-              // profile name typed yet) runs long in some languages, and a
-              // mid-word ellipsis next to the header icons read as broken
-              // layout rather than a graceful truncation.
-              Align(
-                alignment: Alignment.centerLeft,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    profileDisplayName(l10n, widget.profile),
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.headlineMedium,
+        Row(
+          children: [
+            ZodiacAvatar(size: 52, sign: widget.profile.zodiacSign),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    _greeting(l10n, widget.dependencies.nowLocal()),
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                ),
+                  // Scaled down rather than ellipsized: the default name (no
+                  // profile name typed yet) runs long in some languages, and a
+                  // mid-word ellipsis next to the header icons read as broken
+                  // layout rather than a graceful truncation.
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        profileDisplayName(l10n, widget.profile),
+                        maxLines: 1,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
+          ],
         ),
-        const SizedBox(width: 8),
         HeaderSettingsCapsule(
+          key: _settingsCapsuleKey,
           isOpen: _isSettingsOpen,
           onToggle: () {
             setState(() => _isSettingsOpen = !_isSettingsOpen);
