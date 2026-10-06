@@ -723,6 +723,12 @@ void main() {
       await tester.tap(find.byIcon(Icons.close_rounded).first);
       await tester.pumpAndSettle();
       await switchLanguage(tester, AppLocale.vietnamese);
+      final settingsFinder = find.byKey(const Key('home_settings_button'));
+      if (settingsFinder.evaluate().isNotEmpty) {
+        await tester.ensureVisible(settingsFinder);
+        await tester.tap(settingsFinder);
+        await tester.pumpAndSettle();
+      }
       await tester.tap(find.byIcon(Icons.history_rounded));
       await tester.pumpAndSettle();
 

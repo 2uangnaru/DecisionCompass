@@ -15,7 +15,7 @@ import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_capsule_bar.dart';
 import '../widgets/daily_energy_info.dart';
-import '../widgets/language_selector.dart';
+import '../widgets/header_settings_capsule.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
 import 'profile_page.dart';
@@ -53,6 +53,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   engine.ReadingCategory _category = engine.ReadingCategory.general;
 
   late AppProfile _profile = widget.profile;
+  bool _isSettingsOpen = false;
+  final GlobalKey _settingsCapsuleKey = GlobalKey();
 
   /// Ambient preview, refreshed when the device's local calendar day changes.
   /// It never enters reading history; an actual Reveal has its own snapshot.
@@ -206,139 +208,172 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _header(l10n),
-            const SizedBox(height: 24),
-            _dailySignals(l10n),
-            const SizedBox(height: 28),
-            _positioning(l10n),
-            const SizedBox(height: 22),
-            // No heading here: the positioning copy above already asks for
-            // this, and a second one made the screen read as a wall of
-            // headings.
-            _modeGrid(l10n),
-            const SizedBox(height: 28),
-            Text(
-              l10n.areaQuestion,
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 14),
-            _categorySelector(l10n),
-            const SizedBox(height: 28),
-            FilledButton.icon(
-              key: const Key('find_direction'),
-              onPressed: _beginReading,
-              icon: const Icon(Icons.auto_awesome_rounded),
-              label: Text(l10n.findDirection),
-            ),
-            const SizedBox(height: 12),
-            Center(
-              child: Text(
-                '${categoryLabel(l10n, _category)}  •  '
-                '${modeLabel(l10n, _mode)}',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: CompassColors.muted,
-                  letterSpacing: trackingFor(context, 0.8),
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (_isSettingsOpen) {
+            if (notification is ScrollStartNotification ||
+                notification is ScrollUpdateNotification) {
+              setState(() => _isSettingsOpen = false);
+            }
+          }
+          return false;
+        },
+        child: Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (event) {
+            if (_isSettingsOpen) {
+              final renderBox = _settingsCapsuleKey.currentContext
+                  ?.findRenderObject() as RenderBox?;
+              if (renderBox != null && renderBox.hasSize) {
+                final capsuleBox =
+                    renderBox.localToGlobal(Offset.zero) & renderBox.size;
+                if (!capsuleBox.contains(event.position)) {
+                  setState(() => _isSettingsOpen = false);
+                }
+              } else {
+                setState(() => _isSettingsOpen = false);
+              }
+            }
+          },
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _header(l10n),
+                const SizedBox(height: 24),
+                _dailySignals(l10n),
+                const SizedBox(height: 28),
+                _positioning(l10n),
+                const SizedBox(height: 22),
+                // No heading here: the positioning copy above already asks for
+                // this, and a second one made the screen read as a wall of
+                // headings.
+                _modeGrid(l10n),
+                const SizedBox(height: 28),
+                Text(
+                  l10n.areaQuestion,
+                  style: Theme.of(context).textTheme.headlineMedium,
                 ),
-              ),
+                const SizedBox(height: 14),
+                _categorySelector(l10n),
+                const SizedBox(height: 28),
+                FilledButton.icon(
+                  key: const Key('find_direction'),
+                  onPressed: _beginReading,
+                  icon: const Icon(Icons.auto_awesome_rounded),
+                  label: Text(l10n.findDirection),
+                ),
+                const SizedBox(height: 12),
+                Center(
+                  child: Text(
+                    '${categoryLabel(l10n, _category)}  •  '
+                    '${modeLabel(l10n, _mode)}',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                      color: CompassColors.muted,
+                      letterSpacing: trackingFor(context, 0.8),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
   Widget _header(AppLocalizations l10n) {
-    return Row(
+    return Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.centerRight,
       children: [
-        // The avatar and the name are one target, not two: they read as one
-        // thing, and splitting them would give a screen reader two doors into
-        // the same screen.
-        //
-        // `_profile`, not `widget.profile`: the header used to show the
-        // profile Home was *constructed* with while every calculation on the
-        // same screen used the current one, so a saved edit left the greeting
-        // and the avatar a step behind until the app was restarted.
-        // Expanded, as the name column used to be: the greeting and the name
-        // have to be free to shrink, or a long one pushes the language,
-        // safety and history controls off a 360dp screen.
-        Expanded(
-          child: Semantics(
-            button: true,
-            label: l10n.openProfile,
-            // The child's own node is replaced rather than merged, so a
-            // screen reader hears one control and not the greeting, the name
-            // and the avatar as three. Replacing it also drops the InkWell's
-            // tap action, which is why the action is restated here.
-            excludeSemantics: true,
-            onTap: _openProfile,
-            child: InkWell(
-              key: const Key('home_open_profile'),
-              onTap: _openProfile,
-              borderRadius: BorderRadius.circular(16),
-              child: Row(
-                children: [
-                  ZodiacAvatar(size: 52, sign: _profile.zodiacSign),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _greeting(l10n, widget.dependencies.nowLocal()),
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        // Scaled down rather than ellipsized: the default
-                        // name (no profile name typed yet) runs long in some
-                        // languages, and a mid-word ellipsis next to the
-                        // header icons read as broken layout rather than a
-                        // graceful truncation.
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              profileDisplayName(l10n, _profile),
-                              maxLines: 1,
-                              style: Theme.of(context).textTheme.headlineMedium,
+        Row(
+          children: [
+            // The avatar and the name are one target, not two: they read as one
+            // thing, and splitting them would give a screen reader two doors into
+            // the same screen.
+            //
+            // `_profile`, not `widget.profile`: the header used to show the
+            // profile Home was *constructed* with while every calculation on the
+            // same screen used the current one, so a saved edit left the greeting
+            // and the avatar a step behind until the app was restarted.
+            // Expanded, as the name column used to be: the greeting and the name
+            // have to be free to shrink, or a long one pushes the language,
+            // safety and history controls off a 360dp screen.
+            Expanded(
+              child: Semantics(
+                button: true,
+                label: l10n.openProfile,
+                // The child's own node is replaced rather than merged, so a
+                // screen reader hears one control and not the greeting, the name
+                // and the avatar as three. Replacing it also drops the InkWell's
+                // tap action, which is why the action is restated here.
+                excludeSemantics: true,
+                onTap: _openProfile,
+                child: InkWell(
+                  key: const Key('home_open_profile'),
+                  onTap: _openProfile,
+                  borderRadius: BorderRadius.circular(16),
+                  child: Row(
+                    children: [
+                      ZodiacAvatar(size: 52, sign: _profile.zodiacSign),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              _greeting(l10n, widget.dependencies.nowLocal()),
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
-                          ),
+                            // Scaled down rather than ellipsized: the default
+                            // name (no profile name typed yet) runs long in some
+                            // languages, and a mid-word ellipsis next to the
+                            // header icons read as broken layout rather than a
+                            // graceful truncation.
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Text(
+                                  profileDisplayName(l10n, _profile),
+                                  maxLines: 1,
+                                  style: Theme.of(context).textTheme.headlineMedium,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
+          ],
         ),
-        // The same language control the welcome screen offers, so the choice
-        // stays changeable after onboarding.
-        LanguageButton(
-          controller: widget.dependencies.localeController,
-          compact: true,
-        ),
-        const SizedBox(width: 2),
-        IconButton.filledTonal(
-          key: const Key('home_responsible_use_button'),
-          tooltip: l10n.responsibleUse,
-          onPressed: () => showResponsibleUseSheet(context),
-          icon: const Icon(Icons.shield_outlined, size: 20),
-        ),
-        const SizedBox(width: 2),
-        IconButton.filledTonal(
-          tooltip: l10n.history,
-          onPressed: () => Navigator.of(context).push(
+        HeaderSettingsCapsule(
+          key: _settingsCapsuleKey,
+          isOpen: _isSettingsOpen,
+          onToggle: () {
+            setState(() => _isSettingsOpen = !_isSettingsOpen);
+          },
+          onClose: () {
+            if (_isSettingsOpen) {
+              setState(() => _isSettingsOpen = false);
+            }
+          },
+          localeController: widget.dependencies.localeController,
+          onOpenResponsibleUse: () => showResponsibleUseSheet(context),
+          onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (_) => HistoryPage(dependencies: widget.dependencies),
+              builder: (_) =>
+                  HistoryPage(dependencies: widget.dependencies),
             ),
           ),
-          icon: const Icon(Icons.history_rounded),
         ),
       ],
     );

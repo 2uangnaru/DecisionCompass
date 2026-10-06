@@ -107,9 +107,7 @@ void main() {
       // The globe is still on Home, so the switch is still undoable — that is
       // what makes a silent change recoverable rather than a trap.
       final vi = stringsFor(AppLocale.vietnamese);
-      await tester.tap(find.byKey(const Key('language_button')).first);
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 400));
+      await openLanguageSheet(tester);
       expect(find.text(vi.chooseLanguage), findsOneWidget);
     });
 

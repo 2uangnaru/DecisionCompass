@@ -22,6 +22,7 @@ import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:decision_compass/theme.dart';
+import 'package:decision_compass/widgets/header_settings_capsule.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FontLoader, JSONMessageCodec;
 import 'package:flutter_test/flutter_test.dart';
@@ -286,8 +287,19 @@ void allowCountryNameGap(WidgetTester tester) {
 
 /// Opens the language bottom sheet and lets it finish sliding in.
 Future<void> openLanguageSheet(WidgetTester tester) async {
-  await tester.ensureVisible(find.byKey(const Key('language_button')).first);
-  await tester.tap(find.byKey(const Key('language_button')).first);
+  final settingsFinder = find.byKey(const Key('home_settings_button'));
+  if (settingsFinder.evaluate().isNotEmpty) {
+    final capsule = tester
+        .widgetList<HeaderSettingsCapsule>(find.byType(HeaderSettingsCapsule))
+        .firstOrNull;
+    if (capsule != null && !capsule.isOpen) {
+      await tester.ensureVisible(settingsFinder);
+      await tester.tap(settingsFinder);
+      await tester.pumpAndSettle();
+    }
+  }
+  await tester.ensureVisible(find.byKey(const Key('language_button')).last);
+  await tester.tap(find.byKey(const Key('language_button')).last);
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 400));
 }
