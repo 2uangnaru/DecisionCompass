@@ -57,7 +57,7 @@ void main() {
       tester,
       initialTime: const TimeOfDay(hour: 8, minute: 30),
     );
-    expect(find.byType(CupertinoPicker), findsNWidgets(3));
+    expect(find.byType(CupertinoPicker), findsNWidgets(2));
     expect(
       tester.widget<Text>(find.byKey(const Key('birth_time_feedback'))).data,
       contains('Dragon'),
@@ -276,11 +276,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Scroll period wheel
-      await tester.drag(
-        find.byKey(const Key('birth_time_period_wheel')),
-        const Offset(0, -50),
-      );
+      // Tap period button
+      await tester.tap(find.byKey(const Key('birth_time_am')));
       await tester.pumpAndSettle();
 
       final updatedConfirmButton = tester.widget<FilledButton>(

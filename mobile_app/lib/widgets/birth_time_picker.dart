@@ -193,7 +193,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   late FixedExtentScrollController _hourWheel;
   late FixedExtentScrollController _minuteWheel;
-  late FixedExtentScrollController _periodWheel;
 
   late final TextEditingController _hourController;
   late final TextEditingController _minuteController;
@@ -207,6 +206,7 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
 
   Widget? _cachedWheels;
   String? _cachedLocale;
+  DayPeriod? _cachedPeriod;
 
   @override
   void initState() {
@@ -235,12 +235,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     );
     _minuteWheel = FixedExtentScrollController(
       initialItem: _minute != null ? _minute! + 1 : 0,
-      keepScrollOffset: false,
-    );
-    _periodWheel = FixedExtentScrollController(
-      initialItem: _period == null
-          ? 0
-          : (_period == DayPeriod.am ? 1 : 2),
       keepScrollOffset: false,
     );
   }
@@ -285,15 +279,9 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     for (int i = 0; i <= 59; i++) i.toString().padLeft(2, '0'),
   ];
 
-  static const List<String> _staticPeriodItemsVi = ['--', 'Sáng', 'Tối'];
-  static const List<String> _staticPeriodItemsEn = ['--', 'AM', 'PM'];
-
   List<String> get _hourItems => _staticHourItems;
 
   List<String> get _minuteItems => _staticMinuteItems;
-
-  List<String> _periodItems(bool isVi) =>
-      isVi ? _staticPeriodItemsVi : _staticPeriodItemsEn;
 
   void _chooseHour(int index) {
     final count = _hourItems.length;
@@ -313,15 +301,11 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     });
   }
 
-  void _choosePeriod(int index) {
+  void _selectPeriod(DayPeriod period) {
+    HapticFeedback.selectionClick();
     setState(() {
-      if (index == 0) {
-        _period = null;
-      } else if (index == 1) {
-        _period = DayPeriod.am;
-      } else {
-        _period = DayPeriod.pm;
-      }
+      _period = period;
+      _manualPeriod = period;
       _showError = false;
     });
   }
@@ -352,7 +336,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
         _period = _manualPeriod;
         _hourWheel.dispose();
         _minuteWheel.dispose();
-        _periodWheel.dispose();
         _createWheelControllers();
       }
       _mode = mode;
@@ -395,7 +378,6 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     _minuteFocus.dispose();
     _hourWheel.dispose();
     _minuteWheel.dispose();
-    _periodWheel.dispose();
     super.dispose();
   }
 
@@ -462,8 +444,101 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
     ),
   );
 
+  Widget _buildPeriodButton({
+    required DayPeriod period,
+    required bool isVi,
+    required ThemeData theme,
+  }) {
+    final isSelected = _period == period;
+    final isAm = period == DayPeriod.am;
+    final activeColor = isAm ? CompassColors.gold : CompassColors.blueLight;
+
+    return SizedBox(
+      height: 46,
+      width: double.infinity,
+      child: Semantics(
+        selected: isSelected,
+        button: true,
+        label: isVi
+            ? (isAm ? 'Buổi Sáng' : 'Buổi Tối')
+            : (isAm ? 'AM Morning' : 'PM Evening'),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            key: Key(isAm ? 'birth_time_am' : 'birth_time_pm'),
+            borderRadius: BorderRadius.circular(14),
+            onTap: () => _selectPeriod(period),
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              alignment: Alignment.center,
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? activeColor.withValues(alpha: 0.16)
+                    : CompassColors.glass,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: isSelected
+                      ? activeColor
+                      : CompassColors.line.withValues(alpha: 0.7),
+                  width: isSelected ? 1.4 : 1.0,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: activeColor.withValues(alpha: 0.22),
+                          blurRadius: 8,
+                          spreadRadius: 0.5,
+                        ),
+                      ]
+                    : null,
+              ),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      isAm ? Icons.wb_sunny_rounded : Icons.nightlight_round,
+                      size: 14,
+                      color: isSelected
+                          ? activeColor
+                          : CompassColors.secondary.withValues(alpha: 0.65),
+                    ),
+                    const SizedBox(width: 5),
+                    Text(
+                      isVi
+                          ? (isAm ? 'Sáng' : 'Tối')
+                          : (isAm ? 'AM' : 'PM'),
+                      style: theme.textTheme.labelLarge?.copyWith(
+                        color: isSelected
+                            ? activeColor
+                            : CompassColors.secondary,
+                        fontWeight:
+                            isSelected ? FontWeight.w800 : FontWeight.w600,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildWheels(bool isVi) {
     final theme = Theme.of(context);
+    final headerStyle = theme.textTheme.labelMedium?.copyWith(
+      color: CompassColors.gold,
+      letterSpacing: 1.2,
+      fontWeight: FontWeight.w600,
+    );
+
     return CupertinoTheme(
       data: CupertinoThemeData(
         brightness: Brightness.dark,
@@ -479,105 +554,166 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
         children: [
           Row(
             children: [
-              for (final label in [
-                isVi ? 'GIỜ' : 'HOUR',
-                isVi ? 'PHÚT' : 'MINUTE',
-                isVi ? 'BUỔI' : 'PERIOD',
-              ])
-                Expanded(
-                  child: Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: CompassColors.gold,
-                      letterSpacing: 1.2,
-                      fontWeight: FontWeight.w600,
+              Expanded(
+                flex: 2,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        isVi ? 'GIỜ' : 'HOUR',
+                        textAlign: TextAlign.center,
+                        style: headerStyle,
+                      ),
                     ),
-                  ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        isVi ? 'PHÚT' : 'MINUTE',
+                        textAlign: TextAlign.center,
+                        style: headerStyle,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
+              const SizedBox(width: 21),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  isVi ? 'BUỔI' : 'PERIOD',
+                  textAlign: TextAlign.center,
+                  style: headerStyle,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 6),
           SizedBox(
             height: 200,
-            child: Stack(
-              alignment: Alignment.center,
+            child: Row(
               children: [
-                Row(
-                  children: [
-                    _wheelColumn(
-                      key: const Key('birth_time_hour_wheel'),
-                      controller: _hourWheel,
-                      items: _hourItems,
-                      onSelected: _chooseHour,
-                      label: isVi ? 'Giờ' : 'Hour',
-                      placeholder: 'HH',
-                      looping: true,
-                      itemKeyBuilder: (i, item) =>
-                          i == 0 ? null : Key('birth_time_hour_$i'),
-                    ),
-                    _wheelColumn(
-                      key: const Key('birth_time_minute_wheel'),
-                      controller: _minuteWheel,
-                      items: _minuteItems,
-                      onSelected: _chooseMinute,
-                      label: isVi ? 'Phút' : 'Minute',
-                      placeholder: 'MM',
-                      looping: true,
-                      itemKeyBuilder: (i, item) =>
-                          i == 0 ? null : Key('birth_time_minute_${i - 1}'),
-                    ),
-                    _wheelColumn(
-                      key: const Key('birth_time_period_wheel'),
-                      controller: _periodWheel,
-                      items: _periodItems(isVi),
-                      onSelected: _choosePeriod,
-                      label: isVi ? 'Buổi' : 'Period',
-                      placeholder: 'AM/PM',
-                      looping: false,
-                      itemKeyBuilder: (i, item) => i == 1
-                          ? const Key('birth_time_am')
-                          : (i == 2 ? const Key('birth_time_pm') : null),
-                    ),
-                  ],
-                ),
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            CompassColors.raised,
-                            CompassColors.raised.withValues(
-                              alpha: 0.0,
+                Expanded(
+                  flex: 2,
+                  child: SizedBox(
+                    height: 200,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Row(
+                          children: [
+                            _wheelColumn(
+                              key: const Key('birth_time_hour_wheel'),
+                              controller: _hourWheel,
+                              items: _hourItems,
+                              onSelected: _chooseHour,
+                              label: isVi ? 'Giờ' : 'Hour',
+                              placeholder: 'HH',
+                              looping: true,
+                              itemKeyBuilder: (i, item) =>
+                                  i == 0 ? null : Key('birth_time_hour_$i'),
                             ),
-                            CompassColors.raised.withValues(
-                              alpha: 0.0,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 2),
+                              child: Text(
+                                ':',
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  color: CompassColors.gold.withValues(alpha: 0.6),
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
-                            CompassColors.raised,
+                            _wheelColumn(
+                              key: const Key('birth_time_minute_wheel'),
+                              controller: _minuteWheel,
+                              items: _minuteItems,
+                              onSelected: _chooseMinute,
+                              label: isVi ? 'Phút' : 'Minute',
+                              placeholder: 'MM',
+                              looping: true,
+                              itemKeyBuilder: (i, item) =>
+                                  i == 0 ? null : Key('birth_time_minute_${i - 1}'),
+                            ),
                           ],
-                          stops: const [0.0, 0.22, 0.78, 1.0],
                         ),
-                      ),
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: DecoratedBox(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [
+                                    CompassColors.raised,
+                                    CompassColors.raised.withValues(
+                                      alpha: 0.0,
+                                    ),
+                                    CompassColors.raised.withValues(
+                                      alpha: 0.0,
+                                    ),
+                                    CompassColors.raised,
+                                  ],
+                                  stops: const [0.0, 0.22, 0.78, 1.0],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        IgnorePointer(
+                          child: Container(
+                            height: 46,
+                            decoration: BoxDecoration(
+                              color: CompassColors.gold.withValues(
+                                alpha: 0.08,
+                              ),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.45,
+                                ),
+                                width: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-                IgnorePointer(
-                  child: Container(
-                    height: 46,
-                    decoration: BoxDecoration(
-                      color: CompassColors.gold.withValues(
-                        alpha: 0.08,
-                      ),
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: CompassColors.gold.withValues(
-                          alpha: 0.45,
+                Container(
+                  height: 120,
+                  width: 1,
+                  margin: const EdgeInsets.symmetric(horizontal: 10),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        CompassColors.line.withValues(alpha: 0.0),
+                        CompassColors.line.withValues(alpha: 0.8),
+                        CompassColors.line.withValues(alpha: 0.0),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: SizedBox(
+                    height: 200,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildPeriodButton(
+                          period: DayPeriod.am,
+                          isVi: isVi,
+                          theme: theme,
                         ),
-                        width: 1.2,
-                      ),
+                        const SizedBox(height: 10),
+                        _buildPeriodButton(
+                          period: DayPeriod.pm,
+                          isVi: isVi,
+                          theme: theme,
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -646,8 +782,11 @@ class _BirthTimePickerSheetState extends State<BirthTimePickerSheet> {
                 !_manualValid));
 
     final currentLocale = Localizations.localeOf(context).languageCode;
-    if (_cachedWheels == null || _cachedLocale != currentLocale) {
+    if (_cachedWheels == null ||
+        _cachedLocale != currentLocale ||
+        _cachedPeriod != _period) {
       _cachedLocale = currentLocale;
+      _cachedPeriod = _period;
       _cachedWheels = _buildWheels(isVi);
     }
 
