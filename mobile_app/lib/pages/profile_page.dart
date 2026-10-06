@@ -103,7 +103,8 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   late final _nameController = TextEditingController(
     text: widget.profile.userName ?? '',
   );
@@ -129,9 +130,41 @@ class _ProfilePageState extends State<ProfilePage> {
   String? _notice;
   Timer? _noticeTimer;
 
+  /// True while the notice is up and not yet on its way out. A repeat tap is
+  /// only ignored while this holds; once it is fading, asking again brings it
+  /// back.
+  bool _noticeHolding = false;
+
   /// Long enough to read a short sentence, short enough not to sit over the
   /// screen while the reader carries on.
-  static const Duration _noticeDuration = Duration(seconds: 4);
+  static const Duration _noticeDuration = Duration(milliseconds: 3500);
+
+  /// It arrives the way a message arrives — in from the left as it fades up —
+  /// and leaves by fading alone. Sliding back out would read as the notice
+  /// retreating, which is a different and more deliberate gesture than
+  /// something quietly finishing.
+  late final AnimationController _noticeAnimation = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 240),
+    reverseDuration: const Duration(milliseconds: 300),
+  );
+
+  late final Animation<double> _noticeFade = CurvedAnimation(
+    parent: _noticeAnimation,
+    curve: Curves.easeOut,
+    reverseCurve: Curves.easeIn,
+  );
+
+  /// `Threshold(0)` on the way back holds this at its end value for the whole
+  /// reverse, so the fade-out happens where the notice already is.
+  late final Animation<Offset> _noticeSlide =
+      Tween<Offset>(begin: const Offset(-0.18, 0), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: _noticeAnimation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: const Threshold(0),
+        ),
+      );
 
   /// Fires when a cooldown runs out, so a reader waiting on this screen sees
   /// the field open by itself rather than having to leave and come back.
@@ -151,6 +184,7 @@ class _ProfilePageState extends State<ProfilePage> {
     // Nothing of this page outlives it — including a notice that would
     // otherwise have been handed to the messenger and shown on Home.
     _noticeTimer?.cancel();
+    _noticeAnimation.dispose();
     _nameController.dispose();
     _nameFocusNode.dispose();
     super.dispose();
@@ -268,35 +302,75 @@ class _ProfilePageState extends State<ProfilePage> {
   /// reader has moved on. A *different* field replaces the text immediately,
   /// because the reader's question has changed.
   void _showNotice(String message) {
-    if (_notice == message) return;
+    if (_noticeHolding && _notice == message) return;
     _noticeTimer?.cancel();
-    setState(() => _notice = message);
-    _noticeTimer = Timer(_noticeDuration, () {
-      if (mounted) setState(() => _notice = null);
+    setState(() {
+      _notice = message;
+      _noticeHolding = true;
+    });
+    if (_reducedMotion) {
+      _noticeAnimation.value = 1;
+    } else {
+      // From zero even when one is already up: a different field's message is
+      // a new message, and it should look like one arriving.
+      _noticeAnimation.forward(from: 0);
+    }
+    _noticeTimer = Timer(_noticeDuration, _hideNotice);
+  }
+
+  void _hideNotice() {
+    if (!mounted || _notice == null) return;
+    _noticeHolding = false;
+    if (_reducedMotion) {
+      _noticeAnimation.value = 0;
+      setState(() => _notice = null);
+      return;
+    }
+    _noticeAnimation.reverse().then((_) {
+      // Guarded: a tap during the fade restarts the animation, and that run's
+      // future still completes here. Only a controller that actually reached
+      // the bottom means the notice is gone.
+      if (mounted && _noticeAnimation.value == 0) {
+        setState(() => _notice = null);
+      }
     });
   }
 
-  /// A banner, not a bar at the bottom: the two buttons the reader needs are
-  /// down there, and this must not sit on top of them. It takes its space
-  /// from the top of the page instead of floating over the Back control, so
-  /// nothing it explains is hidden while it explains it.
-  Widget _lockedNotice() {
+  bool get _reducedMotion => MediaQuery.of(context).disableAnimations;
+
+  /// The notice, floating over the top of the scrolling area.
+  ///
+  /// In a [Stack] rather than in the column it used to head, because taking
+  /// space changed the height of everything below it: the whole page stepped
+  /// down when a notice arrived and back up when it left, which read as the
+  /// screen flinching rather than as something being said. Nothing moves now.
+  ///
+  /// Its position is the Stack's own top edge, which is immediately below the
+  /// pinned Back row — a relationship rather than a measured offset, so it
+  /// cannot drift when the title wraps or the text scale changes.
+  ///
+  /// [IgnorePointer] because it explains a tap rather than inviting one: the
+  /// fields underneath stay reachable while it is up.
+  Widget _noticeOverlay() {
     final message = _notice;
-    return AnimatedSize(
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.easeOut,
-      alignment: Alignment.topCenter,
-      child: message == null
-          ? const SizedBox(width: double.infinity)
-          : Semantics(
+    if (message == null) return const SizedBox.shrink();
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 0,
+      child: IgnorePointer(
+        child: FadeTransition(
+          opacity: _noticeFade,
+          child: SlideTransition(
+            position: _noticeSlide,
+            child: Semantics(
               container: true,
               liveRegion: true,
               label: message,
               excludeSemantics: true,
               child: Container(
                 key: const Key('profile_locked_notice'),
-                width: double.infinity,
-                margin: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+                margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 14,
                   vertical: 10,
@@ -305,6 +379,13 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: CompassColors.raised,
                   borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: CompassColors.line),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x66000000),
+                      blurRadius: 18,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
                 ),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -332,6 +413,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 
@@ -580,167 +664,181 @@ class _ProfilePageState extends State<ProfilePage> {
           onTap: _unfocus,
           child: Column(
             children: [
-              _lockedNotice(),
+              // Pinned above the scrolling area rather than scrolling with
+              // it. That is what gives the notice a fixed edge to hang from,
+              // and it is why Back can never be covered: the notice lives in
+              // the area below this row and cannot reach back into it.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      key: const Key('profile_back'),
+                      // Leaving without saving is the cancel: nothing has been
+                      // written, so no cooldown starts and no reading changes.
+                      onPressed: _saving
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      tooltip: l10n.backAction,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.profileTitle,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Expanded(
-                child: SingleChildScrollView(
-                  keyboardDismissBehavior:
-                      ScrollViewKeyboardDismissBehavior.onDrag,
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
+                child: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag,
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 32),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          IconButton(
-                            key: const Key('profile_back'),
-                            // Leaving without saving is the cancel: nothing has been
-                            // written, so no cooldown starts and no reading changes.
-                            onPressed: _saving
-                                ? null
-                                : () => Navigator.of(context).pop(),
-                            icon: const Icon(Icons.arrow_back_rounded),
-                            tooltip: l10n.backAction,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              l10n.profileTitle,
-                              style: Theme.of(context).textTheme.headlineMedium,
+                          Center(
+                            child: Column(
+                              children: [
+                                // The sign the *edited* date gives, so a reader
+                                // correcting their birthday watches the avatar follow
+                                // before they commit to it rather than after.
+                                ZodiacAvatar(
+                                  size: 92,
+                                  glow: true,
+                                  sign: _zodiac,
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  zodiacLabel(l10n, _zodiac),
+                                  style: Theme.of(context).textTheme.labelSmall
+                                      ?.copyWith(
+                                        color: CompassColors.gold,
+                                        letterSpacing: 1.7,
+                                      ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
-                      ),
-                      const SizedBox(height: 18),
-                      Center(
-                        child: Column(
-                          children: [
-                            // The sign the *edited* date gives, so a reader
-                            // correcting their birthday watches the avatar follow
-                            // before they commit to it rather than after.
-                            ZodiacAvatar(size: 92, glow: true, sign: _zodiac),
-                            const SizedBox(height: 8),
+                          const SizedBox(height: 22),
+                          TextField(
+                            key: const Key('profile_name_field'),
+                            controller: _nameController,
+                            focusNode: _nameFocusNode,
+                            onTapOutside: (_) => _unfocus(),
+                            textInputAction: TextInputAction.done,
+                            // So Save wakes up as soon as the first character lands.
+                            onChanged: (_) => setState(() {}),
+                            decoration: InputDecoration(
+                              labelText: l10n.nameField,
+                              helperMaxLines: 2,
+                              helperText: l10n.profileDefaultNameHint(
+                                l10n.defaultUserName,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+                          _editableRow(
+                            cardKey: const Key('profile_birth_date'),
+                            icon: Icons.calendar_month_rounded,
+                            label: l10n.dateOfBirth,
+                            value: formatDate(localeName, _birthDate),
+                            valueKey: const Key('profile_birth_date_value'),
+                            locked: _birthDateLocked,
+                            note: _birthDateLocked
+                                ? l10n.profileBirthDateLocked(
+                                    formatEditWait(
+                                      l10n,
+                                      localeName,
+                                      _birthDateWait,
+                                    ),
+                                  )
+                                : null,
+                            noteKey: const Key('profile_birth_date_wait'),
+                            onTap: () => _pickBirthDate(l10n, localeName),
+                          ),
+                          const SizedBox(height: 14),
+                          _birthTimeSection(l10n, localeName),
+                          const SizedBox(height: 14),
+                          _editableRow(
+                            cardKey: const Key('profile_birth_country'),
+                            icon: Icons.public_rounded,
+                            label: l10n.countryOfBirth,
+                            value:
+                                country?.getTranslatedName(context) ??
+                                country?.name ??
+                                _birthCountryCode,
+                            valueKey: const Key('profile_birth_country_value'),
+                            locked: _birthCountryLocked,
+                            note: _birthCountryLocked
+                                ? l10n.profileBirthCountryLocked(
+                                    formatEditWait(
+                                      l10n,
+                                      localeName,
+                                      _birthCountryWait,
+                                    ),
+                                  )
+                                : null,
+                            noteKey: const Key('profile_birth_country_wait'),
+                            onTap: () => _pickBirthCountry(l10n, localeName),
+                          ),
+                          const SizedBox(height: 22),
+                          if (_saveFailed) ...[
                             Text(
-                              zodiacLabel(l10n, _zodiac),
-                              style: Theme.of(context).textTheme.labelSmall
+                              l10n.profileNotSaved,
+                              key: const Key('profile_save_failed'),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(
-                                    color: CompassColors.gold,
-                                    letterSpacing: 1.7,
+                                    color: Theme.of(context).colorScheme.error,
                                   ),
                             ),
+                            const SizedBox(height: 10),
                           ],
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      TextField(
-                        key: const Key('profile_name_field'),
-                        controller: _nameController,
-                        focusNode: _nameFocusNode,
-                        onTapOutside: (_) => _unfocus(),
-                        textInputAction: TextInputAction.done,
-                        // So Save wakes up as soon as the first character lands.
-                        onChanged: (_) => setState(() {}),
-                        decoration: InputDecoration(
-                          labelText: l10n.nameField,
-                          helperMaxLines: 2,
-                          helperText: l10n.profileDefaultNameHint(
-                            l10n.defaultUserName,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      _editableRow(
-                        cardKey: const Key('profile_birth_date'),
-                        icon: Icons.calendar_month_rounded,
-                        label: l10n.dateOfBirth,
-                        value: formatDate(localeName, _birthDate),
-                        valueKey: const Key('profile_birth_date_value'),
-                        locked: _birthDateLocked,
-                        note: _birthDateLocked
-                            ? l10n.profileBirthDateLocked(
-                                formatEditWait(
-                                  l10n,
-                                  localeName,
-                                  _birthDateWait,
+                          Row(
+                            children: [
+                              Expanded(
+                                child: OutlinedButton(
+                                  key: const Key('profile_cancel'),
+                                  onPressed: _saving
+                                      ? null
+                                      : () => Navigator.of(context).pop(),
+                                  child: Text(l10n.cancelAction),
                                 ),
-                              )
-                            : null,
-                        noteKey: const Key('profile_birth_date_wait'),
-                        onTap: () => _pickBirthDate(l10n, localeName),
-                      ),
-                      const SizedBox(height: 14),
-                      _birthTimeSection(l10n, localeName),
-                      const SizedBox(height: 14),
-                      _editableRow(
-                        cardKey: const Key('profile_birth_country'),
-                        icon: Icons.public_rounded,
-                        label: l10n.countryOfBirth,
-                        value:
-                            country?.getTranslatedName(context) ??
-                            country?.name ??
-                            _birthCountryCode,
-                        valueKey: const Key('profile_birth_country_value'),
-                        locked: _birthCountryLocked,
-                        note: _birthCountryLocked
-                            ? l10n.profileBirthCountryLocked(
-                                formatEditWait(
-                                  l10n,
-                                  localeName,
-                                  _birthCountryWait,
-                                ),
-                              )
-                            : null,
-                        noteKey: const Key('profile_birth_country_wait'),
-                        onTap: () => _pickBirthCountry(l10n, localeName),
-                      ),
-                      const SizedBox(height: 22),
-                      if (_saveFailed) ...[
-                        Text(
-                          l10n.profileNotSaved,
-                          key: const Key('profile_save_failed'),
-                          textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.bodySmall
-                              ?.copyWith(
-                                color: Theme.of(context).colorScheme.error,
                               ),
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                      Row(
-                        children: [
-                          Expanded(
-                            child: OutlinedButton(
-                              key: const Key('profile_cancel'),
-                              onPressed: _saving
-                                  ? null
-                                  : () => Navigator.of(context).pop(),
-                              child: Text(l10n.cancelAction),
-                            ),
+                              const SizedBox(width: 12),
+                              Expanded(
+                                child: FilledButton(
+                                  key: const Key('profile_save'),
+                                  // Dead until something actually differs: a save with
+                                  // nothing to save would be a write, and a write is what
+                                  // starts a cooldown.
+                                  onPressed: (_saving || !_hasChanges)
+                                      ? null
+                                      : _save,
+                                  child: Text(l10n.saveAction),
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: FilledButton(
-                              key: const Key('profile_save'),
-                              // Dead until something actually differs: a save with
-                              // nothing to save would be a write, and a write is what
-                              // starts a cooldown.
-                              onPressed: (_saving || !_hasChanges)
-                                  ? null
-                                  : _save,
-                              child: Text(l10n.saveAction),
-                            ),
+                          const SizedBox(height: 14),
+                          Text(
+                            l10n.profileReadingsUnchanged,
+                            key: const Key('profile_history_note'),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: CompassColors.muted),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 14),
-                      Text(
-                        l10n.profileReadingsUnchanged,
-                        key: const Key('profile_history_note'),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall
-                            ?.copyWith(color: CompassColors.muted),
-                      ),
-                    ],
-                  ),
+                    ),
+                    _noticeOverlay(),
+                  ],
                 ),
               ),
             ],

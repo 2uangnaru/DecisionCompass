@@ -81,6 +81,7 @@ void main() {
     required AppProfile profile,
     required ReadingDependencies dependencies,
     AppLocale locale = AppLocale.english,
+    bool reducedMotion = false,
   }) async {
     // A test that opens Profile twice has to leave the first one first:
     // `pumpWidget` reuses a structurally identical tree, so a Profile route
@@ -101,9 +102,17 @@ void main() {
                 onPressed: () async {
                   final saved = await Navigator.of(context).push<AppProfile>(
                     MaterialPageRoute<AppProfile>(
-                      builder: (_) => ProfilePage(
-                        profile: profile,
-                        dependencies: dependencies,
+                      // Wrapped around the page rather than around `home`: a
+                      // pushed route is built under the Navigator, which is
+                      // itself under `home`, so an override up there never
+                      // reaches it.
+                      builder: (_) => MediaQuery(
+                        data: MediaQuery.of(context)
+                            .copyWith(disableAnimations: reducedMotion),
+                        child: ProfilePage(
+                          profile: profile,
+                          dependencies: dependencies,
+                        ),
                       ),
                     ),
                   );
@@ -1818,29 +1827,183 @@ void main() {
         reason: 'the notice is meant to be near the top',
       );
 
-      // Back, Cancel and Save all live inside the scrolling area and move
-      // with it, so comparing against where they happen to be right now says
-      // nothing. What matters is that the notice takes its space from *above*
-      // that area rather than floating over it — which is what makes it
-      // unable to cover any of them at any scroll offset.
-      final page = tester.getRect(find.byType(SingleChildScrollView));
+      // Below the Back row, which is pinned above the scrolling area — so
+      // this holds at every scroll offset, not just this one.
+      final back = tester.getRect(find.byKey(const Key('profile_back')));
       expect(
-        box.bottom,
-        lessThanOrEqualTo(page.top),
-        reason: 'the notice overlaps the page it is explaining',
+        box.top,
+        greaterThanOrEqualTo(back.bottom),
+        reason: 'the notice sits over the Back control',
       );
-      expect(
-        page.bottom,
-        lessThanOrEqualTo(640),
-        reason: 'the notice pushed the page off the bottom of the screen',
-      );
-      // And Save is still reachable, below it rather than under it.
+      // And close under it rather than somewhere down the page.
+      expect(box.top - back.bottom, lessThan(24));
+
+      // Scrolled to the bottom, where Cancel and Save are, it still does not
+      // reach them.
       await tester.ensureVisible(find.byKey(const Key('profile_save')));
       await tester.pumpAndSettle();
-      expect(
-        tester.getRect(find.byKey(const Key('profile_save'))).top,
-        greaterThanOrEqualTo(box.bottom),
+      for (final key in const ['profile_cancel', 'profile_save']) {
+        final button = tester.getRect(find.byKey(Key(key)));
+        expect(
+          tester.getRect(notice()).overlaps(button),
+          isFalse,
+          reason: 'the notice covers $key once the page is scrolled down',
+        );
+      }
+      // The notice has not moved while the page scrolled underneath it.
+      expect(tester.getRect(notice()), box);
+    });
+
+    testWidgets('nothing on the page moves when it comes or goes', (
+      tester,
+    ) async {
+      useScreen(tester, size: const Size(360, 640));
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
       );
+
+      // Scrolled away from the top, so a real scroll offset is in play —
+      // and settled *before* anything is measured, because `ensureVisible`
+      // moves the page itself and that is not what this test is about.
+      await tester.ensureVisible(find.byKey(const Key('profile_birth_date')));
+      await tester.pumpAndSettle();
+
+      Rect rectOf(Finder finder) => tester.getRect(finder);
+      double scrollOffset() => tester
+          .state<ScrollableState>(find.byType(Scrollable).first)
+          .position
+          .pixels;
+
+      final watched = <String, Finder>{
+        'the Back row': find.byKey(const Key('profile_back')),
+        'the avatar': find.byType(ZodiacAvatar).first,
+        'the name field': find.byKey(const Key('profile_name_field')),
+        'the birth-date row': find.byKey(const Key('profile_birth_date')),
+        'Save': find.byKey(const Key('profile_save')),
+      };
+      final before = {
+        for (final entry in watched.entries) entry.key: rectOf(entry.value),
+      };
+      final offsetBefore = scrollOffset();
+
+      // Tapped where it already is: no `ensureVisible`, so any movement
+      // measured below is the notice's doing and nobody else's.
+      await tester.tap(find.byKey(const Key('profile_birth_date')));
+      await tester.pumpAndSettle();
+      expect(notice(), findsOneWidget);
+
+      before.forEach((name, rect) {
+        expect(
+          rectOf(watched[name]!),
+          rect,
+          reason: '$name moved when the notice arrived',
+        );
+      });
+      expect(scrollOffset(), offsetBefore, reason: 'the page scrolled itself');
+
+      // ...and nothing moves back when it leaves, either.
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+      before.forEach((name, rect) {
+        expect(
+          rectOf(watched[name]!),
+          rect,
+          reason: '$name moved when the notice left',
+        );
+      });
+      expect(scrollOffset(), offsetBefore);
+    });
+
+    testWidgets('it slides in from the left as it fades up, and fades out '
+        'where it is', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      double opacity() => tester
+          .widget<FadeTransition>(
+            find
+                .ancestor(of: notice(), matching: find.byType(FadeTransition))
+                .first,
+          )
+          .opacity
+          .value;
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pump(const Duration(milliseconds: 80));
+      final arriving = tester.getRect(notice());
+      final arrivingOpacity = opacity();
+      expect(arrivingOpacity, greaterThan(0));
+      expect(arrivingOpacity, lessThan(1), reason: 'it appeared at full');
+
+      await tester.pumpAndSettle();
+      final settled = tester.getRect(notice());
+      expect(opacity(), 1);
+      expect(
+        arriving.left,
+        lessThan(settled.left),
+        reason: 'it did not travel in from the left',
+      );
+      expect(
+        arriving.top,
+        settled.top,
+        reason: 'it moved vertically; this is meant to be a horizontal slide',
+      );
+
+      // On the way out it fades where it is rather than retreating left.
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pump(const Duration(milliseconds: 120));
+      expect(opacity(), lessThan(1));
+      expect(opacity(), greaterThan(0));
+      expect(
+        tester.getRect(notice()).left,
+        settled.left,
+        reason: 'it slid back out instead of fading',
+      );
+
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+    });
+
+    testWidgets('with animations off it simply appears and disappears', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+        reducedMotion: true,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      // One frame, no settling: it is already all the way there.
+      final box = tester.getRect(notice());
+      expect(
+        tester
+            .widget<FadeTransition>(
+              find
+                  .ancestor(of: notice(), matching: find.byType(FadeTransition))
+                  .first,
+            )
+            .opacity
+            .value,
+        1,
+        reason: 'a reader who asked for no animation got a fade anyway',
+      );
+
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.getRect(notice()), box, reason: 'it was still sliding');
+
+      await tester.pump(const Duration(seconds: 4));
+      expect(notice(), findsNothing);
     });
 
     testWidgets('a screen reader is told, once', (tester) async {
