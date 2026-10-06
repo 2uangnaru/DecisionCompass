@@ -342,7 +342,6 @@
   "openProfile": "Abrir tu perfil",
   "saveAction": "Guardar",
   "cancelAction": "Cancelar",
-  "profileBirthDateFixed": "La fecha de nacimiento no se puede cambiar.",
   "profileDefaultNameHint": "Déjalo vacío para que te llamemos {name}.",
   "profileSaved": "Perfil actualizado.",
   "profileBirthTimeLocked": "Podrás cambiar tu hora de nacimiento dentro de {wait}.",
@@ -353,5 +352,7 @@
   "profileConfirmBirthTime": "Después, tu hora de nacimiento quedará fija durante 2 horas.",
   "profileConfirmBirthCountry": "Después, tu país de nacimiento quedará fijo durante 1 hora.",
   "profileBirthTimeUnknownValue": "Desconocida",
-  "profileReadingsUnchanged": "Las lecturas que ya guardaste no cambian."
+  "profileReadingsUnchanged": "Las lecturas que ya guardaste no cambian.",
+  "profileBirthDateLocked": "Podrás cambiar tu fecha de nacimiento dentro de {wait}.",
+  "profileConfirmBirthDate": "Después, tu fecha de nacimiento quedará fija durante 4 horas."
 }

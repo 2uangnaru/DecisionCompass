@@ -2167,12 +2167,6 @@ abstract class AppLocalizations {
   /// **'Cancel'**
   String get cancelAction;
 
-  /// No description provided for @profileBirthDateFixed.
-  ///
-  /// In en, this message translates to:
-  /// **'Your birth date can’t be changed.'**
-  String get profileBirthDateFixed;
-
   /// No description provided for @profileDefaultNameHint.
   ///
   /// In en, this message translates to:
@@ -2238,6 +2232,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Readings you’ve already saved stay as they are.'**
   String get profileReadingsUnchanged;
+
+  /// No description provided for @profileBirthDateLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change your birth date again in {wait}.'**
+  String profileBirthDateLocked(String wait);
+
+  /// No description provided for @profileConfirmBirthDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Your birth date will then stay fixed for 4 hours.'**
+  String get profileConfirmBirthDate;
 }
 
 class _AppLocalizationsDelegate

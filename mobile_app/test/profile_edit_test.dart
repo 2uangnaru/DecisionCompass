@@ -11,6 +11,7 @@ import 'package:decision_compass/localized_presentation.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/home_page.dart';
 import 'package:decision_compass/pages/profile_page.dart';
+import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -81,6 +82,14 @@ void main() {
     required ReadingDependencies dependencies,
     AppLocale locale = AppLocale.english,
   }) async {
+    // A test that opens Profile twice has to leave the first one first:
+    // `pumpWidget` reuses a structurally identical tree, so a Profile route
+    // still on the navigator would hide the button this taps.
+    if (find.byKey(const Key('profile_cancel')).evaluate().isNotEmpty) {
+      await tester.ensureVisible(find.byKey(const Key('profile_cancel')));
+      await tester.tap(find.byKey(const Key('profile_cancel')));
+      await tester.pumpAndSettle();
+    }
     await tester.pumpWidget(
       localizedApp(
         locale: locale,
@@ -132,6 +141,27 @@ void main() {
     await tester.enterText(find.byType(TextField).last, code);
     await tester.pumpAndSettle();
     await tester.tap(find.text(flag).last);
+    await tester.pumpAndSettle();
+  }
+
+  Future<void> pickDate(
+    WidgetTester tester, {
+    required String day,
+    required String month,
+    required String year,
+  }) async {
+    await tester.ensureVisible(find.byKey(const Key('profile_birth_date')));
+    await tester.tap(find.byKey(const Key('profile_birth_date')));
+    await tester.pumpAndSettle();
+    // Typed rather than spun: the wheels' resting position is the picker's
+    // business, and these tests are about what the date does afterwards.
+    await tester.tap(find.byKey(const Key('birth_date_type_tab')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const Key('birth_date_day')), day);
+    await tester.enterText(find.byKey(const Key('birth_date_month')), month);
+    await tester.enterText(find.byKey(const Key('birth_date_year')), year);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('birth_date_confirm')));
     await tester.pumpAndSettle();
   }
 
@@ -194,7 +224,6 @@ void main() {
       );
       expect(find.byKey(const Key('profile_birth_date_value')), findsOneWidget);
       expect(find.text('Jun 21, 1998'), findsOneWidget);
-      expect(find.text(l10n.profileBirthDateFixed), findsOneWidget);
       expect(
         tester
             .widget<Text>(find.byKey(const Key('profile_birth_time_value')))
@@ -203,11 +232,25 @@ void main() {
       );
       expect(find.text('Vietnam'), findsOneWidget);
 
-      // The birth date is the one row with nothing to tap.
-      expect(
-        tester.getSemantics(find.byKey(const Key('profile_birth_date_value'))),
-        isNot(matchesSemantics(isButton: true)),
-      );
+      // Every one of the three is a control, including the birth date — it
+      // used to be the one row with nothing to tap.
+      for (final key in const [
+        'profile_birth_date',
+        'profile_birth_time',
+        'profile_birth_country',
+      ]) {
+        expect(
+          tester
+              .getSemantics(find.byKey(Key(key)))
+              .getSemanticsData()
+              .hasAction(SemanticsAction.tap),
+          isTrue,
+          reason: '$key cannot be opened',
+        );
+      }
+      // This profile has no stamps and no createdAt, so nothing is held.
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsNothing);
+      expect(l10n.profileTitle, isNotEmpty);
     });
 
     testWidgets('an unknown birth time says Unknown, not an invented hour', (
@@ -275,7 +318,8 @@ void main() {
           [l10n.profileTitle, en.profileTitle],
           [l10n.saveAction, en.saveAction],
           [l10n.cancelAction, en.cancelAction],
-          [l10n.profileBirthDateFixed, en.profileBirthDateFixed],
+          [l10n.profileBirthDateLocked('x'), en.profileBirthDateLocked('x')],
+          [l10n.profileConfirmBirthDate, en.profileConfirmBirthDate],
           [l10n.profileSaved, en.profileSaved],
           [l10n.profileConfirmTitle, en.profileConfirmTitle],
           [l10n.profileConfirmBirthTime, en.profileConfirmBirthTime],
@@ -1237,6 +1281,400 @@ void main() {
       expect(scripted.pending, hasLength(1), reason: 'nothing was recomputed');
       expect(find.text('3'), findsOneWidget, reason: 'the signals blinked out');
       expect(find.text('Bo'), findsOneWidget);
+    });
+  });
+
+  // ---------------------------------------------------------- birth date --
+
+  group('the birth date', () {
+    /// A legacy profile: no `createdAt`, never edited, so the first change is
+    /// allowed straight away.
+    AppProfile legacy() => profileWith().copyWith(createdAt: null);
+
+    testWidgets('a legacy profile may fix it immediately', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsNothing);
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester);
+
+      final saved = result['saved']!;
+      expect(saved.birthDate.year, 1998);
+      expect(saved.birthDate.month, 3);
+      expect(saved.birthDate.day, 10);
+      expect(saved.birthDateChangedAtUtc, nowUtc());
+      // The other two are untouched, which is what independent means.
+      expect(saved.birthTimeChangedAtUtc, isNull);
+      expect(saved.birthCountryChangedAtUtc, isNull);
+    });
+
+    testWidgets('the avatar follows the picker before the reader commits', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+      final l10n = stringsFor(AppLocale.english);
+      final before = zodiacForDate(DateTime(1998, 6, 21));
+      expect(find.text(zodiacLabel(l10n, before)), findsOneWidget);
+
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+
+      final after = zodiacForDate(DateTime(1998, 3, 10));
+      expect(after, isNot(before));
+      expect(find.text(zodiacLabel(l10n, after)), findsOneWidget);
+      expect(find.text(zodiacLabel(l10n, before)), findsNothing);
+      expect(
+        tester.widget<ZodiacAvatar>(find.byType(ZodiacAvatar).first).sign,
+        after,
+      );
+      // Still only a preview: nothing is written until Save.
+      expect(rig.profileRepository.saves, 0);
+    });
+
+    testWidgets('a new profile waits two hours, then opens', (tester) async {
+      final rig = makeRig();
+      final created = nowUtc().subtract(const Duration(minutes: 97));
+      await openProfile(
+        tester,
+        profile: profileWith().copyWith(createdAt: created),
+        dependencies: rig.dependencies,
+      );
+      final l10n = stringsFor(AppLocale.english);
+
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('profile_birth_date_wait')))
+            .data,
+        l10n.profileBirthDateLocked('23 min'),
+      );
+      await tester.ensureVisible(find.byKey(const Key('profile_birth_date')));
+      await tester.tap(find.byKey(const Key('profile_birth_date')));
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const Key('birth_date_sheet')),
+        findsNothing,
+        reason: 'the picker must not open while the date is held',
+      );
+      expect(find.byKey(const Key('profile_locked_notice')), findsOneWidget);
+
+      // Exactly at the two hours, from a profile created that long ago.
+      await openProfile(
+        tester,
+        profile: profileWith().copyWith(
+          createdAt: nowUtc().subtract(birthDateFirstEditDelay),
+        ),
+        dependencies: rig.dependencies,
+      );
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsNothing);
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester);
+      expect(result['saved']!.birthDate.month, 3);
+    });
+
+    testWidgets('a second change waits four hours from that change', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy().copyWith(
+          birthDateChangedAtUtc: nowUtc().subtract(
+            const Duration(hours: 1, minutes: 12),
+          ),
+        ),
+        dependencies: rig.dependencies,
+      );
+
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('profile_birth_date_wait')))
+            .data,
+        stringsFor(AppLocale.english).profileBirthDateLocked('2 hr 48 min'),
+      );
+      // The other two fields are untouched by it.
+      expect(find.byKey(const Key('profile_birth_time_wait')), findsNothing);
+      expect(find.byKey(const Key('profile_birth_country_wait')), findsNothing);
+
+      // And exactly four hours after that change it is open again.
+      await openProfile(
+        tester,
+        profile: legacy().copyWith(
+          birthDateChangedAtUtc: nowUtc().subtract(birthDateEditCooldown),
+        ),
+        dependencies: rig.dependencies,
+      );
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsNothing);
+    });
+
+    testWidgets('editing it again restarts the whole four hours', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      // Four hours and a minute since the last change: open, but only just.
+      await openProfile(
+        tester,
+        profile: legacy().copyWith(
+          birthDateChangedAtUtc: nowUtc().subtract(
+            birthDateEditCooldown + const Duration(minutes: 1),
+          ),
+        ),
+        dependencies: rig.dependencies,
+      );
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester);
+
+      final saved = result['saved']!;
+      expect(saved.birthDateChangedAtUtc, nowUtc());
+      // Re-opened with what was written, the full window is back.
+      await openProfile(tester, profile: saved, dependencies: rig.dependencies);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('profile_birth_date_wait')))
+            .data,
+        stringsFor(AppLocale.english).profileBirthDateLocked('4 hr 0 min'),
+      );
+    });
+
+    testWidgets('the wait runs out while the reader watches', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: profileWith().copyWith(
+          createdAt: nowUtc().subtract(
+            birthDateFirstEditDelay - const Duration(minutes: 2),
+          ),
+        ),
+        dependencies: rig.dependencies,
+      );
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsOneWidget);
+
+      clock = clock.add(const Duration(minutes: 3));
+      await tester.pump(const Duration(minutes: 3));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('profile_birth_date_wait')), findsNothing);
+    });
+
+    testWidgets('re-picking the same day is not a change', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+
+      await pickDate(tester, day: '21', month: '06', year: '1998');
+      expect(
+        tester
+            .widget<FilledButton>(find.byKey(const Key('profile_save')))
+            .onPressed,
+        isNull,
+        reason:
+            'saving the same birthday would start four hours of waiting for '
+            'nothing',
+      );
+    });
+
+    testWidgets('a dismissed picker, a declined confirmation and a refused '
+        'write all leave it alone', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+
+      // Dismissed.
+      await tester.ensureVisible(find.byKey(const Key('profile_birth_date')));
+      await tester.tap(find.byKey(const Key('profile_birth_date')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const Key('birth_date_type_tab')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('birth_date_day')), '10');
+      await tester.enterText(find.byKey(const Key('birth_date_month')), '03');
+      await tester.enterText(find.byKey(const Key('birth_date_year')), '1998');
+      await tester.tap(find.byKey(const Key('birth_date_cancel')));
+      await tester.pumpAndSettle();
+      expect(find.text('Jun 21, 1998'), findsOneWidget);
+      expect(
+        tester
+            .widget<FilledButton>(find.byKey(const Key('profile_save')))
+            .onPressed,
+        isNull,
+      );
+
+      // Declined at the confirmation.
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester, confirm: false);
+      expect(rig.profileRepository.saves, 0);
+      expect(closed, 0);
+
+      // Refused by the store.
+      rig.profileRepository.failSaves = true;
+      await save(tester);
+      expect(find.byKey(const Key('profile_save_failed')), findsOneWidget);
+      expect(rig.profileRepository.saves, 0);
+      expect(await rig.profileRepository.load(), isNull);
+      expect(closed, 0);
+    });
+
+    testWidgets('the lock survives a restart', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester);
+
+      clock = clock.add(const Duration(minutes: 30));
+      final reloaded = await rig.profileRepository.load();
+      expect(reloaded!.birthDateChangedAtUtc, isNotNull);
+
+      final restarted = makeRig();
+      await openProfile(
+        tester,
+        profile: AppProfile.fromJson(reloaded.toJson()),
+        dependencies: restarted.dependencies,
+      );
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('profile_birth_date_wait')))
+            .data,
+        stringsFor(AppLocale.english).profileBirthDateLocked('3 hr 30 min'),
+      );
+    });
+
+    testWidgets('all three at once each start their own wait, and the '
+        'confirmation names each one', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: legacy(),
+        dependencies: rig.dependencies,
+      );
+      final l10n = stringsFor(AppLocale.english);
+
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await pickTime(tester, const TimeOfDay(hour: 9, minute: 15));
+      await pickCountry(tester, 'JP', japan);
+
+      await tester.ensureVisible(find.byKey(const Key('profile_save')));
+      await tester.tap(find.byKey(const Key('profile_save')));
+      await tester.pumpAndSettle();
+      expect(find.text(l10n.profileConfirmBirthDate), findsOneWidget);
+      expect(find.text(l10n.profileConfirmBirthTime), findsOneWidget);
+      expect(find.text(l10n.profileConfirmBirthCountry), findsOneWidget);
+      // The row is still a row, with three lines above it.
+      final cancel = tester.getRect(
+        find.byKey(const Key('profile_confirm_cancel')),
+      );
+      final confirmSave = tester.getRect(
+        find.byKey(const Key('profile_confirm_save')),
+      );
+      expect(
+        cancel.center.dy,
+        moreOrLessEquals(confirmSave.center.dy, epsilon: 0.5),
+      );
+      expect(cancel.right, lessThanOrEqualTo(confirmSave.left));
+
+      await tester.tap(find.byKey(const Key('profile_confirm_save')));
+      await tester.pumpAndSettle();
+
+      final saved = result['saved']!;
+      expect(saved.birthDateChangedAtUtc, nowUtc());
+      expect(saved.birthTimeChangedAtUtc, nowUtc());
+      expect(saved.birthCountryChangedAtUtc, nowUtc());
+    });
+
+    testWidgets('a name-only save moves no stamp, including the date one', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      final seeded = legacy().copyWith(
+        birthDateChangedAtUtc: nowUtc().subtract(const Duration(hours: 9)),
+      );
+      await openProfile(
+        tester,
+        profile: seeded,
+        dependencies: rig.dependencies,
+      );
+
+      await tester.enterText(find.byKey(const Key('profile_name_field')), 'Bo');
+      await tester.pumpAndSettle();
+      await save(tester);
+
+      expect(find.byKey(const Key('profile_confirm_dialog')), findsNothing);
+      expect(
+        result['saved']!.birthDateChangedAtUtc,
+        seeded.birthDateChangedAtUtc,
+      );
+    });
+  });
+
+  // ---------------------------------------------- a new date, seen from Home --
+
+  group('a new birth date, back on Home', () {
+    testWidgets('changes the avatar, the signals and the next reading, and '
+        'leaves History alone', (tester) async {
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        liveLocalClock: () => clock,
+      );
+      rig.dailyBriefProvider.responseFor = (profile) => engine.DailyBrief(
+        colors: testDailyColors(),
+        luckyNumber: profile.birthDate.month == 3 ? 7 : 3,
+        energy: null,
+      );
+      final entry = historyEntryFor(fixtureResponse('ready_yes_no_now.json'));
+      await rig.historyRepository.save(entry);
+      final historyBefore = rig.historyRepository.saved.single;
+
+      await rig.profileRepository.save(profileWith().copyWith(createdAt: null));
+      await tester.pumpWidget(rig.app);
+      await tester.pumpAndSettle();
+      expect(find.text('3'), findsOneWidget);
+      final before = zodiacForDate(DateTime(1998, 6, 21));
+
+      await tester.tap(find.byKey(const Key('home_open_profile')));
+      await tester.pumpAndSettle();
+      await pickDate(tester, day: '10', month: '03', year: '1998');
+      await save(tester);
+
+      // The header avatar is the new sign, without a restart.
+      final after = zodiacForDate(DateTime(1998, 3, 10));
+      expect(after, isNot(before));
+      expect(
+        tester.widget<ZodiacAvatar>(find.byType(ZodiacAvatar).first).sign,
+        after,
+      );
+      // Today's signals were redealt from the saved profile.
+      expect(rig.dailyBriefProvider.profiles.last.birthDate.month, 3);
+      expect(find.text('7'), findsOneWidget);
+      expect(find.text('3'), findsNothing);
+
+      // And the next reading is calculated from the new date.
+      await revealReading(tester);
+      await tester.pumpAndSettle();
+      expect(rig.sentRequest!.profile.birthDate, '1998-03-10');
+
+      // The reading already in History is the reading it always was.
+      expect(rig.historyRepository.saved, hasLength(2));
+      final historyAfter = rig.historyRepository.saved.first;
+      expect(identical(historyAfter, historyBefore), isTrue);
+      expect(
+        historyAfter.reading.inputSnapshot.raw,
+        historyBefore.reading.inputSnapshot.raw,
+      );
     });
   });
 }

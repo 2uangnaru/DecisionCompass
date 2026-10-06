@@ -57,3 +57,66 @@ bool canEditNow({
       nowUtc: nowUtc,
     ) ==
     Duration.zero;
+
+/// How long a brand-new profile holds its birth date still.
+///
+/// Shorter than the cooldown after an edit, because the likeliest reason to
+/// change a birth date soon after onboarding is that it was typed wrong — and
+/// a reader who cannot fix it has a compass built for somebody else.
+const Duration birthDateFirstEditDelay = Duration(hours: 2);
+
+/// The wait after a successful birth-date change.
+///
+/// The longest of the three. Every cycle a reading is built from is anchored
+/// to this date, so changing it is the nearest thing the app has to becoming
+/// a different person; it should not be something a reader can do twice in an
+/// afternoon while looking for a better answer.
+const Duration birthDateEditCooldown = Duration(hours: 4);
+
+/// How long before the birth date may be changed, as of [nowUtc].
+///
+/// Three states, in order:
+///
+/// * Changed before — [birthDateEditCooldown] from that change.
+/// * Never changed, but the profile knows when it was created —
+///   [birthDateFirstEditDelay] from then.
+/// * Neither — a profile saved by a build that did not record `createdAt`, or
+///   one whose stamp was unreadable. Open. Refusing instead would lock those
+///   readers out permanently with nothing they could do about it, and the
+///   first edit they make starts the normal four-hour wait like anyone's.
+///
+/// [createdAt] is whatever the profile recorded, which for a profile written
+/// by this build is a *local* time. It is converted here, which is right on
+/// the device that wrote it; a phone carried across a time-zone boundary
+/// inside its first two hours has the gate shift by the offset difference.
+/// That is a two-hour UX delay reading slightly short or long, not a
+/// correctness problem, and it is not worth rewriting a stored field over.
+Duration remainingBirthDateWait({
+  required DateTime? createdAt,
+  required DateTime? changedAtUtc,
+  required DateTime nowUtc,
+}) {
+  if (changedAtUtc != null) {
+    return remainingEditCooldown(
+      changedAtUtc: changedAtUtc,
+      window: birthDateEditCooldown,
+      nowUtc: nowUtc,
+    );
+  }
+  if (createdAt == null) return Duration.zero;
+  return remainingEditCooldown(
+    changedAtUtc: createdAt,
+    window: birthDateFirstEditDelay,
+    nowUtc: nowUtc,
+  );
+}
+
+/// Whether two birth dates name the same day.
+///
+/// Compared by calendar fields, never by instant: the picker answers with a
+/// local midnight, and a stored date read back in another zone can land on a
+/// different instant while still being the same birthday. Comparing the
+/// `DateTime`s would then read as an edit and start a four-hour wait for a
+/// date nobody touched.
+bool isSameBirthDate(DateTime a, DateTime b) =>
+    a.year == b.year && a.month == b.month && a.day == b.day;

@@ -1200,9 +1200,6 @@ class AppLocalizationsVi extends AppLocalizations {
   String get cancelAction => 'Huỷ';
 
   @override
-  String get profileBirthDateFixed => 'Không thể thay đổi ngày sinh.';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'Để trống nếu bạn muốn được gọi là $name.';
   }
@@ -1246,4 +1243,13 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get profileReadingsUnchanged => 'Các kết quả đã lưu vẫn giữ nguyên.';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'Bạn có thể đổi ngày sinh sau $wait nữa.';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'Sau đó ngày sinh sẽ được giữ nguyên trong 4 giờ.';
 }

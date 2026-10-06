@@ -18,6 +18,7 @@ class AppProfile {
     this.createdAt,
     this.birthTimeChangedAtUtc,
     this.birthCountryChangedAtUtc,
+    this.birthDateChangedAtUtc,
   });
 
   /// The timestamp when the user created their profile, used for journey tenure progression.
@@ -69,6 +70,13 @@ class AppProfile {
   /// The same, for the country of birth.
   final DateTime? birthCountryChangedAtUtc;
 
+  /// The same, for the birth date — null until it has been changed once.
+  ///
+  /// Null does not mean "open": before the first change the wait is measured
+  /// from [createdAt] instead, and only a profile that knows neither is free
+  /// to edit immediately. `data/profile_edit_policy.dart` holds that rule.
+  final DateTime? birthDateChangedAtUtc;
+
   /// The user's explicit answer on the explainer screen: true only after
   /// "Allow Current Location", false after "Use Device Time Zone Instead".
   ///
@@ -102,6 +110,7 @@ class AppProfile {
     DateTime? createdAt,
     DateTime? birthTimeChangedAtUtc,
     DateTime? birthCountryChangedAtUtc,
+    DateTime? birthDateChangedAtUtc,
   }) {
     return AppProfile(
       userName: userName ?? this.userName,
@@ -117,6 +126,8 @@ class AppProfile {
           birthTimeChangedAtUtc ?? this.birthTimeChangedAtUtc,
       birthCountryChangedAtUtc:
           birthCountryChangedAtUtc ?? this.birthCountryChangedAtUtc,
+      birthDateChangedAtUtc:
+          birthDateChangedAtUtc ?? this.birthDateChangedAtUtc,
     );
   }
 
@@ -127,26 +138,34 @@ class AppProfile {
   /// unknown birth time clears [birthTime]. `copyWith` cannot express either,
   /// and making it able to would weaken it everywhere else.
   ///
-  /// The birth date is not here on purpose. It is the one input the whole
-  /// chart is built from, and the screen shows it read-only.
+  /// [zodiacSign] is not a parameter: it is re-derived from [birthDate], the
+  /// same way `fromJson` re-derives it, so a changed date can never leave the
+  /// old sign behind on the avatar.
+  ///
+  /// [createdAt] is carried over untouched. It records when this reader's
+  /// compass was made, which editing it does not change — and the birth
+  /// date's first-edit gate is measured from it.
   AppProfile edited({
     required String? userName,
+    required DateTime birthDate,
     required String? birthTime,
     required String birthCountryCode,
     required DateTime? birthTimeChangedAtUtc,
     required DateTime? birthCountryChangedAtUtc,
+    required DateTime? birthDateChangedAtUtc,
   }) => AppProfile(
     userName: userName,
     birthDate: birthDate,
     birthTime: birthTime,
     birthCountryCode: birthCountryCode,
     traditionalProfile: traditionalProfile,
-    zodiacSign: zodiacSign,
+    zodiacSign: zodiacForDate(birthDate),
     useCurrentLocation: useCurrentLocation,
     safetyAcknowledged: safetyAcknowledged,
     createdAt: createdAt,
     birthTimeChangedAtUtc: birthTimeChangedAtUtc,
     birthCountryChangedAtUtc: birthCountryChangedAtUtc,
+    birthDateChangedAtUtc: birthDateChangedAtUtc,
   );
 
   String get formattedBirthDate =>
@@ -187,20 +206,29 @@ class AppProfile {
       'birthCountryChangedAtUtc': birthCountryChangedAtUtc!
           .toUtc()
           .toIso8601String(),
+    if (birthDateChangedAtUtc != null)
+      'birthDateChangedAtUtc': birthDateChangedAtUtc!.toUtc().toIso8601String(),
   };
 
-  /// Reads a stored timestamp, in UTC, or null when it is absent, not a
-  /// string, or not a date. The type is checked rather than cast: a record
-  /// holding a number here must not throw on the first frame.
-  static DateTime? _readUtc(Object? raw) {
+  /// Reads a stored timestamp, or null when it is absent, not a string, or
+  /// not a date.
+  ///
+  /// The type is checked rather than cast. A record whose value here is a
+  /// number, a boolean, a list or an object is one this build does not
+  /// understand, and `as String?` would throw on it — on the first frame,
+  /// before anything had a chance to fall back.
+  static DateTime? _readDateTime(Object? raw) {
     if (raw is! String) return null;
-    return DateTime.tryParse(raw)?.toUtc();
+    return DateTime.tryParse(raw);
   }
+
+  /// The same, normalised to UTC, for the three edit stamps — which are
+  /// always written as UTC and must be compared as instants.
+  static DateTime? _readUtc(Object? raw) => _readDateTime(raw)?.toUtc();
 
   factory AppProfile.fromJson(Map<String, dynamic> json) {
     final birthDate = DateTime.parse(json['birthDate'] as String);
     final rawTraditionalProfile = json['traditionalProfile'] as String?;
-    final rawCreatedAt = json['createdAt'] as String?;
     // A record written before the default-name state existed always has this
     // key, so it is read as a name the reader chose — including the literal
     // string `Explorer`, which such a reader may well have typed. Guessing
@@ -217,12 +245,19 @@ class AppProfile {
       zodiacSign: zodiacForDate(birthDate),
       useCurrentLocation: json['useCurrentLocation'] as bool,
       safetyAcknowledged: json['safetyAcknowledged'] as bool? ?? false,
-      createdAt: rawCreatedAt != null ? DateTime.tryParse(rawCreatedAt) : null,
+      // Not converted to UTC: this is whatever clock the build that wrote
+      // it used, and `remainingBirthDateWait` converts at comparison time.
+      // Unreadable reads as absent, which is the legacy state — the profile
+      // still loads, and the birth date opens for its first edit straight
+      // away rather than being held for two hours from a date nobody can
+      // read.
+      createdAt: _readDateTime(json['createdAt']),
       // An unparseable stamp reads as "never changed", which unlocks the
       // field. The alternative — treating it as "just changed" — would lock a
       // reader out of their own profile over a corrupt string.
       birthTimeChangedAtUtc: _readUtc(json['birthTimeChangedAtUtc']),
       birthCountryChangedAtUtc: _readUtc(json['birthCountryChangedAtUtc']),
+      birthDateChangedAtUtc: _readUtc(json['birthDateChangedAtUtc']),
     );
   }
 }

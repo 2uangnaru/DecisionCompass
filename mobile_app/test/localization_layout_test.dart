@@ -279,8 +279,8 @@ void main() {
       testWidgets('Profile holds together, $at', (tester) async {
         await sized(tester, scale, () async {
           final rig = ReadingTestRig();
-          // Both birth fields locked, which is the densest the screen gets:
-          // every row carries its own wait line underneath it.
+          // All three birth fields locked, which is the densest the screen
+          // gets: every row carries its own wait line underneath it.
           final now = rig.dependencies.nowUtc();
           await tester.pumpWidget(
             localizedApp(
@@ -292,6 +292,9 @@ void main() {
                     const Duration(minutes: 7),
                   ),
                   birthCountryChangedAtUtc: now.subtract(
+                    const Duration(minutes: 7),
+                  ),
+                  birthDateChangedAtUtc: now.subtract(
                     const Duration(minutes: 7),
                   ),
                 ),
@@ -311,11 +314,14 @@ void main() {
               reason: '$key below the 48dp target, $at',
             );
           }
-          // And the wait is readable rather than clipped away.
-          expect(
-            find.byKey(const Key('profile_birth_time_wait')),
-            findsOneWidget,
-          );
+          // And every wait is readable rather than clipped away.
+          for (final key in const [
+            'profile_birth_date_wait',
+            'profile_birth_time_wait',
+            'profile_birth_country_wait',
+          ]) {
+            expect(find.byKey(Key(key)), findsOneWidget, reason: '$key, $at');
+          }
         });
       });
 

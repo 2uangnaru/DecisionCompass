@@ -342,7 +342,6 @@
   "openProfile": "अपनी प्रोफ़ाइल खोलें",
   "saveAction": "सहेजें",
   "cancelAction": "रद्द करें",
-  "profileBirthDateFixed": "जन्मतिथि बदली नहीं जा सकती।",
   "profileDefaultNameHint": "खाली छोड़ें तो आपको {name} कहा जाएगा।",
   "profileSaved": "प्रोफ़ाइल अपडेट हो गई।",
   "profileBirthTimeLocked": "आप अपना जन्म का समय {wait} बाद फिर बदल सकते हैं।",
@@ -353,5 +352,7 @@
   "profileConfirmBirthTime": "इसके बाद आपका जन्म का समय 2 घंटे तक नहीं बदला जा सकेगा।",
   "profileConfirmBirthCountry": "इसके बाद आपका जन्म का देश 1 घंटे तक नहीं बदला जा सकेगा।",
   "profileBirthTimeUnknownValue": "अज्ञात",
-  "profileReadingsUnchanged": "पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।"
+  "profileReadingsUnchanged": "पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।",
+  "profileBirthDateLocked": "आप अपनी जन्मतिथि {wait} बाद फिर बदल सकते हैं।",
+  "profileConfirmBirthDate": "इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।"
 }

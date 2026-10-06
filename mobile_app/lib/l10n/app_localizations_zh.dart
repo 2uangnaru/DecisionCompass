@@ -1058,9 +1058,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get cancelAction => '取消';
 
   @override
-  String get profileBirthDateFixed => '出生日期无法修改。';
-
-  @override
   String profileDefaultNameHint(String name) {
     return '留空则称呼你为“$name”。';
   }
@@ -1102,6 +1099,14 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get profileReadingsUnchanged => '已保存的结果将保持不变。';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return '$wait后可再次修改出生日期。';
+  }
+
+  @override
+  String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2157,9 +2162,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get cancelAction => '取消';
 
   @override
-  String get profileBirthDateFixed => '出生日期无法修改。';
-
-  @override
   String profileDefaultNameHint(String name) {
     return '留空则称呼你为“$name”。';
   }
@@ -2201,6 +2203,14 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get profileReadingsUnchanged => '已保存的结果将保持不变。';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return '$wait后可再次修改出生日期。';
+  }
+
+  @override
+  String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
 }
 
 /// The translations for Chinese, as used in China, using the Han script (`zh_Hans_CN`).
@@ -3256,9 +3266,6 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get cancelAction => '取消';
 
   @override
-  String get profileBirthDateFixed => '出生日期无法修改。';
-
-  @override
   String profileDefaultNameHint(String name) {
     return '留空则称呼你为“$name”。';
   }
@@ -3300,4 +3307,12 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get profileReadingsUnchanged => '已保存的结果将保持不变。';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return '$wait后可再次修改出生日期。';
+  }
+
+  @override
+  String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
 }

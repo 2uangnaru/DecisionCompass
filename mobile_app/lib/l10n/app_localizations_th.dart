@@ -1190,9 +1190,6 @@ class AppLocalizationsTh extends AppLocalizations {
   String get cancelAction => 'ยกเลิก';
 
   @override
-  String get profileBirthDateFixed => 'ไม่สามารถเปลี่ยนวันเกิดได้';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'เว้นว่างไว้หากต้องการให้เรียกว่า $name';
   }
@@ -1236,4 +1233,13 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get profileReadingsUnchanged => 'ผลลัพธ์ที่บันทึกไว้แล้วจะยังคงเดิม';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'คุณจะเปลี่ยนวันเกิดได้อีกครั้งในอีก $wait';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง';
 }

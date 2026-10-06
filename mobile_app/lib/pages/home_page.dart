@@ -6,6 +6,7 @@ import '../app_profile.dart';
 import '../category_presentation.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
+import '../data/profile_edit_policy.dart';
 import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../localized_rotation.dart';
@@ -170,7 +171,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     // through a placeholder on the way back to the same values.
     final birthChanged =
         updated.birthTime != before.birthTime ||
-        updated.birthCountryCode != before.birthCountryCode;
+        updated.birthCountryCode != before.birthCountryCode ||
+        !isSameBirthDate(updated.birthDate, before.birthDate);
 
     setState(() {
       _profile = updated;
@@ -222,8 +224,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           behavior: HitTestBehavior.translucent,
           onPointerDown: (event) {
             if (_isSettingsOpen) {
-              final renderBox = _settingsCapsuleKey.currentContext
-                  ?.findRenderObject() as RenderBox?;
+              final renderBox =
+                  _settingsCapsuleKey.currentContext?.findRenderObject()
+                      as RenderBox?;
               if (renderBox != null && renderBox.hasSize) {
                 final capsuleBox =
                     renderBox.localToGlobal(Offset.zero) & renderBox.size;
@@ -340,7 +343,9 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                 child: Text(
                                   profileDisplayName(l10n, _profile),
                                   maxLines: 1,
-                                  style: Theme.of(context).textTheme.headlineMedium,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headlineMedium,
                                 ),
                               ),
                             ),
@@ -370,8 +375,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           onOpenResponsibleUse: () => showResponsibleUseSheet(context),
           onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (_) =>
-                  HistoryPage(dependencies: widget.dependencies),
+              builder: (_) => HistoryPage(dependencies: widget.dependencies),
             ),
           ),
         ),

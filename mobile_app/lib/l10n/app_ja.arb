@@ -342,7 +342,6 @@
   "openProfile": "プロフィールを開く",
   "saveAction": "保存",
   "cancelAction": "キャンセル",
-  "profileBirthDateFixed": "生年月日は変更できません。",
   "profileDefaultNameHint": "空欄のままにすると「{name}」と表示されます。",
   "profileSaved": "プロフィールを更新しました。",
   "profileBirthTimeLocked": "出生時刻は、あと{wait}で変更できます。",
@@ -353,5 +352,7 @@
   "profileConfirmBirthTime": "保存後、出生時刻は2時間変更できません。",
   "profileConfirmBirthCountry": "保存後、出生国は1時間変更できません。",
   "profileBirthTimeUnknownValue": "不明",
-  "profileReadingsUnchanged": "保存済みの結果はそのまま残ります。"
+  "profileReadingsUnchanged": "保存済みの結果はそのまま残ります。",
+  "profileBirthDateLocked": "生年月日は、あと{wait}で変更できます。",
+  "profileConfirmBirthDate": "保存後、生年月日は4時間変更できません。"
 }

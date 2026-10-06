@@ -1086,9 +1086,6 @@ class AppLocalizationsJa extends AppLocalizations {
   String get cancelAction => 'キャンセル';
 
   @override
-  String get profileBirthDateFixed => '生年月日は変更できません。';
-
-  @override
   String profileDefaultNameHint(String name) {
     return '空欄のままにすると「$name」と表示されます。';
   }
@@ -1130,4 +1127,12 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get profileReadingsUnchanged => '保存済みの結果はそのまま残ります。';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return '生年月日は、あと$waitで変更できます。';
+  }
+
+  @override
+  String get profileConfirmBirthDate => '保存後、生年月日は4時間変更できません。';
 }

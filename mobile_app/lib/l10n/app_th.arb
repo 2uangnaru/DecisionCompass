@@ -342,7 +342,6 @@
   "openProfile": "เปิดโปรไฟล์ของคุณ",
   "saveAction": "บันทึก",
   "cancelAction": "ยกเลิก",
-  "profileBirthDateFixed": "ไม่สามารถเปลี่ยนวันเกิดได้",
   "profileDefaultNameHint": "เว้นว่างไว้หากต้องการให้เรียกว่า {name}",
   "profileSaved": "อัปเดตโปรไฟล์แล้ว",
   "profileBirthTimeLocked": "คุณจะเปลี่ยนเวลาเกิดได้อีกครั้งในอีก {wait}",
@@ -353,5 +352,7 @@
   "profileConfirmBirthTime": "หลังจากนี้ เวลาเกิดจะคงที่เป็นเวลา 2 ชั่วโมง",
   "profileConfirmBirthCountry": "หลังจากนี้ ประเทศที่เกิดจะคงที่เป็นเวลา 1 ชั่วโมง",
   "profileBirthTimeUnknownValue": "ไม่ทราบ",
-  "profileReadingsUnchanged": "ผลลัพธ์ที่บันทึกไว้แล้วจะยังคงเดิม"
+  "profileReadingsUnchanged": "ผลลัพธ์ที่บันทึกไว้แล้วจะยังคงเดิม",
+  "profileBirthDateLocked": "คุณจะเปลี่ยนวันเกิดได้อีกครั้งในอีก {wait}",
+  "profileConfirmBirthDate": "หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง"
 }

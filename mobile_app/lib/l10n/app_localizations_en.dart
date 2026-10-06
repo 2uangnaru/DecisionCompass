@@ -1197,9 +1197,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelAction => 'Cancel';
 
   @override
-  String get profileBirthDateFixed => 'Your birth date can’t be changed.';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'Leave this empty to be called $name.';
   }
@@ -1244,4 +1241,13 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get profileReadingsUnchanged =>
       'Readings you’ve already saved stay as they are.';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'You can change your birth date again in $wait.';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'Your birth date will then stay fixed for 4 hours.';
 }

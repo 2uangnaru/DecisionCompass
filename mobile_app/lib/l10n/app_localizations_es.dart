@@ -1205,10 +1205,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get cancelAction => 'Cancelar';
 
   @override
-  String get profileBirthDateFixed =>
-      'La fecha de nacimiento no se puede cambiar.';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'Déjalo vacío para que te llamemos $name.';
   }
@@ -1253,4 +1249,13 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get profileReadingsUnchanged =>
       'Las lecturas que ya guardaste no cambian.';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'Podrás cambiar tu fecha de nacimiento dentro de $wait.';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'Después, tu fecha de nacimiento quedará fija durante 4 horas.';
 }

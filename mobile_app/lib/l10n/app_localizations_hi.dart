@@ -1201,9 +1201,6 @@ class AppLocalizationsHi extends AppLocalizations {
   String get cancelAction => 'रद्द करें';
 
   @override
-  String get profileBirthDateFixed => 'जन्मतिथि बदली नहीं जा सकती।';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
   }
@@ -1248,6 +1245,15 @@ class AppLocalizationsHi extends AppLocalizations {
   @override
   String get profileReadingsUnchanged =>
       'पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'आप अपनी जन्मतिथि $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।';
 }
 
 /// The translations for Hindi, as used in India (`hi_IN`).
@@ -2446,9 +2452,6 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get cancelAction => 'रद्द करें';
 
   @override
-  String get profileBirthDateFixed => 'जन्मतिथि बदली नहीं जा सकती।';
-
-  @override
   String profileDefaultNameHint(String name) {
     return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
   }
@@ -2493,4 +2496,13 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get profileReadingsUnchanged =>
       'पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।';
+
+  @override
+  String profileBirthDateLocked(String wait) {
+    return 'आप अपनी जन्मतिथि $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String get profileConfirmBirthDate =>
+      'इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।';
 }

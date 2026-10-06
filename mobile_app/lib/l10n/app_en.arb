@@ -434,7 +434,6 @@
   "openProfile": "Open your profile",
   "saveAction": "Save",
   "cancelAction": "Cancel",
-  "profileBirthDateFixed": "Your birth date can’t be changed.",
   "profileDefaultNameHint": "Leave this empty to be called {name}.",
   "@profileDefaultNameHint": {
     "placeholders": {
@@ -489,5 +488,15 @@
   "profileConfirmBirthTime": "Your birth time will then stay fixed for 2 hours.",
   "profileConfirmBirthCountry": "Your country of birth will then stay fixed for 1 hour.",
   "profileBirthTimeUnknownValue": "Unknown",
-  "profileReadingsUnchanged": "Readings you’ve already saved stay as they are."
+  "profileReadingsUnchanged": "Readings you’ve already saved stay as they are.",
+  "profileBirthDateLocked": "You can change your birth date again in {wait}.",
+  "@profileBirthDateLocked": {
+    "placeholders": {
+      "wait": {
+        "type": "String",
+        "example": "3 hr 12 min"
+      }
+    }
+  },
+  "profileConfirmBirthDate": "Your birth date will then stay fixed for 4 hours."
 }

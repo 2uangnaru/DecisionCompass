@@ -11,6 +11,8 @@ import '../local_engine/time/tzdb.dart';
 import '../localized_presentation.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
+import '../models.dart';
+import '../widgets/birth_date_picker.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 
@@ -81,11 +83,12 @@ class _ConfirmActions extends StatelessWidget {
 /// profile into Home and the reading flow — this page never reaches past the
 /// repository on its own.
 ///
-/// The birth date is shown but not editable. Every cycle the reading is built
-/// from is anchored to it, so changing it is not a correction but a different
-/// person; a reader who entered the wrong date needs a different flow than
-/// this one, and silently allowing it here would quietly invalidate the
-/// profile's whole history.
+/// The birth date is editable too, but on the longest leash of the three.
+/// Every cycle a reading is built from is anchored to it, so changing it is
+/// the nearest thing the app has to becoming a different person — and yet a
+/// reader who typed it wrong during onboarding has a compass built for
+/// somebody else until they can fix it. A new profile opens the date after
+/// two hours; every change after that closes it for four.
 class ProfilePage extends StatefulWidget {
   const ProfilePage({
     super.key,
@@ -109,6 +112,7 @@ class _ProfilePageState extends State<ProfilePage> {
   late bool _knowsBirthTime = widget.profile.birthTime != null;
   late TimeOfDay? _birthTime = _parseBirthTime(widget.profile.birthTime);
   late String _birthCountryCode = widget.profile.birthCountryCode;
+  late DateTime _birthDate = widget.profile.birthDate;
 
   /// True while the profile is being written. A second tap is ignored, the
   /// way onboarding's own create button ignores one.
@@ -156,6 +160,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   DateTime get _nowUtc => widget.dependencies.nowUtc().toUtc();
 
+  ZodiacSign get _zodiac => zodiacForDate(_birthDate);
+
   Duration get _birthTimeWait => remainingEditCooldown(
     changedAtUtc: widget.profile.birthTimeChangedAtUtc,
     window: birthTimeEditCooldown,
@@ -168,8 +174,17 @@ class _ProfilePageState extends State<ProfilePage> {
     nowUtc: _nowUtc,
   );
 
+  /// Measured from the last change, or — before there has been one — from
+  /// when the profile was created. See `remainingBirthDateWait`.
+  Duration get _birthDateWait => remainingBirthDateWait(
+    createdAt: widget.profile.createdAt,
+    changedAtUtc: widget.profile.birthDateChangedAtUtc,
+    nowUtc: _nowUtc,
+  );
+
   bool get _birthTimeLocked => _birthTimeWait > Duration.zero;
   bool get _birthCountryLocked => _birthCountryWait > Duration.zero;
+  bool get _birthDateLocked => _birthDateWait > Duration.zero;
 
   /// Wakes the screen up exactly when the nearer of the two waits ends.
   void _scheduleCooldownExpiry() {
@@ -177,6 +192,7 @@ class _ProfilePageState extends State<ProfilePage> {
     final waits = [
       _birthTimeWait,
       _birthCountryWait,
+      _birthDateWait,
     ].where((wait) => wait > Duration.zero);
     if (waits.isEmpty) return;
     final next = waits.reduce((a, b) => a < b ? a : b);
@@ -204,8 +220,16 @@ class _ProfilePageState extends State<ProfilePage> {
   bool get _birthTimeChanged => _birthTimeValue != widget.profile.birthTime;
   bool get _birthCountryChanged =>
       _birthCountryCode != widget.profile.birthCountryCode;
+
+  /// By calendar day, never by instant — see [isSameBirthDate].
+  bool get _birthDateChanged =>
+      !isSameBirthDate(_birthDate, widget.profile.birthDate);
+
   bool get _hasChanges =>
-      _nameChanged || _birthTimeChanged || _birthCountryChanged;
+      _nameChanged ||
+      _birthTimeChanged ||
+      _birthCountryChanged ||
+      _birthDateChanged;
 
   // ---------------------------------------------------------------- edits --
 
@@ -219,6 +243,26 @@ class _ProfilePageState extends State<ProfilePage> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(key: const Key('profile_locked_notice'), content: Text(message)),
     );
+  }
+
+  Future<void> _pickBirthDate(AppLocalizations l10n, String locale) async {
+    if (_birthDateLocked) {
+      _reportLocked(
+        l10n.profileBirthDateLocked(
+          formatEditWait(l10n, locale, _birthDateWait),
+        ),
+      );
+      return;
+    }
+    _unfocus();
+    // The onboarding picker, with its own range and validation: a date this
+    // screen accepts has to be a date onboarding would have accepted.
+    final picked = await showBirthDatePicker(
+      context: context,
+      initialDate: _birthDate,
+    );
+    if (!mounted || picked == null) return;
+    setState(() => _birthDate = picked);
   }
 
   Future<void> _pickBirthTime(AppLocalizations l10n, String localeName) async {
@@ -308,7 +352,10 @@ class _ProfilePageState extends State<ProfilePage> {
   /// Only for the fields that actually changed: a reader editing their name
   /// is not told about a birth-time lock that is not going to happen.
   Future<bool> _confirm(AppLocalizations l10n) async {
+    // One line per field actually changing, in the order the screen shows
+    // them. A reader editing only their name is told about no lock at all.
     final consequences = <String>[
+      if (_birthDateChanged) l10n.profileConfirmBirthDate,
       if (_birthTimeChanged) l10n.profileConfirmBirthTime,
       if (_birthCountryChanged) l10n.profileConfirmBirthCountry,
     ];
@@ -363,12 +410,14 @@ class _ProfilePageState extends State<ProfilePage> {
     // slow reader's cooldown starts from the save and not from the question.
     final birthTimeChanged = _birthTimeChanged;
     final birthCountryChanged = _birthCountryChanged;
+    final birthDateChanged = _birthDateChanged;
     if (!await _confirm(l10n)) return;
     if (!mounted) return;
 
     final now = _nowUtc;
     final next = widget.profile.edited(
       userName: _nameValue,
+      birthDate: _birthDate,
       birthTime: _birthTimeValue,
       birthCountryCode: _birthCountryCode,
       // Only a field that actually changed restarts its own wait. A save that
@@ -380,6 +429,9 @@ class _ProfilePageState extends State<ProfilePage> {
       birthCountryChangedAtUtc: birthCountryChanged
           ? now
           : widget.profile.birthCountryChangedAtUtc,
+      birthDateChangedAtUtc: birthDateChanged
+          ? now
+          : widget.profile.birthDateChangedAtUtc,
     );
 
     setState(() {
@@ -467,14 +519,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 Center(
                   child: Column(
                     children: [
-                      ZodiacAvatar(
-                        size: 92,
-                        glow: true,
-                        sign: widget.profile.zodiacSign,
-                      ),
+                      // The sign the *edited* date gives, so a reader
+                      // correcting their birthday watches the avatar follow
+                      // before they commit to it rather than after.
+                      ZodiacAvatar(size: 92, glow: true, sign: _zodiac),
                       const SizedBox(height: 8),
                       Text(
-                        zodiacLabel(l10n, widget.profile.zodiacSign),
+                        zodiacLabel(l10n, _zodiac),
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: CompassColors.gold,
                           letterSpacing: 1.7,
@@ -501,12 +552,20 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                _readOnlyRow(
+                _editableRow(
+                  cardKey: const Key('profile_birth_date'),
                   icon: Icons.calendar_month_rounded,
                   label: l10n.dateOfBirth,
-                  value: formatDate(localeName, widget.profile.birthDate),
+                  value: formatDate(localeName, _birthDate),
                   valueKey: const Key('profile_birth_date_value'),
-                  note: l10n.profileBirthDateFixed,
+                  locked: _birthDateLocked,
+                  note: _birthDateLocked
+                      ? l10n.profileBirthDateLocked(
+                          formatEditWait(l10n, localeName, _birthDateWait),
+                        )
+                      : null,
+                  noteKey: const Key('profile_birth_date_wait'),
+                  onTap: () => _pickBirthDate(l10n, localeName),
                 ),
                 const SizedBox(height: 14),
                 _birthTimeSection(l10n, localeName),
@@ -625,57 +684,6 @@ class _ProfilePageState extends State<ProfilePage> {
               : null,
           noteKey: const Key('profile_birth_time_wait'),
           onTap: () => _pickBirthTime(l10n, localeName),
-        ),
-      ],
-    );
-  }
-
-  Widget _readOnlyRow({
-    required IconData icon,
-    required String label,
-    required String value,
-    required Key valueKey,
-    required String note,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        GlassCard(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          child: Row(
-            children: [
-              Icon(icon, color: CompassColors.muted),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(label, style: Theme.of(context).textTheme.bodyMedium),
-                    const SizedBox(height: 2),
-                    Text(
-                      value,
-                      key: valueKey,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(
-                Icons.lock_outline_rounded,
-                size: 18,
-                color: CompassColors.muted,
-              ),
-            ],
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.only(top: 6, left: 12),
-          child: Text(
-            note,
-            key: const Key('profile_birth_date_note'),
-            style: Theme.of(context).textTheme.bodySmall
-                ?.copyWith(color: CompassColors.muted),
-          ),
         ),
       ],
     );
