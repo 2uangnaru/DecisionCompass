@@ -14,6 +14,66 @@ import '../theme.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 
+/// Cancel and Save, side by side, exactly the same size.
+///
+/// Equal width comes from two [Expanded]s; equal height from [IntrinsicHeight]
+/// plus `CrossAxisAlignment.stretch`, so a label that wraps at a large text
+/// scale grows *both* boxes rather than leaving one short. Each button's
+/// `minimumSize` is restated locally: the app-wide themes ask for an infinite
+/// minimum width, which inside an `Expanded` would be an unbounded-constraint
+/// fight rather than a layout.
+class _ConfirmActions extends StatelessWidget {
+  const _ConfirmActions({required this.dialogContext, required this.l10n});
+
+  final BuildContext dialogContext;
+  final AppLocalizations l10n;
+
+  /// Android's minimum accessible touch target, and the floor for both boxes.
+  static const double _minHeight = 48;
+
+  static const ButtonStyle _shared = ButtonStyle(
+    minimumSize: WidgetStatePropertyAll(Size(0, _minHeight)),
+    padding: WidgetStatePropertyAll(
+      EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    Widget label(String text) => Text(
+      text,
+      textAlign: TextAlign.center,
+      maxLines: 2,
+      overflow: TextOverflow.ellipsis,
+    );
+
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            child: OutlinedButton(
+              key: const Key('profile_confirm_cancel'),
+              style: _shared,
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: label(l10n.cancelAction),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: FilledButton(
+              key: const Key('profile_confirm_save'),
+              style: _shared,
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: label(l10n.saveAction),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// The saved profile, and the three parts of it a reader may correct.
 ///
 /// Pops with the saved [AppProfile] when something was written, and with null
@@ -259,33 +319,37 @@ class _ProfilePageState extends State<ProfilePage> {
         key: const Key('profile_confirm_dialog'),
         backgroundColor: CompassColors.raised,
         title: Text(l10n.profileConfirmTitle),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (final line in consequences) ...[
-              Text(line),
-              const SizedBox(height: 10),
+        // `AlertDialog` gives `content` a bounded height, so the scroll view
+        // only bites on a short screen or at a large text scale. It is here
+        // rather than `scrollable: true` because that would put the buttons
+        // inside the same scroll view and scroll them off the screen.
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final line in consequences) ...[
+                Text(line),
+                const SizedBox(height: 10),
+              ],
+              Text(
+                l10n.profileReadingsUnchanged,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: CompassColors.muted),
+              ),
             ],
-            Text(
-              l10n.profileReadingsUnchanged,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: CompassColors.muted),
-            ),
-          ],
+          ),
         ),
-        actions: [
-          TextButton(
-            key: const Key('profile_confirm_cancel'),
-            onPressed: () => Navigator.of(dialogContext).pop(false),
-            child: Text(l10n.cancelAction),
-          ),
-          FilledButton(
-            key: const Key('profile_confirm_save'),
-            onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: Text(l10n.saveAction),
-          ),
-        ],
+        actionsPadding: const EdgeInsets.fromLTRB(24, 8, 24, 20),
+        // One action, which is itself the row.
+        //
+        // Two separate actions go into `OverflowBar`, and this app's button
+        // themes set `minimumSize: Size.fromHeight(56)` — which is
+        // `Size(infinity, 56)`, a minimum *width* of infinity. Every button
+        // therefore claims the whole line, the two cannot sit side by side,
+        // and `OverflowBar` does what it is supposed to do and stacks them.
+        // That is where Cancel-above-a-full-width-Save came from.
+        actions: [_ConfirmActions(dialogContext: dialogContext, l10n: l10n)],
       ),
     );
     return agreed ?? false;
