@@ -1176,4 +1176,64 @@ class AppLocalizationsTh extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return 'อวตารจักรราศี $sign';
   }
+
+  @override
+  String get profileTitle => 'โปรไฟล์';
+
+  @override
+  String get openProfile => 'เปิดโปรไฟล์ของคุณ';
+
+  @override
+  String get saveAction => 'บันทึก';
+
+  @override
+  String get cancelAction => 'ยกเลิก';
+
+  @override
+  String get profileBirthDateFixed => 'ไม่สามารถเปลี่ยนวันเกิดได้';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'เว้นว่างไว้หากต้องการให้เรียกว่า $name';
+  }
+
+  @override
+  String get profileSaved => 'อัปเดตโปรไฟล์แล้ว';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'คุณจะเปลี่ยนเวลาเกิดได้อีกครั้งในอีก $wait';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'คุณจะเปลี่ยนประเทศที่เกิดได้อีกครั้งในอีก $wait';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours ชม. $minutes นาที';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes นาที';
+  }
+
+  @override
+  String get profileConfirmTitle => 'บันทึกการเปลี่ยนแปลงนี้ไหม';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'หลังจากนี้ เวลาเกิดจะคงที่เป็นเวลา 2 ชั่วโมง';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'หลังจากนี้ ประเทศที่เกิดจะคงที่เป็นเวลา 1 ชั่วโมง';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'ไม่ทราบ';
+
+  @override
+  String get profileReadingsUnchanged => 'ผลลัพธ์ที่บันทึกไว้แล้วจะยังคงเดิม';
 }

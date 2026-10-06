@@ -18,6 +18,7 @@ import '../widgets/daily_energy_info.dart';
 import '../widgets/language_selector.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
+import 'profile_page.dart';
 import 'ritual_page.dart';
 
 /// Buckets a real wall-clock hour into the three greetings the design uses.
@@ -146,6 +147,41 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     super.dispose();
   }
 
+  /// Opens Profile, and adopts whatever it saved.
+  ///
+  /// The page pops with the saved profile, or with null when the reader left
+  /// without saving — so a cancelled edit reaches here as "nothing happened"
+  /// and no part of Home is rebuilt.
+  Future<void> _openProfile() async {
+    final before = _profile;
+    final updated = await Navigator.of(context).push<AppProfile>(
+      MaterialPageRoute<AppProfile>(
+        builder: (_) =>
+            ProfilePage(profile: before, dependencies: widget.dependencies),
+      ),
+    );
+    if (!mounted || updated == null) return;
+
+    // Only the birth inputs reach the engine. A rename changes the greeting
+    // and nothing else, so it must not spend a calculation — and, more to the
+    // point, must not make today's colours, lucky number and energy flicker
+    // through a placeholder on the way back to the same values.
+    final birthChanged =
+        updated.birthTime != before.birthTime ||
+        updated.birthCountryCode != before.birthCountryCode;
+
+    setState(() {
+      _profile = updated;
+      if (birthChanged) {
+        _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
+        // Replacing the future is what discards a preview still in flight for
+        // the old profile: `FutureBuilder` ignores a result that arrives for
+        // a future it is no longer watching.
+        _dailyBrief = widget.dependencies.dailyBriefProvider.preview(updated);
+      }
+    });
+  }
+
   void _beginReading() {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
@@ -220,32 +256,65 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget _header(AppLocalizations l10n) {
     return Row(
       children: [
-        ZodiacAvatar(size: 52, sign: widget.profile.zodiacSign),
-        const SizedBox(width: 12),
+        // The avatar and the name are one target, not two: they read as one
+        // thing, and splitting them would give a screen reader two doors into
+        // the same screen.
+        //
+        // `_profile`, not `widget.profile`: the header used to show the
+        // profile Home was *constructed* with while every calculation on the
+        // same screen used the current one, so a saved edit left the greeting
+        // and the avatar a step behind until the app was restarted.
+        // Expanded, as the name column used to be: the greeting and the name
+        // have to be free to shrink, or a long one pushes the language,
+        // safety and history controls off a 360dp screen.
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                _greeting(l10n, widget.dependencies.nowLocal()),
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              // Scaled down rather than ellipsized: the default name (no
-              // profile name typed yet) runs long in some languages, and a
-              // mid-word ellipsis next to the header icons read as broken
-              // layout rather than a graceful truncation.
-              Align(
-                alignment: Alignment.centerLeft,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    profileDisplayName(l10n, widget.profile),
-                    maxLines: 1,
-                    style: Theme.of(context).textTheme.headlineMedium,
+          child: Semantics(
+            button: true,
+            label: l10n.openProfile,
+            // The child's own node is replaced rather than merged, so a
+            // screen reader hears one control and not the greeting, the name
+            // and the avatar as three. Replacing it also drops the InkWell's
+            // tap action, which is why the action is restated here.
+            excludeSemantics: true,
+            onTap: _openProfile,
+            child: InkWell(
+              key: const Key('home_open_profile'),
+              onTap: _openProfile,
+              borderRadius: BorderRadius.circular(16),
+              child: Row(
+                children: [
+                  ZodiacAvatar(size: 52, sign: _profile.zodiacSign),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          _greeting(l10n, widget.dependencies.nowLocal()),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        // Scaled down rather than ellipsized: the default
+                        // name (no profile name typed yet) runs long in some
+                        // languages, and a mid-word ellipsis next to the
+                        // header icons read as broken layout rather than a
+                        // graceful truncation.
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              profileDisplayName(l10n, _profile),
+                              maxLines: 1,
+                              style: Theme.of(context).textTheme.headlineMedium,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
         // The same language control the welcome screen offers, so the choice
@@ -407,7 +476,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             key: const Key('daily_signals_content'),
             future: _dailyBrief,
             builder: (context, snapshot) {
-              final brief = snapshot.data;
+              // Only a *finished* future speaks for the profile on screen.
+              // `FutureBuilder` keeps the previous future's value while the
+              // next one is waiting — `AsyncSnapshot.inState` changes the
+              // connection state and carries the data across — so reading
+              // `snapshot.data` directly showed the old profile's energy,
+              // colours and lucky number under the new profile's name for as
+              // long as the recalculation took.
+              final brief = snapshot.connectionState == ConnectionState.done
+                  ? snapshot.data
+                  : null;
               final colors = brief?.colors;
               final energy = brief?.energy;
               return Column(
@@ -420,8 +498,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           children: [
                             Flexible(
                               child: Text(
-                                energyLevelLabel(l10n, energy?.level) ??
-                                    '—',
+                                energyLevelLabel(l10n, energy?.level) ?? '—',
                                 key: const Key('daily_energy_label'),
                                 overflow: TextOverflow.ellipsis,
                                 style: Theme.of(context)
@@ -431,10 +508,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                                       color: CompassColors.text,
                                       fontSize: 22,
                                       fontWeight: FontWeight.w700,
-                                      letterSpacing: trackingFor(
-                                        context,
-                                        1.2,
-                                      ),
+                                      letterSpacing: trackingFor(context, 1.2),
                                     ),
                               ),
                             ),

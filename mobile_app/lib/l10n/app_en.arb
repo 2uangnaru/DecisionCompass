@@ -429,5 +429,65 @@
         "example": "Aries"
       }
     }
-  }
+  },
+  "profileTitle": "Profile",
+  "openProfile": "Open your profile",
+  "saveAction": "Save",
+  "cancelAction": "Cancel",
+  "profileBirthDateFixed": "Your birth date can’t be changed.",
+  "profileDefaultNameHint": "Leave this empty to be called {name}.",
+  "@profileDefaultNameHint": {
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "Explorer"
+      }
+    }
+  },
+  "profileSaved": "Profile updated.",
+  "profileBirthTimeLocked": "You can change your birth time again in {wait}.",
+  "@profileBirthTimeLocked": {
+    "placeholders": {
+      "wait": {
+        "type": "String",
+        "example": "1 hr 24 min"
+      }
+    }
+  },
+  "profileBirthCountryLocked": "You can change your country of birth again in {wait}.",
+  "@profileBirthCountryLocked": {
+    "placeholders": {
+      "wait": {
+        "type": "String",
+        "example": "24 min"
+      }
+    }
+  },
+  "profileWaitHoursMinutes": "{hours} hr {minutes} min",
+  "@profileWaitHoursMinutes": {
+    "placeholders": {
+      "hours": {
+        "type": "String",
+        "example": "1"
+      },
+      "minutes": {
+        "type": "String",
+        "example": "24"
+      }
+    }
+  },
+  "profileWaitMinutes": "{minutes} min",
+  "@profileWaitMinutes": {
+    "placeholders": {
+      "minutes": {
+        "type": "String",
+        "example": "24"
+      }
+    }
+  },
+  "profileConfirmTitle": "Save these changes?",
+  "profileConfirmBirthTime": "Your birth time will then stay fixed for 2 hours.",
+  "profileConfirmBirthCountry": "Your country of birth will then stay fixed for 1 hour.",
+  "profileBirthTimeUnknownValue": "Unknown",
+  "profileReadingsUnchanged": "Readings you’ve already saved stay as they are."
 }

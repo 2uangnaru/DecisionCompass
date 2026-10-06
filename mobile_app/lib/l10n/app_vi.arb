@@ -337,5 +337,21 @@
   "zodiacCapricorn": "Ma Kết",
   "zodiacAquarius": "Bảo Bình",
   "zodiacPisces": "Song Ngư",
-  "zodiacAvatarSemantics": "Ảnh đại diện cung {sign}"
+  "zodiacAvatarSemantics": "Ảnh đại diện cung {sign}",
+  "profileTitle": "Hồ sơ",
+  "openProfile": "Mở hồ sơ của bạn",
+  "saveAction": "Lưu",
+  "cancelAction": "Huỷ",
+  "profileBirthDateFixed": "Không thể thay đổi ngày sinh.",
+  "profileDefaultNameHint": "Để trống nếu bạn muốn được gọi là {name}.",
+  "profileSaved": "Đã cập nhật hồ sơ.",
+  "profileBirthTimeLocked": "Bạn có thể đổi giờ sinh sau {wait} nữa.",
+  "profileBirthCountryLocked": "Bạn có thể đổi quốc gia nơi sinh sau {wait} nữa.",
+  "profileWaitHoursMinutes": "{hours} giờ {minutes} phút",
+  "profileWaitMinutes": "{minutes} phút",
+  "profileConfirmTitle": "Lưu các thay đổi này?",
+  "profileConfirmBirthTime": "Sau đó giờ sinh sẽ được giữ nguyên trong 2 giờ.",
+  "profileConfirmBirthCountry": "Sau đó quốc gia nơi sinh sẽ được giữ nguyên trong 1 giờ.",
+  "profileBirthTimeUnknownValue": "Không rõ",
+  "profileReadingsUnchanged": "Các kết quả đã lưu vẫn giữ nguyên."
 }

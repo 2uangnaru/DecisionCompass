@@ -337,5 +337,21 @@
   "zodiacCapricorn": "मकर",
   "zodiacAquarius": "कुंभ",
   "zodiacPisces": "मीन",
-  "zodiacAvatarSemantics": "{sign} राशि का अवतार"
+  "zodiacAvatarSemantics": "{sign} राशि का अवतार",
+  "profileTitle": "प्रोफ़ाइल",
+  "openProfile": "अपनी प्रोफ़ाइल खोलें",
+  "saveAction": "सहेजें",
+  "cancelAction": "रद्द करें",
+  "profileBirthDateFixed": "जन्मतिथि बदली नहीं जा सकती।",
+  "profileDefaultNameHint": "खाली छोड़ें तो आपको {name} कहा जाएगा।",
+  "profileSaved": "प्रोफ़ाइल अपडेट हो गई।",
+  "profileBirthTimeLocked": "आप अपना जन्म का समय {wait} बाद फिर बदल सकते हैं।",
+  "profileBirthCountryLocked": "आप अपना जन्म का देश {wait} बाद फिर बदल सकते हैं।",
+  "profileWaitHoursMinutes": "{hours} घंटे {minutes} मिनट",
+  "profileWaitMinutes": "{minutes} मिनट",
+  "profileConfirmTitle": "ये बदलाव सहेजें?",
+  "profileConfirmBirthTime": "इसके बाद आपका जन्म का समय 2 घंटे तक नहीं बदला जा सकेगा।",
+  "profileConfirmBirthCountry": "इसके बाद आपका जन्म का देश 1 घंटे तक नहीं बदला जा सकेगा।",
+  "profileBirthTimeUnknownValue": "अज्ञात",
+  "profileReadingsUnchanged": "पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।"
 }

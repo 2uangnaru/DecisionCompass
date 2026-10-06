@@ -16,6 +16,8 @@ class AppProfile {
     this.traditionalProfile,
     this.safetyAcknowledged = false,
     this.createdAt,
+    this.birthTimeChangedAtUtc,
+    this.birthCountryChangedAtUtc,
   });
 
   /// The timestamp when the user created their profile, used for journey tenure progression.
@@ -51,6 +53,22 @@ class AppProfile {
 
   final ZodiacSign zodiacSign;
 
+  /// When the birth time was last changed from Profile, in UTC — or null if
+  /// it never has been.
+  ///
+  /// UTC because the reader can fly: a stamp written in local time would make
+  /// the wait shrink or stretch by the offset difference on landing. Null is
+  /// the first-edit state, which is always allowed; see
+  /// `data/profile_edit_policy.dart` for the window itself.
+  ///
+  /// This is a UX cooldown and nothing more. It lives in the same local store
+  /// as the rest of the profile, so anyone willing to edit that store can
+  /// clear it — which is fine, because nothing downstream trusts it.
+  final DateTime? birthTimeChangedAtUtc;
+
+  /// The same, for the country of birth.
+  final DateTime? birthCountryChangedAtUtc;
+
   /// The user's explicit answer on the explainer screen: true only after
   /// "Allow Current Location", false after "Use Device Time Zone Instead".
   ///
@@ -65,8 +83,13 @@ class AppProfile {
 
   /// [userName] cannot be *cleared* through this, only replaced: a null
   /// argument means "leave it alone", which is the usual `copyWith`
-  /// convention. Nothing needs to clear a name, and a `copyWith` that could
-  /// would make it easy to erase one by accident.
+  /// convention, and a `copyWith` that could clear one would make it easy to
+  /// erase a name by accident.
+  ///
+  /// Profile editing does need to clear both the name and the birth time, so
+  /// it goes through [edited] instead, where null means null and every
+  /// editable field is required. Loosening the rule here would have made
+  /// every existing caller's omitted argument a potential erasure.
   AppProfile copyWith({
     String? userName,
     DateTime? birthDate,
@@ -77,6 +100,8 @@ class AppProfile {
     bool? useCurrentLocation,
     bool? safetyAcknowledged,
     DateTime? createdAt,
+    DateTime? birthTimeChangedAtUtc,
+    DateTime? birthCountryChangedAtUtc,
   }) {
     return AppProfile(
       userName: userName ?? this.userName,
@@ -88,8 +113,41 @@ class AppProfile {
       useCurrentLocation: useCurrentLocation ?? this.useCurrentLocation,
       safetyAcknowledged: safetyAcknowledged ?? this.safetyAcknowledged,
       createdAt: createdAt ?? this.createdAt,
+      birthTimeChangedAtUtc:
+          birthTimeChangedAtUtc ?? this.birthTimeChangedAtUtc,
+      birthCountryChangedAtUtc:
+          birthCountryChangedAtUtc ?? this.birthCountryChangedAtUtc,
     );
   }
+
+  /// Applies an edit made on the Profile screen.
+  ///
+  /// Every field the screen can touch is required, and null means null: an
+  /// empty name clears [userName] back to the default-name state, and an
+  /// unknown birth time clears [birthTime]. `copyWith` cannot express either,
+  /// and making it able to would weaken it everywhere else.
+  ///
+  /// The birth date is not here on purpose. It is the one input the whole
+  /// chart is built from, and the screen shows it read-only.
+  AppProfile edited({
+    required String? userName,
+    required String? birthTime,
+    required String birthCountryCode,
+    required DateTime? birthTimeChangedAtUtc,
+    required DateTime? birthCountryChangedAtUtc,
+  }) => AppProfile(
+    userName: userName,
+    birthDate: birthDate,
+    birthTime: birthTime,
+    birthCountryCode: birthCountryCode,
+    traditionalProfile: traditionalProfile,
+    zodiacSign: zodiacSign,
+    useCurrentLocation: useCurrentLocation,
+    safetyAcknowledged: safetyAcknowledged,
+    createdAt: createdAt,
+    birthTimeChangedAtUtc: birthTimeChangedAtUtc,
+    birthCountryChangedAtUtc: birthCountryChangedAtUtc,
+  );
 
   String get formattedBirthDate =>
       '${birthDate.year.toString().padLeft(4, '0')}-'
@@ -121,7 +179,23 @@ class AppProfile {
     'useCurrentLocation': useCurrentLocation,
     'safetyAcknowledged': safetyAcknowledged,
     if (createdAt != null) 'createdAt': createdAt!.toIso8601String(),
+    // Always written as UTC, whatever the DateTime handed in was, so a record
+    // can never be read back in the wrong clock.
+    if (birthTimeChangedAtUtc != null)
+      'birthTimeChangedAtUtc': birthTimeChangedAtUtc!.toUtc().toIso8601String(),
+    if (birthCountryChangedAtUtc != null)
+      'birthCountryChangedAtUtc': birthCountryChangedAtUtc!
+          .toUtc()
+          .toIso8601String(),
   };
+
+  /// Reads a stored timestamp, in UTC, or null when it is absent, not a
+  /// string, or not a date. The type is checked rather than cast: a record
+  /// holding a number here must not throw on the first frame.
+  static DateTime? _readUtc(Object? raw) {
+    if (raw is! String) return null;
+    return DateTime.tryParse(raw)?.toUtc();
+  }
 
   factory AppProfile.fromJson(Map<String, dynamic> json) {
     final birthDate = DateTime.parse(json['birthDate'] as String);
@@ -144,6 +218,11 @@ class AppProfile {
       useCurrentLocation: json['useCurrentLocation'] as bool,
       safetyAcknowledged: json['safetyAcknowledged'] as bool? ?? false,
       createdAt: rawCreatedAt != null ? DateTime.tryParse(rawCreatedAt) : null,
+      // An unparseable stamp reads as "never changed", which unlocks the
+      // field. The alternative — treating it as "just changed" — would lock a
+      // reader out of their own profile over a corrupt string.
+      birthTimeChangedAtUtc: _readUtc(json['birthTimeChangedAtUtc']),
+      birthCountryChangedAtUtc: _readUtc(json['birthCountryChangedAtUtc']),
     );
   }
 }

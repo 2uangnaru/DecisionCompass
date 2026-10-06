@@ -1,0 +1,687 @@
+import 'dart:async';
+
+import 'package:country_picker/country_picker.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../app_profile.dart';
+import '../data/profile_edit_policy.dart';
+import '../l10n/app_localizations.dart';
+import '../local_engine/time/tzdb.dart';
+import '../localized_presentation.dart';
+import '../reading_dependencies.dart';
+import '../theme.dart';
+import '../widgets/birth_time_picker.dart';
+import '../widgets/celestial_ui.dart';
+
+/// The saved profile, and the three parts of it a reader may correct.
+///
+/// Pops with the saved [AppProfile] when something was written, and with null
+/// when the reader left without saving. The caller is what carries the new
+/// profile into Home and the reading flow — this page never reaches past the
+/// repository on its own.
+///
+/// The birth date is shown but not editable. Every cycle the reading is built
+/// from is anchored to it, so changing it is not a correction but a different
+/// person; a reader who entered the wrong date needs a different flow than
+/// this one, and silently allowing it here would quietly invalidate the
+/// profile's whole history.
+class ProfilePage extends StatefulWidget {
+  const ProfilePage({
+    super.key,
+    required this.profile,
+    required this.dependencies,
+  });
+
+  final AppProfile profile;
+  final ReadingDependencies dependencies;
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  late final _nameController = TextEditingController(
+    text: widget.profile.userName ?? '',
+  );
+  final _nameFocusNode = FocusNode();
+
+  late bool _knowsBirthTime = widget.profile.birthTime != null;
+  late TimeOfDay? _birthTime = _parseBirthTime(widget.profile.birthTime);
+  late String _birthCountryCode = widget.profile.birthCountryCode;
+
+  /// True while the profile is being written. A second tap is ignored, the
+  /// way onboarding's own create button ignores one.
+  var _saving = false;
+  var _saveFailed = false;
+
+  /// Fires when a cooldown runs out, so a reader waiting on this screen sees
+  /// the field open by itself rather than having to leave and come back.
+  /// One-shot, never periodic: a repeating timer would keep the frame loop
+  /// awake for hours and would hang any test that settles the tree.
+  Timer? _cooldownTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _scheduleCooldownExpiry();
+  }
+
+  @override
+  void dispose() {
+    _cooldownTimer?.cancel();
+    _nameController.dispose();
+    _nameFocusNode.dispose();
+    super.dispose();
+  }
+
+  static TimeOfDay? _parseBirthTime(String? stored) {
+    if (stored == null) return null;
+    final parts = stored.split(':');
+    if (parts.length != 2) return null;
+    final hour = int.tryParse(parts[0]);
+    final minute = int.tryParse(parts[1]);
+    if (hour == null || minute == null) return null;
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) return null;
+    return TimeOfDay(hour: hour, minute: minute);
+  }
+
+  void _unfocus() {
+    _nameFocusNode.unfocus();
+    FocusScope.of(context).unfocus();
+    SystemChannels.textInput.invokeMethod<void>('TextInput.hide');
+  }
+
+  // --------------------------------------------------------------- state --
+
+  DateTime get _nowUtc => widget.dependencies.nowUtc().toUtc();
+
+  Duration get _birthTimeWait => remainingEditCooldown(
+    changedAtUtc: widget.profile.birthTimeChangedAtUtc,
+    window: birthTimeEditCooldown,
+    nowUtc: _nowUtc,
+  );
+
+  Duration get _birthCountryWait => remainingEditCooldown(
+    changedAtUtc: widget.profile.birthCountryChangedAtUtc,
+    window: birthCountryEditCooldown,
+    nowUtc: _nowUtc,
+  );
+
+  bool get _birthTimeLocked => _birthTimeWait > Duration.zero;
+  bool get _birthCountryLocked => _birthCountryWait > Duration.zero;
+
+  /// Wakes the screen up exactly when the nearer of the two waits ends.
+  void _scheduleCooldownExpiry() {
+    _cooldownTimer?.cancel();
+    final waits = [
+      _birthTimeWait,
+      _birthCountryWait,
+    ].where((wait) => wait > Duration.zero);
+    if (waits.isEmpty) return;
+    final next = waits.reduce((a, b) => a < b ? a : b);
+    _cooldownTimer = Timer(next, () {
+      if (mounted) setState(_scheduleCooldownExpiry);
+    });
+  }
+
+  /// The engine's `HH:mm`, or null for an unknown birth time.
+  String? get _birthTimeValue {
+    final time = _knowsBirthTime ? _birthTime : null;
+    if (time == null) return null;
+    return '${time.hour.toString().padLeft(2, '0')}:'
+        '${time.minute.toString().padLeft(2, '0')}';
+  }
+
+  /// The typed name, or null for the default-name state. Null rather than the
+  /// translated word, for the reason `AppProfile.userName` documents.
+  String? get _nameValue {
+    final typed = _nameController.text.trim();
+    return typed.isEmpty ? null : typed;
+  }
+
+  bool get _nameChanged => _nameValue != widget.profile.userName;
+  bool get _birthTimeChanged => _birthTimeValue != widget.profile.birthTime;
+  bool get _birthCountryChanged =>
+      _birthCountryCode != widget.profile.birthCountryCode;
+  bool get _hasChanges =>
+      _nameChanged || _birthTimeChanged || _birthCountryChanged;
+
+  // ---------------------------------------------------------------- edits --
+
+  /// Says how long is left, without pretending the tap did anything.
+  void _reportLocked(String message) {
+    _unfocus();
+    // Re-read the clock on the way through: the inline label was rendered
+    // whenever this page last built, and the reader may have been sitting
+    // here since.
+    setState(_scheduleCooldownExpiry);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(key: const Key('profile_locked_notice'), content: Text(message)),
+    );
+  }
+
+  Future<void> _pickBirthTime(AppLocalizations l10n, String localeName) async {
+    if (_birthTimeLocked) {
+      _reportLocked(
+        l10n.profileBirthTimeLocked(
+          formatEditWait(l10n, localeName, _birthTimeWait),
+        ),
+      );
+      return;
+    }
+    _unfocus();
+    final picked = await showBirthTimePicker(
+      context: context,
+      helpText: l10n.selectBirthTime,
+      current: _birthTime,
+    );
+    // Null is "no answer": cancelled, or dismissed without completing a
+    // choice. The field keeps whatever it already said — including Unknown —
+    // and nothing is written, so no cooldown can start from a dismissal.
+    if (!mounted || picked == null) return;
+    setState(() {
+      _birthTime = picked;
+      // Confirming a time *is* the answer to "do you know it?". The row is
+      // reachable while the switch is off, so without this the reader picked
+      // an hour, watched the sheet close, and found Unknown still sitting
+      // there: the selection was read back through the switch and discarded.
+      // The switch stays as the other way to say the same thing.
+      _knowsBirthTime = true;
+    });
+  }
+
+  void _setKnowsBirthTime(bool value, AppLocalizations l10n, String locale) {
+    if (_birthTimeLocked) {
+      _reportLocked(
+        l10n.profileBirthTimeLocked(
+          formatEditWait(l10n, locale, _birthTimeWait),
+        ),
+      );
+      return;
+    }
+    _unfocus();
+    setState(() {
+      _knowsBirthTime = value;
+      // Dropped rather than held aside, exactly as onboarding does it: a
+      // reader who says they do not know their birth time must not have an
+      // earlier answer restored for them.
+      _birthTime = value ? _parseBirthTime(widget.profile.birthTime) : null;
+    });
+  }
+
+  void _pickBirthCountry(AppLocalizations l10n, String localeName) {
+    if (_birthCountryLocked) {
+      _reportLocked(
+        l10n.profileBirthCountryLocked(
+          formatEditWait(l10n, localeName, _birthCountryWait),
+        ),
+      );
+      return;
+    }
+    _unfocus();
+    showCountryPicker(
+      context: context,
+      showPhoneCode: false,
+      showSearch: true,
+      searchAutofocus: true,
+      countryFilter: tzdbCountries(),
+      countryListTheme: CountryListThemeData(
+        backgroundColor: CompassColors.raised,
+        textStyle: const TextStyle(color: CompassColors.text),
+        inputDecoration: InputDecoration(
+          labelText: l10n.searchCountries,
+          prefixIcon: const Icon(Icons.search_rounded),
+        ),
+      ),
+      onSelect: (country) {
+        _unfocus();
+        setState(() => _birthCountryCode = country.countryCode);
+      },
+    );
+  }
+
+  // ----------------------------------------------------------------- save --
+
+  /// Names the cooldowns this save is about to start, and asks.
+  ///
+  /// Only for the fields that actually changed: a reader editing their name
+  /// is not told about a birth-time lock that is not going to happen.
+  Future<bool> _confirm(AppLocalizations l10n) async {
+    final consequences = <String>[
+      if (_birthTimeChanged) l10n.profileConfirmBirthTime,
+      if (_birthCountryChanged) l10n.profileConfirmBirthCountry,
+    ];
+    if (consequences.isEmpty) return true;
+    final agreed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        key: const Key('profile_confirm_dialog'),
+        backgroundColor: CompassColors.raised,
+        title: Text(l10n.profileConfirmTitle),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final line in consequences) ...[
+              Text(line),
+              const SizedBox(height: 10),
+            ],
+            Text(
+              l10n.profileReadingsUnchanged,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: CompassColors.muted),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            key: const Key('profile_confirm_cancel'),
+            onPressed: () => Navigator.of(dialogContext).pop(false),
+            child: Text(l10n.cancelAction),
+          ),
+          FilledButton(
+            key: const Key('profile_confirm_save'),
+            onPressed: () => Navigator.of(dialogContext).pop(true),
+            child: Text(l10n.saveAction),
+          ),
+        ],
+      ),
+    );
+    return agreed ?? false;
+  }
+
+  Future<void> _save() async {
+    _unfocus();
+    if (_saving || !_hasChanges) return;
+    final l10n = AppLocalizations.of(context);
+    // Read before the dialog, and read again for the stamps afterwards, so a
+    // slow reader's cooldown starts from the save and not from the question.
+    final birthTimeChanged = _birthTimeChanged;
+    final birthCountryChanged = _birthCountryChanged;
+    if (!await _confirm(l10n)) return;
+    if (!mounted) return;
+
+    final now = _nowUtc;
+    final next = widget.profile.edited(
+      userName: _nameValue,
+      birthTime: _birthTimeValue,
+      birthCountryCode: _birthCountryCode,
+      // Only a field that actually changed restarts its own wait. A save that
+      // only renamed the reader, or one that re-picked the hour already
+      // stored, leaves the old stamp exactly where it was.
+      birthTimeChangedAtUtc: birthTimeChanged
+          ? now
+          : widget.profile.birthTimeChangedAtUtc,
+      birthCountryChangedAtUtc: birthCountryChanged
+          ? now
+          : widget.profile.birthCountryChangedAtUtc,
+    );
+
+    setState(() {
+      _saving = true;
+      _saveFailed = false;
+    });
+    try {
+      await widget.dependencies.profileRepository.save(next);
+    } catch (_) {
+      // Nothing was written, so nothing has changed — including the cooldown,
+      // which lives in the same record. The reader keeps their edits and can
+      // try again.
+      if (!mounted) return;
+      setState(() {
+        _saving = false;
+        _saveFailed = true;
+      });
+      return;
+    }
+    if (!mounted) return;
+
+    // Through the messenger rather than this page's own context: the notice
+    // has to outlive the pop to be read on Home.
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        key: const Key('profile_saved_notice'),
+        content: Text(l10n.profileSaved),
+      ),
+    );
+    // The reading flow's copy of the profile is the caller's to update; this
+    // page hands it back rather than reaching into Home.
+    Navigator.of(context).pop(next);
+  }
+
+  // ---------------------------------------------------------------- build --
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final localeName = intlLocaleOf(context);
+    final country = Country.tryParse(_birthCountryCode);
+
+    return PopScope(
+      // Only while a write is in flight. `Navigator.pop` is not gated by
+      // this — only `maybePop` is, and that is the path the system Back
+      // button and the back gesture take — so the pop that hands the saved
+      // profile back at the end of `_save` still goes through.
+      //
+      // Without it, Back could pop the page mid-write: the record would land
+      // in storage while Home carried on with the profile it was built with,
+      // and the two would not agree again until the app restarted.
+      canPop: !_saving,
+      child: CelestialScaffold(
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: _unfocus,
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      key: const Key('profile_back'),
+                      // Leaving without saving is the cancel: nothing has been
+                      // written, so no cooldown starts and no reading changes.
+                      onPressed: _saving
+                          ? null
+                          : () => Navigator.of(context).pop(),
+                      icon: const Icon(Icons.arrow_back_rounded),
+                      tooltip: l10n.backAction,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        l10n.profileTitle,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
+                Center(
+                  child: Column(
+                    children: [
+                      ZodiacAvatar(
+                        size: 92,
+                        glow: true,
+                        sign: widget.profile.zodiacSign,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        zodiacLabel(l10n, widget.profile.zodiacSign),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: CompassColors.gold,
+                          letterSpacing: 1.7,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 22),
+                TextField(
+                  key: const Key('profile_name_field'),
+                  controller: _nameController,
+                  focusNode: _nameFocusNode,
+                  onTapOutside: (_) => _unfocus(),
+                  textInputAction: TextInputAction.done,
+                  // So Save wakes up as soon as the first character lands.
+                  onChanged: (_) => setState(() {}),
+                  decoration: InputDecoration(
+                    labelText: l10n.nameField,
+                    helperMaxLines: 2,
+                    helperText: l10n.profileDefaultNameHint(
+                      l10n.defaultUserName,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _readOnlyRow(
+                  icon: Icons.calendar_month_rounded,
+                  label: l10n.dateOfBirth,
+                  value: formatDate(localeName, widget.profile.birthDate),
+                  valueKey: const Key('profile_birth_date_value'),
+                  note: l10n.profileBirthDateFixed,
+                ),
+                const SizedBox(height: 14),
+                _birthTimeSection(l10n, localeName),
+                const SizedBox(height: 14),
+                _editableRow(
+                  cardKey: const Key('profile_birth_country'),
+                  icon: Icons.public_rounded,
+                  label: l10n.countryOfBirth,
+                  value:
+                      country?.getTranslatedName(context) ??
+                      country?.name ??
+                      _birthCountryCode,
+                  valueKey: const Key('profile_birth_country_value'),
+                  locked: _birthCountryLocked,
+                  note: _birthCountryLocked
+                      ? l10n.profileBirthCountryLocked(
+                          formatEditWait(l10n, localeName, _birthCountryWait),
+                        )
+                      : null,
+                  noteKey: const Key('profile_birth_country_wait'),
+                  onTap: () => _pickBirthCountry(l10n, localeName),
+                ),
+                const SizedBox(height: 22),
+                if (_saveFailed) ...[
+                  Text(
+                    l10n.profileNotSaved,
+                    key: const Key('profile_save_failed'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: Theme.of(context).colorScheme.error),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        key: const Key('profile_cancel'),
+                        onPressed: _saving
+                            ? null
+                            : () => Navigator.of(context).pop(),
+                        child: Text(l10n.cancelAction),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: FilledButton(
+                        key: const Key('profile_save'),
+                        // Dead until something actually differs: a save with
+                        // nothing to save would be a write, and a write is what
+                        // starts a cooldown.
+                        onPressed: (_saving || !_hasChanges) ? null : _save,
+                        child: Text(l10n.saveAction),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  l10n.profileReadingsUnchanged,
+                  key: const Key('profile_history_note'),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall
+                      ?.copyWith(color: CompassColors.muted),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _birthTimeSection(AppLocalizations l10n, String localeName) {
+    final locked = _birthTimeLocked;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GlassCard(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+          child: SwitchListTile.adaptive(
+            key: const Key('profile_knows_birth_time'),
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.knowBirthTime),
+            subtitle: Text(
+              _knowsBirthTime
+                  ? l10n.knowBirthTimeDetail
+                  : l10n.birthTimeUnknownDetail,
+            ),
+            value: _knowsBirthTime,
+            // Still live while locked, and still says why. A dead switch
+            // would leave a reader tapping at nothing with no explanation.
+            onChanged: (value) => _setKnowsBirthTime(value, l10n, localeName),
+          ),
+        ),
+        const SizedBox(height: 10),
+        _editableRow(
+          cardKey: const Key('profile_birth_time'),
+          icon: Icons.schedule_rounded,
+          label: l10n.timeOfBirth,
+          value: _knowsBirthTime
+              ? (_birthTime == null
+                    ? l10n.selectBirthTime
+                    : formatClock(
+                        localeName,
+                        _birthTime!.hour,
+                        _birthTime!.minute,
+                      ))
+              : l10n.profileBirthTimeUnknownValue,
+          valueKey: const Key('profile_birth_time_value'),
+          locked: locked,
+          note: locked
+              ? l10n.profileBirthTimeLocked(
+                  formatEditWait(l10n, localeName, _birthTimeWait),
+                )
+              : null,
+          noteKey: const Key('profile_birth_time_wait'),
+          onTap: () => _pickBirthTime(l10n, localeName),
+        ),
+      ],
+    );
+  }
+
+  Widget _readOnlyRow({
+    required IconData icon,
+    required String label,
+    required String value,
+    required Key valueKey,
+    required String note,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GlassCard(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            children: [
+              Icon(icon, color: CompassColors.muted),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label, style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 2),
+                    Text(
+                      value,
+                      key: valueKey,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
+              ),
+              const Icon(
+                Icons.lock_outline_rounded,
+                size: 18,
+                color: CompassColors.muted,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(top: 6, left: 12),
+          child: Text(
+            note,
+            key: const Key('profile_birth_date_note'),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: CompassColors.muted),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _editableRow({
+    required Key cardKey,
+    required IconData icon,
+    required String label,
+    required String value,
+    required Key valueKey,
+    required bool locked,
+    required String? note,
+    required Key noteKey,
+    required VoidCallback onTap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        GlassCard(
+          key: cardKey,
+          // Tappable even while locked, so the tap can explain itself.
+          onTap: onTap,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          child: Row(
+            children: [
+              Icon(
+                icon,
+                color: locked ? CompassColors.muted : CompassColors.gold,
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(label, style: Theme.of(context).textTheme.bodyMedium),
+                    const SizedBox(height: 2),
+                    Text(
+                      value,
+                      key: valueKey,
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: locked
+                            ? CompassColors.secondary
+                            : CompassColors.text,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                locked
+                    ? Icons.hourglass_bottom_rounded
+                    : Icons.chevron_right_rounded,
+                color: locked ? CompassColors.muted : null,
+                size: locked ? 18 : null,
+              ),
+            ],
+          ),
+        ),
+        if (note != null)
+          Padding(
+            padding: const EdgeInsets.only(top: 6, left: 12),
+            child: Text(
+              note,
+              key: noteKey,
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: CompassColors.gold),
+            ),
+          ),
+      ],
+    );
+  }
+}

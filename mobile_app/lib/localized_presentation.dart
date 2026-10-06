@@ -301,3 +301,31 @@ String formatDate(String localeName, DateTime date) =>
 /// The short day-and-month stamp on the Today's signals card.
 String formatShortDate(String localeName, DateTime date) =>
     DateFormat.MMMd(localeName).format(date);
+
+// ---------------------------------------------------------------------------
+// Profile edit cooldowns
+// ---------------------------------------------------------------------------
+
+/// How long a reader still has to wait, in their own language.
+///
+/// Rounded *up* to the whole minute. A remainder of twelve seconds is still a
+/// wait, and rounding it down would print "0 min" beside a field that refuses
+/// to open — which reads as a bug rather than as a countdown.
+///
+/// The numbers go through [formatWholeNumber] rather than `toString`, so a
+/// locale that writes its own digits gets them.
+String formatEditWait(
+  AppLocalizations l10n,
+  String localeName,
+  Duration remaining,
+) {
+  final minutes = (remaining.inSeconds / 60).ceil();
+  final hours = minutes ~/ 60;
+  if (hours == 0) {
+    return l10n.profileWaitMinutes(formatWholeNumber(localeName, minutes));
+  }
+  return l10n.profileWaitHoursMinutes(
+    formatWholeNumber(localeName, hours),
+    formatWholeNumber(localeName, minutes % 60),
+  );
+}

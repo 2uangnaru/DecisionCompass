@@ -337,5 +337,21 @@
   "zodiacCapricorn": "摩羯座",
   "zodiacAquarius": "水瓶座",
   "zodiacPisces": "双鱼座",
-  "zodiacAvatarSemantics": "{sign}星座头像"
+  "zodiacAvatarSemantics": "{sign}星座头像",
+  "profileTitle": "个人资料",
+  "openProfile": "打开你的个人资料",
+  "saveAction": "保存",
+  "cancelAction": "取消",
+  "profileBirthDateFixed": "出生日期无法修改。",
+  "profileDefaultNameHint": "留空则称呼你为“{name}”。",
+  "profileSaved": "资料已更新。",
+  "profileBirthTimeLocked": "{wait}后可再次修改出生时间。",
+  "profileBirthCountryLocked": "{wait}后可再次修改出生国家。",
+  "profileWaitHoursMinutes": "{hours} 小时 {minutes} 分钟",
+  "profileWaitMinutes": "{minutes} 分钟",
+  "profileConfirmTitle": "保存这些更改吗？",
+  "profileConfirmBirthTime": "保存后，出生时间将在 2 小时内无法修改。",
+  "profileConfirmBirthCountry": "保存后，出生国家将在 1 小时内无法修改。",
+  "profileBirthTimeUnknownValue": "未知",
+  "profileReadingsUnchanged": "已保存的结果将保持不变。"
 }

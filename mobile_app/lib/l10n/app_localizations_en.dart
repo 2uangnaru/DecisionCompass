@@ -1183,4 +1183,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return '$sign zodiac avatar';
   }
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get openProfile => 'Open your profile';
+
+  @override
+  String get saveAction => 'Save';
+
+  @override
+  String get cancelAction => 'Cancel';
+
+  @override
+  String get profileBirthDateFixed => 'Your birth date can’t be changed.';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'Leave this empty to be called $name.';
+  }
+
+  @override
+  String get profileSaved => 'Profile updated.';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'You can change your birth time again in $wait.';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'You can change your country of birth again in $wait.';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours hr $minutes min';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get profileConfirmTitle => 'Save these changes?';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'Your birth time will then stay fixed for 2 hours.';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'Your country of birth will then stay fixed for 1 hour.';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'Unknown';
+
+  @override
+  String get profileReadingsUnchanged =>
+      'Readings you’ve already saved stay as they are.';
 }

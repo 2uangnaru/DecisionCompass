@@ -1044,6 +1044,64 @@ class AppLocalizationsZh extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return '$sign星座头像';
   }
+
+  @override
+  String get profileTitle => '个人资料';
+
+  @override
+  String get openProfile => '打开你的个人资料';
+
+  @override
+  String get saveAction => '保存';
+
+  @override
+  String get cancelAction => '取消';
+
+  @override
+  String get profileBirthDateFixed => '出生日期无法修改。';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return '留空则称呼你为“$name”。';
+  }
+
+  @override
+  String get profileSaved => '资料已更新。';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return '$wait后可再次修改出生时间。';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return '$wait后可再次修改出生国家。';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String get profileConfirmTitle => '保存这些更改吗？';
+
+  @override
+  String get profileConfirmBirthTime => '保存后，出生时间将在 2 小时内无法修改。';
+
+  @override
+  String get profileConfirmBirthCountry => '保存后，出生国家将在 1 小时内无法修改。';
+
+  @override
+  String get profileBirthTimeUnknownValue => '未知';
+
+  @override
+  String get profileReadingsUnchanged => '已保存的结果将保持不变。';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2085,6 +2143,64 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String zodiacAvatarSemantics(String sign) {
     return '$sign星座头像';
   }
+
+  @override
+  String get profileTitle => '个人资料';
+
+  @override
+  String get openProfile => '打开你的个人资料';
+
+  @override
+  String get saveAction => '保存';
+
+  @override
+  String get cancelAction => '取消';
+
+  @override
+  String get profileBirthDateFixed => '出生日期无法修改。';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return '留空则称呼你为“$name”。';
+  }
+
+  @override
+  String get profileSaved => '资料已更新。';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return '$wait后可再次修改出生时间。';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return '$wait后可再次修改出生国家。';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String get profileConfirmTitle => '保存这些更改吗？';
+
+  @override
+  String get profileConfirmBirthTime => '保存后，出生时间将在 2 小时内无法修改。';
+
+  @override
+  String get profileConfirmBirthCountry => '保存后，出生国家将在 1 小时内无法修改。';
+
+  @override
+  String get profileBirthTimeUnknownValue => '未知';
+
+  @override
+  String get profileReadingsUnchanged => '已保存的结果将保持不变。';
 }
 
 /// The translations for Chinese, as used in China, using the Han script (`zh_Hans_CN`).
@@ -3126,4 +3242,62 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String zodiacAvatarSemantics(String sign) {
     return '$sign星座头像';
   }
+
+  @override
+  String get profileTitle => '个人资料';
+
+  @override
+  String get openProfile => '打开你的个人资料';
+
+  @override
+  String get saveAction => '保存';
+
+  @override
+  String get cancelAction => '取消';
+
+  @override
+  String get profileBirthDateFixed => '出生日期无法修改。';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return '留空则称呼你为“$name”。';
+  }
+
+  @override
+  String get profileSaved => '资料已更新。';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return '$wait后可再次修改出生时间。';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return '$wait后可再次修改出生国家。';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours 小时 $minutes 分钟';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes 分钟';
+  }
+
+  @override
+  String get profileConfirmTitle => '保存这些更改吗？';
+
+  @override
+  String get profileConfirmBirthTime => '保存后，出生时间将在 2 小时内无法修改。';
+
+  @override
+  String get profileConfirmBirthCountry => '保存后，出生国家将在 1 小时内无法修改。';
+
+  @override
+  String get profileBirthTimeUnknownValue => '未知';
+
+  @override
+  String get profileReadingsUnchanged => '已保存的结果将保持不变。';
 }

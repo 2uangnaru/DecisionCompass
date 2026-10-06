@@ -2142,6 +2142,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{sign} zodiac avatar'**
   String zodiacAvatarSemantics(String sign);
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @openProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Open your profile'**
+  String get openProfile;
+
+  /// No description provided for @saveAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get saveAction;
+
+  /// No description provided for @cancelAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelAction;
+
+  /// No description provided for @profileBirthDateFixed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your birth date can’t be changed.'**
+  String get profileBirthDateFixed;
+
+  /// No description provided for @profileDefaultNameHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Leave this empty to be called {name}.'**
+  String profileDefaultNameHint(String name);
+
+  /// No description provided for @profileSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated.'**
+  String get profileSaved;
+
+  /// No description provided for @profileBirthTimeLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change your birth time again in {wait}.'**
+  String profileBirthTimeLocked(String wait);
+
+  /// No description provided for @profileBirthCountryLocked.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change your country of birth again in {wait}.'**
+  String profileBirthCountryLocked(String wait);
+
+  /// No description provided for @profileWaitHoursMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hr {minutes} min'**
+  String profileWaitHoursMinutes(String hours, String minutes);
+
+  /// No description provided for @profileWaitMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{minutes} min'**
+  String profileWaitMinutes(String minutes);
+
+  /// No description provided for @profileConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save these changes?'**
+  String get profileConfirmTitle;
+
+  /// No description provided for @profileConfirmBirthTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Your birth time will then stay fixed for 2 hours.'**
+  String get profileConfirmBirthTime;
+
+  /// No description provided for @profileConfirmBirthCountry.
+  ///
+  /// In en, this message translates to:
+  /// **'Your country of birth will then stay fixed for 1 hour.'**
+  String get profileConfirmBirthCountry;
+
+  /// No description provided for @profileBirthTimeUnknownValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown'**
+  String get profileBirthTimeUnknownValue;
+
+  /// No description provided for @profileReadingsUnchanged.
+  ///
+  /// In en, this message translates to:
+  /// **'Readings you’ve already saved stay as they are.'**
+  String get profileReadingsUnchanged;
 }
 
 class _AppLocalizationsDelegate

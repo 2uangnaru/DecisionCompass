@@ -23,7 +23,7 @@ import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:decision_compass/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show FontLoader;
+import 'package:flutter/services.dart' show FontLoader, JSONMessageCodec;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'bundled_fonts.dart';
@@ -228,6 +228,23 @@ Future<void> loadBundledFonts() async {
     }
     await loader.load();
   }
+}
+
+/// Presses the Android back button.
+///
+/// Sends the platform message the engine sends on a system back, which is the
+/// only path that consults `PopScope` — `Navigator.pop` does not. Flutter's
+/// own `simulateSystemBack` lives in its private test utilities and is not
+/// exported, so it is restated here.
+Future<void> simulateSystemBack() {
+  return TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+      .handlePlatformMessage(
+        'flutter/navigation',
+        const JSONMessageCodec().encodeMessage(<String, dynamic>{
+          'method': 'popRoute',
+        }),
+        (ByteData? _) {},
+      );
 }
 
 /// The strings a locale actually renders, without pumping a widget.

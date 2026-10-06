@@ -100,6 +100,10 @@ void main() {
           'orbitBaZi',
           'orbitYinYang',
           'orbitZiWei',
+          // "min" is how Spanish abbreviates minutes too. The hours-and-
+          // minutes form beside it does differ ("h", not "hr"), which is what
+          // says this one is a coincidence rather than a missed translation.
+          'profileWaitMinutes',
           'zodiacAries',
           'zodiacLeo',
           'zodiacLibra',

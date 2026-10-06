@@ -1187,6 +1187,67 @@ class AppLocalizationsHi extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return '$sign राशि का अवतार';
   }
+
+  @override
+  String get profileTitle => 'प्रोफ़ाइल';
+
+  @override
+  String get openProfile => 'अपनी प्रोफ़ाइल खोलें';
+
+  @override
+  String get saveAction => 'सहेजें';
+
+  @override
+  String get cancelAction => 'रद्द करें';
+
+  @override
+  String get profileBirthDateFixed => 'जन्मतिथि बदली नहीं जा सकती।';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
+  }
+
+  @override
+  String get profileSaved => 'प्रोफ़ाइल अपडेट हो गई।';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'आप अपना जन्म का समय $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'आप अपना जन्म का देश $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours घंटे $minutes मिनट';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes मिनट';
+  }
+
+  @override
+  String get profileConfirmTitle => 'ये बदलाव सहेजें?';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'इसके बाद आपका जन्म का समय 2 घंटे तक नहीं बदला जा सकेगा।';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'इसके बाद आपका जन्म का देश 1 घंटे तक नहीं बदला जा सकेगा।';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'अज्ञात';
+
+  @override
+  String get profileReadingsUnchanged =>
+      'पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।';
 }
 
 /// The translations for Hindi, as used in India (`hi_IN`).
@@ -2371,4 +2432,65 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String zodiacAvatarSemantics(String sign) {
     return '$sign राशि का अवतार';
   }
+
+  @override
+  String get profileTitle => 'प्रोफ़ाइल';
+
+  @override
+  String get openProfile => 'अपनी प्रोफ़ाइल खोलें';
+
+  @override
+  String get saveAction => 'सहेजें';
+
+  @override
+  String get cancelAction => 'रद्द करें';
+
+  @override
+  String get profileBirthDateFixed => 'जन्मतिथि बदली नहीं जा सकती।';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
+  }
+
+  @override
+  String get profileSaved => 'प्रोफ़ाइल अपडेट हो गई।';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'आप अपना जन्म का समय $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'आप अपना जन्म का देश $wait बाद फिर बदल सकते हैं।';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours घंटे $minutes मिनट';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes मिनट';
+  }
+
+  @override
+  String get profileConfirmTitle => 'ये बदलाव सहेजें?';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'इसके बाद आपका जन्म का समय 2 घंटे तक नहीं बदला जा सकेगा।';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'इसके बाद आपका जन्म का देश 1 घंटे तक नहीं बदला जा सकेगा।';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'अज्ञात';
+
+  @override
+  String get profileReadingsUnchanged =>
+      'पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।';
 }

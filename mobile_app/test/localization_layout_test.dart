@@ -3,6 +3,7 @@ import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/history_page.dart';
+import 'package:decision_compass/pages/profile_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
 import 'package:decision_compass/widgets/responsible_use_sheet.dart';
@@ -272,6 +273,49 @@ void main() {
           }
           expect(find.byKey(const Key('important_limits')), findsOneWidget);
           expect(find.byKey(const Key('crisis_support')), findsOneWidget);
+        });
+      });
+
+      testWidgets('Profile holds together, $at', (tester) async {
+        await sized(tester, scale, () async {
+          final rig = ReadingTestRig();
+          // Both birth fields locked, which is the densest the screen gets:
+          // every row carries its own wait line underneath it.
+          final now = rig.dependencies.nowUtc();
+          await tester.pumpWidget(
+            localizedApp(
+              locale: locale,
+              home: ProfilePage(
+                profile: profile.copyWith(
+                  birthTime: '14:30',
+                  birthTimeChangedAtUtc: now.subtract(
+                    const Duration(minutes: 7),
+                  ),
+                  birthCountryChangedAtUtc: now.subtract(
+                    const Duration(minutes: 7),
+                  ),
+                ),
+                dependencies: rig.dependencies,
+              ),
+            ),
+          );
+          await tester.pumpAndSettle();
+          expectNoLayoutTrouble(tester, 'Profile $at');
+
+          // Both actions stay on screen and stay tappable.
+          for (final key in const ['profile_cancel', 'profile_save']) {
+            expect(find.byKey(Key(key)), findsOneWidget);
+            expect(
+              tester.getSize(find.byKey(Key(key))).height,
+              greaterThanOrEqualTo(48),
+              reason: '$key below the 48dp target, $at',
+            );
+          }
+          // And the wait is readable rather than clipped away.
+          expect(
+            find.byKey(const Key('profile_birth_time_wait')),
+            findsOneWidget,
+          );
         });
       });
 

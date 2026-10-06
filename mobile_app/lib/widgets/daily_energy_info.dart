@@ -189,7 +189,7 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     _afterFrame(() {
       if (!_coachOpen) return;
       setState(() => _coachOpen = false);
-      _coachPortal.hide();
+      if (_coachPortal.isShowing) _coachPortal.hide();
     });
   }
 
@@ -205,7 +205,15 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     _afterFrame(() {
       if (_open == value) return;
       setState(() => _open = value);
-      value ? _portal.show() : _portal.hide();
+      if (value) {
+        _portal.show();
+      } else if (_portal.isShowing) {
+        // The portal may already be gone. `build` returns an empty box when
+        // the tone is unavailable, and that happens while Home waits for a
+        // recalculated brief — so a close deferred to after the frame can
+        // land on a portal that has left the tree, where `hide` asserts.
+        _portal.hide();
+      }
     });
   }
 

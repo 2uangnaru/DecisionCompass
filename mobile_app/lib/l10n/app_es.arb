@@ -337,5 +337,21 @@
   "zodiacCapricorn": "Capricornio",
   "zodiacAquarius": "Acuario",
   "zodiacPisces": "Piscis",
-  "zodiacAvatarSemantics": "Avatar del signo zodiacal {sign}"
+  "zodiacAvatarSemantics": "Avatar del signo zodiacal {sign}",
+  "profileTitle": "Perfil",
+  "openProfile": "Abrir tu perfil",
+  "saveAction": "Guardar",
+  "cancelAction": "Cancelar",
+  "profileBirthDateFixed": "La fecha de nacimiento no se puede cambiar.",
+  "profileDefaultNameHint": "Déjalo vacío para que te llamemos {name}.",
+  "profileSaved": "Perfil actualizado.",
+  "profileBirthTimeLocked": "Podrás cambiar tu hora de nacimiento dentro de {wait}.",
+  "profileBirthCountryLocked": "Podrás cambiar tu país de nacimiento dentro de {wait}.",
+  "profileWaitHoursMinutes": "{hours} h {minutes} min",
+  "profileWaitMinutes": "{minutes} min",
+  "profileConfirmTitle": "¿Guardar estos cambios?",
+  "profileConfirmBirthTime": "Después, tu hora de nacimiento quedará fija durante 2 horas.",
+  "profileConfirmBirthCountry": "Después, tu país de nacimiento quedará fijo durante 1 hora.",
+  "profileBirthTimeUnknownValue": "Desconocida",
+  "profileReadingsUnchanged": "Las lecturas que ya guardaste no cambian."
 }

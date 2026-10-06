@@ -1191,4 +1191,66 @@ class AppLocalizationsEs extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return 'Avatar del signo zodiacal $sign';
   }
+
+  @override
+  String get profileTitle => 'Perfil';
+
+  @override
+  String get openProfile => 'Abrir tu perfil';
+
+  @override
+  String get saveAction => 'Guardar';
+
+  @override
+  String get cancelAction => 'Cancelar';
+
+  @override
+  String get profileBirthDateFixed =>
+      'La fecha de nacimiento no se puede cambiar.';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'Déjalo vacío para que te llamemos $name.';
+  }
+
+  @override
+  String get profileSaved => 'Perfil actualizado.';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'Podrás cambiar tu hora de nacimiento dentro de $wait.';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'Podrás cambiar tu país de nacimiento dentro de $wait.';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes min';
+  }
+
+  @override
+  String get profileConfirmTitle => '¿Guardar estos cambios?';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'Después, tu hora de nacimiento quedará fija durante 2 horas.';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'Después, tu país de nacimiento quedará fijo durante 1 hora.';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'Desconocida';
+
+  @override
+  String get profileReadingsUnchanged =>
+      'Las lecturas que ya guardaste no cambian.';
 }

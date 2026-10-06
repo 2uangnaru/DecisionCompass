@@ -337,5 +337,21 @@
   "zodiacCapricorn": "山羊座",
   "zodiacAquarius": "水瓶座",
   "zodiacPisces": "魚座",
-  "zodiacAvatarSemantics": "{sign}の星座アバター"
+  "zodiacAvatarSemantics": "{sign}の星座アバター",
+  "profileTitle": "プロフィール",
+  "openProfile": "プロフィールを開く",
+  "saveAction": "保存",
+  "cancelAction": "キャンセル",
+  "profileBirthDateFixed": "生年月日は変更できません。",
+  "profileDefaultNameHint": "空欄のままにすると「{name}」と表示されます。",
+  "profileSaved": "プロフィールを更新しました。",
+  "profileBirthTimeLocked": "出生時刻は、あと{wait}で変更できます。",
+  "profileBirthCountryLocked": "出生国は、あと{wait}で変更できます。",
+  "profileWaitHoursMinutes": "{hours}時間{minutes}分",
+  "profileWaitMinutes": "{minutes}分",
+  "profileConfirmTitle": "この変更を保存しますか？",
+  "profileConfirmBirthTime": "保存後、出生時刻は2時間変更できません。",
+  "profileConfirmBirthCountry": "保存後、出生国は1時間変更できません。",
+  "profileBirthTimeUnknownValue": "不明",
+  "profileReadingsUnchanged": "保存済みの結果はそのまま残ります。"
 }

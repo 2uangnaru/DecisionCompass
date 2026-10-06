@@ -1186,4 +1186,64 @@ class AppLocalizationsVi extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return 'Ảnh đại diện cung $sign';
   }
+
+  @override
+  String get profileTitle => 'Hồ sơ';
+
+  @override
+  String get openProfile => 'Mở hồ sơ của bạn';
+
+  @override
+  String get saveAction => 'Lưu';
+
+  @override
+  String get cancelAction => 'Huỷ';
+
+  @override
+  String get profileBirthDateFixed => 'Không thể thay đổi ngày sinh.';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return 'Để trống nếu bạn muốn được gọi là $name.';
+  }
+
+  @override
+  String get profileSaved => 'Đã cập nhật hồ sơ.';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return 'Bạn có thể đổi giờ sinh sau $wait nữa.';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return 'Bạn có thể đổi quốc gia nơi sinh sau $wait nữa.';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours giờ $minutes phút';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes phút';
+  }
+
+  @override
+  String get profileConfirmTitle => 'Lưu các thay đổi này?';
+
+  @override
+  String get profileConfirmBirthTime =>
+      'Sau đó giờ sinh sẽ được giữ nguyên trong 2 giờ.';
+
+  @override
+  String get profileConfirmBirthCountry =>
+      'Sau đó quốc gia nơi sinh sẽ được giữ nguyên trong 1 giờ.';
+
+  @override
+  String get profileBirthTimeUnknownValue => 'Không rõ';
+
+  @override
+  String get profileReadingsUnchanged => 'Các kết quả đã lưu vẫn giữ nguyên.';
 }

@@ -1072,4 +1072,62 @@ class AppLocalizationsJa extends AppLocalizations {
   String zodiacAvatarSemantics(String sign) {
     return '$signの星座アバター';
   }
+
+  @override
+  String get profileTitle => 'プロフィール';
+
+  @override
+  String get openProfile => 'プロフィールを開く';
+
+  @override
+  String get saveAction => '保存';
+
+  @override
+  String get cancelAction => 'キャンセル';
+
+  @override
+  String get profileBirthDateFixed => '生年月日は変更できません。';
+
+  @override
+  String profileDefaultNameHint(String name) {
+    return '空欄のままにすると「$name」と表示されます。';
+  }
+
+  @override
+  String get profileSaved => 'プロフィールを更新しました。';
+
+  @override
+  String profileBirthTimeLocked(String wait) {
+    return '出生時刻は、あと$waitで変更できます。';
+  }
+
+  @override
+  String profileBirthCountryLocked(String wait) {
+    return '出生国は、あと$waitで変更できます。';
+  }
+
+  @override
+  String profileWaitHoursMinutes(String hours, String minutes) {
+    return '$hours時間$minutes分';
+  }
+
+  @override
+  String profileWaitMinutes(String minutes) {
+    return '$minutes分';
+  }
+
+  @override
+  String get profileConfirmTitle => 'この変更を保存しますか？';
+
+  @override
+  String get profileConfirmBirthTime => '保存後、出生時刻は2時間変更できません。';
+
+  @override
+  String get profileConfirmBirthCountry => '保存後、出生国は1時間変更できません。';
+
+  @override
+  String get profileBirthTimeUnknownValue => '不明';
+
+  @override
+  String get profileReadingsUnchanged => '保存済みの結果はそのまま残ります。';
 }
