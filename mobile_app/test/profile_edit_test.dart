@@ -1677,6 +1677,252 @@ void main() {
       );
     });
   });
+
+  // ------------------------------------------------- the locked-field notice --
+
+  group('the locked-field notice', () {
+    /// Both the date and the time held, so there are two different sentences
+    /// to tell apart.
+    AppProfile heldProfile() =>
+        profileWith(
+          birthTimeChangedAtUtc: nowUtc().subtract(const Duration(minutes: 36)),
+        ).copyWith(
+          createdAt: null,
+          birthDateChangedAtUtc: nowUtc().subtract(const Duration(minutes: 12)),
+        );
+
+    Finder notice() => find.byKey(const Key('profile_locked_notice'));
+
+    Future<void> tapLocked(WidgetTester tester, String key) async {
+      await tester.ensureVisible(find.byKey(Key(key)));
+      await tester.tap(find.byKey(Key(key)));
+      await tester.pump();
+    }
+
+    testWidgets('ten rapid taps make one notice, and nothing arrives later', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      for (var i = 0; i < 10; i++) {
+        await tapLocked(tester, 'profile_birth_date');
+      }
+      await tester.pumpAndSettle();
+
+      expect(notice(), findsOneWidget, reason: 'ten taps, ten notices');
+      // Not the messenger's queue, which is where the ten came from.
+      expect(find.byType(SnackBar), findsNothing);
+
+      // It goes by itself...
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+
+      // ...and nothing follows it out of a queue, however long the reader
+      // waits. This is the half the old behaviour failed: the notices kept
+      // coming up over Cancel and Save long after the tapping stopped.
+      await tester.pump(const Duration(seconds: 60));
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+      expect(find.byType(SnackBar), findsNothing);
+    });
+
+    testWidgets('a different held field replaces the sentence at once', (
+      tester,
+    ) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+      final l10n = stringsFor(AppLocale.english);
+      final dateMessage = l10n.profileBirthDateLocked('3 hr 48 min');
+      final timeMessage = l10n.profileBirthTimeLocked('1 hr 24 min');
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+      expect(tester.getSemantics(notice()).label, dateMessage);
+
+      // Straight to the other one, with no wait in between.
+      await tapLocked(tester, 'profile_birth_time');
+      await tester.pumpAndSettle();
+      expect(notice(), findsOneWidget, reason: 'the first one was queued');
+      expect(tester.getSemantics(notice()).label, timeMessage);
+      // Scoped to the banner: the same sentence is also the standing label
+      // under the date row, and that one is supposed to stay.
+      expect(
+        find.descendant(of: notice(), matching: find.text(dateMessage)),
+        findsNothing,
+      );
+      expect(
+        find.descendant(of: notice(), matching: find.text(timeMessage)),
+        findsOneWidget,
+      );
+
+      // And the replacement does not leave the first one waiting to return.
+      await tester.pump(const Duration(seconds: 10));
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+    });
+
+    testWidgets('a tap after it has gone brings a new one', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+      expect(notice(), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 5));
+      await tester.pumpAndSettle();
+      expect(notice(), findsNothing);
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+      expect(
+        notice(),
+        findsOneWidget,
+        reason: 'the field is still held, so asking again must still answer',
+      );
+    });
+
+    testWidgets('it covers neither the Back control nor Cancel and Save', (
+      tester,
+    ) async {
+      useScreen(tester, size: const Size(360, 640));
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+
+      final box = tester.getRect(notice());
+      expect(box.top, greaterThanOrEqualTo(0), reason: 'off the top edge');
+      expect(
+        box.top,
+        lessThan(640 / 2),
+        reason: 'the notice is meant to be near the top',
+      );
+
+      // Back, Cancel and Save all live inside the scrolling area and move
+      // with it, so comparing against where they happen to be right now says
+      // nothing. What matters is that the notice takes its space from *above*
+      // that area rather than floating over it — which is what makes it
+      // unable to cover any of them at any scroll offset.
+      final page = tester.getRect(find.byType(SingleChildScrollView));
+      expect(
+        box.bottom,
+        lessThanOrEqualTo(page.top),
+        reason: 'the notice overlaps the page it is explaining',
+      );
+      expect(
+        page.bottom,
+        lessThanOrEqualTo(640),
+        reason: 'the notice pushed the page off the bottom of the screen',
+      );
+      // And Save is still reachable, below it rather than under it.
+      await tester.ensureVisible(find.byKey(const Key('profile_save')));
+      await tester.pumpAndSettle();
+      expect(
+        tester.getRect(find.byKey(const Key('profile_save'))).top,
+        greaterThanOrEqualTo(box.bottom),
+      );
+    });
+
+    testWidgets('a screen reader is told, once', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+
+      final semantics = tester.getSemantics(notice());
+      expect(
+        semantics.label,
+        stringsFor(AppLocale.english).profileBirthDateLocked('3 hr 48 min'),
+      );
+      expect(
+        semantics.getSemanticsData().flagsCollection.isLiveRegion,
+        isTrue,
+        reason: 'TalkBack would not announce it without being asked to look',
+      );
+    });
+
+    testWidgets('it wraps rather than clips on a narrow phone at a large '
+        'text scale', (tester) async {
+      useScreen(tester, size: const Size(320, 640), textScale: 1.5);
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+        locale: AppLocale.spanish,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull, reason: 'the notice overflowed');
+      final box = tester.getRect(notice());
+      expect(box.left, greaterThanOrEqualTo(0));
+      expect(box.right, lessThanOrEqualTo(320));
+      final text = tester.widget<Text>(
+        find.descendant(of: notice(), matching: find.byType(Text)),
+      );
+      expect(
+        text.overflow,
+        isNot(TextOverflow.ellipsis),
+        reason: 'the remaining time is the point; it must not be cut off',
+      );
+    });
+
+    testWidgets('leaving Profile takes it with them', (tester) async {
+      final rig = makeRig();
+      await openProfile(
+        tester,
+        profile: heldProfile(),
+        dependencies: rig.dependencies,
+      );
+
+      await tapLocked(tester, 'profile_birth_date');
+      await tester.pumpAndSettle();
+      expect(notice(), findsOneWidget);
+
+      await tester.ensureVisible(find.byKey(const Key('profile_cancel')));
+      await tester.tap(find.byKey(const Key('profile_cancel')));
+      await tester.pumpAndSettle();
+
+      expect(closed, 1);
+      expect(notice(), findsNothing);
+      expect(
+        find.byType(SnackBar),
+        findsNothing,
+        reason: 'a messenger notice would have followed the reader to Home',
+      );
+      // Its timer went with the page: were it still running, the test
+      // framework would report it pending at teardown.
+      await tester.pump(const Duration(seconds: 10));
+      expect(notice(), findsNothing);
+    });
+  });
 }
 
 /// A [DailyBriefProvider] whose answers are released by hand, so a test can
