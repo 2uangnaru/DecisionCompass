@@ -1118,6 +1118,8 @@ class _RitualPageState extends State<RitualPage>
                 fontWeight: FontWeight.w600,
                 color: elapsed
                     ? CompassColors.muted
+                    : locked
+                    ? CompassColors.muted
                     : selected
                     ? Colors.white
                     : CompassColors.secondary,

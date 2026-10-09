@@ -882,6 +882,8 @@ class _ModeCard extends StatelessWidget {
           style: TextStyle(
             color: selected
                 ? CompassColors.blueLight
+                : isLocked
+                ? CompassColors.muted
                 : CompassColors.text,
             fontWeight: FontWeight.w700,
             fontSize: 12,
@@ -893,7 +895,9 @@ class _ModeCard extends StatelessWidget {
           child: Text(
             '/',
             style: TextStyle(
-              color: CompassColors.muted.withValues(alpha: 0.7),
+              color: isLocked
+                  ? CompassColors.muted.withValues(alpha: 0.45)
+                  : CompassColors.muted.withValues(alpha: 0.7),
               fontSize: 12,
               fontWeight: FontWeight.w400,
             ),
@@ -905,6 +909,8 @@ class _ModeCard extends StatelessWidget {
           style: TextStyle(
             color: selected
                 ? CompassColors.blueLight
+                : isLocked
+                ? CompassColors.muted
                 : CompassColors.secondary,
             fontWeight: FontWeight.w700,
             fontSize: 12,
