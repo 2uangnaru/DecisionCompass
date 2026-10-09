@@ -57,12 +57,14 @@ class GlassCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(18),
     this.selected = false,
+    this.locked = false,
     this.onTap,
   });
 
   final Widget child;
   final EdgeInsets padding;
   final bool selected;
+  final bool locked;
   final VoidCallback? onTap;
 
   @override
@@ -81,6 +83,10 @@ class GlassCard extends StatelessWidget {
         ),
         child: InkWell(
           onTap: onTap,
+          splashColor: locked ? Colors.transparent : null,
+          highlightColor: locked ? Colors.transparent : null,
+          hoverColor: locked ? Colors.transparent : null,
+          splashFactory: locked ? NoSplash.splashFactory : null,
           borderRadius: BorderRadius.circular(22),
           child: AnimatedPadding(
             duration: const Duration(milliseconds: 180),
@@ -374,37 +380,87 @@ class _StarsPainter extends CustomPainter {
 }
 
 /// A gentle frosted celestial badge indicating an option requires watching an Ad to unlock.
-class AdOptionBadge extends StatelessWidget {
+class AdOptionBadge extends StatefulWidget {
   const AdOptionBadge({
     super.key,
     this.compact = false,
+    this.trigger,
   });
 
   final bool compact;
+  final Listenable? trigger;
+
+  @override
+  State<AdOptionBadge> createState() => _AdOptionBadgeState();
+}
+
+class _AdOptionBadgeState extends State<AdOptionBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _bounceController = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 260),
+  );
+
+  late final Animation<double> _scaleAnimation = TweenSequence<double>([
+    TweenSequenceItem(
+      tween: Tween(begin: 1.0, end: 1.30).chain(CurveTween(curve: Curves.easeOutBack)),
+      weight: 45,
+    ),
+    TweenSequenceItem(
+      tween: Tween(begin: 1.30, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+      weight: 55,
+    ),
+  ]).animate(_bounceController);
+
+  @override
+  void initState() {
+    super.initState();
+    widget.trigger?.addListener(_onTrigger);
+  }
+
+  @override
+  void didUpdateWidget(AdOptionBadge oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.trigger != widget.trigger) {
+      oldWidget.trigger?.removeListener(_onTrigger);
+      widget.trigger?.addListener(_onTrigger);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.trigger?.removeListener(_onTrigger);
+    _bounceController.dispose();
+    super.dispose();
+  }
+
+  void _onTrigger() {
+    _bounceController.forward(from: 0);
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    final badge = Container(
       padding: EdgeInsets.symmetric(
-        horizontal: compact ? 6.5 : 9.5,
-        vertical: compact ? 2.5 : 3.5,
+        horizontal: widget.compact ? 5.5 : 7.5,
+        vertical: widget.compact ? 2.0 : 3.0,
       ),
       decoration: BoxDecoration(
-        color: const Color(0xE6101D33),
-        borderRadius: BorderRadius.circular(compact ? 12 : 14),
+        color: const Color(0xF00A1526),
+        borderRadius: BorderRadius.circular(widget.compact ? 8 : 10),
         border: Border.all(
-          color: CompassColors.blueLight.withValues(alpha: 0.38),
-          width: 0.9,
+          color: const Color(0x6680BAFF),
+          width: 0.85,
         ),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.55),
-            blurRadius: 10,
-            offset: const Offset(0, 3),
+            color: Color(0x66000000),
+            blurRadius: 4,
+            offset: Offset(0, 1.5),
           ),
           BoxShadow(
-            color: CompassColors.blueLight.withValues(alpha: 0.16),
-            blurRadius: 12,
+            color: Color(0x2880BAFF),
+            blurRadius: 6,
             spreadRadius: 0.5,
           ),
         ],
@@ -414,22 +470,69 @@ class AdOptionBadge extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Icon(
-            Icons.play_circle_filled_rounded,
-            size: compact ? 10.5 : 12.5,
-            color: const Color(0xFFE2EEF8),
+            Icons.play_arrow_rounded,
+            size: widget.compact ? 9.5 : 12.0,
+            color: const Color(0xFF80BAFF),
           ),
-          const SizedBox(width: 3.5),
+          const SizedBox(width: 2.0),
           Text(
             'AD',
             style: TextStyle(
-              fontSize: compact ? 8.5 : 9.8,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 0.6,
-              color: const Color(0xFFE2EEF8),
+              fontSize: widget.compact ? 8.0 : 9.5,
+              fontWeight: FontWeight.w800,
+              letterSpacing: 0.5,
+              color: const Color(0xFF80BAFF),
             ),
           ),
         ],
       ),
+    );
+
+    return ScaleTransition(
+      scale: _scaleAnimation,
+      child: badge,
+    );
+  }
+}
+
+/// Wraps an option card or chip with a top-right Ad badge when [locked] is true.
+class AdLockOptionWrapper extends StatelessWidget {
+  const AdLockOptionWrapper({
+    super.key,
+    required this.locked,
+    required this.child,
+    this.compact = true,
+    this.badgeTop = 3.0,
+    this.badgeRight = 4.0,
+    this.trigger,
+  });
+
+  final bool locked;
+  final Widget child;
+  final bool compact;
+  final double badgeTop;
+  final double badgeRight;
+  final Listenable? trigger;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!locked) return child;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        child,
+        Positioned(
+          top: badgeTop,
+          right: badgeRight,
+          child: IgnorePointer(
+            child: AdOptionBadge(
+              compact: compact,
+              trigger: trigger,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

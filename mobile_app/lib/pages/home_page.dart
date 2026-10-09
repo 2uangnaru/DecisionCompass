@@ -63,7 +63,7 @@ class _HomePageState extends State<HomePage>
     if (mode == DecisionMode.yesNo) return false;
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
-    if (quota.isAvailable(now)) return false;
+    if (quota.isFreeEnergyReady(now)) return false;
     return !_unlockedModes.contains(mode);
   }
 
@@ -71,12 +71,22 @@ class _HomePageState extends State<HomePage>
     if (category == engine.ReadingCategory.general) return false;
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
-    if (quota.isAvailable(now)) return false;
+    if (quota.isFreeEnergyReady(now)) return false;
     return !_unlockedCategories.contains(category);
   }
 
+  final Map<engine.ReadingCategory, ValueNotifier<int>> _categoryTriggers = {};
+  final Map<DecisionMode, ValueNotifier<int>> _modeTriggers = {};
+
+  ValueNotifier<int> _categoryTrigger(engine.ReadingCategory cat) =>
+      _categoryTriggers.putIfAbsent(cat, () => ValueNotifier<int>(0));
+
+  ValueNotifier<int> _modeTrigger(DecisionMode m) =>
+      _modeTriggers.putIfAbsent(m, () => ValueNotifier<int>(0));
+
   Future<void> _handleModeTap(DecisionMode mode, String label) async {
     if (_isModeLocked(mode)) {
+      _modeTriggers[mode]?.value++;
       final confirmed = await showOptionAdUnlockSheet(
         context,
         optionLabel: label,
@@ -100,6 +110,7 @@ class _HomePageState extends State<HomePage>
     String label,
   ) async {
     if (_isCategoryLocked(category)) {
+      _categoryTriggers[category]?.value++;
       final confirmed = await showOptionAdUnlockSheet(
         context,
         optionLabel: label,
@@ -357,6 +368,12 @@ class _HomePageState extends State<HomePage>
     _dayChangeTimer?.cancel();
     _noticeTimer?.cancel();
     _noticeAnimation.dispose();
+    for (final notifier in _categoryTriggers.values) {
+      notifier.dispose();
+    }
+    for (final notifier in _modeTriggers.values) {
+      notifier.dispose();
+    }
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -697,22 +714,22 @@ class _HomePageState extends State<HomePage>
             // The constraint reaches Material and InkWell unchanged, so the
             // whole tappable area is 48dp tall, not just the painted box.
             constraints: const BoxConstraints(minHeight: _minTouchTarget),
-            child: GlassCard(
-              key: Key(choice.testKey),
-              selected: selected,
-              onTap: () => _handleCategoryTap(choice.category, label),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  locked
-                      ? Opacity(opacity: 0.22, child: chipContent)
-                      : chipContent,
-                  if (locked)
-                    const IgnorePointer(
-                      child: AdOptionBadge(compact: true),
-                    ),
-                ],
+            child: AdLockOptionWrapper(
+              locked: locked,
+              compact: true,
+              badgeTop: 1.5,
+              badgeRight: 3.5,
+              trigger: _categoryTrigger(choice.category),
+              child: GlassCard(
+                key: Key(choice.testKey),
+                selected: selected,
+                locked: locked,
+                onTap: () => _handleCategoryTap(choice.category, label),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 11,
+                ),
+                child: chipContent,
               ),
             ),
           ),
@@ -897,6 +914,7 @@ class _HomePageState extends State<HomePage>
         second: second,
         selected: _mode == mode,
         isLocked: _isModeLocked(mode),
+        trigger: _modeTrigger(mode),
         onTap: () => _handleModeTap(mode, '$first / $second'),
       );
     }
@@ -978,6 +996,7 @@ class _ModeCard extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.isLocked = false,
+    this.trigger,
   });
 
   /// Two already-localized tokens and a separator, never an English label to
@@ -987,6 +1006,7 @@ class _ModeCard extends StatelessWidget {
   final bool selected;
   final VoidCallback onTap;
   final bool isLocked;
+  final Listenable? trigger;
 
   @override
   Widget build(BuildContext context) {
@@ -1000,8 +1020,6 @@ class _ModeCard extends StatelessWidget {
           style: TextStyle(
             color: selected
                 ? CompassColors.blueLight
-                : isLocked
-                ? CompassColors.muted
                 : CompassColors.text,
             fontWeight: FontWeight.w700,
             fontSize: 12,
@@ -1025,8 +1043,6 @@ class _ModeCard extends StatelessWidget {
           style: TextStyle(
             color: selected
                 ? CompassColors.blueLight
-                : isLocked
-                ? CompassColors.muted
                 : CompassColors.secondary,
             fontWeight: FontWeight.w700,
             fontSize: 12,
@@ -1036,27 +1052,26 @@ class _ModeCard extends StatelessWidget {
       ],
     );
 
-    return GlassCard(
+    final card = GlassCard(
       selected: selected,
+      locked: isLocked,
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          Center(
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: isLocked
-                  ? Opacity(opacity: 0.22, child: textRow)
-                  : textRow,
-            ),
-          ),
-          if (isLocked)
-            const IgnorePointer(
-              child: AdOptionBadge(),
-            ),
-        ],
+      child: Center(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: textRow,
+        ),
       ),
+    );
+
+    return AdLockOptionWrapper(
+      locked: isLocked,
+      compact: true,
+      badgeTop: 3.5,
+      badgeRight: 4.5,
+      trigger: trigger,
+      child: card,
     );
   }
 }

@@ -90,6 +90,19 @@ void main() {
         // Quota should now have 1 bonus reading
         expect(quota.bonusReadings, 1);
         expect(find.text(rig.strings.adUnlockedReward), findsOneWidget);
+
+        // Individual unlock: Love is unlocked, so tapping it does not open ad modal
+        await tester.ensureVisible(find.byKey(const Key('category_love')));
+        await tester.tap(find.byKey(const Key('category_love')));
+        await tester.pump();
+        expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+
+        // Other categories like Career remain locked and still require ad
+        await tester.ensureVisible(find.byKey(const Key('category_career')));
+        await tester.tap(find.byKey(const Key('category_career')));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+        expect(find.byKey(const Key('option_unlock_ad_button')), findsOneWidget);
       },
     );
   });

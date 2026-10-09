@@ -72,6 +72,20 @@ class _RitualPageState extends State<RitualPage>
         quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings;
   }
 
+  Duration get _pulseDuration => _isQuotaExhausted
+      ? const Duration(milliseconds: 3200)
+      : const Duration(milliseconds: 1500);
+
+  void _syncPulseDuration() {
+    final target = _pulseDuration;
+    if (_pulseController.duration != target) {
+      _pulseController.duration = target;
+      if (_pulseController.isAnimating) {
+        _pulseController.repeat(reverse: true);
+      }
+    }
+  }
+
   void _startCountdownTimer() {
     _countdownTimer?.cancel();
     if (!_isCooldown && !_isQuotaExhausted) return;
@@ -89,6 +103,7 @@ class _RitualPageState extends State<RitualPage>
           _isCooldown = false;
           _isQuotaExhaustedOverride = false;
           _countdownString = '00:00:00';
+          _syncPulseDuration();
         });
       } else {
         setState(() {
@@ -162,6 +177,7 @@ class _RitualPageState extends State<RitualPage>
     setState(() {
       _isCooldown = false;
       _isQuotaExhaustedOverride = false;
+      _syncPulseDuration();
     });
     _countdownTimer?.cancel();
     final l10n = AppLocalizations.of(context);
@@ -169,22 +185,31 @@ class _RitualPageState extends State<RitualPage>
   }
 
   void _onQuotaChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      _syncPulseDuration();
+      setState(() {});
+    }
   }
 
   final Set<TimePeriod> _unlockedPeriods = <TimePeriod>{};
+  final Map<TimePeriod, ValueNotifier<int>> _periodTriggers = {};
+
+  ValueNotifier<int> _periodTrigger(TimePeriod p) =>
+      _periodTriggers.putIfAbsent(p, () => ValueNotifier<int>(0));
 
   bool _isPeriodLocked(TimePeriod period) {
     if (period == TimePeriod.now) return false;
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
-    if (quota.isAvailable(now) && !_isCooldown && !_isQuotaExhausted) {
+    final inCooldown = widget.isCooldown ?? _isCooldown;
+    if (quota.isFreeEnergyReady(now) && !inCooldown) {
       return false;
     }
     return !_unlockedPeriods.contains(period);
   }
 
   Future<void> _unlockPeriodWithAd(TimePeriod period) async {
+    _periodTriggers[period]?.value++;
     final l10n = AppLocalizations.of(context);
     final confirmed = await showOptionAdUnlockSheet(
       context,
@@ -198,6 +223,7 @@ class _RitualPageState extends State<RitualPage>
       _period = period;
       _isCooldown = false;
       _isQuotaExhaustedOverride = false;
+      _syncPulseDuration();
     });
     _countdownTimer?.cancel();
     _showNotice(l10n.adUnlockedReward);
@@ -302,11 +328,24 @@ class _RitualPageState extends State<RitualPage>
     }
     _pulseController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500),
+      duration: isExhausted
+          ? const Duration(milliseconds: 3200)
+          : const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     _resolveTimezone();
+  }
+
+  @override
+  void didUpdateWidget(RitualPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.isQuotaExhausted != oldWidget.isQuotaExhausted ||
+        widget.isCooldown != oldWidget.isCooldown) {
+      _isQuotaExhaustedOverride = widget.isQuotaExhausted;
+      _isCooldown = widget.isCooldown ?? _isCooldown;
+      _syncPulseDuration();
+    }
   }
 
   @override
@@ -318,6 +357,9 @@ class _RitualPageState extends State<RitualPage>
     _noticeTimer?.cancel();
     _noticeAnimation.dispose();
     _pulseController.dispose();
+    for (final notifier in _periodTriggers.values) {
+      notifier.dispose();
+    }
     super.dispose();
   }
 
@@ -481,6 +523,7 @@ class _RitualPageState extends State<RitualPage>
               quota.bonusReadings == 0 &&
               quota.dailyFreeReadingsUsed(local) >= quota.maxDailyFreeReadings;
           _countdownString = quota.remainingTimeString(local);
+          _syncPulseDuration();
         });
         _startCountdownTimer();
         _notifyCooldownLocked();
@@ -764,12 +807,21 @@ class _RitualPageState extends State<RitualPage>
                       final pulse = reduceMotion || selectedPeriodElapsed
                           ? 0.0
                           : _pulseController.value;
-                      final ringScale = _locked ? 0.96 : 1 + pulse * 0.08;
-                      final coreScale = _locked ? 0.96 : 1 + pulse * 0.02;
+                      // When quota is exhausted, breathing is significantly weaker and shallower
+                      final ringScale = _locked
+                          ? 0.96
+                          : _isQuotaExhausted
+                          ? 1 + pulse * 0.025
+                          : 1 + pulse * 0.08;
+                      final coreScale = _locked
+                          ? 0.96
+                          : _isQuotaExhausted
+                          ? 1 + pulse * 0.006
+                          : 1 + pulse * 0.02;
 
                       final auraColor = _isQuotaExhausted
                           ? const Color(0xFFE27C7C)
-                                .withValues(alpha: 0.16 + pulse * 0.20)
+                                .withValues(alpha: 0.07 + pulse * 0.08)
                           : _isCooldown
                           ? const Color(0xFFE2A84B)
                                 .withValues(alpha: 0.16 + pulse * 0.20)
@@ -787,12 +839,19 @@ class _RitualPageState extends State<RitualPage>
                               height: ringSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(color: auraColor),
+                                border: Border.all(
+                                  color: auraColor,
+                                  width: _isQuotaExhausted ? 0.85 : 1.0,
+                                ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: auraColor,
-                                    blurRadius: 22 + pulse * 24,
-                                    spreadRadius: pulse * 4,
+                                    blurRadius: _isQuotaExhausted
+                                        ? 10 + pulse * 6
+                                        : 22 + pulse * 24,
+                                    spreadRadius: _isQuotaExhausted
+                                        ? 0.2 + pulse * 0.6
+                                        : pulse * 4,
                                   ),
                                 ],
                               ),
@@ -828,7 +887,7 @@ class _RitualPageState extends State<RitualPage>
                                 border: Border.all(
                                   color: _isQuotaExhausted
                                       ? const Color(0xFFE27C7C)
-                                            .withValues(alpha: 0.85)
+                                            .withValues(alpha: 0.45 + pulse * 0.15)
                                       : _isCooldown
                                       ? const Color(0xFFE2A84B)
                                             .withValues(alpha: 0.85)
@@ -839,24 +898,35 @@ class _RitualPageState extends State<RitualPage>
                                   BoxShadow(
                                     color: _isQuotaExhausted
                                         ? const Color(0xFFE27C7C)
-                                              .withValues(alpha: 0.25)
+                                              .withValues(alpha: 0.10 + pulse * 0.06)
                                         : _isCooldown
                                         ? const Color(0xFFE2A84B)
                                               .withValues(alpha: 0.25)
                                         : CompassColors.blueLight.withValues(
                                             alpha: 0.3,
                                           ),
-                                    blurRadius: _locked ? 44 : 26 + pulse * 10,
-                                    spreadRadius: _locked ? 6 : 1 + pulse * 2,
+                                    blurRadius: _locked
+                                        ? 44
+                                        : _isQuotaExhausted
+                                        ? 14 + pulse * 5
+                                        : 26 + pulse * 10,
+                                    spreadRadius: _locked
+                                        ? 6
+                                        : _isQuotaExhausted
+                                        ? 0.5 + pulse * 0.5
+                                        : 1 + pulse * 2,
                                   ),
                                 ],
                               ),
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  ZodiacAvatar(
-                                    size: compact ? 46 : 54,
-                                    sign: widget.profile.zodiacSign,
+                                  Opacity(
+                                    opacity: _isQuotaExhausted ? 0.72 : 1.0,
+                                    child: ZodiacAvatar(
+                                      size: compact ? 46 : 54,
+                                      sign: widget.profile.zodiacSign,
+                                    ),
                                   ),
                                   SizedBox(height: compact ? 6 : 8),
                                   Text(
@@ -1055,56 +1125,57 @@ class _RitualPageState extends State<RitualPage>
                 fontWeight: FontWeight.w600,
                 color: elapsed
                     ? CompassColors.muted
-                    : locked
-                    ? CompassColors.muted
                     : selected
                     ? Colors.white
                     : CompassColors.secondary,
               ),
             );
-            return ChoiceChip(
-              key: Key('ritual_period_${period.name}'),
-              label: Stack(
-                alignment: Alignment.center,
-                children: [
-                  locked
-                      ? Opacity(opacity: 0.22, child: chipText)
-                      : chipText,
-                  if (locked)
-                    const IgnorePointer(
-                      child: AdOptionBadge(compact: true),
-                    ),
-                ],
+            final chip = Theme(
+              data: Theme.of(context).copyWith(
+                splashFactory: locked ? NoSplash.splashFactory : null,
+                splashColor: locked ? Colors.transparent : null,
+                highlightColor: locked ? Colors.transparent : null,
               ),
-              selected: selected,
-              showCheckmark: false,
-              visualDensity: VisualDensity.compact,
-              // A null callback is what disables a chip. Elapsed periods stay
-              // on screen, muted, so the whole day is still legible.
-              onSelected: elapsed || _locked
-                  ? null
-                  : (_) {
-                      if (locked) {
-                        _unlockPeriodWithAd(period);
-                        return;
-                      }
-                      // A cutoff may have passed since the last paint.
-                      if (!_availability(period).selectable) {
-                        setState(() {});
-                        return;
-                      }
-                      setState(() => _period = period);
-                    },
-              backgroundColor: Colors.white.withValues(alpha: 0.04),
-              disabledColor: Colors.white.withValues(alpha: 0.02),
-              selectedColor: const Color(0xFF244C78),
-              side: BorderSide(
-                color: selected && !elapsed
-                    ? CompassColors.blueLight
-                    : CompassColors.line,
+              child: ChoiceChip(
+                key: Key('ritual_period_${period.name}'),
+                label: chipText,
+                selected: selected,
+                showCheckmark: false,
+                visualDensity: VisualDensity.compact,
+                onSelected: elapsed || _locked
+                    ? null
+                    : (_) {
+                        if (locked) {
+                          _unlockPeriodWithAd(period);
+                          return;
+                        }
+                        // A cutoff may have passed since the last paint.
+                        if (!_availability(period).selectable) {
+                          setState(() {});
+                          return;
+                        }
+                        setState(() => _period = period);
+                      },
+                backgroundColor: Colors.white.withValues(alpha: 0.04),
+                disabledColor: Colors.white.withValues(alpha: 0.02),
+                selectedColor: const Color(0xFF244C78),
+                side: BorderSide(
+                  color: selected && !elapsed
+                      ? CompassColors.blueLight
+                      : CompassColors.line,
+                ),
+                labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
               ),
-              labelPadding: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            );
+
+            return AdLockOptionWrapper(
+              locked: locked,
+              compact: true,
+              badgeTop: -2.0,
+              badgeRight: -1.0,
+              trigger: _periodTrigger(period),
+              child: chip,
             );
           }).toList(),
         ),

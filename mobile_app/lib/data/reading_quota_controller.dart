@@ -13,6 +13,10 @@ abstract interface class ReadingQuotaController implements Listenable {
   int get bonusReadings;
   int dailyFreeReadingsUsed(DateTime now);
   int get maxDailyFreeReadings;
+
+  /// Whether natural daily free energy is currently ready (not in cooldown and not exhausted).
+  bool isFreeEnergyReady(DateTime now);
+
   Future<void> earnBonusReading();
 
   /// Commit one successful reading using the device LOCAL completion time.
@@ -86,6 +90,17 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
   @override
   bool isAvailable(DateTime now) {
     if (_bonusReadings > 0) return true;
+    if (_storedDateString != _dateKey(now.toLocal())) return true;
+    if (_usedToday >= maxDailyFreeReadings) return false;
+    if (_lastReadingTime != null) {
+      final elapsed = now.difference(_lastReadingTime!);
+      if (elapsed < cooldownDuration) return false;
+    }
+    return true;
+  }
+
+  @override
+  bool isFreeEnergyReady(DateTime now) {
     if (_storedDateString != _dateKey(now.toLocal())) return true;
     if (_usedToday >= maxDailyFreeReadings) return false;
     if (_lastReadingTime != null) {
@@ -222,6 +237,9 @@ class NoopReadingQuotaController implements ReadingQuotaController {
   bool isAvailable(DateTime now) => !defaultCooldown;
 
   @override
+  bool isFreeEnergyReady(DateTime now) => !defaultCooldown;
+
+  @override
   bool isCooldown(DateTime now) => defaultCooldown;
 
   @override
@@ -312,6 +330,12 @@ class FakeReadingQuotaController extends ChangeNotifier
 
   @override
   int get maxDailyFreeReadings => 3;
+
+  @override
+  bool isFreeEnergyReady(DateTime now) {
+    if (_usedToday >= maxDailyFreeReadings) return false;
+    return !_isCooldown;
+  }
 
   @override
   Future<void> earnBonusReading() async {
