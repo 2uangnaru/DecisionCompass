@@ -12,7 +12,9 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
+import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
+import '../widgets/monetization_unlock_sheet.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'loading_page.dart';
 
@@ -25,6 +27,7 @@ class RitualPage extends StatefulWidget {
     required this.profile,
     required this.dependencies,
     this.onSafetyAcknowledged,
+    this.isCooldown = false,
   });
 
   final DecisionMode mode;
@@ -34,6 +37,9 @@ class RitualPage extends StatefulWidget {
   final ReadingDependencies dependencies;
   final ValueChanged<AppProfile>? onSafetyAcknowledged;
 
+  /// Whether the cooldown state is simulated for Option 1 UI.
+  final bool isCooldown;
+
   @override
   State<RitualPage> createState() => _RitualPageState();
 }
@@ -41,9 +47,28 @@ class RitualPage extends StatefulWidget {
 class _RitualPageState extends State<RitualPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
+  late bool _isCooldown = widget.isCooldown;
   Timer? _periodRefreshTimer;
   late final AnimationController _pulseController;
   late AppProfile _profile = widget.profile;
+
+  void _openUnlockSheet() {
+    showMonetizationUnlockSheet(
+      context,
+      remainingTime: '02:15:34',
+      onWatchAd: () {
+        setState(() => _isCooldown = false);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              '✨ Đã mở khóa 1 lượt phân tích ngay! (Thời gian đếm ngược vẫn giữ nguyên)',
+            ),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      },
+    );
+  }
 
   /// The IANA zone a reading taken now would resolve to.
   ///
@@ -285,34 +310,45 @@ class _RitualPageState extends State<RitualPage>
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     return CelestialScaffold(
       // Keep the choice, reveal control and instruction in one top-to-bottom
-      // flow. A capped gap after the period chips avoids a tall-screen void;
-      // the scroll view still protects small screens and larger text scales.
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final compact = constraints.maxHeight < 700;
-          // Sized from the space actually available rather than from a
-          // breakpoint, and capped by width so it never crowds the edges.
-          final ringSize = math.min(
-            (constraints.maxHeight * 0.28).clamp(150.0, 220.0),
-            constraints.maxWidth * 0.62,
-          );
-          return SingleChildScrollView(
-            padding: EdgeInsets.fromLTRB(
-              20,
-              compact ? 6 : 12,
-              20,
-              compact ? 18 : 28,
+      // flow. Spacing is kept compact and balanced so elements are never too far apart.
+      child: Column(
+        children: [
+          Expanded(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final compact = constraints.maxHeight < 680;
+                // Sized proportionally so it leaves comfortable space for controls
+                // without crowding edges or pushing elements off the viewport.
+                final ringSize = math.min(
+                  (constraints.maxHeight * 0.25).clamp(135.0, 195.0),
+                  constraints.maxWidth * 0.58,
+                );
+                return SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(
+                    20,
+                    compact ? 4 : 8,
+                    20,
+                    compact ? 10 : 16,
+                  ),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight - (compact ? 16 : 24),
+                    ),
+                    child: IntrinsicHeight(
+                      child: _body(
+                        compact,
+                        ringSize,
+                        ringSize * 0.82,
+                        reduceMotion,
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(
-                minHeight: constraints.maxHeight - (compact ? 24 : 40),
-              ),
-              child: IntrinsicHeight(
-                child: _body(compact, ringSize, ringSize * 0.81, reduceMotion),
-              ),
-            ),
-          );
-        },
+          ),
+          const AdBannerSlot(),
+        ],
       ),
     );
   }
@@ -348,40 +384,41 @@ class _RitualPageState extends State<RitualPage>
               tooltip: l10n.responsibleUse,
               onPressed: _locked
                   ? null
-                  : () => showResponsibleUseSheet(context),
+                  : () => showResponsibleUseSheet(
+                      context,
+                      analytics: widget.dependencies.analytics,
+                    ),
               icon: const Icon(Icons.shield_outlined, size: 20),
             ),
           ],
         ),
-        const SizedBox(height: 10),
-        _CategoryBadge(
-          key: const Key('ritual_category_badge'),
-          label: categoryLabel(l10n, widget.category),
-          semanticsLabel: l10n.readingAreaSemantics(
-            categoryLabel(l10n, widget.category),
+        const SizedBox(height: 6),
+        GestureDetector(
+          onTap: () => setState(() => _isCooldown = !_isCooldown),
+          child: _CategoryBadge(
+            key: const Key('ritual_category_badge'),
+            label: categoryLabel(l10n, widget.category),
+            semanticsLabel: l10n.readingAreaSemantics(
+              categoryLabel(l10n, widget.category),
+            ),
           ),
         ),
-        SizedBox(height: compact ? 10 : 18),
+        SizedBox(height: compact ? 6 : 10),
         _periodSelector(l10n),
-        SizedBox(height: compact ? 28 : 48),
-        // The hero follows the chips directly. Centring it in all remaining
-        // height used to create the large empty band above the circle.
+        SizedBox(height: compact ? 14 : 20),
         Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Semantics(
               button: true,
               enabled: !_locked && !selectedPeriodElapsed,
-              // A list of three complete labels, not a sentence with the
-              // period dropped into it: "for Morning" is ungrammatical in
-              // several of these languages, and a screen reader reads a
-              // comma-separated list perfectly well.
               label:
                   '${l10n.reveal}, ${periodLabel(l10n, _period)}, '
                   '${modeLabel(l10n, widget.mode)}',
               child: GestureDetector(
                 key: const Key('reveal_button'),
                 onTap: _locked || selectedPeriodElapsed ? null : _reveal,
+                onLongPress: () => setState(() => _isCooldown = !_isCooldown),
                 child: Opacity(
                   opacity: selectedPeriodElapsed ? 0.45 : 1,
                   child: AnimatedBuilder(
@@ -390,11 +427,15 @@ class _RitualPageState extends State<RitualPage>
                       final pulse = reduceMotion || selectedPeriodElapsed
                           ? 0.0
                           : _pulseController.value;
-                      // Outer ring breathes noticeably wider than the core button
-                      // so the pulse reads clearly without the whole control
-                      // feeling like it is jumping in size.
-                      final ringScale = _locked ? 0.96 : 1 + pulse * 0.09;
-                      final coreScale = _locked ? 0.96 : 1 + pulse * 0.022;
+                      final ringScale = _locked ? 0.96 : 1 + pulse * 0.08;
+                      final coreScale = _locked ? 0.96 : 1 + pulse * 0.02;
+
+                      final auraColor = _isCooldown
+                          ? const Color(0xFFE2A84B)
+                              .withValues(alpha: 0.16 + pulse * 0.18)
+                          : CompassColors.blueLight
+                              .withValues(alpha: 0.2 + pulse * 0.28);
+
                       return Stack(
                         alignment: Alignment.center,
                         children: [
@@ -406,17 +447,13 @@ class _RitualPageState extends State<RitualPage>
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 border: Border.all(
-                                  color: CompassColors.blueLight.withValues(
-                                    alpha: 0.2 + pulse * 0.28,
-                                  ),
+                                  color: auraColor,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: CompassColors.blueLight.withValues(
-                                      alpha: 0.08 + pulse * 0.1,
-                                    ),
-                                    blurRadius: 24 + pulse * 26,
-                                    spreadRadius: pulse * 6,
+                                    color: auraColor,
+                                    blurRadius: 22 + pulse * 24,
+                                    spreadRadius: pulse * 4,
                                   ),
                                 ],
                               ),
@@ -429,23 +466,35 @@ class _RitualPageState extends State<RitualPage>
                               height: buttonSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: const RadialGradient(
-                                  colors: [
-                                    Color(0xFF286DA5),
-                                    Color(0xFF153553),
-                                  ],
-                                ),
+                                gradient: _isCooldown
+                                    ? const RadialGradient(
+                                        colors: [
+                                          Color(0xFF231F2A),
+                                          Color(0xFF131520),
+                                        ],
+                                      )
+                                    : const RadialGradient(
+                                        colors: [
+                                          Color(0xFF286DA5),
+                                          Color(0xFF153553),
+                                        ],
+                                      ),
                                 border: Border.all(
-                                  color: CompassColors.blueLight,
+                                  color: _isCooldown
+                                      ? const Color(0xFFE2A84B)
+                                          .withValues(alpha: 0.8)
+                                      : CompassColors.blueLight,
                                   width: 1.4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: CompassColors.blueLight.withValues(
-                                      alpha: 0.3,
-                                    ),
-                                    blurRadius: _locked ? 48 : 30 + pulse * 12,
-                                    spreadRadius: _locked ? 8 : 2 + pulse * 2,
+                                    color: _isCooldown
+                                        ? const Color(0xFFE2A84B)
+                                            .withValues(alpha: 0.2)
+                                        : CompassColors.blueLight
+                                            .withValues(alpha: 0.3),
+                                    blurRadius: _locked ? 44 : 26 + pulse * 10,
+                                    spreadRadius: _locked ? 6 : 1 + pulse * 2,
                                   ),
                                 ],
                               ),
@@ -453,27 +502,42 @@ class _RitualPageState extends State<RitualPage>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ZodiacAvatar(
-                                    size: compact ? 54 : 62,
+                                    size: compact ? 46 : 54,
                                     sign: widget.profile.zodiacSign,
                                   ),
-                                  const SizedBox(height: 10),
+                                  const SizedBox(height: 6),
                                   Text(
                                     _locked
                                         ? l10n.aligning
                                         : selectedPeriodElapsed
                                         ? l10n.periodPassedShort
+                                        : _isCooldown
+                                        ? 'LẮNG ĐỌNG'
                                         : l10n.reveal,
                                     textAlign: TextAlign.center,
-                                    // Two lines, because several languages
-                                    // need more than one word where English
-                                    // needs one; the circle keeps its size.
-                                    maxLines: 2,
+                                    maxLines: 1,
                                     style: TextStyle(
-                                      fontSize: 12,
+                                      fontSize: 11,
                                       letterSpacing: trackingFor(context, 2),
                                       fontWeight: FontWeight.w700,
+                                      color: _isCooldown
+                                          ? const Color(0xFFF3E0A2)
+                                          : Colors.white,
                                     ),
                                   ),
+                                  if (_isCooldown) ...[
+                                    const SizedBox(height: 2),
+                                    const Text(
+                                      '02:15:34',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: 'monospace',
+                                        color: CompassColors.gold,
+                                        letterSpacing: 0.8,
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -485,24 +549,95 @@ class _RitualPageState extends State<RitualPage>
                 ),
               ),
             ),
-            SizedBox(height: compact ? 18 : 24),
+            SizedBox(height: compact ? 10 : 14),
+            if (_isCooldown) ...[
+              Container(
+                constraints: const BoxConstraints(maxWidth: 320),
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    key: const Key('ritual_watch_ad_button'),
+                    onTap: _openUnlockSheet,
+                    borderRadius: BorderRadius.circular(16),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 11,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFF2477C9),
+                            Color(0xFF4EB3E8),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.25),
+                          width: 1.0,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFF2477C9).withValues(alpha: 0.35),
+                            blurRadius: 12,
+                            offset: const Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('🎬', style: TextStyle(fontSize: 14)),
+                              SizedBox(width: 8),
+                              Text(
+                                'XEM QUẢNG CÁO · PHÂN TÍCH NGAY',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w800,
+                                  letterSpacing: 0.8,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SizedBox(height: compact ? 8 : 12),
+            ],
             Text(
               _locked
                   ? l10n.ritualLocked
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
+                  : _isCooldown
+                  ? 'Năng lượng đang hồi phục (02:15:34)'
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.headlineMedium,
+              style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    fontSize: _isCooldown ? 16 : null,
+                    color: _isCooldown ? const Color(0xFFF3E0A2) : null,
+                  ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
             Text(
-              l10n.keepChoiceInMind,
+              _isCooldown
+                  ? 'Bạn có thể chờ lượt tự động mở, hoặc xem 1 video ngắn để phân tích ngay.'
+                  : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontSize: 12.5,
+                  ),
             ),
-            SizedBox(height: compact ? 10 : 14),
+            SizedBox(height: compact ? 8 : 10),
             Text(
               l10n.ritualSafety,
               key: const Key('ritual_responsible_use_note'),
@@ -511,7 +646,7 @@ class _RitualPageState extends State<RitualPage>
                 color: CompassColors.secondary,
                 fontSize: 11,
                 fontStyle: FontStyle.italic,
-                height: 1.45,
+                height: 1.4,
               ),
             ),
           ],
@@ -621,9 +756,8 @@ class _RitualPageState extends State<RitualPage>
           Text(
             l10n.timezoneUnavailableNotice,
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: CompassColors.muted,
-            ),
+            style: Theme.of(context).textTheme.bodySmall
+                ?.copyWith(color: CompassColors.muted),
           ),
           TextButton(
             key: const Key('ritual_timezone_retry_button'),

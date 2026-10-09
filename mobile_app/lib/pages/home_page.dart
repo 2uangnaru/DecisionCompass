@@ -13,6 +13,7 @@ import '../localized_rotation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../theme.dart';
+import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_capsule_bar.dart';
 import '../widgets/daily_energy_info.dart';
@@ -197,6 +198,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           category: _category,
           profile: _profile,
           dependencies: widget.dependencies,
+          isCooldown: true,
           onSafetyAcknowledged: (updated) {
             setState(() => _profile = updated);
             widget.dependencies.profileRepository.save(updated);
@@ -210,79 +212,86 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
-      child: NotificationListener<ScrollNotification>(
-        onNotification: (notification) {
-          if (_isSettingsOpen) {
-            if (notification is ScrollStartNotification ||
-                notification is ScrollUpdateNotification) {
-              setState(() => _isSettingsOpen = false);
-            }
-          }
-          return false;
-        },
-        child: Listener(
-          behavior: HitTestBehavior.translucent,
-          onPointerDown: (event) {
-            if (_isSettingsOpen) {
-              final renderBox =
-                  _settingsCapsuleKey.currentContext?.findRenderObject()
-                      as RenderBox?;
-              if (renderBox != null && renderBox.hasSize) {
-                final capsuleBox =
-                    renderBox.localToGlobal(Offset.zero) & renderBox.size;
-                if (!capsuleBox.contains(event.position)) {
-                  setState(() => _isSettingsOpen = false);
+      child: Column(
+        children: [
+          Expanded(
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (_isSettingsOpen) {
+                  if (notification is ScrollStartNotification ||
+                      notification is ScrollUpdateNotification) {
+                    setState(() => _isSettingsOpen = false);
+                  }
                 }
-              } else {
-                setState(() => _isSettingsOpen = false);
-              }
-            }
-          },
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _header(l10n),
-                const SizedBox(height: 24),
-                _dailySignals(l10n),
-                const SizedBox(height: 28),
-                _positioning(l10n),
-                const SizedBox(height: 22),
-                // No heading here: the positioning copy above already asks for
-                // this, and a second one made the screen read as a wall of
-                // headings.
-                _modeGrid(l10n),
-                const SizedBox(height: 28),
-                Text(
-                  l10n.areaQuestion,
-                  style: Theme.of(context).textTheme.headlineMedium,
-                ),
-                const SizedBox(height: 14),
-                _categorySelector(l10n),
-                const SizedBox(height: 28),
-                FilledButton.icon(
-                  key: const Key('find_direction'),
-                  onPressed: _beginReading,
-                  icon: const Icon(Icons.auto_awesome_rounded),
-                  label: Text(l10n.findDirection),
-                ),
-                const SizedBox(height: 12),
-                Center(
-                  child: Text(
-                    '${categoryLabel(l10n, _category)}  •  '
-                    '${modeLabel(l10n, _mode)}',
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: CompassColors.muted,
-                      letterSpacing: trackingFor(context, 0.8),
-                    ),
+                return false;
+              },
+              child: Listener(
+                behavior: HitTestBehavior.translucent,
+                onPointerDown: (event) {
+                  if (_isSettingsOpen) {
+                    final renderBox =
+                        _settingsCapsuleKey.currentContext?.findRenderObject()
+                            as RenderBox?;
+                    if (renderBox != null && renderBox.hasSize) {
+                      final capsuleBox =
+                          renderBox.localToGlobal(Offset.zero) & renderBox.size;
+                      if (!capsuleBox.contains(event.position)) {
+                        setState(() => _isSettingsOpen = false);
+                      }
+                    } else {
+                      setState(() => _isSettingsOpen = false);
+                    }
+                  }
+                },
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(20, 14, 20, 32),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _header(l10n),
+                      const SizedBox(height: 24),
+                      _dailySignals(l10n),
+                      const SizedBox(height: 28),
+                      _positioning(l10n),
+                      const SizedBox(height: 22),
+                      // No heading here: the positioning copy above already asks for
+                      // this, and a second one made the screen read as a wall of
+                      // headings.
+                      _modeGrid(l10n),
+                      const SizedBox(height: 28),
+                      Text(
+                        l10n.areaQuestion,
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                      const SizedBox(height: 14),
+                      _categorySelector(l10n),
+                      const SizedBox(height: 28),
+                      FilledButton.icon(
+                        key: const Key('find_direction'),
+                        onPressed: _beginReading,
+                        icon: const Icon(Icons.auto_awesome_rounded),
+                        label: Text(l10n.findDirection),
+                      ),
+                      const SizedBox(height: 12),
+                      Center(
+                        child: Text(
+                          '${categoryLabel(l10n, _category)}  •  '
+                          '${modeLabel(l10n, _mode)}',
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                            color: CompassColors.muted,
+                            letterSpacing: trackingFor(context, 0.8),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ),
-        ),
+          const AdBannerSlot(),
+        ],
       ),
     );
   }
@@ -372,7 +381,10 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             }
           },
           localeController: widget.dependencies.localeController,
-          onOpenResponsibleUse: () => showResponsibleUseSheet(context),
+          onOpenResponsibleUse: () => showResponsibleUseSheet(
+            context,
+            analytics: widget.dependencies.analytics,
+          ),
           onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => HistoryPage(dependencies: widget.dependencies),
