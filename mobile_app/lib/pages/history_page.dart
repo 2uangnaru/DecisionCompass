@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../data/history_entry.dart';
+import '../analytics/analytics_event.dart';
 import '../data/models/models.dart' as engine;
 import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
@@ -41,6 +42,10 @@ class _HistoryPageState extends State<HistoryPage> {
   void initState() {
     super.initState();
     _entries = widget.dependencies.historyRepository.list();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted)
+        widget.dependencies.analytics.record(AnalyticsEvent.historyOpened());
+    });
   }
 
   void _retry() => setState(() {

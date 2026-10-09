@@ -13,6 +13,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';
+
+  @override
+  String get analyticsConsentBody =>
+      'AstraCue को बेहतर बनाने के लिए Firebase/Google Analytics को ऐप के उपयोग और डिवाइस की जानकारी इकट्ठा करने दें। आपका नाम, जन्म विवरण और कुंडली नहीं भेजे जाते। आप इसे ज़िम्मेदारी से उपयोग अनुभाग में बंद कर सकते हैं।';
+
+  @override
+  String get analyticsConsentSaveFailed =>
+      'यह विकल्प सहेजा नहीं जा सका। इस सत्र में आँकड़ों का संग्रह बंद है।';
+
+  @override
   String get continueAction => 'आगे बढ़ें';
 
   @override
@@ -1199,11 +1210,6 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get cancelAction => 'रद्द करें';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
-  }
 
   @override
   String get profileSaved => 'प्रोफ़ाइल अपडेट हो गई।';
@@ -1264,6 +1270,17 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';
+
+  @override
+  String get analyticsConsentBody =>
+      'AstraCue को बेहतर बनाने के लिए Firebase/Google Analytics को ऐप के उपयोग और डिवाइस की जानकारी इकट्ठा करने दें। आपका नाम, जन्म विवरण और कुंडली नहीं भेजे जाते। आप इसे ज़िम्मेदारी से उपयोग अनुभाग में बंद कर सकते हैं।';
+
+  @override
+  String get analyticsConsentSaveFailed =>
+      'यह विकल्प सहेजा नहीं जा सका। इस सत्र में आँकड़ों का संग्रह बंद है।';
+
+  @override
   String get continueAction => 'आगे बढ़ें';
 
   @override
@@ -2450,11 +2467,6 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get cancelAction => 'रद्द करें';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return 'खाली छोड़ें तो आपको $name कहा जाएगा।';
-  }
 
   @override
   String get profileSaved => 'प्रोफ़ाइल अपडेट हो गई।';

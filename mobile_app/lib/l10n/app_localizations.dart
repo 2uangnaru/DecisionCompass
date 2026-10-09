@@ -121,6 +121,24 @@ abstract class AppLocalizations {
   /// **'AstraCue'**
   String get appName;
 
+  /// No description provided for @analyticsConsentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Usage analytics (optional)'**
+  String get analyticsConsentTitle;
+
+  /// No description provided for @analyticsConsentBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow Firebase/Google Analytics to collect app usage and device information to help improve AstraCue. Your name, birth details and charts are not sent. You can turn this off in Responsible Use settings.'**
+  String get analyticsConsentBody;
+
+  /// No description provided for @analyticsConsentSaveFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save this preference. Analytics is off for this session.'**
+  String get analyticsConsentSaveFailed;
+
   /// No description provided for @continueAction.
   ///
   /// In en, this message translates to:
@@ -2166,12 +2184,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cancelAction;
-
-  /// No description provided for @profileDefaultNameHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Leave this empty to be called {name}.'**
-  String profileDefaultNameHint(String name);
 
   /// No description provided for @profileSaved.
   ///

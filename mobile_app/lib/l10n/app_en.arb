@@ -1,6 +1,9 @@
 {
   "@@locale": "en",
   "appName": "AstraCue",
+  "analyticsConsentTitle": "Usage analytics (optional)",
+  "analyticsConsentBody": "Allow Firebase/Google Analytics to collect app usage and device information to help improve AstraCue. Your name, birth details and charts are not sent. You can turn this off in Responsible Use settings.",
+  "analyticsConsentSaveFailed": "Could not save this preference. Analytics is off for this session.",
   "continueAction": "Continue",
   "backAction": "Back",
   "closeAction": "Close",
@@ -434,15 +437,6 @@
   "openProfile": "Open your profile",
   "saveAction": "Save",
   "cancelAction": "Cancel",
-  "profileDefaultNameHint": "Leave this empty to be called {name}.",
-  "@profileDefaultNameHint": {
-    "placeholders": {
-      "name": {
-        "type": "String",
-        "example": "Explorer"
-      }
-    }
-  },
   "profileSaved": "Profile updated.",
   "profileBirthTimeLocked": "You can change your birth time again in {wait}.",
   "@profileBirthTimeLocked": {

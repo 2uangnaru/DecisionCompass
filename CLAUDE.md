@@ -2,6 +2,27 @@
 
 Updated: 2026-09-21
 
+## Current analytics handoff — 2026-10-09
+
+Android product tracking is now instrumented via `mobile_app/lib/analytics/`
+and injectable `ReadingDependencies.analytics`. Eight typed custom events,
+optional persisted consent, seven-language controls and a Firebase SDK adapter
+are implemented. The production calculation remains fully local; formulas and
+reading results were not changed. See `mobile_app/TRACKING.md` for exact triggers,
+parameters, privacy boundaries and setup. Analytics initializes in the background
+and must not extend the startup ritual.
+
+No genuine Firebase config is present, no external project was created, and
+device-to-Firebase delivery has not been verified. Default APKs use a no-op sink
+and deactivate native collection. Activating requires the owner's genuine
+Android `google-services.json` plus `FIREBASE_ANALYTICS_ENABLED=true` at build
+time, followed by Android DebugView QA. Do not claim an operational dashboard
+until those steps are verified. Ads/billing/Crashlytics are outside this task.
+
+The older prototype status below is historical and contains stale claims about
+mock readings and missing localization/profile features; inspect current code
+and the mobile README before treating those claims as present-day blockers.
+
 This file is the implementation handoff for any coding agent joining this
 repository. Read it before changing code. The product and UX specifications are
 in `outputs/`; this file records what is actually implemented versus planned.

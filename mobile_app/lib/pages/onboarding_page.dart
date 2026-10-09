@@ -5,6 +5,7 @@ import 'package:country_picker/country_picker.dart' hide showCountryPicker;
 import '../widgets/compass_country_picker.dart';
 
 import '../app_profile.dart';
+import '../analytics/analytics_event.dart';
 import '../l10n/app_localizations.dart';
 import '../local_engine/time/tzdb.dart';
 import '../localized_presentation.dart';
@@ -15,6 +16,7 @@ import '../widgets/birth_date_picker.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/language_selector.dart';
+import '../widgets/analytics_consent_tile.dart';
 import 'home_page.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -86,6 +88,22 @@ class _OnboardingPageState extends State<OnboardingPage> {
   /// as when they try to continue. Separate from [_showRequiredErrors] so
   /// dismissing the dialog does not also light up the date and country.
   var _showBirthTimeError = false;
+  bool _onboardingTracked = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _trackOnboarding();
+    });
+  }
+
+  void _trackOnboarding() {
+    if (_onboardingTracked || widget.initialProfile != null) return;
+    _onboardingTracked = widget.dependencies.analytics.record(
+      AnalyticsEvent.onboardingStarted(),
+    );
+  }
 
   /// Reads the stored `HH:mm` back. A record that cannot be parsed is treated
   /// as no time at all rather than repaired into one.
@@ -249,6 +267,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
     });
     try {
       await widget.dependencies.profileRepository.save(profile);
+      if (widget.initialProfile == null) {
+        widget.dependencies.analytics.record(
+          AnalyticsEvent.onboardingCompleted(),
+        );
+      }
     } catch (_) {
       // The profile is not saved, so nothing has happened yet — including to
       // the language. The reader keeps their form and can try again.
@@ -373,6 +396,10 @@ class _OnboardingPageState extends State<OnboardingPage> {
                   ),
                   Column(
                     children: [
+                      AnalyticsConsentTile(
+                        analytics: widget.dependencies.analytics,
+                        onEnabled: _trackOnboarding,
+                      ),
                       FilledButton.icon(
                         key: const Key('continue_to_profile'),
                         onPressed: _continueToProfile,
@@ -459,10 +486,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                         Text(
                           zodiacLabel(l10n, zodiacForDate(_birthDate!)),
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: CompassColors.gold,
-                            letterSpacing: 1.7,
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: CompassColors.gold,
+                                letterSpacing: 1.7,
+                              ),
                         ),
                       ],
                     ),
@@ -486,93 +514,32 @@ class _OnboardingPageState extends State<OnboardingPage> {
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(labelText: l10n.nameField),
             ),
-          const SizedBox(height: 14),
-          GlassCard(
-            key: const Key('birth_date_picker'),
-            onTap: _pickBirthDate,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: [
-                const Icon(
-                  Icons.calendar_month_rounded,
-                  color: CompassColors.gold,
-                ),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.dateOfBirth,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        _birthDate == null
-                            ? l10n.selectBirthDate
-                            : formatDate(localeName, _birthDate!),
-                        key: const Key('birth_date_value'),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
-                ),
-                const Icon(Icons.chevron_right_rounded),
-              ],
-            ),
-          ),
-          if (_showRequiredErrors && _birthDate == null)
-            Padding(
-              padding: const EdgeInsets.only(top: 6, left: 12),
-              child: Text(
-                l10n.birthDateRequired,
-                style: const TextStyle(color: CompassColors.coral),
-              ),
-            ),
-          const SizedBox(height: 14),
-          GlassCard(
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            // Stated the way the reader would state it, and on by default.
-            // The old switch said "Birth time unknown", which made the
-            // affirmative answer the one you had to turn *off* — easy to
-            // misread, and it defaulted every new profile to unknown.
-            child: SwitchListTile.adaptive(
-              key: const Key('knows_birth_time'),
-              contentPadding: EdgeInsets.zero,
-              title: Text(l10n.knowBirthTime),
-              subtitle: Text(
-                _knowsBirthTime
-                    ? l10n.knowBirthTimeDetail
-                    : l10n.birthTimeUnknownDetail,
-              ),
-              value: _knowsBirthTime,
-              onChanged: _setKnowsBirthTime,
-            ),
-          ),
-          if (_knowsBirthTime) ...[
             const SizedBox(height: 14),
             GlassCard(
-              key: const Key('birth_time_picker'),
-              onTap: _pickBirthTime,
+              key: const Key('birth_date_picker'),
+              onTap: _pickBirthDate,
               padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
               child: Row(
                 children: [
-                  const Icon(Icons.schedule_rounded, color: CompassColors.gold),
+                  const Icon(
+                    Icons.calendar_month_rounded,
+                    color: CompassColors.gold,
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          l10n.timeOfBirth,
+                          l10n.dateOfBirth,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          // A prompt until the reader answers it — never a
-                          // plausible-looking hour they did not choose.
-                          _birthTimeDisplay(localeName) ?? l10n.selectBirthTime,
-                          key: const Key('birth_time_value'),
+                          _birthDate == null
+                              ? l10n.selectBirthDate
+                              : formatDate(localeName, _birthDate!),
+                          key: const Key('birth_date_value'),
                           style: Theme.of(context).textTheme.bodyLarge,
                         ),
                       ],
@@ -582,89 +549,157 @@ class _OnboardingPageState extends State<OnboardingPage> {
                 ],
               ),
             ),
-            if (_showBirthTimeError && _birthTimeMissing)
+            if (_showRequiredErrors && _birthDate == null)
               Padding(
                 padding: const EdgeInsets.only(top: 6, left: 12),
                 child: Text(
-                  l10n.birthTimeRequired,
-                  key: const Key('birth_time_required'),
+                  l10n.birthDateRequired,
                   style: const TextStyle(color: CompassColors.coral),
                 ),
               ),
-          ],
-          const SizedBox(height: 14),
-          GlassCard(
-            key: const Key('birth_country'),
-            onTap: _pickBirthCountry,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-            child: Row(
-              children: [
-                const Icon(Icons.public_rounded, color: CompassColors.gold),
-                const SizedBox(width: 14),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.countryOfBirth,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        // The picker's own localized name where it has one,
-                        // which is why this reads the country through the
-                        // delegate rather than its English `name`.
-                        _birthCountry?.getTranslatedName(context) ??
-                            _birthCountry?.name ??
-                            l10n.selectBirthCountry,
-                        key: const Key('birth_country_value'),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    ],
-                  ),
+            const SizedBox(height: 14),
+            GlassCard(
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              // Stated the way the reader would state it, and on by default.
+              // The old switch said "Birth time unknown", which made the
+              // affirmative answer the one you had to turn *off* — easy to
+              // misread, and it defaulted every new profile to unknown.
+              child: SwitchListTile.adaptive(
+                key: const Key('knows_birth_time'),
+                contentPadding: EdgeInsets.zero,
+                title: Text(l10n.knowBirthTime),
+                subtitle: Text(
+                  _knowsBirthTime
+                      ? l10n.knowBirthTimeDetail
+                      : l10n.birthTimeUnknownDetail,
                 ),
-                const Icon(Icons.chevron_right_rounded),
-              ],
-            ),
-          ),
-          if (_showRequiredErrors && _birthCountry == null)
-            Padding(
-              padding: const EdgeInsets.only(top: 6, left: 12),
-              child: Text(
-                l10n.birthCountryRequired,
-                style: const TextStyle(color: CompassColors.coral),
+                value: _knowsBirthTime,
+                onChanged: _setKnowsBirthTime,
               ),
             ),
-          const SizedBox(height: 28),
-          if (_profileSaveFailed) ...[
-            Text(
-              l10n.profileNotSaved,
-              key: const Key('profile_save_failed'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: Theme.of(context).colorScheme.error),
+            if (_knowsBirthTime) ...[
+              const SizedBox(height: 14),
+              GlassCard(
+                key: const Key('birth_time_picker'),
+                onTap: _pickBirthTime,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 18,
+                  vertical: 14,
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.schedule_rounded,
+                      color: CompassColors.gold,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            l10n.timeOfBirth,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            // A prompt until the reader answers it — never a
+                            // plausible-looking hour they did not choose.
+                            _birthTimeDisplay(localeName) ??
+                                l10n.selectBirthTime,
+                            key: const Key('birth_time_value'),
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Icon(Icons.chevron_right_rounded),
+                  ],
+                ),
+              ),
+              if (_showBirthTimeError && _birthTimeMissing)
+                Padding(
+                  padding: const EdgeInsets.only(top: 6, left: 12),
+                  child: Text(
+                    l10n.birthTimeRequired,
+                    key: const Key('birth_time_required'),
+                    style: const TextStyle(color: CompassColors.coral),
+                  ),
+                ),
+            ],
+            const SizedBox(height: 14),
+            GlassCard(
+              key: const Key('birth_country'),
+              onTap: _pickBirthCountry,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+              child: Row(
+                children: [
+                  const Icon(Icons.public_rounded, color: CompassColors.gold),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.countryOfBirth,
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          // The picker's own localized name where it has one,
+                          // which is why this reads the country through the
+                          // delegate rather than its English `name`.
+                          _birthCountry?.getTranslatedName(context) ??
+                              _birthCountry?.name ??
+                              l10n.selectBirthCountry,
+                          key: const Key('birth_country_value'),
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const Icon(Icons.chevron_right_rounded),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
+            if (_showRequiredErrors && _birthCountry == null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6, left: 12),
+                child: Text(
+                  l10n.birthCountryRequired,
+                  style: const TextStyle(color: CompassColors.coral),
+                ),
+              ),
+            const SizedBox(height: 28),
+            if (_profileSaveFailed) ...[
+              Text(
+                l10n.profileNotSaved,
+                key: const Key('profile_save_failed'),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.error),
+              ),
+              const SizedBox(height: 10),
+            ],
+            FilledButton(
+              key: const Key('complete_profile'),
+              // Null while a save is in flight: the guard in `_finish` already
+              // ignores a second tap, and a dead-looking button says so.
+              onPressed: _finishing ? null : _finish,
+              child: Text(l10n.createCompass),
+            ),
+            const SizedBox(height: 12),
+            Center(
+              child: Text(
+                l10n.birthPrivacyPrototype,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: CompassColors.muted),
+              ),
+            ),
           ],
-          FilledButton(
-            key: const Key('complete_profile'),
-            // Null while a save is in flight: the guard in `_finish` already
-            // ignores a second tap, and a dead-looking button says so.
-            onPressed: _finishing ? null : _finish,
-            child: Text(l10n.createCompass),
-          ),
-          const SizedBox(height: 12),
-          Center(
-            child: Text(
-              l10n.birthPrivacyPrototype,
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodySmall
-                  ?.copyWith(color: CompassColors.muted),
-            ),
-          ),
-        ],
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

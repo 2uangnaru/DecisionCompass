@@ -21,6 +21,9 @@ mobile_app/android/app/debug/
 mobile_app/android/app/profile/
 mobile_app/android/app/release/
 mobile_app/.metadata
+mobile_app/android/app/google-services.json
+mobile_app/android/.kotlin/
+mobile_app/android/build/
 
 # Misc
 *.log
@@ -31,3 +34,6 @@ mobile_app/.metadata
 .claude/
 mobile_app/.claude/
 mobile_app/design_previews/
+demo_images/
+outputs/.antigravity_qa/
+outputs/*.docx

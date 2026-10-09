@@ -1,6 +1,9 @@
 {
   "@@locale": "vi",
   "appName": "AstraCue",
+  "analyticsConsentTitle": "Thống kê sử dụng (không bắt buộc)",
+  "analyticsConsentBody": "Cho phép Firebase/Google Analytics thu thập thông tin sử dụng app và thiết bị để cải thiện AstraCue. Không gửi tên, thông tin sinh hoặc lá số của bạn. Bạn có thể tắt trong mục Sử dụng có trách nhiệm.",
+  "analyticsConsentSaveFailed": "Không thể lưu lựa chọn này. Thống kê đã tắt trong phiên này.",
   "continueAction": "Tiếp tục",
   "backAction": "Quay lại",
   "closeAction": "Đóng",
@@ -342,7 +345,6 @@
   "openProfile": "Mở hồ sơ của bạn",
   "saveAction": "Lưu",
   "cancelAction": "Huỷ",
-  "profileDefaultNameHint": "Để trống nếu bạn muốn được gọi là {name}.",
   "profileSaved": "Đã cập nhật hồ sơ.",
   "profileBirthTimeLocked": "Bạn có thể đổi giờ sinh sau {wait} nữa.",
   "profileBirthCountryLocked": "Bạn có thể đổi quốc gia nơi sinh sau {wait} nữa.",

@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:decision_compass/local_engine/time/local_time.dart';
 import 'package:decision_compass/app.dart';
 import 'package:decision_compass/app_locale.dart';
+import 'package:decision_compass/analytics/analytics_service.dart';
 import 'package:decision_compass/data/current_context_provider.dart';
 import 'package:decision_compass/data/locale_controller.dart';
 import 'package:decision_compass/data/locale_store.dart';
@@ -52,6 +53,7 @@ class ReadingTestRig {
     Random? insightRandom,
     AppLocale? locale,
     InMemoryLocaleStore? localeStore,
+    this.analytics = const NoopAnalyticsService(),
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
@@ -113,6 +115,7 @@ class ReadingTestRig {
   /// Survives a rig swap when a test passes its own, so a "restart" comes
   /// back in the language the previous run chose.
   final InMemoryLocaleStore localeStore;
+  final AnalyticsService analytics;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -138,6 +141,7 @@ class ReadingTestRig {
     ),
     dailyEnergyInsights: dailyEnergyInsights,
     localeController: localeController,
+    analytics: analytics,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own
@@ -159,6 +163,7 @@ class ReadingTestRig {
   late final LocaleController localeController = LocaleController(
     store: localeStore,
     initial: startingLocale,
+    analytics: analytics,
   );
 
   /// The strings the app is currently rendering.

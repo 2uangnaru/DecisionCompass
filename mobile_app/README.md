@@ -17,6 +17,9 @@ data, no server and no HTTP call.
 - Responsive checks for compact phones, standard phones and 800dp large windows
 - Result, Top 2 lucky windows and responsible-use footer
 - Saved reading history with replay, retry-on-error and result sharing
+- Optional Android Firebase Analytics instrumentation with seven-language
+  opt-in controls. Default builds send no analytics; see [TRACKING.md](TRACKING.md)
+  for genuine Firebase configuration, event definitions and verification status.
 
 ## Run
 
@@ -195,7 +198,8 @@ Then open the app and take a reading. No `adb reverse`, no server and no
 
 - Profile editing and export/delete controls for local data
 - Monetization: rewarded ads, entitlement, paywall and subscriptions
-- Analytics, crash reporting and remote config
+- Real Firebase project connection / device DebugView verification (tracking
+  instrumentation exists; see TRACKING.md), crash reporting and remote config
 - Internationalization, RTL QA and locale formatting
 - Store release work: icons, screenshots, signing, privacy documents
 - Traditional profile/convention is still not collected (sent as null; the

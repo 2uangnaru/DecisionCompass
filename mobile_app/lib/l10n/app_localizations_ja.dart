@@ -13,6 +13,16 @@ class AppLocalizationsJa extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => '利用状況の分析（任意）';
+
+  @override
+  String get analyticsConsentBody =>
+      'AstraCueの改善のため、Firebase/Google Analyticsによるアプリの利用状況と端末情報の収集を許可します。名前、出生情報、命盤は送信しません。「責任ある利用」でいつでもオフにできます。';
+
+  @override
+  String get analyticsConsentSaveFailed => '設定を保存できませんでした。このセッションでは分析をオフにしました。';
+
+  @override
   String get continueAction => '続ける';
 
   @override
@@ -1084,11 +1094,6 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get cancelAction => 'キャンセル';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return '空欄のままにすると「$name」と表示されます。';
-  }
 
   @override
   String get profileSaved => 'プロフィールを更新しました。';

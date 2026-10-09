@@ -1,6 +1,9 @@
 {
   "@@locale": "zh_Hans",
   "appName": "AstraCue",
+  "analyticsConsentTitle": "使用情况统计（可选）",
+  "analyticsConsentBody": "允许 Firebase/Google Analytics 收集应用使用情况和设备信息，以帮助改进 AstraCue。不会发送你的姓名、出生信息或命盘。你可以在「负责任使用」中关闭此功能。",
+  "analyticsConsentSaveFailed": "无法保存此设置。本次使用期间已关闭统计。",
   "continueAction": "继续",
   "backAction": "返回",
   "closeAction": "关闭",
@@ -342,7 +345,6 @@
   "openProfile": "打开你的个人资料",
   "saveAction": "保存",
   "cancelAction": "取消",
-  "profileDefaultNameHint": "留空则称呼你为“{name}”。",
   "profileSaved": "资料已更新。",
   "profileBirthTimeLocked": "{wait}后可再次修改出生时间。",
   "profileBirthCountryLocked": "{wait}后可再次修改出生国家。",

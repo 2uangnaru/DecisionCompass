@@ -11,6 +11,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 
 import 'app.dart';
+import 'analytics/analytics_service.dart';
+import 'analytics/firebase_analytics_sink.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
 import 'data/engine_daily_brief_provider.dart';
@@ -47,8 +49,18 @@ Future<void> main() async {
   final dailyEnergyInsights = DailyEnergyInsightController(
     store: const SharedPreferencesDailyEnergyInsightStore(),
   );
+  final analytics = ProductAnalytics(
+    store: const SharedPreferencesAnalyticsConsentStore(),
+    sink: const bool.fromEnvironment('FIREBASE_ANALYTICS_ENABLED')
+        ? FirebaseAnalyticsSink()
+        : const NoopAnalyticsSink(),
+  );
+  // Optional telemetry must not extend the startup ritual or hold Home back.
+  // The consent control is disabled until this background load settles.
+  unawaited(analytics.ensureLoaded());
   final localeController = LocaleController(
     store: const SharedPreferencesLocaleStore(),
+    analytics: analytics,
   );
   // Load while the first Flutter frame animates. The app keeps the language-
   // neutral startup view until both tasks finish, so saved languages never
@@ -84,6 +96,7 @@ Future<void> main() async {
         ),
         dailyEnergyInsights: dailyEnergyInsights,
         localeController: localeController,
+        analytics: analytics,
       ),
     ),
   );

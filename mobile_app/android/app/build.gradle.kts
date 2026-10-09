@@ -1,8 +1,21 @@
+import java.util.Base64
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// No fabricated Firebase project: ordinary builds still work without JSON.
+if (file("google-services.json").exists()) {
+    apply(plugin = "com.google.gms.google-services")
+}
+val analyticsRequested = (project.findProperty("dart-defines") as? String)
+    ?.split(",")
+    ?.any {
+        String(Base64.getDecoder().decode(it), Charsets.UTF_8) ==
+            "FIREBASE_ANALYTICS_ENABLED=true"
+    } ?: false
 
 android {
     namespace = "com.decisioncompass.decision_compass"
@@ -15,6 +28,10 @@ android {
     }
 
     defaultConfig {
+        // Native SDKs are entirely deactivated in unconfigured/default builds,
+        // including before Dart starts and regardless of prior SDK consent.
+        manifestPlaceholders["analyticsDeactivated"] =
+            (!analyticsRequested || !file("google-services.json").exists()).toString()
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.decisioncompass.decision_compass"
         // You can update the following values to match your application needs.

@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../app_locale.dart';
+import '../analytics/analytics_event.dart';
+import '../analytics/analytics_service.dart';
 import 'birth_country_language.dart';
 import 'locale_store.dart';
 
@@ -14,11 +16,15 @@ import 'locale_store.dart';
 /// The choice is stored before a profile exists, so a reader who picks their
 /// language and then closes the app comes back to it.
 class LocaleController extends ChangeNotifier {
-  LocaleController({required this.store, AppLocale? initial})
-    : _locale = initial ?? AppLocale.english,
-      _loaded = initial != null;
+  LocaleController({
+    required this.store,
+    AppLocale? initial,
+    this.analytics = const NoopAnalyticsService(),
+  }) : _locale = initial ?? AppLocale.english,
+       _loaded = initial != null;
 
   final LocaleStore store;
+  final AnalyticsService analytics;
 
   AppLocale _locale;
   Future<void>? _loading;
@@ -63,6 +69,7 @@ class LocaleController extends ChangeNotifier {
   /// "this one" — and from then on the country rule must leave them alone. An
   /// early return on `locale == _locale` would have quietly discarded that.
   Future<void> select(AppLocale locale) async {
+    final previous = _locale;
     final changed = locale != _locale;
     _locale = locale;
     _loaded = true;
@@ -71,6 +78,8 @@ class LocaleController extends ChangeNotifier {
     // slow write can never hold up the switch the reader just asked for.
     if (changed) notifyListeners();
     await store.save(locale, LocaleProvenance.manual);
+    if (changed)
+      analytics.record(AnalyticsEvent.languageChanged(previous, locale));
   }
 
   /// Chooses a language from the reader's country of birth, once.

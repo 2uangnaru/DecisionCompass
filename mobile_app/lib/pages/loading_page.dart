@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../analytics/reading_analytics_attempt.dart';
 import '../data/models/models.dart' as engine;
 import '../data/period_availability.dart';
 import '../data/reading_api_exception.dart';
@@ -66,63 +67,51 @@ class _LoadingPageState extends State<LoadingPage>
     duration: const Duration(milliseconds: 550),
   );
 
-  late final Animation<double> _ringScale = Tween<double>(
-    begin: 1.0,
-    end: 3.2,
-  ).animate(
-    CurvedAnimation(
-      parent: _apertureController,
-      curve: Curves.easeInCubic,
-    ),
-  );
+  late final Animation<double> _ringScale = Tween<double>(begin: 1.0, end: 3.2)
+      .animate(
+        CurvedAnimation(parent: _apertureController, curve: Curves.easeInCubic),
+      );
 
-  late final Animation<double> _ringOpacity = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  ).animate(
-    CurvedAnimation(
-      parent: _apertureController,
-      curve: const Interval(0.20, 1.0, curve: Curves.easeOut),
-    ),
-  );
+  late final Animation<double> _ringOpacity =
+      Tween<double>(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(
+          parent: _apertureController,
+          curve: const Interval(0.20, 1.0, curve: Curves.easeOut),
+        ),
+      );
 
   /// Central zodiac avatar contracts subtly into celestial depth (1.0 -> 0.95)
   /// without blowing up in size, staying centered until result arrives.
-  late final Animation<double> _avatarScale = Tween<double>(
-    begin: 1.0,
-    end: 0.95,
-  ).animate(
-    CurvedAnimation(
-      parent: _apertureController,
-      curve: Curves.easeInOutCubic,
-    ),
-  );
+  late final Animation<double> _avatarScale =
+      Tween<double>(begin: 1.0, end: 0.95).animate(
+        CurvedAnimation(
+          parent: _apertureController,
+          curve: Curves.easeInOutCubic,
+        ),
+      );
 
-  late final Animation<double> _avatarOpacity = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  ).animate(
-    CurvedAnimation(
-      parent: _apertureController,
-      curve: const Interval(0.30, 1.0, curve: Curves.easeOut),
-    ),
-  );
+  late final Animation<double> _avatarOpacity =
+      Tween<double>(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(
+          parent: _apertureController,
+          curve: const Interval(0.30, 1.0, curve: Curves.easeOut),
+        ),
+      );
 
-  late final Animation<double> _ambientOpacity = Tween<double>(
-    begin: 1.0,
-    end: 0.0,
-  ).animate(
-    CurvedAnimation(
-      parent: _apertureController,
-      curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
-    ),
-  );
+  late final Animation<double> _ambientOpacity =
+      Tween<double>(begin: 1.0, end: 0.0).animate(
+        CurvedAnimation(
+          parent: _apertureController,
+          curve: const Interval(0.0, 0.45, curve: Curves.easeOut),
+        ),
+      );
 
   /// Built once and reused, so a retry replays the original Reveal moment
   /// instead of quietly moving it.
   engine.ReadingRequest? _request;
   ReadingApiException? _failure;
   var _attemptRunning = false;
+  ReadingAnalyticsAttempt? _analyticsAttempt;
 
   @override
   void initState() {
@@ -164,12 +153,23 @@ class _LoadingPageState extends State<LoadingPage>
   Future<void> _runAttempt() async {
     if (_attemptRunning) return; // Guards rebuilds and repeated retry taps.
     _attemptRunning = true;
+    _analyticsAttempt = null;
+    final elapsed = Stopwatch()..start();
 
     final ritualFloor = Future<void>.delayed(
       Duration(milliseconds: _durationMs),
     );
     try {
       final request = _request ??= await _buildRequest();
+      if (!mounted) return;
+      _analyticsAttempt = ReadingAnalyticsAttempt(
+        analytics: widget.dependencies.analytics,
+        mode: toEngineMode(widget.mode),
+        category: request.category,
+        period: toEnginePeriod(widget.period),
+        language: widget.dependencies.localeController.locale,
+        elapsed: elapsed,
+      );
       final reading = await widget.dependencies.repository.calculate(request);
       await ritualFloor;
       if (!mounted) return;
@@ -204,6 +204,7 @@ class _LoadingPageState extends State<LoadingPage>
 
   void _settleFailure(ReadingApiException failure) {
     if (!mounted) return;
+    _analyticsAttempt?.failed(failure.kind);
     _cancelTimers();
     setState(() {
       _attemptRunning = false;
@@ -303,8 +304,11 @@ class _LoadingPageState extends State<LoadingPage>
         // it in one action instead of revealing History on the way.
         settings: const RouteSettings(name: ResultPage.currentReadingRouteName),
         transitionDuration: const Duration(milliseconds: 450),
-        pageBuilder: (_, animation, secondaryAnimation) =>
-            ResultPage(reading: reading, dependencies: widget.dependencies),
+        pageBuilder: (_, animation, secondaryAnimation) => ResultPage(
+          reading: reading,
+          dependencies: widget.dependencies,
+          analyticsAttempt: _analyticsAttempt,
+        ),
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
           final curved = CurvedAnimation(
             parent: animation,

@@ -1,3 +1,4 @@
+import 'analytics/analytics_service.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_brief_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
@@ -20,6 +21,7 @@ class ReadingDependencies {
     required this.homeDescriptionDeck,
     required this.dailyEnergyInsights,
     required this.localeController,
+    this.analytics = const NoopAnalyticsService(),
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -42,6 +44,7 @@ class ReadingDependencies {
   /// the welcome screen re-renders the whole flow at once, with no screen left
   /// behind in the previous language.
   final LocaleController localeController;
+  final AnalyticsService analytics;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

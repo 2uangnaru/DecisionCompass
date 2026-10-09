@@ -738,10 +738,6 @@ class _ProfilePageState extends State<ProfilePage>
                             onChanged: (_) => setState(() {}),
                             decoration: InputDecoration(
                               labelText: l10n.nameField,
-                              helperMaxLines: 2,
-                              helperText: l10n.profileDefaultNameHint(
-                                l10n.defaultUserName,
-                              ),
                             ),
                           ),
                           const SizedBox(height: 16),

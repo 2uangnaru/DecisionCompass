@@ -1,6 +1,9 @@
 {
   "@@locale": "th",
   "appName": "AstraCue",
+  "analyticsConsentTitle": "สถิติการใช้งาน (ไม่บังคับ)",
+  "analyticsConsentBody": "อนุญาตให้ Firebase/Google Analytics เก็บข้อมูลการใช้งานแอปและอุปกรณ์เพื่อปรับปรุง AstraCue โดยไม่ส่งชื่อ ข้อมูลการเกิด หรือดวงชะตาของคุณ คุณปิดได้ในเมนูการใช้งานอย่างรับผิดชอบ",
+  "analyticsConsentSaveFailed": "บันทึกการตั้งค่านี้ไม่ได้ ระบบปิดสถิติการใช้งานสำหรับครั้งนี้แล้ว",
   "continueAction": "ดำเนินต่อ",
   "backAction": "กลับ",
   "closeAction": "ปิด",
@@ -342,7 +345,6 @@
   "openProfile": "เปิดโปรไฟล์ของคุณ",
   "saveAction": "บันทึก",
   "cancelAction": "ยกเลิก",
-  "profileDefaultNameHint": "เว้นว่างไว้หากต้องการให้เรียกว่า {name}",
   "profileSaved": "อัปเดตโปรไฟล์แล้ว",
   "profileBirthTimeLocked": "คุณจะเปลี่ยนเวลาเกิดได้อีกครั้งในอีก {wait}",
   "profileBirthCountryLocked": "คุณจะเปลี่ยนประเทศที่เกิดได้อีกครั้งในอีก {wait}",

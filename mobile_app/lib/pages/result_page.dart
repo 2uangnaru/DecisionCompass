@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../data/action_guidance.dart';
+import '../analytics/analytics_event.dart';
+import '../analytics/reading_analytics_attempt.dart';
 import '../data/history_entry.dart';
 import '../data/models/models.dart' as engine;
 import '../l10n/app_localizations.dart';
@@ -30,6 +32,7 @@ class ResultPage extends StatefulWidget {
     required this.dependencies,
     this.autoSave = true,
     this.closesToCurrentReading = false,
+    this.analyticsAttempt,
   });
 
   /// Names the route holding the reading the app just calculated.
@@ -45,6 +48,7 @@ class ResultPage extends StatefulWidget {
 
   /// False when reopening an immutable snapshot from History.
   final bool autoSave;
+  final ReadingAnalyticsAttempt? analyticsAttempt;
 
   /// Whether leaving this page should go back to the reading the app just
   /// calculated rather than to the page that pushed it.
@@ -69,6 +73,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   bool _saving = false;
   bool _saved = false;
   bool _saveFailed = false;
+  bool _sharing = false;
 
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
@@ -114,6 +119,9 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
     if (widget.autoSave) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) widget.analyticsAttempt?.completed();
+      });
       _saving = true;
       unawaited(_saveToHistory());
     } else {
@@ -193,6 +201,11 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   Future<void> _shareReading() async {
+    if (_sharing) return;
+    _sharing = true;
+    widget.dependencies.analytics.record(
+      AnalyticsEvent.shareRequested(fromHistory: !widget.autoSave),
+    );
     final l10n = AppLocalizations.of(context);
     try {
       await SharePlus.instance.share(
@@ -205,6 +218,8 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(l10n.shareUnavailable)));
       }
+    } finally {
+      _sharing = false;
     }
   }
 
@@ -420,7 +435,10 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
               const SizedBox(height: 18),
               InkWell(
                 key: const Key('result_responsible_use_link'),
-                onTap: () => showResponsibleUseSheet(context),
+                onTap: () => showResponsibleUseSheet(
+                  context,
+                  analytics: widget.dependencies.analytics,
+                ),
                 borderRadius: BorderRadius.circular(10),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(

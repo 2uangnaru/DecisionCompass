@@ -13,6 +13,16 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => '使用情况统计（可选）';
+
+  @override
+  String get analyticsConsentBody =>
+      '允许 Firebase/Google Analytics 收集应用使用情况和设备信息，以帮助改进 AstraCue。不会发送你的姓名、出生信息或命盘。你可以在「负责任使用」中关闭此功能。';
+
+  @override
+  String get analyticsConsentSaveFailed => '无法保存此设置。本次使用期间已关闭统计。';
+
+  @override
   String get continueAction => '继续';
 
   @override
@@ -1056,11 +1066,6 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get cancelAction => '取消';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return '留空则称呼你为“$name”。';
-  }
 
   @override
   String get profileSaved => '资料已更新。';
@@ -1117,6 +1122,16 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => '使用情况统计（可选）';
+
+  @override
+  String get analyticsConsentBody =>
+      '允许 Firebase/Google Analytics 收集应用使用情况和设备信息，以帮助改进 AstraCue。不会发送你的姓名、出生信息或命盘。你可以在「负责任使用」中关闭此功能。';
+
+  @override
+  String get analyticsConsentSaveFailed => '无法保存此设置。本次使用期间已关闭统计。';
+
+  @override
   String get continueAction => '继续';
 
   @override
@@ -2160,11 +2175,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get cancelAction => '取消';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return '留空则称呼你为“$name”。';
-  }
 
   @override
   String get profileSaved => '资料已更新。';
@@ -2221,6 +2231,16 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get appName => 'AstraCue';
 
   @override
+  String get analyticsConsentTitle => '使用情况统计（可选）';
+
+  @override
+  String get analyticsConsentBody =>
+      '允许 Firebase/Google Analytics 收集应用使用情况和设备信息，以帮助改进 AstraCue。不会发送你的姓名、出生信息或命盘。你可以在「负责任使用」中关闭此功能。';
+
+  @override
+  String get analyticsConsentSaveFailed => '无法保存此设置。本次使用期间已关闭统计。';
+
+  @override
   String get continueAction => '继续';
 
   @override
@@ -3264,11 +3284,6 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get cancelAction => '取消';
-
-  @override
-  String profileDefaultNameHint(String name) {
-    return '留空则称呼你为“$name”。';
-  }
 
   @override
   String get profileSaved => '资料已更新。';
