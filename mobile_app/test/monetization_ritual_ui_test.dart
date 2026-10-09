@@ -56,9 +56,18 @@ void main() {
 
     // 2. Cooldown elements are present
     expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
-    expect(find.text('02:15:34'), findsOneWidget);
+    // Time is removed from the analysis / ritual screen
+    expect(find.text('02:15:34'), findsNothing);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
-    expect(find.text('Năng lượng đang hồi phục (02:15:34)'), findsOneWidget);
+    expect(find.text('Xem quảng cáo'), findsOneWidget);
+    expect(find.text('Năng lượng cần hồi phục'), findsOneWidget);
+
+    // Verify title 'Năng lượng cần hồi phục' is positioned ABOVE watch ad button
+    final titleRect = tester.getRect(find.text('Năng lượng cần hồi phục'));
+    final adBtnRect = tester.getRect(
+      find.byKey(const Key('ritual_watch_ad_button')),
+    );
+    expect(titleRect.bottom, lessThan(adBtnRect.top));
 
     // 3. Tapping the watch ad button opens the Unlock Bottom Sheet
     await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));

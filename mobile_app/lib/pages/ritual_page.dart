@@ -316,29 +316,29 @@ class _RitualPageState extends State<RitualPage>
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final compact = constraints.maxHeight < 680;
-                // Sized proportionally so it leaves comfortable space for controls
-                // without crowding edges or pushing elements off the viewport.
+                final compact = constraints.maxHeight < 700;
+                // Sized from the space actually available rather than from a
+                // breakpoint, and capped by width so it never crowds the edges.
                 final ringSize = math.min(
-                  (constraints.maxHeight * 0.25).clamp(135.0, 195.0),
-                  constraints.maxWidth * 0.58,
+                  (constraints.maxHeight * 0.28).clamp(150.0, 220.0),
+                  constraints.maxWidth * 0.62,
                 );
                 return SingleChildScrollView(
                   padding: EdgeInsets.fromLTRB(
                     20,
-                    compact ? 4 : 8,
+                    compact ? 8 : 14,
                     20,
-                    compact ? 10 : 16,
+                    compact ? 12 : 24,
                   ),
                   child: ConstrainedBox(
                     constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - (compact ? 16 : 24),
+                      minHeight: constraints.maxHeight - (compact ? 24 : 40),
                     ),
                     child: IntrinsicHeight(
                       child: _body(
                         compact,
                         ringSize,
-                        ringSize * 0.82,
+                        ringSize * 0.81,
                         reduceMotion,
                       ),
                     ),
@@ -502,10 +502,10 @@ class _RitualPageState extends State<RitualPage>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ZodiacAvatar(
-                                    size: compact ? 46 : 54,
+                                    size: compact ? 54 : 62,
                                     sign: widget.profile.zodiacSign,
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: 10),
                                   Text(
                                     _locked
                                         ? l10n.aligning
@@ -515,9 +515,9 @@ class _RitualPageState extends State<RitualPage>
                                         ? 'LẮNG ĐỌNG'
                                         : l10n.reveal,
                                     textAlign: TextAlign.center,
-                                    maxLines: 1,
+                                    maxLines: 2,
                                     style: TextStyle(
-                                      fontSize: 11,
+                                      fontSize: 12,
                                       letterSpacing: trackingFor(context, 2),
                                       fontWeight: FontWeight.w700,
                                       color: _isCooldown
@@ -525,19 +525,6 @@ class _RitualPageState extends State<RitualPage>
                                           : Colors.white,
                                     ),
                                   ),
-                                  if (_isCooldown) ...[
-                                    const SizedBox(height: 2),
-                                    const Text(
-                                      '02:15:34',
-                                      style: TextStyle(
-                                        fontSize: 10,
-                                        fontWeight: FontWeight.w700,
-                                        fontFamily: 'monospace',
-                                        color: CompassColors.gold,
-                                        letterSpacing: 0.8,
-                                      ),
-                                    ),
-                                  ],
                                 ],
                               ),
                             ),
@@ -549,76 +536,14 @@ class _RitualPageState extends State<RitualPage>
                 ),
               ),
             ),
-            SizedBox(height: compact ? 10 : 14),
-            if (_isCooldown) ...[
-              Container(
-                constraints: const BoxConstraints(maxWidth: 320),
-                child: Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    key: const Key('ritual_watch_ad_button'),
-                    onTap: _openUnlockSheet,
-                    borderRadius: BorderRadius.circular(16),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 11,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFF2477C9),
-                            Color(0xFF4EB3E8),
-                          ],
-                        ),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.25),
-                          width: 1.0,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF2477C9).withValues(alpha: 0.35),
-                            blurRadius: 12,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('🎬', style: TextStyle(fontSize: 14)),
-                              SizedBox(width: 8),
-                              Text(
-                                'XEM QUẢNG CÁO · PHÂN TÍCH NGAY',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w800,
-                                  letterSpacing: 0.8,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(height: compact ? 8 : 12),
-            ],
+            SizedBox(height: compact ? 14 : 18),
             Text(
               _locked
                   ? l10n.ritualLocked
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
                   : _isCooldown
-                  ? 'Năng lượng đang hồi phục (02:15:34)'
+                  ? 'Năng lượng cần hồi phục'
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
@@ -630,14 +555,68 @@ class _RitualPageState extends State<RitualPage>
             const SizedBox(height: 5),
             Text(
               _isCooldown
-                  ? 'Bạn có thể chờ lượt tự động mở, hoặc xem 1 video ngắn để phân tích ngay.'
+                  ? 'Bạn có thể chờ lượt hồi phục hoặc xem video ngắn để tiếp tục.'
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                     fontSize: 12.5,
                   ),
             ),
-            SizedBox(height: compact ? 8 : 10),
+            if (_isCooldown) ...[
+              SizedBox(height: compact ? 10 : 12),
+              Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  key: const Key('ritual_watch_ad_button'),
+                  onTap: _openUnlockSheet,
+                  borderRadius: BorderRadius.circular(20),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 7.5,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF2477C9),
+                          Color(0xFF4EB3E8),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: Colors.white.withValues(alpha: 0.28),
+                        width: 1.0,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: const Color(0xFF2477C9).withValues(alpha: 0.35),
+                          blurRadius: 10,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('🎬', style: TextStyle(fontSize: 13)),
+                        SizedBox(width: 6),
+                        Text(
+                          'Xem quảng cáo',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            SizedBox(height: compact ? 10 : 14),
             Text(
               l10n.ritualSafety,
               key: const Key('ritual_responsible_use_note'),
