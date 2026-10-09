@@ -55,8 +55,8 @@ void main() {
     // 1. Fixed bottom Ad banner is present
     expect(find.byType(AdBannerSlot), findsOneWidget);
 
-    // 2. Cooldown elements are present
-    expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
+    // 2. Cooldown elements are present (orb remains PHÂN TÍCH with normal effects)
+    expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
     expect(find.text('Xem quảng cáo'), findsOneWidget);
     expect(
@@ -86,7 +86,7 @@ void main() {
       ),
       findsOneWidget,
     );
-    expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
+    expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
 
     // 4. Tapping the watch ad button directly unlocks the reading on the spot without opening a bottom sheet
@@ -120,7 +120,7 @@ void main() {
     await tester.pump();
 
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
-    expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
+    expect(find.text('PHÂN TÍCH'), findsOneWidget);
   });
 
   test('ReadingQuotaController tracks cooldown, consumes quota, and unlocks with bonus', () async {

@@ -477,7 +477,7 @@ class _RitualPageState extends State<RitualPage>
           children: [
             Semantics(
               button: true,
-              enabled: !_locked && !selectedPeriodElapsed && !_isCooldown,
+              enabled: !_locked && !selectedPeriodElapsed,
               label:
                   '${l10n.reveal}, ${periodLabel(l10n, _period)}, '
                   '${modeLabel(l10n, widget.mode)}',
@@ -488,25 +488,18 @@ class _RitualPageState extends State<RitualPage>
                     : (_isCooldown ? _notifyCooldownLocked : _reveal),
                 onLongPress: _toggleCooldownPreview,
                 child: Opacity(
-                  opacity: selectedPeriodElapsed
-                      ? 0.45
-                      : (_isCooldown ? 0.8 : 1),
+                  opacity: selectedPeriodElapsed ? 0.45 : 1,
                   child: AnimatedBuilder(
                     animation: _pulseController,
                     builder: (context, child) {
-                      final pulse = reduceMotion ||
-                              selectedPeriodElapsed ||
-                              _isCooldown
+                      final pulse = reduceMotion || selectedPeriodElapsed
                           ? 0.0
                           : _pulseController.value;
                       final ringScale = _locked ? 0.96 : 1 + pulse * 0.08;
                       final coreScale = _locked ? 0.96 : 1 + pulse * 0.02;
 
-                      final auraColor = _isCooldown
-                          ? const Color(0xFFE2A84B)
-                              .withValues(alpha: 0.16 + pulse * 0.18)
-                          : CompassColors.blueLight
-                              .withValues(alpha: 0.2 + pulse * 0.28);
+                      final auraColor = CompassColors.blueLight
+                          .withValues(alpha: 0.2 + pulse * 0.28);
 
                       return Stack(
                         alignment: Alignment.center,
@@ -538,33 +531,20 @@ class _RitualPageState extends State<RitualPage>
                               height: buttonSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: _isCooldown
-                                    ? const RadialGradient(
-                                        colors: [
-                                          Color(0xFF231F2A),
-                                          Color(0xFF131520),
-                                        ],
-                                      )
-                                    : const RadialGradient(
-                                        colors: [
-                                          Color(0xFF286DA5),
-                                          Color(0xFF153553),
-                                        ],
-                                      ),
+                                gradient: const RadialGradient(
+                                  colors: [
+                                    Color(0xFF286DA5),
+                                    Color(0xFF153553),
+                                  ],
+                                ),
                                 border: Border.all(
-                                  color: _isCooldown
-                                      ? const Color(0xFFE2A84B)
-                                          .withValues(alpha: 0.8)
-                                      : CompassColors.blueLight,
+                                  color: CompassColors.blueLight,
                                   width: 1.4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: _isCooldown
-                                        ? const Color(0xFFE2A84B)
-                                            .withValues(alpha: 0.2)
-                                        : CompassColors.blueLight
-                                            .withValues(alpha: 0.3),
+                                    color: CompassColors.blueLight
+                                        .withValues(alpha: 0.3),
                                     blurRadius: _locked ? 44 : 26 + pulse * 10,
                                     spreadRadius: _locked ? 6 : 1 + pulse * 2,
                                   ),
@@ -583,8 +563,6 @@ class _RitualPageState extends State<RitualPage>
                                         ? l10n.aligning
                                         : selectedPeriodElapsed
                                         ? l10n.periodPassedShort
-                                        : _isCooldown
-                                        ? 'LẮNG ĐỌNG'
                                         : l10n.reveal,
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
@@ -592,9 +570,7 @@ class _RitualPageState extends State<RitualPage>
                                       fontSize: 12,
                                       letterSpacing: trackingFor(context, 2),
                                       fontWeight: FontWeight.w700,
-                                      color: _isCooldown
-                                          ? const Color(0xFFF3E0A2)
-                                          : Colors.white,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
