@@ -18,6 +18,7 @@ import 'package:decision_compass/data/in_memory_home_description_store.dart';
 import 'package:decision_compass/data/history_entry.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
+import 'package:decision_compass/data/reading_quota_controller.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/l10n/app_localizations.dart';
@@ -54,6 +55,7 @@ class ReadingTestRig {
     AppLocale? locale,
     InMemoryLocaleStore? localeStore,
     this.analytics = const NoopAnalyticsService(),
+    this.quotaManager = const NoopReadingQuotaController(),
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
@@ -116,6 +118,7 @@ class ReadingTestRig {
   /// back in the language the previous run chose.
   final InMemoryLocaleStore localeStore;
   final AnalyticsService analytics;
+  final ReadingQuotaController quotaManager;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -142,6 +145,7 @@ class ReadingTestRig {
     dailyEnergyInsights: dailyEnergyInsights,
     localeController: localeController,
     analytics: analytics,
+    quotaManager: quotaManager,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own

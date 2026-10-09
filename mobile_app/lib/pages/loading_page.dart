@@ -8,6 +8,7 @@ import '../analytics/reading_analytics_attempt.dart';
 import '../data/models/models.dart' as engine;
 import '../data/period_availability.dart';
 import '../data/reading_api_exception.dart';
+import '../data/reading_quota_controller.dart';
 import '../l10n/app_localizations.dart';
 import '../local_engine/time/local_time.dart' show validZone;
 import '../localized_presentation.dart';
@@ -112,6 +113,40 @@ class _LoadingPageState extends State<LoadingPage>
   ReadingApiException? _failure;
   var _attemptRunning = false;
   ReadingAnalyticsAttempt? _analyticsAttempt;
+  bool _quotaConsumed = false;
+
+  bool _hasUsableScore(engine.ReadingResponse reading) {
+    if (reading.status != engine.ReadingStatus.ready &&
+        reading.status != engine.ReadingStatus.balanced) {
+      return false;
+    }
+    final split = reading.percentages?.tenths;
+    if (split == null ||
+        split.length != 2 ||
+        split.values.any((v) => v < 0 || v > 1000) ||
+        split.values.reduce((a, b) => a + b) != 1000 ||
+        (reading.status == engine.ReadingStatus.ready &&
+            !split.containsKey(reading.winner))) {
+      throw const ReadingApiException(
+        kind: ReadingApiFailureKind.invalidResponse,
+        safeCode: 'unexpected_reading_contract',
+        safeMessage: 'The reading could not be read by this app version.',
+      );
+    }
+    return true;
+  }
+
+  Future<void> _requireEntitlement() async {
+    final quota = widget.dependencies.quotaManager;
+    await quota.ensureLoaded();
+    final local = widget.dependencies.nowLocal();
+    if (!quota.isAvailable(local)) {
+      throw ReadingQuotaUnavailableException(
+        exhausted:
+            quota.dailyFreeReadingsUsed(local) >= quota.maxDailyFreeReadings,
+      );
+    }
+  }
 
   @override
   void initState() {
@@ -160,6 +195,7 @@ class _LoadingPageState extends State<LoadingPage>
       Duration(milliseconds: _durationMs),
     );
     try {
+      if (!_quotaConsumed) await _requireEntitlement();
       final request = _request ??= await _buildRequest();
       if (!mounted) return;
       _analyticsAttempt = ReadingAnalyticsAttempt(
@@ -173,6 +209,16 @@ class _LoadingPageState extends State<LoadingPage>
       final reading = await widget.dependencies.repository.calculate(request);
       await ritualFloor;
       if (!mounted) return;
+      // A real result with a split is billable; failed/insufficient/elapsed
+      // attempts spend nothing. Commit using the LOCAL completion day, never
+      // the UTC instant kept in the immutable calculation snapshot.
+      if (!_quotaConsumed && _hasUsableScore(reading)) {
+        await widget.dependencies.quotaManager.consumeReading(
+          widget.dependencies.nowLocal(),
+        );
+        _quotaConsumed = true;
+      }
+      if (!mounted) return;
       final reduceMotion =
           MediaQuery.maybeOf(context)?.disableAnimations ?? false;
       if (!reduceMotion) {
@@ -182,6 +228,17 @@ class _LoadingPageState extends State<LoadingPage>
       if (!mounted) return;
       _attemptRunning = false;
       _showResult(reading);
+    } on ReadingQuotaUnavailableException catch (failure) {
+      await ritualFloor;
+      _settleFailure(
+        ReadingApiException(
+          kind: ReadingApiFailureKind.rejectedRequest,
+          safeCode: failure.exhausted
+              ? 'reading_quota_exhausted'
+              : 'reading_quota_cooldown',
+          safeMessage: 'No reading entitlement is available.',
+        ),
+      );
     } on ReadingApiException catch (failure) {
       await ritualFloor;
       _settleFailure(failure);
@@ -483,29 +540,43 @@ class _ReadingErrorView extends StatelessWidget {
   final TimePeriod period;
   final VoidCallback onRetry;
 
-  String _headline(AppLocalizations l10n) => switch (failure.kind) {
-    ReadingApiFailureKind.timeout ||
-    ReadingApiFailureKind.network => l10n.errorNetworkHeadline,
-    ReadingApiFailureKind.server => l10n.errorServerHeadline,
-    ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedHeadline,
-    ReadingApiFailureKind.invalidResponse => l10n.errorInvalidHeadline,
-    ReadingApiFailureKind.configuration => l10n.errorConfigurationHeadline,
-    // Not a failure to say sorry for: the day simply moved on.
-    ReadingApiFailureKind.periodClosed => l10n.periodTooLittleTime,
-  };
+  bool get _quotaFailure =>
+      failure.safeCode == 'reading_quota_exhausted' ||
+      failure.safeCode == 'reading_quota_cooldown';
 
-  String _detail(AppLocalizations l10n) => switch (failure.kind) {
-    ReadingApiFailureKind.timeout ||
-    ReadingApiFailureKind.network => l10n.errorNetworkDetail,
-    ReadingApiFailureKind.server => l10n.errorServerDetail,
-    ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedDetail,
-    ReadingApiFailureKind.invalidResponse => l10n.errorInvalidDetail,
-    ReadingApiFailureKind.configuration => l10n.errorConfigurationDetail,
-    ReadingApiFailureKind.periodClosed =>
-      failure.safeCode.endsWith('passed')
-          ? l10n.periodHasPassed(periodLabel(l10n, period))
-          : l10n.periodNotEnoughTimeLeft(periodLabel(l10n, period)),
-  };
+  String _headline(AppLocalizations l10n) {
+    if (_quotaFailure) {
+      return failure.safeCode == 'reading_quota_exhausted'
+          ? l10n.quotaExhaustedNotice
+          : l10n.energyAccumulating;
+    }
+    return switch (failure.kind) {
+      ReadingApiFailureKind.timeout ||
+      ReadingApiFailureKind.network => l10n.errorNetworkHeadline,
+      ReadingApiFailureKind.server => l10n.errorServerHeadline,
+      ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedHeadline,
+      ReadingApiFailureKind.invalidResponse => l10n.errorInvalidHeadline,
+      ReadingApiFailureKind.configuration => l10n.errorConfigurationHeadline,
+      // Not a failure to say sorry for: the day simply moved on.
+      ReadingApiFailureKind.periodClosed => l10n.periodTooLittleTime,
+    };
+  }
+
+  String _detail(AppLocalizations l10n) {
+    if (_quotaFailure) return l10n.watchAdPrompt;
+    return switch (failure.kind) {
+      ReadingApiFailureKind.timeout ||
+      ReadingApiFailureKind.network => l10n.errorNetworkDetail,
+      ReadingApiFailureKind.server => l10n.errorServerDetail,
+      ReadingApiFailureKind.rejectedRequest => l10n.errorRejectedDetail,
+      ReadingApiFailureKind.invalidResponse => l10n.errorInvalidDetail,
+      ReadingApiFailureKind.configuration => l10n.errorConfigurationDetail,
+      ReadingApiFailureKind.periodClosed =>
+        failure.safeCode.endsWith('passed')
+            ? l10n.periodHasPassed(periodLabel(l10n, period))
+            : l10n.periodNotEnoughTimeLeft(periodLabel(l10n, period)),
+    };
+  }
 
   /// Only the transient kinds can be retried; a rejected request or a contract
   /// mismatch would fail identically however many times it is sent.

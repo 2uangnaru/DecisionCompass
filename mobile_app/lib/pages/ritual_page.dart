@@ -50,6 +50,7 @@ class RitualPage extends StatefulWidget {
 class _RitualPageState extends State<RitualPage>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
+  var _checkingEntitlement = false;
   late bool _isCooldown;
   bool? _isQuotaExhaustedOverride;
   late String _countdownString;
@@ -91,34 +92,9 @@ class _RitualPageState extends State<RitualPage>
         });
       } else {
         setState(() {
-          _countdownString =
-              widget.dependencies.quotaManager.remainingTimeString(now);
+          _countdownString = widget.dependencies.quotaManager
+              .remainingTimeString(now);
         });
-      }
-    });
-  }
-
-  void _toggleCooldownPreview() {
-    setState(() {
-      if (!_isCooldown && !_isQuotaExhausted) {
-        // 1. Chuyển sang Cooldown chờ hồi (màu hổ phách)
-        _isCooldown = true;
-        _isQuotaExhaustedOverride = false;
-        _countdownString = widget.dependencies.quotaManager
-            .remainingTimeString(widget.dependencies.nowLocal());
-        _startCountdownTimer();
-      } else if (_isCooldown && !_isQuotaExhausted) {
-        // 2. Chuyển sang Hết lượt free trong ngày (màu đỏ)
-        _isCooldown = true;
-        _isQuotaExhaustedOverride = true;
-        _countdownString = widget.dependencies.quotaManager
-            .remainingTimeString(widget.dependencies.nowLocal());
-        _startCountdownTimer();
-      } else {
-        // 3. Chuyển về Sẵn sàng (màu xanh)
-        _isCooldown = false;
-        _isQuotaExhaustedOverride = false;
-        _countdownTimer?.cancel();
       }
     });
   }
@@ -228,12 +204,12 @@ class _RitualPageState extends State<RitualPage>
     _isQuotaExhaustedOverride = widget.isQuotaExhausted;
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
-    final isExhausted = widget.isQuotaExhausted ??
+    final isExhausted =
+        widget.isQuotaExhausted ??
         (quota.bonusReadings == 0 &&
             quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings);
 
-    _isCooldown = widget.isCooldown ??
-        (isExhausted || quota.isCooldown(now));
+    _isCooldown = widget.isCooldown ?? (isExhausted || quota.isCooldown(now));
 
     _countdownString = quota.remainingTimeString(now);
     if (_isCooldown || isExhausted) {
@@ -404,6 +380,32 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _reveal() async {
+    if (_locked || _checkingEntitlement) return;
+    _checkingEntitlement = true;
+    try {
+      final quota = widget.dependencies.quotaManager;
+      await quota.ensureLoaded();
+      if (!mounted) return;
+      final local = widget.dependencies.nowLocal();
+      if (!quota.isAvailable(local)) {
+        setState(() {
+          _isCooldown = true;
+          _isQuotaExhaustedOverride =
+              quota.bonusReadings == 0 &&
+              quota.dailyFreeReadingsUsed(local) >= quota.maxDailyFreeReadings;
+          _countdownString = quota.remainingTimeString(local);
+        });
+        _startCountdownTimer();
+        _notifyCooldownLocked();
+        return;
+      }
+      await _revealAvailable();
+    } finally {
+      _checkingEntitlement = false;
+    }
+  }
+
+  Future<void> _revealAvailable() async {
     if (_locked) return;
     if (_isCooldown || _isQuotaExhausted) {
       _notifyCooldownLocked();
@@ -439,8 +441,15 @@ class _RitualPageState extends State<RitualPage>
     // Checked again: the responsible-use sheet can sit open across a cutoff,
     // and this time against the tap's own instant, not the sheet's.
     if (_rejectClosedPeriod(at: instantUtc)) return;
+    // A safety sheet or timezone lookup may have remained open while another
+    // entry point consumed the last entitlement. UI state is not authority.
+    if (!widget.dependencies.quotaManager.isAvailable(
+      widget.dependencies.nowLocal(),
+    )) {
+      _notifyCooldownLocked();
+      return;
+    }
     setState(() => _locked = true);
-    await widget.dependencies.quotaManager.consumeReading(instantUtc);
     await Future<void>.delayed(const Duration(milliseconds: 360));
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
@@ -465,8 +474,8 @@ class _RitualPageState extends State<RitualPage>
     final accentColor = isSuccess
         ? CompassColors.gold
         : isExhausted
-            ? const Color(0xFFE27C7C)
-            : CompassColors.gold;
+        ? const Color(0xFFE27C7C)
+        : CompassColors.gold;
 
     return Positioned(
       left: 0,
@@ -522,10 +531,8 @@ class _RitualPageState extends State<RitualPage>
                     Expanded(
                       child: Text(
                         message,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: CompassColors.text,
-                              height: 1.35,
-                            ),
+                        style: Theme.of(context).textTheme.bodySmall
+                            ?.copyWith(color: CompassColors.text, height: 1.35),
                       ),
                     ),
                   ],
@@ -567,7 +574,8 @@ class _RitualPageState extends State<RitualPage>
                       ),
                       child: ConstrainedBox(
                         constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                          minHeight:
+                              constraints.maxHeight - (compact ? 24 : 40),
                         ),
                         child: IntrinsicHeight(
                           child: _body(
@@ -631,14 +639,11 @@ class _RitualPageState extends State<RitualPage>
           ],
         ),
         const SizedBox(height: 6),
-        GestureDetector(
-          onTap: _toggleCooldownPreview,
-          child: _CategoryBadge(
-            key: const Key('ritual_category_badge'),
-            label: categoryLabel(l10n, widget.category),
-            semanticsLabel: l10n.readingAreaSemantics(
-              categoryLabel(l10n, widget.category),
-            ),
+        _CategoryBadge(
+          key: const Key('ritual_category_badge'),
+          label: categoryLabel(l10n, widget.category),
+          semanticsLabel: l10n.readingAreaSemantics(
+            categoryLabel(l10n, widget.category),
           ),
         ),
         SizedBox(height: compact ? 6 : 10),
@@ -649,7 +654,8 @@ class _RitualPageState extends State<RitualPage>
           children: [
             Semantics(
               button: true,
-              enabled: !_locked &&
+              enabled:
+                  !_locked &&
                   !selectedPeriodElapsed &&
                   !_isCooldown &&
                   !_isQuotaExhausted,
@@ -661,9 +667,8 @@ class _RitualPageState extends State<RitualPage>
                 onTap: _locked || selectedPeriodElapsed
                     ? null
                     : ((_isCooldown || _isQuotaExhausted)
-                        ? _notifyCooldownLocked
-                        : _reveal),
-                onLongPress: _toggleCooldownPreview,
+                          ? _notifyCooldownLocked
+                          : _reveal),
                 child: Opacity(
                   opacity: selectedPeriodElapsed ? 0.45 : 1,
                   child: AnimatedBuilder(
@@ -677,12 +682,13 @@ class _RitualPageState extends State<RitualPage>
 
                       final auraColor = _isQuotaExhausted
                           ? const Color(0xFFE27C7C)
-                              .withValues(alpha: 0.16 + pulse * 0.20)
+                                .withValues(alpha: 0.16 + pulse * 0.20)
                           : _isCooldown
-                              ? const Color(0xFFE2A84B)
-                                  .withValues(alpha: 0.16 + pulse * 0.20)
-                              : CompassColors.blueLight
-                                  .withValues(alpha: 0.2 + pulse * 0.28);
+                          ? const Color(0xFFE2A84B)
+                                .withValues(alpha: 0.16 + pulse * 0.20)
+                          : CompassColors.blueLight.withValues(
+                              alpha: 0.2 + pulse * 0.28,
+                            );
 
                       return Stack(
                         alignment: Alignment.center,
@@ -694,9 +700,7 @@ class _RitualPageState extends State<RitualPage>
                               height: ringSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: auraColor,
-                                ),
+                                border: Border.all(color: auraColor),
                                 boxShadow: [
                                   BoxShadow(
                                     color: auraColor,
@@ -722,38 +726,39 @@ class _RitualPageState extends State<RitualPage>
                                         ],
                                       )
                                     : _isCooldown
-                                        ? const RadialGradient(
-                                            colors: [
-                                              Color(0xFF231F2A),
-                                              Color(0xFF131520),
-                                            ],
-                                          )
-                                        : const RadialGradient(
-                                            colors: [
-                                              Color(0xFF286DA5),
-                                              Color(0xFF153553),
-                                            ],
-                                          ),
+                                    ? const RadialGradient(
+                                        colors: [
+                                          Color(0xFF231F2A),
+                                          Color(0xFF131520),
+                                        ],
+                                      )
+                                    : const RadialGradient(
+                                        colors: [
+                                          Color(0xFF286DA5),
+                                          Color(0xFF153553),
+                                        ],
+                                      ),
                                 border: Border.all(
                                   color: _isQuotaExhausted
                                       ? const Color(0xFFE27C7C)
-                                          .withValues(alpha: 0.85)
+                                            .withValues(alpha: 0.85)
                                       : _isCooldown
-                                          ? const Color(0xFFE2A84B)
-                                              .withValues(alpha: 0.85)
-                                          : CompassColors.blueLight,
+                                      ? const Color(0xFFE2A84B)
+                                            .withValues(alpha: 0.85)
+                                      : CompassColors.blueLight,
                                   width: 1.4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
                                     color: _isQuotaExhausted
                                         ? const Color(0xFFE27C7C)
-                                            .withValues(alpha: 0.25)
+                                              .withValues(alpha: 0.25)
                                         : _isCooldown
-                                            ? const Color(0xFFE2A84B)
-                                                .withValues(alpha: 0.25)
-                                            : CompassColors.blueLight
-                                                .withValues(alpha: 0.3),
+                                        ? const Color(0xFFE2A84B)
+                                              .withValues(alpha: 0.25)
+                                        : CompassColors.blueLight.withValues(
+                                            alpha: 0.3,
+                                          ),
                                     blurRadius: _locked ? 44 : 26 + pulse * 10,
                                     spreadRadius: _locked ? 6 : 1 + pulse * 2,
                                   ),
@@ -782,8 +787,8 @@ class _RitualPageState extends State<RitualPage>
                                       color: _isQuotaExhausted
                                           ? const Color(0xFFF5BDBD)
                                           : _isCooldown
-                                              ? const Color(0xFFF3E0A2)
-                                              : Colors.white,
+                                          ? const Color(0xFFF3E0A2)
+                                          : Colors.white,
                                     ),
                                   ),
                                 ],
@@ -811,14 +816,13 @@ class _RitualPageState extends State<RitualPage>
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontSize:
-                        (_isCooldown || _isQuotaExhausted) ? 15.5 : null,
-                    color: _isQuotaExhausted
-                        ? const Color(0xFFE27C7C)
-                        : _isCooldown
-                        ? const Color(0xFFF3E0A2)
-                        : null,
-                  ),
+                fontSize: (_isCooldown || _isQuotaExhausted) ? 15.5 : null,
+                color: _isQuotaExhausted
+                    ? const Color(0xFFE27C7C)
+                    : _isCooldown
+                    ? const Color(0xFFF3E0A2)
+                    : null,
+              ),
             ),
             const SizedBox(height: 5),
             Text(
@@ -826,9 +830,8 @@ class _RitualPageState extends State<RitualPage>
                   ? l10n.watchAdPrompt
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    fontSize: 12.5,
-                  ),
+              style: Theme.of(context).textTheme.bodyMedium
+                  ?.copyWith(fontSize: 12.5),
             ),
             if (_isCooldown || _isQuotaExhausted) ...[
               SizedBox(height: compact ? 10 : 12),
@@ -846,16 +849,10 @@ class _RitualPageState extends State<RitualPage>
                     decoration: BoxDecoration(
                       gradient: _isQuotaExhausted
                           ? const LinearGradient(
-                              colors: [
-                                Color(0xFFB95F62),
-                                Color(0xFFE27C7C),
-                              ],
+                              colors: [Color(0xFFB95F62), Color(0xFFE27C7C)],
                             )
                           : const LinearGradient(
-                              colors: [
-                                Color(0xFF2477C9),
-                                Color(0xFF4EB3E8),
-                              ],
+                              colors: [Color(0xFF2477C9), Color(0xFF4EB3E8)],
                             ),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
@@ -864,10 +861,11 @@ class _RitualPageState extends State<RitualPage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: (_isQuotaExhausted
-                                  ? const Color(0xFFB95F62)
-                                  : const Color(0xFF2477C9))
-                              .withValues(alpha: 0.35),
+                          color:
+                              (_isQuotaExhausted
+                                      ? const Color(0xFFB95F62)
+                                      : const Color(0xFF2477C9))
+                                  .withValues(alpha: 0.35),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),

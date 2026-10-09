@@ -2,6 +2,23 @@
 
 Updated: 2026-09-21
 
+## Current quota handoff — 2026-10-09
+
+The app-owned monetization logic now uses three successful free readings per
+device-local day, a three-hour cooldown, and a full free quota AND cooldown
+reset at local 00:00. This newer owner decision supersedes the earlier design
+brief's cooldown-carryover rule. Bonus credits remain independent.
+
+Only a usable `ready` or `balanced` result commits a reading entitlement, using
+the local completion time rather than the calculation's UTC Reveal instant.
+Failed, insufficient-data, elapsed-period and cancelled unfinished attempts
+spend nothing. Real quota gates exist at Ritual, Loading and the serialized
+persistent commit; category-badge/long-press demo bypasses have been removed.
+See `mobile_app/MONETIZATION.md` and the quota/completion regression tests.
+
+The ad button still directly grants a prototype bonus; no live rewarded SDK or
+banner serving was added. Do not call the commercial ad integration complete.
+
 ## Current analytics handoff — 2026-10-09
 
 Android product tracking is now instrumented via `mobile_app/lib/analytics/`
