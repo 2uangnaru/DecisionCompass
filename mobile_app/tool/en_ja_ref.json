@@ -1432,8 +1432,8 @@
     "ja": "エネルギー回復中 ({countdown})"
   },
   "dailyQuotaExhaustedTitle": {
-    "en": "All 3 free readings used today ({countdown})",
-    "ja": "本日の3回分を使い切りました ({countdown})"
+    "en": "All 3 free readings used today",
+    "ja": "本日の3回分を使い切りました"
   },
   "energyAccumulating": {
     "en": "Energy is gathering",

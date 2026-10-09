@@ -358,7 +358,7 @@
   "profileBirthDateLocked": "{wait}後に生年月日を再度変更できます。",
   "profileConfirmBirthDate": "保存後、生年月日は4時間変更できません。",
   "energyCooldownTitle": "エネルギー回復中 ({countdown})",
-  "dailyQuotaExhaustedTitle": "本日の3回分を使い切りました ({countdown})",
+  "dailyQuotaExhaustedTitle": "本日の3回分を使い切りました",
   "energyAccumulating": "エネルギーが蓄積されています",
   "quotaExhaustedNotice": "本日の無料リーディング上限に達しました",
   "watchAdPrompt": "動画広告を視聴して続けることができます",

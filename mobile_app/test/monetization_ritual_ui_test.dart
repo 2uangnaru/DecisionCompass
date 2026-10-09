@@ -118,7 +118,7 @@ void main() {
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
     expect(find.text('Xem quảng cáo'), findsOneWidget);
-    expect(find.text('Đã dùng hết 3 lượt hôm nay (03:00:00)'), findsOneWidget);
+    expect(find.text('Đã dùng hết 3 lượt hôm nay'), findsOneWidget);
     expect(
       find.text('Bạn có thể xem video quảng cáo để tiếp tục'),
       findsOneWidget,

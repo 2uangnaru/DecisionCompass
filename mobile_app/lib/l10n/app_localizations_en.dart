@@ -1263,9 +1263,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return 'All 3 free readings used today ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => 'All 3 free readings used today';
 
   @override
   String get energyAccumulating => 'Energy is gathering';

@@ -1267,9 +1267,7 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return 'आज के सभी 3 पठन उपयोग कर लिए हैं ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => 'आज के सभी 3 पठन उपयोग कर लिए हैं';
 
   @override
   String get energyAccumulating => 'ऊर्जा एकत्रित हो रही है';
@@ -2550,9 +2548,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return 'आज के सभी 3 पठन उपयोग कर लिए हैं ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => 'आज के सभी 3 पठन उपयोग कर लिए हैं';
 
   @override
   String get energyAccumulating => 'ऊर्जा एकत्रित हो रही है';

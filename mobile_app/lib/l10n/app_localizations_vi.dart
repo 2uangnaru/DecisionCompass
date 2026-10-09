@@ -1265,9 +1265,7 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return 'Đã dùng hết 3 lượt hôm nay ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => 'Đã dùng hết 3 lượt hôm nay';
 
   @override
   String get energyAccumulating => 'Năng lượng đang được tích tụ';

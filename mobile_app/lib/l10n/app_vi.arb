@@ -358,7 +358,7 @@
   "profileBirthDateLocked": "Bạn có thể đổi ngày sinh sau {wait} nữa.",
   "profileConfirmBirthDate": "Sau đó ngày sinh sẽ được giữ nguyên trong 4 giờ.",
   "energyCooldownTitle": "Năng lượng cần hồi phục ({countdown})",
-  "dailyQuotaExhaustedTitle": "Đã dùng hết 3 lượt hôm nay ({countdown})",
+  "dailyQuotaExhaustedTitle": "Đã dùng hết 3 lượt hôm nay",
   "energyAccumulating": "Năng lượng đang được tích tụ",
   "quotaExhaustedNotice": "Đã dùng hết lượt miễn phí hôm nay",
   "watchAdPrompt": "Bạn có thể xem video quảng cáo để tiếp tục",

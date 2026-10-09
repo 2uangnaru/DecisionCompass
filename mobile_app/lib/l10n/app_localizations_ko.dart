@@ -1161,9 +1161,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return '오늘 무료 점술 3회를 모두 사용했습니다 ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => '오늘 무료 점술 3회를 모두 사용했습니다';
 
   @override
   String get energyAccumulating => '우주의 에너지가 채워지고 있습니다';

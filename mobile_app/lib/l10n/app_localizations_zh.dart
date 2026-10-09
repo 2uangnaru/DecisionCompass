@@ -1119,9 +1119,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return '今日3次免费已用完 ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';
@@ -2253,9 +2251,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return '今日3次免费已用完 ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';
@@ -3387,9 +3383,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   }
 
   @override
-  String dailyQuotaExhaustedTitle(String countdown) {
-    return '今日3次免费已用完 ($countdown)';
-  }
+  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';

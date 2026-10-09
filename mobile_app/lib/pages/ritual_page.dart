@@ -809,7 +809,7 @@ class _RitualPageState extends State<RitualPage>
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
                   : _isQuotaExhausted
-                  ? l10n.dailyQuotaExhaustedTitle(_countdownString)
+                  ? l10n.dailyQuotaExhaustedTitle
                   : _isCooldown
                   ? l10n.energyCooldownTitle(_countdownString)
                   : l10n.tapWhenReady,

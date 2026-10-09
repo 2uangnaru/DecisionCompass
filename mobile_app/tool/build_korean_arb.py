@@ -156,7 +156,7 @@ direct = {
     "orbitRhythm": "우주의 리듬",
     "orbitMoment": "시간의 기운",
     "orbitBalance": "조화와 균형",
-    "dailyQuotaExhaustedTitle": "오늘 무료 점술 3회를 모두 사용했습니다 ({countdown})",
+    "dailyQuotaExhaustedTitle": "오늘 무료 점술 3회를 모두 사용했습니다",
     "energyCooldownTitle": "에너지 충전 중 ({countdown})",
     "editProfile": "프로필 수정",
     "profileUpdated": "프로필이 업데이트되었습니다.",
