@@ -1,6 +1,7 @@
 import 'package:country_picker/country_picker.dart';
 import 'package:flutter/material.dart';
 
+import '../data/country_names_data.dart';
 import '../theme.dart';
 
 /// Flag emoji converter from 2-letter ISO country code.
@@ -324,6 +325,13 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
     final engName = country.name.toLowerCase();
     if (engName.contains(query)) return true;
     if (_stripDiacritics(engName).contains(queryNorm)) return true;
+
+    // Vietnamese name from CLDR (searchable in any locale, with or without accents)
+    final viName = countryNamesVI[country.countryCode]?.toLowerCase();
+    if (viName != null) {
+      if (viName.contains(query)) return true;
+      if (_stripDiacritics(viName).contains(queryNorm)) return true;
+    }
 
     final aliases = _countrySearchAliases[country.countryCode];
     if (aliases != null) {
