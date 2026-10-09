@@ -77,20 +77,26 @@ void main() {
     );
     expect(titleRect.bottom, lessThan(adBtnRect.top));
 
-    // 3. Tapping the watch ad button opens the Unlock Bottom Sheet
+    // 3. Tapping the locked analysis orb notifies user and does not reveal
+    await tester.tap(find.byKey(const Key('reveal_button')));
+    await tester.pump();
+    expect(
+      find.text(
+        '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!',
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+
+    // 4. Tapping the watch ad button directly unlocks the reading on the spot without opening a bottom sheet
     await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
 
-    expect(find.text('Năng Lượng Đang Lắng Đọng'), findsOneWidget);
-    expect(find.text('PHÂN TÍCH NGAY BÂY GIỜ'), findsOneWidget);
-
-    // 4. Tapping the watch ad option unlocks the reading
-    await tester.tap(find.text('PHÂN TÍCH NGAY BÂY GIỜ'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 300));
-
-    // Bottom sheet is dismissed and cooldown is lifted
+    // Cooldown is lifted directly without any modal sheet
+    expect(find.text('Năng Lượng Đang Lắng Đọng'), findsNothing);
+    expect(find.text('✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!'), findsOneWidget);
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
   });

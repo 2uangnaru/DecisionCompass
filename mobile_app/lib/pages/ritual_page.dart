@@ -14,7 +14,6 @@ import '../reading_dependencies.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
-import '../widgets/monetization_unlock_sheet.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'loading_page.dart';
 
@@ -93,26 +92,33 @@ class _RitualPageState extends State<RitualPage>
     });
   }
 
-  void _openUnlockSheet() {
-    showMonetizationUnlockSheet(
-      context,
-      remainingTime: _countdownString,
-      onWatchAd: () async {
-        await widget.dependencies.quotaManager.earnBonusReading();
-        if (!mounted) return;
-        setState(() {
-          _isCooldown = false;
-        });
-        _countdownTimer?.cancel();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text(
-              '✨ Đã mở khóa 1 lượt phân tích ngay! (Thời gian đếm ngược vẫn giữ nguyên)',
-            ),
-            duration: Duration(seconds: 3),
-          ),
-        );
-      },
+  Future<void> _watchAdAndUnlock() async {
+    await widget.dependencies.quotaManager.earnBonusReading();
+    if (!mounted) return;
+    setState(() {
+      _isCooldown = false;
+    });
+    _countdownTimer?.cancel();
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          '✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!',
+        ),
+        duration: Duration(seconds: 3),
+      ),
+    );
+  }
+
+  void _notifyCooldownLocked() {
+    ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!',
+        ),
+        duration: Duration(seconds: 2),
+      ),
     );
   }
 
@@ -314,7 +320,7 @@ class _RitualPageState extends State<RitualPage>
   Future<void> _reveal() async {
     if (_locked) return;
     if (_isCooldown) {
-      _openUnlockSheet();
+      _notifyCooldownLocked();
       return;
     }
     // The reading's moment is this tap, taken before any lookup, so a slow
@@ -471,20 +477,26 @@ class _RitualPageState extends State<RitualPage>
           children: [
             Semantics(
               button: true,
-              enabled: !_locked && !selectedPeriodElapsed,
+              enabled: !_locked && !selectedPeriodElapsed && !_isCooldown,
               label:
                   '${l10n.reveal}, ${periodLabel(l10n, _period)}, '
                   '${modeLabel(l10n, widget.mode)}',
               child: GestureDetector(
                 key: const Key('reveal_button'),
-                onTap: _locked || selectedPeriodElapsed ? null : _reveal,
+                onTap: _locked || selectedPeriodElapsed
+                    ? null
+                    : (_isCooldown ? _notifyCooldownLocked : _reveal),
                 onLongPress: _toggleCooldownPreview,
                 child: Opacity(
-                  opacity: selectedPeriodElapsed ? 0.45 : 1,
+                  opacity: selectedPeriodElapsed
+                      ? 0.45
+                      : (_isCooldown ? 0.8 : 1),
                   child: AnimatedBuilder(
                     animation: _pulseController,
                     builder: (context, child) {
-                      final pulse = reduceMotion || selectedPeriodElapsed
+                      final pulse = reduceMotion ||
+                              selectedPeriodElapsed ||
+                              _isCooldown
                           ? 0.0
                           : _pulseController.value;
                       final ringScale = _locked ? 0.96 : 1 + pulse * 0.08;
@@ -628,7 +640,7 @@ class _RitualPageState extends State<RitualPage>
                 color: Colors.transparent,
                 child: InkWell(
                   key: const Key('ritual_watch_ad_button'),
-                  onTap: _openUnlockSheet,
+                  onTap: _watchAdAndUnlock,
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
