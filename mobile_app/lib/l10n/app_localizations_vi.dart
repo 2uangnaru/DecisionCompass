@@ -1258,4 +1258,30 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get profileConfirmBirthDate =>
       'Sau đó ngày sinh sẽ được giữ nguyên trong 4 giờ.';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'Năng lượng cần hồi phục ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return 'Đã dùng hết 3 lượt hôm nay ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'Năng lượng đang được tích tụ';
+
+  @override
+  String get quotaExhaustedNotice => 'Đã dùng hết lượt miễn phí hôm nay';
+
+  @override
+  String get watchAdPrompt => 'Bạn có thể xem video quảng cáo để tiếp tục';
+
+  @override
+  String get watchAdButton => 'Xem quảng cáo';
+
+  @override
+  String get adUnlockedReward =>
+      '✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!';
 }

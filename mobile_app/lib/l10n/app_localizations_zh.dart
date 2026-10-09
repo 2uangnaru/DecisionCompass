@@ -1107,11 +1107,36 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return '$wait后可再次修改出生日期。';
+    return '你可以在 $wait 后再次更改出生日期。';
   }
 
   @override
   String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return '能量恢复中 ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return '今日3次免费已用完 ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => '能量正在汇聚中';
+
+  @override
+  String get quotaExhaustedNotice => '今日免费次数已用尽';
+
+  @override
+  String get watchAdPrompt => '您可以观看视频广告以继续';
+
+  @override
+  String get watchAdButton => '观看广告';
+
+  @override
+  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2216,11 +2241,36 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return '$wait后可再次修改出生日期。';
+    return '你可以在 $wait 后再次更改出生日期。';
   }
 
   @override
   String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return '能量恢复中 ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return '今日3次免费已用完 ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => '能量正在汇聚中';
+
+  @override
+  String get quotaExhaustedNotice => '今日免费次数已用尽';
+
+  @override
+  String get watchAdPrompt => '您可以观看视频广告以继续';
+
+  @override
+  String get watchAdButton => '观看广告';
+
+  @override
+  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
 }
 
 /// The translations for Chinese, as used in China, using the Han script (`zh_Hans_CN`).
@@ -3325,9 +3375,34 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return '$wait后可再次修改出生日期。';
+    return '你可以在 $wait 后再次更改出生日期。';
   }
 
   @override
   String get profileConfirmBirthDate => '保存后，出生日期将在 4 小时内无法修改。';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return '能量恢复中 ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return '今日3次免费已用完 ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => '能量正在汇聚中';
+
+  @override
+  String get quotaExhaustedNotice => '今日免费次数已用尽';
+
+  @override
+  String get watchAdPrompt => '您可以观看视频广告以继续';
+
+  @override
+  String get watchAdButton => '观看广告';
+
+  @override
+  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
 }

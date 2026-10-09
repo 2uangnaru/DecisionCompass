@@ -356,5 +356,13 @@
   "profileBirthTimeUnknownValue": "अज्ञात",
   "profileReadingsUnchanged": "पहले सहेजी गई रीडिंग जैसी हैं वैसी ही रहेंगी।",
   "profileBirthDateLocked": "आप अपनी जन्मतिथि {wait} बाद फिर बदल सकते हैं।",
-  "profileConfirmBirthDate": "इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।"
+  "profileConfirmBirthDate": "इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।",
+  "energyCooldownTitle": "ऊर्जा पुनः प्राप्त हो रही है ({countdown})",
+  "dailyQuotaExhaustedTitle": "आज के सभी 3 पठन उपयोग कर लिए हैं ({countdown})",
+  "energyAccumulating": "ऊर्जा एकत्रित हो रही है",
+  "quotaExhaustedNotice": "आज के निःशुल्क पठन समाप्त हो गए",
+  "watchAdPrompt": "आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं",
+  "watchAdButton": "विज्ञापन देखें",
+  "adUnlockedReward": "✨ विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया",
+  "profileBirthDateLocked": "आप {wait} में अपनी जन्म तिथि दोबारा बदल सकते हैं।"
 }

@@ -188,13 +188,15 @@ class _RitualPageState extends State<RitualPage>
       _isQuotaExhaustedOverride = false;
     });
     _countdownTimer?.cancel();
-    _showNotice('✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!');
+    final l10n = AppLocalizations.of(context);
+    _showNotice(l10n.adUnlockedReward);
   }
 
   void _notifyCooldownLocked() {
+    final l10n = AppLocalizations.of(context);
     final message = _isQuotaExhausted
-        ? '⏳ Đã dùng hết lượt miễn phí hôm nay'
-        : '⏳ Năng lượng đang hồi phục';
+        ? l10n.quotaExhaustedNotice
+        : l10n.energyAccumulating;
     _showNotice(message);
   }
 
@@ -802,9 +804,9 @@ class _RitualPageState extends State<RitualPage>
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
                   : _isQuotaExhausted
-                  ? 'Đã dùng hết 3 lượt hôm nay ($_countdownString)'
+                  ? l10n.dailyQuotaExhaustedTitle(_countdownString)
                   : _isCooldown
-                  ? 'Năng lượng cần hồi phục ($_countdownString)'
+                  ? l10n.energyCooldownTitle(_countdownString)
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
@@ -821,7 +823,7 @@ class _RitualPageState extends State<RitualPage>
             const SizedBox(height: 5),
             Text(
               (_isCooldown || _isQuotaExhausted)
-                  ? 'Bạn có thể xem video quảng cáo để tiếp tục'
+                  ? l10n.watchAdPrompt
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -871,15 +873,15 @@ class _RitualPageState extends State<RitualPage>
                         ),
                       ],
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text('🎬', style: TextStyle(fontSize: 13)),
-                        SizedBox(width: 6),
+                        const Text('🎬', style: TextStyle(fontSize: 13)),
+                        const SizedBox(width: 6),
                         Text(
-                          'Xem quảng cáo',
-                          style: TextStyle(
+                          l10n.watchAdButton,
+                          style: const TextStyle(
                             color: Colors.white,
                             fontSize: 12,
                             fontWeight: FontWeight.w700,

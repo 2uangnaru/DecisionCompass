@@ -356,5 +356,13 @@
   "profileBirthTimeUnknownValue": "未知",
   "profileReadingsUnchanged": "已保存的结果将保持不变。",
   "profileBirthDateLocked": "{wait}后可再次修改出生日期。",
-  "profileConfirmBirthDate": "保存后，出生日期将在 4 小时内无法修改。"
+  "profileConfirmBirthDate": "保存后，出生日期将在 4 小时内无法修改。",
+  "energyCooldownTitle": "能量恢复中 ({countdown})",
+  "dailyQuotaExhaustedTitle": "今日3次免费已用完 ({countdown})",
+  "energyAccumulating": "能量正在汇聚中",
+  "quotaExhaustedNotice": "今日免费次数已用尽",
+  "watchAdPrompt": "您可以观看视频广告以继续",
+  "watchAdButton": "观看广告",
+  "adUnlockedReward": "✨ 广告已观看！已立即解锁1次分析",
+  "profileBirthDateLocked": "你可以在 {wait} 后再次更改出生日期。"
 }

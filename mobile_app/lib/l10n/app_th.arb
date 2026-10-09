@@ -356,5 +356,13 @@
   "profileBirthTimeUnknownValue": "ไม่ทราบ",
   "profileReadingsUnchanged": "ผลลัพธ์ที่บันทึกไว้แล้วจะยังคงเดิม",
   "profileBirthDateLocked": "คุณจะเปลี่ยนวันเกิดได้อีกครั้งในอีก {wait}",
-  "profileConfirmBirthDate": "หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง"
+  "profileConfirmBirthDate": "หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง",
+  "energyCooldownTitle": "กำลังฟื้นฟูพลังงาน ({countdown})",
+  "dailyQuotaExhaustedTitle": "ใช้อ่านฟรีครบ 3 ครั้งแล้ววันนี้ ({countdown})",
+  "energyAccumulating": "พลังงานกำลังสะสม",
+  "quotaExhaustedNotice": "ใช้สิทธิ์อ่านฟรีวันนี้หมดแล้ว",
+  "watchAdPrompt": "คุณสามารถดูวิดีโอโฆษณาเพื่อดำเนินการต่อ",
+  "watchAdButton": "ดูโฆษณา",
+  "adUnlockedReward": "✨ ดูโฆษณาแล้ว! ปลดล็อกการวิเคราะห์ทันที 1 ครั้ง",
+  "profileBirthDateLocked": "คุณจะสามารถเปลี่ยนวันเกิดได้อีกครั้งใน {wait}"
 }

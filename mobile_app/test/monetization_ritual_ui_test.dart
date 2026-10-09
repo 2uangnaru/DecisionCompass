@@ -25,6 +25,7 @@ void main() {
     WidgetTester tester, {
     bool isCooldown = true,
     bool? isQuotaExhausted,
+    AppLocale locale = AppLocale.vietnamese,
   }) async {
     useScreen(tester, size: const Size(393, 873));
     final rig = ReadingTestRig(
@@ -33,7 +34,7 @@ void main() {
     await tester.pumpWidget(
       localizedApp(
         theme: buildCompassTheme(),
-        locale: AppLocale.vietnamese,
+        locale: locale,
         home: RitualPage(
           mode: DecisionMode.yesNo,
           period: TimePeriod.now,
@@ -87,7 +88,7 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.text('⏳ Năng lượng đang hồi phục'),
+      find.text('Năng lượng đang được tích tụ'),
       findsOneWidget,
     );
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
@@ -99,7 +100,7 @@ void main() {
     await tester.tap(find.byKey(const Key('reveal_button')));
     await tester.pump();
     expect(find.byKey(const Key('ritual_locked_notice')), findsOneWidget);
-    expect(find.text('⏳ Năng lượng đang hồi phục'), findsOneWidget);
+    expect(find.text('Năng lượng đang được tích tụ'), findsOneWidget);
 
     // 4. Tapping the watch ad button directly unlocks the reading on the spot without opening a bottom sheet
     await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));
@@ -138,7 +139,7 @@ void main() {
       findsOneWidget,
     );
     expect(
-      find.text('⏳ Đã dùng hết lượt miễn phí hôm nay'),
+      find.text('Đã dùng hết lượt miễn phí hôm nay'),
       findsOneWidget,
     );
 
@@ -180,6 +181,33 @@ void main() {
 
     expect(find.text('Năng lượng cần hồi phục (02:15:34)'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+  });
+
+  testWidgets('RitualPage renders localized monetization strings in English', (
+    tester,
+  ) async {
+    await pumpRitualOption1(
+      tester,
+      isCooldown: true,
+      locale: AppLocale.english,
+    );
+
+    expect(find.text('ANALYZE'), findsOneWidget);
+    expect(find.text('Energy replenishing (02:15:34)'), findsOneWidget);
+    expect(find.text('You can watch a video ad to continue'), findsOneWidget);
+    expect(find.text('Watch ad'), findsOneWidget);
+
+    // Tapping locked orb shows English notice
+    await tester.tap(find.byKey(const Key('reveal_button')));
+    await tester.pump();
+    expect(find.byKey(const Key('ritual_locked_notice')), findsOneWidget);
+    expect(find.text('Energy is gathering'), findsOneWidget);
+
+    // Tapping ad unlocks with English reward notice
+    await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('✨ Ad watched! 1 instant reading unlocked'), findsOneWidget);
   });
 
   test('ReadingQuotaController tracks cooldown, consumes quota, and unlocks with bonus', () async {

@@ -1135,9 +1135,34 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return '生年月日は、あと$waitで変更できます。';
+    return '$wait後に生年月日を再度変更できます。';
   }
 
   @override
   String get profileConfirmBirthDate => '保存後、生年月日は4時間変更できません。';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'エネルギー回復中 ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return '本日の3回分を使い切りました ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'エネルギーが蓄積されています';
+
+  @override
+  String get quotaExhaustedNotice => '本日の無料リーディング上限に達しました';
+
+  @override
+  String get watchAdPrompt => '動画広告を視聴して続けることができます';
+
+  @override
+  String get watchAdButton => '広告を見る';
+
+  @override
+  String get adUnlockedReward => '✨ 広告を視聴しました！すぐに1回分析できます';
 }

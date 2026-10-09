@@ -1258,10 +1258,36 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return 'Podrás cambiar tu fecha de nacimiento dentro de $wait.';
+    return 'Podrás cambiar tu fecha de nacimiento de nuevo en $wait.';
   }
 
   @override
   String get profileConfirmBirthDate =>
       'Después, tu fecha de nacimiento quedará fija durante 4 horas.';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'Recargando energía ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return 'Has usado las 3 lecturas de hoy ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'La energía se está acumulando';
+
+  @override
+  String get quotaExhaustedNotice => 'Lecturas gratuitas diarias agotadas';
+
+  @override
+  String get watchAdPrompt => 'Puedes ver un anuncio en video para continuar';
+
+  @override
+  String get watchAdButton => 'Ver anuncio';
+
+  @override
+  String get adUnlockedReward =>
+      '✨ ¡Anuncio visto! Se desbloqueó 1 lectura instantánea';
 }

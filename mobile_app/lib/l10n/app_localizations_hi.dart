@@ -1254,12 +1254,39 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return 'आप अपनी जन्मतिथि $wait बाद फिर बदल सकते हैं।';
+    return 'आप $wait में अपनी जन्म तिथि दोबारा बदल सकते हैं।';
   }
 
   @override
   String get profileConfirmBirthDate =>
       'इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'ऊर्जा पुनः प्राप्त हो रही है ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return 'आज के सभी 3 पठन उपयोग कर लिए हैं ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'ऊर्जा एकत्रित हो रही है';
+
+  @override
+  String get quotaExhaustedNotice => 'आज के निःशुल्क पठन समाप्त हो गए';
+
+  @override
+  String get watchAdPrompt =>
+      'आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं';
+
+  @override
+  String get watchAdButton => 'विज्ञापन देखें';
+
+  @override
+  String get adUnlockedReward =>
+      '✨ विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
 }
 
 /// The translations for Hindi, as used in India (`hi_IN`).
@@ -2511,10 +2538,37 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return 'आप अपनी जन्मतिथि $wait बाद फिर बदल सकते हैं।';
+    return 'आप $wait में अपनी जन्म तिथि दोबारा बदल सकते हैं।';
   }
 
   @override
   String get profileConfirmBirthDate =>
       'इसके बाद आपकी जन्मतिथि 4 घंटे तक नहीं बदली जा सकेगी।';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'ऊर्जा पुनः प्राप्त हो रही है ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return 'आज के सभी 3 पठन उपयोग कर लिए हैं ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'ऊर्जा एकत्रित हो रही है';
+
+  @override
+  String get quotaExhaustedNotice => 'आज के निःशुल्क पठन समाप्त हो गए';
+
+  @override
+  String get watchAdPrompt =>
+      'आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं';
+
+  @override
+  String get watchAdButton => 'विज्ञापन देखें';
+
+  @override
+  String get adUnlockedReward =>
+      '✨ विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
 }

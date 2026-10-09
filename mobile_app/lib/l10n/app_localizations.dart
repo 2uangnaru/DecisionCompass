@@ -9,6 +9,7 @@ import 'app_localizations_en.dart';
 import 'app_localizations_es.dart';
 import 'app_localizations_hi.dart';
 import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
 import 'app_localizations_th.dart';
 import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
@@ -104,6 +105,7 @@ abstract class AppLocalizations {
     Locale('hi'),
     Locale('hi', 'IN'),
     Locale('ja'),
+    Locale('ko'),
     Locale('th'),
     Locale('vi'),
     Locale('zh'),
@@ -2256,6 +2258,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your birth date will then stay fixed for 4 hours.'**
   String get profileConfirmBirthDate;
+
+  /// No description provided for @energyCooldownTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy replenishing ({countdown})'**
+  String energyCooldownTitle(String countdown);
+
+  /// No description provided for @dailyQuotaExhaustedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'All 3 free readings used today ({countdown})'**
+  String dailyQuotaExhaustedTitle(String countdown);
+
+  /// No description provided for @energyAccumulating.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy is gathering'**
+  String get energyAccumulating;
+
+  /// No description provided for @quotaExhaustedNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily free readings used up'**
+  String get quotaExhaustedNotice;
+
+  /// No description provided for @watchAdPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'You can watch a video ad to continue'**
+  String get watchAdPrompt;
+
+  /// No description provided for @watchAdButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Watch ad'**
+  String get watchAdButton;
+
+  /// No description provided for @adUnlockedReward.
+  ///
+  /// In en, this message translates to:
+  /// **'✨ Ad watched! 1 instant reading unlocked'**
+  String get adUnlockedReward;
 }
 
 class _AppLocalizationsDelegate
@@ -2273,6 +2317,7 @@ class _AppLocalizationsDelegate
     'es',
     'hi',
     'ja',
+    'ko',
     'th',
     'vi',
     'zh',
@@ -2323,6 +2368,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
       return AppLocalizationsHi();
     case 'ja':
       return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
     case 'th':
       return AppLocalizationsTh();
     case 'vi':

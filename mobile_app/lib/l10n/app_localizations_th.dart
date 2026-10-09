@@ -1242,10 +1242,36 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String profileBirthDateLocked(String wait) {
-    return 'คุณจะเปลี่ยนวันเกิดได้อีกครั้งในอีก $wait';
+    return 'คุณจะสามารถเปลี่ยนวันเกิดได้อีกครั้งใน $wait';
   }
 
   @override
   String get profileConfirmBirthDate =>
       'หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง';
+
+  @override
+  String energyCooldownTitle(String countdown) {
+    return 'กำลังฟื้นฟูพลังงาน ($countdown)';
+  }
+
+  @override
+  String dailyQuotaExhaustedTitle(String countdown) {
+    return 'ใช้อ่านฟรีครบ 3 ครั้งแล้ววันนี้ ($countdown)';
+  }
+
+  @override
+  String get energyAccumulating => 'พลังงานกำลังสะสม';
+
+  @override
+  String get quotaExhaustedNotice => 'ใช้สิทธิ์อ่านฟรีวันนี้หมดแล้ว';
+
+  @override
+  String get watchAdPrompt => 'คุณสามารถดูวิดีโอโฆษณาเพื่อดำเนินการต่อ';
+
+  @override
+  String get watchAdButton => 'ดูโฆษณา';
+
+  @override
+  String get adUnlockedReward =>
+      '✨ ดูโฆษณาแล้ว! ปลดล็อกการวิเคราะห์ทันที 1 ครั้ง';
 }

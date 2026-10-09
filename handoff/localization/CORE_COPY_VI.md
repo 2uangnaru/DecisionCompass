@@ -74,6 +74,13 @@ This supplements `CORE_COPY.md` with the **same keys and placeholders**. Locale:
 | noReadings | Chưa có lần phân tích nào. Hãy khám phá hướng đi đầu tiên để bắt đầu lưu lịch sử. |
 | historySnapshot | Kết quả được lưu lại đúng như lúc hiển thị và không được tính lại. |
 | everydayReflection | Chỉ để suy ngẫm về chuyện thường ngày. Quyết định quan trọng cần thông tin thực tế và sự hỗ trợ từ người có chuyên môn. |
+| energyCooldownTitle | Năng lượng cần hồi phục ({countdown}) |
+| dailyQuotaExhaustedTitle | Đã dùng hết 3 lượt hôm nay ({countdown}) |
+| energyAccumulating | Năng lượng đang được tích tụ |
+| quotaExhaustedNotice | Đã dùng hết lượt miễn phí hôm nay |
+| watchAdPrompt | Bạn có thể xem video quảng cáo để tiếp tục |
+| watchAdButton | Xem quảng cáo |
+| adUnlockedReward | ✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay! |
 
 ## Notes
 
