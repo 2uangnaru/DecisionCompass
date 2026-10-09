@@ -1,6 +1,7 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
+import 'package:decision_compass/data/reading_quota_controller.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
 import 'package:decision_compass/theme.dart';
@@ -56,14 +57,21 @@ void main() {
 
     // 2. Cooldown elements are present
     expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
-    // Time is removed from the analysis / ritual screen
-    expect(find.text('02:15:34'), findsNothing);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
     expect(find.text('Xem quảng cáo'), findsOneWidget);
-    expect(find.text('Năng lượng cần hồi phục'), findsOneWidget);
+    expect(
+      find.text('Năng lượng cần hồi phục (02:15:34)'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Bạn có thể xem video quảng cáo để tiếp tục'),
+      findsOneWidget,
+    );
 
     // Verify title 'Năng lượng cần hồi phục' is positioned ABOVE watch ad button
-    final titleRect = tester.getRect(find.text('Năng lượng cần hồi phục'));
+    final titleRect = tester.getRect(
+      find.text('Năng lượng cần hồi phục (02:15:34)'),
+    );
     final adBtnRect = tester.getRect(
       find.byKey(const Key('ritual_watch_ad_button')),
     );
@@ -107,5 +115,33 @@ void main() {
 
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
     expect(find.text('LẮNG ĐỌNG'), findsOneWidget);
+  });
+
+  test('ReadingQuotaController tracks cooldown, consumes quota, and unlocks with bonus', () async {
+    final quota = FakeReadingQuotaController(
+      initialCooldown: false,
+      initialRemaining: const Duration(hours: 2, minutes: 15, seconds: 34),
+    );
+    final now = DateTime(2026, 10, 9, 11, 0);
+
+    // 1. Initially available
+    expect(quota.isAvailable(now), isTrue);
+    expect(quota.isCooldown(now), isFalse);
+
+    // 2. Consume reading triggers cooldown
+    await quota.consumeReading(now);
+    expect(quota.isCooldown(now), isTrue);
+    expect(quota.remainingTimeString(now), '02:15:34');
+
+    // 3. Earn bonus reading unlocks immediately
+    await quota.earnBonusReading();
+    expect(quota.bonusReadings, 1);
+    expect(quota.isAvailable(now), isTrue);
+    expect(quota.isCooldown(now), isFalse);
+
+    // 4. Consuming bonus reading leaves user in cooldown if timer not expired
+    await quota.consumeReading(now);
+    expect(quota.bonusReadings, 0);
+    expect(quota.isCooldown(now), isTrue);
   });
 }

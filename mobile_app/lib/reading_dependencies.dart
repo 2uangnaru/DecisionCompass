@@ -6,6 +6,7 @@ import 'data/home_description_deck.dart';
 import 'data/history_repository.dart';
 import 'data/locale_controller.dart';
 import 'data/profile_repository.dart';
+import 'data/reading_quota_controller.dart';
 import 'data/reading_repository.dart';
 
 /// Everything the reading flow needs from outside the widget tree, passed down
@@ -22,6 +23,7 @@ class ReadingDependencies {
     required this.dailyEnergyInsights,
     required this.localeController,
     this.analytics = const NoopAnalyticsService(),
+    this.quotaManager = const NoopReadingQuotaController(),
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -45,6 +47,7 @@ class ReadingDependencies {
   /// behind in the previous language.
   final LocaleController localeController;
   final AnalyticsService analytics;
+  final ReadingQuotaController quotaManager;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

@@ -198,7 +198,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           category: _category,
           profile: _profile,
           dependencies: widget.dependencies,
-          isCooldown: true,
           onSafetyAcknowledged: (updated) {
             setState(() => _profile = updated);
             widget.dependencies.profileRepository.save(updated);

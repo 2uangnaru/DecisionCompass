@@ -27,7 +27,7 @@ class RitualPage extends StatefulWidget {
     required this.profile,
     required this.dependencies,
     this.onSafetyAcknowledged,
-    this.isCooldown = false,
+    this.isCooldown,
   });
 
   final DecisionMode mode;
@@ -37,8 +37,8 @@ class RitualPage extends StatefulWidget {
   final ReadingDependencies dependencies;
   final ValueChanged<AppProfile>? onSafetyAcknowledged;
 
-  /// Whether the cooldown state is simulated for Option 1 UI.
-  final bool isCooldown;
+  /// Optional override for testing/previewing cooldown state.
+  final bool? isCooldown;
 
   @override
   State<RitualPage> createState() => _RitualPageState();
@@ -47,17 +47,63 @@ class RitualPage extends StatefulWidget {
 class _RitualPageState extends State<RitualPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
-  late bool _isCooldown = widget.isCooldown;
+  late bool _isCooldown;
+  late String _countdownString;
+  Timer? _countdownTimer;
   Timer? _periodRefreshTimer;
   late final AnimationController _pulseController;
   late AppProfile _profile = widget.profile;
 
+  void _startCountdownTimer() {
+    _countdownTimer?.cancel();
+    if (!_isCooldown) return;
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) {
+        timer.cancel();
+        return;
+      }
+      final now = widget.dependencies.nowLocal();
+      final remaining = widget.dependencies.quotaManager.remainingCooldown(now);
+      if (remaining <= Duration.zero &&
+          widget.dependencies.quotaManager.isAvailable(now)) {
+        timer.cancel();
+        setState(() {
+          _isCooldown = false;
+          _countdownString = '00:00:00';
+        });
+      } else {
+        setState(() {
+          _countdownString =
+              widget.dependencies.quotaManager.remainingTimeString(now);
+        });
+      }
+    });
+  }
+
+  void _toggleCooldownPreview() {
+    setState(() {
+      _isCooldown = !_isCooldown;
+      if (_isCooldown) {
+        _countdownString = widget.dependencies.quotaManager
+            .remainingTimeString(widget.dependencies.nowLocal());
+        _startCountdownTimer();
+      } else {
+        _countdownTimer?.cancel();
+      }
+    });
+  }
+
   void _openUnlockSheet() {
     showMonetizationUnlockSheet(
       context,
-      remainingTime: '02:15:34',
-      onWatchAd: () {
-        setState(() => _isCooldown = false);
+      remainingTime: _countdownString,
+      onWatchAd: () async {
+        await widget.dependencies.quotaManager.earnBonusReading();
+        if (!mounted) return;
+        setState(() {
+          _isCooldown = false;
+        });
+        _countdownTimer?.cancel();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
@@ -95,6 +141,14 @@ class _RitualPageState extends State<RitualPage>
   @override
   void initState() {
     super.initState();
+    _isCooldown = widget.isCooldown ??
+        widget.dependencies.quotaManager
+            .isCooldown(widget.dependencies.nowLocal());
+    _countdownString = widget.dependencies.quotaManager
+        .remainingTimeString(widget.dependencies.nowLocal());
+    if (_isCooldown) {
+      _startCountdownTimer();
+    }
     _pulseController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
@@ -107,6 +161,7 @@ class _RitualPageState extends State<RitualPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     _periodRefreshTimer?.cancel();
+    _countdownTimer?.cancel();
     _pulseController.dispose();
     super.dispose();
   }
@@ -258,6 +313,10 @@ class _RitualPageState extends State<RitualPage>
 
   Future<void> _reveal() async {
     if (_locked) return;
+    if (_isCooldown) {
+      _openUnlockSheet();
+      return;
+    }
     // The reading's moment is this tap, taken before any lookup, so a slow
     // one cannot move it — and it is also the instant every check below
     // judges the selection against.
@@ -289,6 +348,7 @@ class _RitualPageState extends State<RitualPage>
     // and this time against the tap's own instant, not the sheet's.
     if (_rejectClosedPeriod(at: instantUtc)) return;
     setState(() => _locked = true);
+    await widget.dependencies.quotaManager.consumeReading(instantUtc);
     await Future<void>.delayed(const Duration(milliseconds: 360));
     if (!mounted) return;
     await Navigator.of(context).pushReplacement(
@@ -394,7 +454,7 @@ class _RitualPageState extends State<RitualPage>
         ),
         const SizedBox(height: 6),
         GestureDetector(
-          onTap: () => setState(() => _isCooldown = !_isCooldown),
+          onTap: _toggleCooldownPreview,
           child: _CategoryBadge(
             key: const Key('ritual_category_badge'),
             label: categoryLabel(l10n, widget.category),
@@ -418,7 +478,7 @@ class _RitualPageState extends State<RitualPage>
               child: GestureDetector(
                 key: const Key('reveal_button'),
                 onTap: _locked || selectedPeriodElapsed ? null : _reveal,
-                onLongPress: () => setState(() => _isCooldown = !_isCooldown),
+                onLongPress: _toggleCooldownPreview,
                 child: Opacity(
                   opacity: selectedPeriodElapsed ? 0.45 : 1,
                   child: AnimatedBuilder(
@@ -543,19 +603,19 @@ class _RitualPageState extends State<RitualPage>
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
                   : _isCooldown
-                  ? 'Năng lượng cần hồi phục'
+                  ? 'Năng lượng cần hồi phục ($_countdownString)'
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontSize: _isCooldown ? 16 : null,
+                    fontSize: _isCooldown ? 15.5 : null,
                     color: _isCooldown ? const Color(0xFFF3E0A2) : null,
                   ),
             ),
             const SizedBox(height: 5),
             Text(
               _isCooldown
-                  ? 'Bạn có thể chờ lượt hồi phục hoặc xem video ngắn để tiếp tục.'
+                  ? 'Bạn có thể xem video quảng cáo để tiếp tục'
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

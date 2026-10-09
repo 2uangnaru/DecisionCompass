@@ -27,6 +27,9 @@ class SharedPreferencesAnalyticsConsentStore implements AnalyticsConsentStore {
   @override
   Future<bool> load() async {
     final prefs = await SharedPreferences.getInstance();
+    if (!prefs.containsKey(key)) {
+      return true;
+    }
     return prefs.get(key) == true;
   }
 

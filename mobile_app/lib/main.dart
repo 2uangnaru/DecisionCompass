@@ -23,6 +23,7 @@ import 'data/shared_preferences_daily_energy_insight_store.dart';
 import 'data/shared_preferences_history_repository.dart';
 import 'data/shared_preferences_home_description_store.dart';
 import 'data/shared_preferences_profile_repository.dart';
+import 'data/reading_quota_controller.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
 
@@ -58,6 +59,7 @@ Future<void> main() async {
   // Optional telemetry must not extend the startup ritual or hold Home back.
   // The consent control is disabled until this background load settles.
   unawaited(analytics.ensureLoaded());
+  final quotaManager = SharedPreferencesReadingQuotaController();
   final localeController = LocaleController(
     store: const SharedPreferencesLocaleStore(),
     analytics: analytics,
@@ -68,6 +70,7 @@ Future<void> main() async {
   final startupPreparation = Future.wait<void>([
     initializeDateFormatting(),
     localeController.ensureLoaded(),
+    quotaManager.ensureLoaded(),
   ]);
 
   runApp(
@@ -97,6 +100,7 @@ Future<void> main() async {
         dailyEnergyInsights: dailyEnergyInsights,
         localeController: localeController,
         analytics: analytics,
+        quotaManager: quotaManager,
       ),
     ),
   );

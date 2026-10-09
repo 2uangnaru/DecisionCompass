@@ -16,7 +16,6 @@ import '../widgets/birth_date_picker.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/language_selector.dart';
-import '../widgets/analytics_consent_tile.dart';
 import 'home_page.dart';
 
 class OnboardingPage extends StatefulWidget {
@@ -394,19 +393,11 @@ class _OnboardingPageState extends State<OnboardingPage> {
                       ),
                     ],
                   ),
-                  Column(
-                    children: [
-                      AnalyticsConsentTile(
-                        analytics: widget.dependencies.analytics,
-                        onEnabled: _trackOnboarding,
-                      ),
-                      FilledButton.icon(
-                        key: const Key('continue_to_profile'),
-                        onPressed: _continueToProfile,
-                        icon: const Icon(Icons.arrow_forward_rounded),
-                        label: Text(l10n.continueAction),
-                      ),
-                    ],
+                  FilledButton.icon(
+                    key: const Key('continue_to_profile'),
+                    onPressed: _continueToProfile,
+                    icon: const Icon(Icons.arrow_forward_rounded),
+                    label: Text(l10n.continueAction),
                   ),
                 ],
               ),
