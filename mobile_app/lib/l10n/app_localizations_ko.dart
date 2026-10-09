@@ -1166,17 +1166,17 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get energyAccumulating => '우주의 에너지가 채워지고 있습니다.';
+  String get energyAccumulating => '우주의 에너지가 채워지고 있습니다';
 
   @override
-  String get quotaExhaustedNotice => '오늘의 무료 점술 횟수를 모두 소진했습니다.';
+  String get quotaExhaustedNotice => '오늘의 무료 점술 횟수를 모두 소진했습니다';
 
   @override
-  String get watchAdPrompt => '추가 점술을 위해 에너지를 충전하시겠습니까?';
+  String get watchAdPrompt => '동영상 광고를 시청하여 계속 진행할 수 있습니다';
 
   @override
-  String get watchAdButton => '에너지 충전하고 계속하기';
+  String get watchAdButton => '광고 시청';
 
   @override
-  String get adUnlockedReward => '새로운 점술 에너지가 충전되었습니다!';
+  String get adUnlockedReward => '광고 시청 완료! 즉시 점술 1회 이용이 잠금 해제되었습니다';
 }

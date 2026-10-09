@@ -12,20 +12,35 @@ class AdBannerSlot extends StatelessWidget {
   const AdBannerSlot({
     super.key,
     this.height = 50.0,
-    this.advertiserName = 'Astra Store',
-    this.title = 'Vòng đá phong thủy may mắn',
-    this.callToAction = 'Xem ngay',
+    this.advertiserName,
+    this.title,
+    this.callToAction,
     this.onTap,
   });
 
   final double height;
-  final String advertiserName;
-  final String title;
-  final String callToAction;
+  final String? advertiserName;
+  final String? title;
+  final String? callToAction;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final lang = Localizations.maybeLocaleOf(context)?.languageCode ?? 'vi';
+    final (resolvedTitle, resolvedCta) = switch (lang) {
+      'en' => ('Lucky feng shui crystal bracelet', 'View now'),
+      'ja' => ('幸運の天然石ブレスレット', '今すぐ見る'),
+      'ko' => ('행운의 천연 원석 팔찌', '바로보기'),
+      'zh' => ('开运风水水晶手串', '立即查看'),
+      'es' => ('Pulsera de piedra de la suerte', 'Ver ahora'),
+      'th' => ('กำไลหินมงคลนำโชค', 'ดูเลย'),
+      'hi' => ('शुभ रत्न ब्रेसलेट', 'अभी देखें'),
+      _ => ('Vòng đá phong thủy may mắn', 'Xem ngay'),
+    };
+    final displayAdvertiser = advertiserName ?? 'Astra Store';
+    final displayTitle = title ?? resolvedTitle;
+    final displayCta = callToAction ?? resolvedCta;
+
     return Container(
       height: height,
       width: double.infinity,
@@ -70,7 +85,7 @@ class AdBannerSlot extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '$advertiserName: $title',
+                  '$displayAdvertiser: $displayTitle',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -98,7 +113,7 @@ class AdBannerSlot extends StatelessWidget {
                 ),
               ),
               child: Text(
-                callToAction,
+                displayCta,
                 style: const TextStyle(
                   color: CompassColors.blueLight,
                   fontSize: 11,
