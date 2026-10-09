@@ -201,5 +201,47 @@ void main() {
         );
       });
     }
+
+    test('in English, KR is named Korea, not South Korea', () {
+      final l10n = CompassCountryLocalizations(const Locale('en'));
+      expect(l10n.countryName(countryCode: 'KR'), 'Korea');
+    });
+
+    testWidgets(
+      'in English, searching Korea finds Korea and South Korea query also resolves',
+      (tester) async {
+        await openPicker(tester, AppLocale.english);
+        await search(tester, 'Korea');
+        expect(inList('Korea'), findsOneWidget);
+        expect(inList('South Korea'), findsNothing);
+
+        await search(tester, 'South Korea');
+        expect(inList('Korea'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'in Vietnamese, searching Korea, South Korea, or han quoc finds Hàn Quốc',
+      (tester) async {
+        await openPicker(tester, AppLocale.vietnamese);
+        await search(tester, 'Korea');
+        expect(inList('Hàn Quốc'), findsOneWidget);
+
+        await search(tester, 'South Korea');
+        expect(inList('Hàn Quốc'), findsOneWidget);
+
+        await search(tester, 'han quoc');
+        expect(inList('Hàn Quốc'), findsOneWidget);
+
+        await tester.tap(inList('\u{1F1F0}\u{1F1F7}'));
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<Text>(find.byKey(const Key('birth_country_value')))
+              .data,
+          'Hàn Quốc',
+        );
+      },
+    );
   });
 }

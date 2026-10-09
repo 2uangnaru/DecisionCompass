@@ -38,9 +38,17 @@ class CompassCountryLocalizations extends CountryLocalizations {
 
   @override
   String? countryName({required String countryCode}) {
+    if (countryCode == 'KR' &&
+        (locale.languageCode == 'en' || locale.languageCode.isEmpty)) {
+      return 'Korea';
+    }
     final bundled = _cldr[locale.languageCode];
     if (bundled != null) return bundled[countryCode];
-    return super.countryName(countryCode: countryCode);
+    final defaultName = super.countryName(countryCode: countryCode);
+    if (countryCode == 'KR' && defaultName == 'South Korea') {
+      return 'Korea';
+    }
+    return defaultName;
   }
 }
 
