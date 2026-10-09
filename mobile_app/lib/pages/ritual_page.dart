@@ -211,6 +211,56 @@ class _RitualPageState extends State<RitualPage>
     _showNotice(message);
   }
 
+  int get _freeReadingsUsed {
+    if (_isQuotaExhausted) {
+      return widget.dependencies.quotaManager.maxDailyFreeReadings;
+    }
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    final used = quota.dailyFreeReadingsUsed(now);
+    if (_isCooldown && used == 0) {
+      return 1;
+    }
+    return used.clamp(0, quota.maxDailyFreeReadings);
+  }
+
+  Widget _quotaBadge({required Color accentColor}) {
+    final quota = widget.dependencies.quotaManager;
+    final total = quota.maxDailyFreeReadings;
+    final used = _freeReadingsUsed;
+    final bonus = quota.bonusReadings;
+    final badgeText = bonus > 0 ? '$used/$total (+$bonus)' : '$used/$total';
+
+    return Container(
+      key: const Key('ritual_quota_badge'),
+      padding: const EdgeInsets.symmetric(horizontal: 7.5, vertical: 2),
+      decoration: BoxDecoration(
+        color: const Color(0x660A1324),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.38),
+          width: 0.85,
+        ),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x55000000),
+            blurRadius: 4,
+            offset: Offset(0, 1.5),
+          ),
+        ],
+      ),
+      child: Text(
+        badgeText,
+        style: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+          color: accentColor.withValues(alpha: 0.95),
+        ),
+      ),
+    );
+  }
+
   /// The IANA zone a reading taken now would resolve to.
   ///
   /// The reader's IANA zone, once it is known.
@@ -618,7 +668,7 @@ class _RitualPageState extends State<RitualPage>
                           child: _body(
                             compact,
                             ringSize,
-                            ringSize * 0.81,
+                            ringSize * 0.825,
                             reduceMotion,
                           ),
                         ),
@@ -805,10 +855,10 @@ class _RitualPageState extends State<RitualPage>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ZodiacAvatar(
-                                    size: compact ? 54 : 62,
+                                    size: compact ? 46 : 54,
                                     sign: widget.profile.zodiacSign,
                                   ),
-                                  const SizedBox(height: 10),
+                                  SizedBox(height: compact ? 6 : 8),
                                   Text(
                                     _locked
                                         ? l10n.aligning
@@ -818,8 +868,8 @@ class _RitualPageState extends State<RitualPage>
                                     textAlign: TextAlign.center,
                                     maxLines: 2,
                                     style: TextStyle(
-                                      fontSize: 12,
-                                      letterSpacing: trackingFor(context, 2),
+                                      fontSize: compact ? 11.5 : 12.5,
+                                      letterSpacing: trackingFor(context, 1.8),
                                       fontWeight: FontWeight.w700,
                                       color: _isQuotaExhausted
                                           ? const Color(0xFFF5BDBD)
@@ -827,6 +877,14 @@ class _RitualPageState extends State<RitualPage>
                                           ? const Color(0xFFF3E0A2)
                                           : Colors.white,
                                     ),
+                                  ),
+                                  const SizedBox(height: 4),
+                                  _quotaBadge(
+                                    accentColor: _isQuotaExhausted
+                                        ? const Color(0xFFE27C7C)
+                                        : _isCooldown
+                                        ? const Color(0xFFE2A84B)
+                                        : CompassColors.blueLight,
                                   ),
                                 ],
                               ),

@@ -154,5 +154,95 @@ void main() {
         }
       },
     );
+
+    testWidgets(
+      'displays quota badge counter accurately inside reveal orb (0/3, 1/3, 3/3, 3/3 (+1))',
+      (tester) async {
+        useScreen(tester, size: const Size(393, 873));
+
+        // 1. Fresh state: 0/3
+        final freshQuota = FakeReadingQuotaController(
+          initialCooldown: false,
+          initialUsed: 0,
+        );
+        final freshRig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          quotaManager: freshQuota,
+        );
+        await tester.pumpWidget(
+          localizedApp(
+            theme: buildCompassTheme(),
+            home: RitualPage(
+              mode: DecisionMode.yesNo,
+              period: TimePeriod.now,
+              category: engine.ReadingCategory.general,
+              profile: profile,
+              dependencies: freshRig.dependencies,
+              isCooldown: false,
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
+        expect(find.text('0/3'), findsOneWidget);
+
+        // 2. Cooldown after 1 reading: 1/3
+        final coolQuota = FakeReadingQuotaController(
+          initialCooldown: true,
+          initialUsed: 1,
+        );
+        final coolRig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          quotaManager: coolQuota,
+        );
+        await tester.pumpWidget(
+          localizedApp(
+            theme: buildCompassTheme(),
+            home: RitualPage(
+              mode: DecisionMode.yesNo,
+              period: TimePeriod.now,
+              category: engine.ReadingCategory.general,
+              profile: profile,
+              dependencies: coolRig.dependencies,
+              isCooldown: true,
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
+        expect(find.text('1/3'), findsOneWidget);
+
+        // 3. Exhausted daily quota: 3/3
+        final exhaustQuota = FakeReadingQuotaController(
+          initialCooldown: true,
+          initialUsed: 3,
+        );
+        final exhaustRig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          quotaManager: exhaustQuota,
+        );
+        await tester.pumpWidget(
+          localizedApp(
+            theme: buildCompassTheme(),
+            home: RitualPage(
+              mode: DecisionMode.yesNo,
+              period: TimePeriod.now,
+              category: engine.ReadingCategory.general,
+              profile: profile,
+              dependencies: exhaustRig.dependencies,
+              isCooldown: true,
+            ),
+          ),
+        );
+        await tester.pump();
+        expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
+        expect(find.text('3/3'), findsOneWidget);
+
+        // 4. Exhausted but with bonus from reward: 3/3 (+1)
+        await exhaustQuota.earnBonusReading();
+        await tester.pump();
+        expect(find.text('3/3 (+1)'), findsOneWidget);
+      },
+    );
   });
 }

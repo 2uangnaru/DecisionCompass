@@ -263,17 +263,25 @@ class FakeReadingQuotaController extends ChangeNotifier
     bool initialCooldown = false,
     Duration initialRemaining = const Duration(hours: 3),
     int initialBonus = 0,
+    int initialUsed = 0,
   }) : _isCooldown = initialCooldown,
        _remaining = initialRemaining,
-       _bonus = initialBonus;
+       _bonus = initialBonus,
+       _usedToday = initialUsed;
 
   bool _isCooldown;
   Duration _remaining;
   int _bonus;
+  int _usedToday;
 
   void setCooldown(bool cooldown, {Duration? remaining}) {
     _isCooldown = cooldown;
     if (remaining != null) _remaining = remaining;
+    notifyListeners();
+  }
+
+  void setUsedToday(int used) {
+    _usedToday = used;
     notifyListeners();
   }
 
@@ -300,7 +308,7 @@ class FakeReadingQuotaController extends ChangeNotifier
   int get bonusReadings => _bonus;
 
   @override
-  int dailyFreeReadingsUsed(DateTime now) => 0;
+  int dailyFreeReadingsUsed(DateTime now) => _usedToday;
 
   @override
   int get maxDailyFreeReadings => 3;
@@ -319,6 +327,7 @@ class FakeReadingQuotaController extends ChangeNotifier
     if (_bonus > 0) {
       _bonus--;
     } else {
+      _usedToday++;
       _isCooldown = true;
     }
     notifyListeners();
