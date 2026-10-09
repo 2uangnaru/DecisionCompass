@@ -79,17 +79,27 @@ void main() {
     );
     expect(titleRect.bottom, lessThan(adBtnRect.top));
 
-    // 3. Tapping the locked analysis orb notifies user and does not reveal
+    // 3. Tapping the locked analysis orb notifies user with floating notice and does not reveal
     await tester.tap(find.byKey(const Key('reveal_button')));
     await tester.pump();
     expect(
-      find.text(
-        '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!',
-      ),
+      find.byKey(const Key('ritual_locked_notice')),
+      findsOneWidget,
+    );
+    expect(
+      find.text('⏳ Năng lượng đang hồi phục'),
       findsOneWidget,
     );
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+
+    // Spam tapping the locked orb holds the notice without re-queueing or flickering
+    await tester.tap(find.byKey(const Key('reveal_button')));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('reveal_button')));
+    await tester.pump();
+    expect(find.byKey(const Key('ritual_locked_notice')), findsOneWidget);
+    expect(find.text('⏳ Năng lượng đang hồi phục'), findsOneWidget);
 
     // 4. Tapping the watch ad button directly unlocks the reading on the spot without opening a bottom sheet
     await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));
@@ -120,13 +130,15 @@ void main() {
       findsOneWidget,
     );
 
-    // Tapping locked orb shows quota exhausted notification
+    // Tapping locked orb shows quota exhausted notification at the top
     await tester.tap(find.byKey(const Key('reveal_button')));
     await tester.pump();
     expect(
-      find.text(
-        '⏳ Bạn đã dùng hết lượt miễn phí hôm nay. Hãy bấm "Xem quảng cáo" bên dưới để tiếp tục!',
-      ),
+      find.byKey(const Key('ritual_locked_notice')),
+      findsOneWidget,
+    );
+    expect(
+      find.text('⏳ Đã dùng hết lượt miễn phí hôm nay'),
       findsOneWidget,
     );
 

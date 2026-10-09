@@ -212,7 +212,7 @@ class AppLocalizationsVi extends AppLocalizations {
   String get reveal => 'PHÂN TÍCH';
 
   @override
-  String get aligning => 'ĐANG KẾT NỐI TÍN HIỆU';
+  String get aligning => 'KẾT NỐI';
 
   @override
   String get tapWhenReady => 'Chạm khi bạn đã sẵn sàng';

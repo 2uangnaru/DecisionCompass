@@ -53,7 +53,7 @@ This supplements `CORE_COPY.md` with the **same keys and placeholders**. Locale:
 | periodPassed | Đã qua |
 | periodHasPassed | {period} đã qua. Hãy chọn thời điểm khác. |
 | reveal | PHÂN TÍCH |
-| aligning | ĐANG KẾT NỐI TÍN HIỆU |
+| aligning | KẾT NỐI |
 | tapWhenReady | Chạm khi bạn đã sẵn sàng |
 | keepChoiceInMind | Hãy nghĩ rõ về lựa chọn khiến bạn phân vân. |
 | ritualSafety | Chỉ để suy ngẫm về chuyện thường ngày • Không dùng cho quyết định về y tế, đầu tư, vay nợ, chính trị hoặc việc có thể gây hại. |

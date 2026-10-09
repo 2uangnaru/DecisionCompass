@@ -48,7 +48,7 @@ class RitualPage extends StatefulWidget {
 }
 
 class _RitualPageState extends State<RitualPage>
-    with SingleTickerProviderStateMixin, WidgetsBindingObserver {
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
   late bool _isCooldown;
   bool? _isQuotaExhaustedOverride;
@@ -123,6 +123,63 @@ class _RitualPageState extends State<RitualPage>
     });
   }
 
+  /// The floating locked/status notice currently on screen, or null for none.
+  String? _notice;
+  Timer? _noticeTimer;
+  bool _noticeHolding = false;
+  static const Duration _noticeDuration = Duration(milliseconds: 3000);
+
+  late final AnimationController _noticeAnimation = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 240),
+    reverseDuration: const Duration(milliseconds: 300),
+  );
+
+  late final Animation<double> _noticeFade = CurvedAnimation(
+    parent: _noticeAnimation,
+    curve: Curves.easeOut,
+    reverseCurve: Curves.easeIn,
+  );
+
+  late final Animation<Offset> _noticeSlide =
+      Tween<Offset>(begin: const Offset(-0.18, 0), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: _noticeAnimation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: const Threshold(0),
+        ),
+      );
+
+  void _showNotice(String message) {
+    if (_noticeHolding && _notice == message) return;
+    _noticeTimer?.cancel();
+    setState(() {
+      _notice = message;
+      _noticeHolding = true;
+    });
+    if (MediaQuery.of(context).disableAnimations) {
+      _noticeAnimation.value = 1;
+    } else {
+      _noticeAnimation.forward(from: 0);
+    }
+    _noticeTimer = Timer(_noticeDuration, _hideNotice);
+  }
+
+  void _hideNotice() {
+    if (!mounted || _notice == null) return;
+    _noticeHolding = false;
+    if (MediaQuery.of(context).disableAnimations) {
+      _noticeAnimation.value = 0;
+      setState(() => _notice = null);
+      return;
+    }
+    _noticeAnimation.reverse().then((_) {
+      if (mounted && _noticeAnimation.value == 0) {
+        setState(() => _notice = null);
+      }
+    });
+  }
+
   Future<void> _watchAdAndUnlock() async {
     await widget.dependencies.quotaManager.earnBonusReading();
     if (!mounted) return;
@@ -131,28 +188,14 @@ class _RitualPageState extends State<RitualPage>
       _isQuotaExhaustedOverride = false;
     });
     _countdownTimer?.cancel();
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          '✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!',
-        ),
-        duration: Duration(seconds: 3),
-      ),
-    );
+    _showNotice('✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!');
   }
 
   void _notifyCooldownLocked() {
-    ScaffoldMessenger.of(context).removeCurrentSnackBar();
     final message = _isQuotaExhausted
-        ? '⏳ Bạn đã dùng hết lượt miễn phí hôm nay. Hãy bấm "Xem quảng cáo" bên dưới để tiếp tục!'
-        : '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!';
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+        ? '⏳ Đã dùng hết lượt miễn phí hôm nay'
+        : '⏳ Năng lượng đang hồi phục';
+    _showNotice(message);
   }
 
   /// The IANA zone a reading taken now would resolve to.
@@ -207,6 +250,8 @@ class _RitualPageState extends State<RitualPage>
     WidgetsBinding.instance.removeObserver(this);
     _periodRefreshTimer?.cancel();
     _countdownTimer?.cancel();
+    _noticeTimer?.cancel();
+    _noticeAnimation.dispose();
     _pulseController.dispose();
     super.dispose();
   }
@@ -410,6 +455,87 @@ class _RitualPageState extends State<RitualPage>
     );
   }
 
+  Widget _noticeOverlay(bool compact) {
+    final message = _notice;
+    if (message == null) return const SizedBox.shrink();
+    final isSuccess = message.startsWith('✨');
+    final isExhausted = _isQuotaExhausted && !isSuccess;
+    final accentColor = isSuccess
+        ? CompassColors.gold
+        : isExhausted
+            ? const Color(0xFFE27C7C)
+            : CompassColors.gold;
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: compact ? 44 : 50,
+      child: IgnorePointer(
+        child: FadeTransition(
+          opacity: _noticeFade,
+          child: SlideTransition(
+            position: _noticeSlide,
+            child: Semantics(
+              container: true,
+              liveRegion: true,
+              label: message,
+              excludeSemantics: true,
+              child: Container(
+                key: const Key('ritual_locked_notice'),
+                margin: const EdgeInsets.fromLTRB(20, 8, 20, 0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: CompassColors.raised,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(
+                    color: isExhausted
+                        ? const Color(0xFFE27C7C).withValues(alpha: 0.45)
+                        : CompassColors.line,
+                  ),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x66000000),
+                      blurRadius: 18,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Icon(
+                        isSuccess
+                            ? Icons.auto_awesome
+                            : Icons.hourglass_bottom_rounded,
+                        size: 18,
+                        color: accentColor,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: CompassColors.text,
+                              height: 1.35,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
@@ -428,26 +554,31 @@ class _RitualPageState extends State<RitualPage>
                   (constraints.maxHeight * 0.28).clamp(150.0, 220.0),
                   constraints.maxWidth * 0.62,
                 );
-                return SingleChildScrollView(
-                  padding: EdgeInsets.fromLTRB(
-                    20,
-                    compact ? 8 : 14,
-                    20,
-                    compact ? 12 : 24,
-                  ),
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight - (compact ? 24 : 40),
-                    ),
-                    child: IntrinsicHeight(
-                      child: _body(
-                        compact,
-                        ringSize,
-                        ringSize * 0.81,
-                        reduceMotion,
+                return Stack(
+                  children: [
+                    SingleChildScrollView(
+                      padding: EdgeInsets.fromLTRB(
+                        20,
+                        compact ? 8 : 14,
+                        20,
+                        compact ? 12 : 24,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minHeight: constraints.maxHeight - (compact ? 24 : 40),
+                        ),
+                        child: IntrinsicHeight(
+                          child: _body(
+                            compact,
+                            ringSize,
+                            ringSize * 0.81,
+                            reduceMotion,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                    _noticeOverlay(compact),
+                  ],
                 );
               },
             ),
