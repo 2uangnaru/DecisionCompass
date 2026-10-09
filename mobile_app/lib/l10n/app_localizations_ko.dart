@@ -188,11 +188,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get periodCheckingTimezone => '시간대 확인 중';
 
   @override
-  String get periodTimezoneUnknown => 'Time zone unknown';
+  String get periodTimezoneUnknown => '시간대를 확인할 수 없습니다';
 
   @override
-  String get timezoneUnavailableNotice =>
-      'Your time zone could not be read, so only NOW is available. Try again to choose a period.';
+  String get timezoneUnavailableNotice => '시간대 정보를 불러올 수 없습니다. 기본 설정을 사용합니다.';
 
   @override
   String periodHasPassed(String period) {
@@ -217,15 +216,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get keepChoiceInMind => '마음속에 고민을 선명히 떠올려 보세요.';
 
   @override
-  String get ritualSafety =>
-      'For everyday reflection only • Never for medical, investing, borrowing, political, or harmful choices.';
+  String get ritualSafety => '마음 챙김 이용 안내';
 
   @override
-  String get loadingLocalMoment => 'READING YOUR LOCAL MOMENT';
+  String get loadingLocalMoment => '현재 시간대의 기운을 읽는 중...';
 
   @override
-  String get loadingReassurance =>
-      'Please wait a moment — cosmic signals are coming into focus.';
+  String get loadingReassurance => '정확한 상징 매칭을 위해 잠시 호흡을 가다듬으세요...';
 
   @override
   String readingForCategory(String category) {
@@ -233,122 +230,110 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get yourDirection => 'YOUR DIRECTION';
+  String get yourDirection => '당신의 방향';
 
   @override
-  String get resultBasis =>
-      'Based on the cosmic energy and signals aligned with you at this moment.';
+  String get resultBasis => '분석 기준';
 
   @override
-  String get percentageCaveat =>
-      'Percentages show symbolic alignment, not a real-world probability.';
+  String get percentageCaveat => '백분율은 상징적인 지표이며, 절대적인 확률이 아닙니다.';
 
   @override
-  String get balancedHeading => 'EVENLY BALANCED';
+  String get balancedHeading => '두 흐름이 대등합니다';
 
   @override
-  String get balancedResult => 'BALANCED';
+  String get balancedResult => '균형을 이룸';
 
   @override
   String get balancedExplanation =>
-      'Neither side leads right now. This is a reading of balance, not a hidden answer.';
+      '어느 한쪽으로 기울지 않고 균형을 유지하고 있습니다. 내면의 소리에 조금 더 귀 기울여 보세요.';
 
   @override
-  String get currentMoment => 'This reading reflects your current moment.';
+  String get currentMoment => '지금 이 순간';
 
   @override
-  String get luckyTimesCaveat =>
-      'Each percentage is a symbolic timing alignment score, not a probability or chance of success. The windows are scored independently, so they do not add up to 100%.';
+  String get luckyTimesCaveat => '상징적 지표이며 특정 사건을 보장하지 않습니다.';
 
   @override
-  String get tryAnotherDirection => 'Try Another Direction';
+  String get tryAnotherDirection => '다른 방향 탐색하기';
 
   @override
-  String get viewHistory => 'View in History';
+  String get viewHistory => '기록 보기';
 
   @override
-  String get yourReadings => 'Your readings';
+  String get yourReadings => '나의 점술 기록';
 
   @override
-  String get noReadings =>
-      'No readings yet. Reveal your first direction to start your history.';
+  String get noReadings => '저장된 점술 기록이 없습니다.';
 
   @override
-  String get historySnapshot =>
-      'Results are saved as snapshots and never rerolled.';
+  String get historySnapshot => '점술 기록 스냅샷';
 
   @override
-  String get everydayReflection =>
-      'For everyday reflection only. Important decisions need real information and qualified help.';
+  String get everydayReflection => '일상의 성찰';
 
   @override
-  String get luckyTimesMorning => 'Your luckiest times this morning';
+  String get luckyTimesMorning => '아침의 상서로운 시간';
 
   @override
-  String get luckyTimesMidday => 'Your luckiest times around midday';
+  String get luckyTimesMidday => '낮의 상서로운 시간';
 
   @override
-  String get luckyTimesAfternoon => 'Your luckiest times this afternoon';
+  String get luckyTimesAfternoon => '오후의 상서로운 시간';
 
   @override
-  String get luckyTimesEvening => 'Your luckiest times this evening';
+  String get luckyTimesEvening => '저녁의 상서로운 시간';
 
   @override
-  String get loadingLocalTime => 'Synchronizing with your local time and hour';
+  String get loadingLocalTime => '지역 시각 및 천체 좌표 동기화 중...';
 
   @override
-  String get loadingBaZi => 'Reading your BaZi elemental balance';
+  String get loadingBaZi => '사주 에너지 조율 중...';
 
   @override
-  String get loadingZiWei => 'Mapping Zi Wei cycles around this moment';
+  String get loadingZiWei => '자미두수 명반 배치 중...';
 
   @override
-  String get loadingVedic => 'Aligning Vedic Nakshatras and lunar mansions';
+  String get loadingVedic => '베다 점성술 패턴 대조 중...';
 
   @override
-  String get loadingNumerology =>
-      'Tracing numerology, lunar and planetary rhythms';
+  String get loadingNumerology => '수비학적 파동 계산 중...';
 
   @override
-  String get loadingYinYang =>
-      'Balancing Yin and Yang signals into one direction';
+  String get loadingYinYang => '음양오행 균형 확인 중...';
 
   @override
-  String get loadingModeYesNo => 'Testing openness against resistance';
+  String get loadingModeYesNo => '선택의 양면성을 가만히 헤아려 보세요.';
 
   @override
-  String get loadingModeActWait => 'Balancing momentum against patience';
+  String get loadingModeActWait => '때를 기다림과 나아감의 리듬을 느껴보세요.';
 
   @override
-  String get loadingModeAdvanceRetreat =>
-      'Measuring today\'s push against the last few days';
+  String get loadingModeAdvanceRetreat => '발걸음의 무게를 차분히 가늠해 보세요.';
 
   @override
-  String get loadingModeStayGo => 'Comparing roots with movement';
+  String get loadingModeStayGo => '머묾과 떠남 사이의 고요를 바라보세요.';
 
   @override
-  String get loadingModeKeepLetGo => 'Weighing continuity against release';
+  String get loadingModeKeepLetGo => '마음속에 품을 것과 비울 것을 떠올려 보세요.';
 
   @override
-  String get loadingModeForwardBackward =>
-      'Tracing forward motion against returning energy';
+  String get loadingModeForwardBackward => '시선의 방향을 조용히 바로잡아 보세요.';
 
   @override
-  String get loadingModeCommitWithdraw =>
-      'Balancing commitment against withdrawal';
+  String get loadingModeCommitWithdraw => '몰입과 한 걸음 물러섬의 경계를 짚어보세요.';
 
   @override
-  String get loadingModeLeftRight =>
-      'Balancing receptive and expressive polarity';
+  String get loadingModeLeftRight => '좌우의 갈림길을 편견 없이 바라보세요.';
 
   @override
-  String get orbitMoment => 'MOMENT';
+  String get orbitMoment => '시간의 기운';
 
   @override
-  String get orbitRhythm => 'RHYTHM';
+  String get orbitRhythm => '우주의 리듬';
 
   @override
-  String get orbitBalance => 'BALANCE';
+  String get orbitBalance => '조화와 균형';
 
   @override
   String get orbitAlmanac => '역법';
@@ -375,119 +360,111 @@ class AppLocalizationsKo extends AppLocalizations {
   String get orbitYinYang => '음양의 조화';
 
   @override
-  String get safetyHeading => 'BOUNDARIES & RESPONSIBLE USE';
+  String get safetyHeading => '안전한 이용 수칙';
 
   @override
-  String get safetyTitle => 'A Mirror for Everyday Moments';
+  String get safetyTitle => '안전 수칙';
 
   @override
-  String get safetyIntro =>
-      'AstraCue offers symbolic perspectives drawn from astronomical rhythms and personal cycles. It is for everyday reflection and entertainment, not a command, prediction, or factual certainty.';
+  String get safetyIntro => 'AstraCue를 건강하고 지혜롭게 활용하는 방법입니다.';
 
   @override
-  String get prohibitedUses => 'PROHIBITED USES';
+  String get prohibitedUses => '금지된 이용 행위';
 
   @override
-  String get harmTitle => 'Harm & Self-Violence';
+  String get harmTitle => '위해 및 위험 방지';
 
   @override
   String get harmDetail =>
-      'Never use for self-harm, suicide, physical violence, or endangering yourself or anyone else.';
+      '자해, 타해, 범죄 행위 등 위험한 행동을 유도하거나 조장하는 용도로 본 서비스를 이용해서는 안 됩니다.';
 
   @override
-  String get navigationTitle => 'Driving & Physical Navigation';
+  String get navigationTitle => '항해 및 이동 안전';
 
   @override
   String get navigationDetail =>
-      'LEFT / RIGHT and ADVANCE / RETREAT are symbolic choices only. Never use them for traffic, driving, route-finding, or physical safety.';
+      '차량 운전, 선박 항해, 항공기 조종 등 실제 이동 안전에 나침반 결과를 의존해서는 안 됩니다.';
 
   @override
-  String get politicsTitle => 'Politics & Social Conflicts';
+  String get politicsTitle => '선거 및 정치 관련 안내';
 
   @override
   String get politicsDetail =>
-      'Never use for political campaigning, electoral decisions, civil unrest, or extremist activities.';
+      '본 서비스는 정치적 견해나 선거 결과에 관여하지 않으며 관련 예측을 제공하지 않습니다.';
 
   @override
-  String get medicalTitle => 'Health, Medical & Emergencies';
+  String get medicalTitle => '의료 및 건강 관련 안내';
 
   @override
   String get medicalDetail =>
-      'Not a substitute for licensed medical care, mental health treatment, medication, or emergency response.';
+      'AstraCue는 의학적 진단, 치료, 처방을 대신하지 않습니다. 신체적·정신적 건강 문제는 반드시 전문 의료진과 상담하세요.';
 
   @override
-  String get legalTitle => 'Legal, Criminal & High-Stakes Contracts';
+  String get legalTitle => '법률 관련 안내';
 
   @override
   String get legalDetail =>
-      'Never use for criminal conduct, court proceedings, testimony, or binding high-stakes legal contracts.';
+      'AstraCue는 법률적 자문이나 소송 관련 지침을 제공하지 않습니다. 법적 분쟁은 공인 법률 전문가와 상의하세요.';
 
   @override
-  String get financeTitle => 'Financial Investments & Gambling';
+  String get financeTitle => '재정 및 투자 관련 안내';
 
   @override
   String get financeDetail =>
-      'Finances is for reflecting on small, routine purchases only. Never use a reading for investing, borrowing, crypto bets, gambling, or major financial decisions.';
+      'AstraCue는 투자, 대출, 자산 거래 등 재정적 결정을 지시하지 않습니다. 금융 관련 결정은 공인 금융 전문가와 상의하세요.';
 
   @override
-  String get consentTitle => 'Consent, Minors & Relationships';
+  String get consentTitle => '동의, 미성년자 및 관계에 관한 원칙';
 
   @override
   String get consentDetail =>
-      'Never use to override another person\'s consent or autonomy, or for child custody and guardianship decisions.';
+      '타인의 동의나 자율성을 침해하거나, 양육권 및 후견인 관련 중대한 결정에 본 서비스를 이용해서는 안 됩니다.';
 
   @override
-  String get importantLimitsHeading => 'IMPORTANT LIMITS';
+  String get importantLimitsHeading => '중요한 한계점';
 
   @override
   String get importantLimitsBody =>
-      'AstraCue is not designed for children. It does not provide medical, legal, or financial advice. For important decisions, use reliable information and appropriate professional help. You remain in control of your choices.';
+      '상징적 패턴은 직관적 영감을 주는 도구일 뿐, 미래의 확실한 사실을 보장하지 않습니다.';
 
   @override
-  String get crisisSupport =>
-      'If you or someone else is in immediate danger or emotional crisis, contact local emergency services or a trusted local crisis helpline now.';
+  String get crisisSupport => '위기 상담 지원';
 
   @override
-  String get acknowledge => 'I Understand & Agree';
+  String get acknowledge => '확인했습니다';
 
   @override
-  String get acknowledgementOnce =>
-      'This acknowledgement appears once before your first reading.';
+  String get acknowledgementOnce => '최초 1회만 확인하시면 됩니다.';
 
   @override
-  String get safetyScrollToContinue =>
-      'Scroll to the end and read everything to continue.';
+  String get safetyScrollToContinue => '계속하려면 아래로 스크롤하세요';
 
   @override
-  String get knowBirthTime => 'I know my birth time';
+  String get knowBirthTime => '출생 시간을 알고 계신가요?';
 
   @override
-  String get knowBirthTimeDetail =>
-      'An exact time sharpens the hour-based cycles.';
+  String get knowBirthTimeDetail => '출생 시간을 알면 더 정확한 주기와 시점을 분석할 수 있습니다.';
 
   @override
-  String get selectBirthTime => 'Select your time of birth';
+  String get selectBirthTime => '출생 시간 선택';
 
   @override
-  String get birthTimeRequired =>
-      'Select your time of birth to continue, or turn this off if you do not know it.';
+  String get birthTimeRequired => '출생 시간을 선택해 주세요.';
 
   @override
-  String get languageSetting => 'Language';
+  String get languageSetting => '언어 설정';
 
   @override
-  String get chooseLanguage => 'Choose your language';
+  String get chooseLanguage => '언어 선택';
 
   @override
-  String get changeLanguage => 'Change language';
+  String get changeLanguage => '언어 변경';
 
   @override
-  String get languageNotSaved =>
-      'Your language preference could not be saved, so it may not be remembered next time.';
+  String get languageNotSaved => '언어 설정을 저장하지 못했습니다';
 
   @override
-  String get profileNotSaved =>
-      'Your profile could not be saved. Please try again.';
+  String get profileNotSaved => '프로필이 저장되지 않았습니다';
 
   @override
   String get choiceYes => '예';
@@ -520,10 +497,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get choiceLetGo => '비우기';
 
   @override
-  String get choiceForward => 'FORWARD';
+  String get choiceForward => '앞으로';
 
   @override
-  String get choiceBackward => 'BACKWARD';
+  String get choiceBackward => '뒤로';
 
   @override
   String get choiceCommit => '전념';
@@ -538,31 +515,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String get choiceRight => '오른쪽';
 
   @override
-  String get energyLevelQuiet => 'QUIET';
+  String get energyLevelQuiet => '고요';
 
   @override
-  String get energyLevelSoft => 'SOFT';
+  String get energyLevelSoft => '부드러움';
 
   @override
   String get energyLevelSteady => '안정';
 
   @override
-  String get energyLevelLively => 'LIVELY';
+  String get energyLevelLively => '활기';
 
   @override
-  String get energyLevelBright => 'BRIGHT';
+  String get energyLevelBright => '밝음';
 
   @override
   String get energyLevelRadiant => '찬란함';
 
   @override
-  String get energyLevelFocused => 'FOCUSED';
+  String get energyLevelFocused => '집중';
 
   @override
-  String get energyLevelFlowing => 'FLOWING';
+  String get energyLevelFlowing => '유려함';
 
   @override
-  String get colorCedar => 'Cedar';
+  String get colorCedar => '삼나무색';
 
   @override
   String get colorJade => '옥색';
@@ -571,55 +548,55 @@ class AppLocalizationsKo extends AppLocalizations {
   String get colorSage => '세이지 그린';
 
   @override
-  String get colorMint => 'Mint';
+  String get colorMint => '민트';
 
   @override
-  String get colorEmber => 'Ember';
+  String get colorEmber => '잉걸불색';
 
   @override
-  String get colorSolarCoral => 'Solar Coral';
+  String get colorSolarCoral => '솔라 코랄';
 
   @override
-  String get colorRose => 'Rose';
+  String get colorRose => '로즈';
 
   @override
-  String get colorBlossom => 'Blossom';
+  String get colorBlossom => '꽃잎색';
 
   @override
-  String get colorOchre => 'Ochre';
+  String get colorOchre => '황토색';
 
   @override
-  String get colorAmber => 'Amber';
+  String get colorAmber => '호박색';
 
   @override
   String get colorSand => '모래빛';
 
   @override
-  String get colorClay => 'Clay';
+  String get colorClay => '점토색';
 
   @override
-  String get colorSilver => 'Silver';
+  String get colorSilver => '실버';
 
   @override
-  String get colorSteel => 'Steel';
+  String get colorSteel => '스틸';
 
   @override
-  String get colorPearl => 'Pearl';
+  String get colorPearl => '펄';
 
   @override
-  String get colorChampagne => 'Champagne';
+  String get colorChampagne => '샴페인';
 
   @override
-  String get colorOceanBlue => 'Ocean Blue';
+  String get colorOceanBlue => '오션 블루';
 
   @override
-  String get colorAzure => 'Azure';
+  String get colorAzure => '애저 블루';
 
   @override
   String get colorIndigo => '인디고';
 
   @override
-  String get colorMistBlue => 'Mist Blue';
+  String get colorMistBlue => '안개 블루';
 
   @override
   String get homeDescription00 =>
@@ -742,68 +719,54 @@ class AppLocalizationsKo extends AppLocalizations {
       '여기서 완벽한 확신을 얻지 않아도 괜찮습니다. 마음을 가라앉히고, 우주의 힌트와 함께 생각을 가다듬으세요.';
 
   @override
-  String get energyQuiet00 =>
-      'Today’s symbolic energy turns inward, making space for quiet reflection.';
+  String get energyQuiet00 => '오늘의 상징적 에너지는 내면으로 향하며, 조용히 돌아볼 여백을 만듭니다.';
 
   @override
   String get energyQuiet01 =>
-      'Today’s cosmic rhythm turns inward; stillness may reveal what noise has been hiding.';
+      '오늘의 우주 리듬은 안으로 흐릅니다. 고요함 속에서 소음에 가려졌던 진심을 발견할 수 있습니다.';
 
   @override
-  String get energyQuiet02 =>
-      'The sky’s symbolic tone is hushed today; give your thoughts room to settle.';
+  String get energyQuiet02 => '하늘에 정적의 기운이 머뭅니다. 생각이 자연스레 가라앉을 시간을 가져보세요.';
 
   @override
-  String get energyQuiet03 =>
-      'A quieter current runs through this day, inviting you to notice rather than rush.';
+  String get energyQuiet03 => '은은한 평온이 흐르는 날입니다. 서두르기보다 주변의 기운을 차분히 관찰해 보세요.';
 
   @override
-  String get energyQuiet04 =>
-      'Today’s signs suggest reflection; a pause can still be part of moving forward.';
+  String get energyQuiet04 => '오늘의 신호는 회고를 권합니다. 잠시 멈추어 서는 것도 나아가는 과정의 일부입니다.';
 
   @override
-  String get energyQuiet05 =>
-      'When the day feels subdued, your inner compass may speak more clearly.';
+  String get energyQuiet05 => '마음이 차분해질수록, 당신 안의 나침반이 내는 소리가 더 또렷하게 들려옵니다.';
 
   @override
-  String get energyQuiet06 =>
-      'The energy of this day leaves space to listen before naming an answer.';
+  String get energyQuiet06 => '오늘의 에너지는 성급히 답을 내리기 전에 귀를 기울일 넉넉한 틈을 선사합니다.';
 
   @override
   String get energyQuiet07 =>
-      'Not every signal arrives loudly; today’s may be easier to notice when you slow down.';
+      '신호가 늘 큰 소리로 다가오는 것은 아닙니다. 오늘은 천천히 걸을 때 더 잘 보입니다.';
 
   @override
-  String get energySoft00 =>
-      'Today’s symbolic energy moves gently, with room for care and small steps.';
+  String get energySoft00 => '오늘의 상징적 에너지는 부드럽게 흐르며, 다정한 시선과 조심스러운 첫걸음을 품어줍니다.';
 
   @override
-  String get energySoft01 =>
-      'A gentle cosmic current moves through today; small steps may feel more natural than big leaps.';
+  String get energySoft01 => '마음의 긴장을 풀고 쉬어가기 좋은 날입니다. 작은 친절이 큰 힘이 되어줍니다.';
 
   @override
-  String get energySoft02 =>
-      'Today’s energy leaves room for care; approach your choice without pressing for certainty.';
+  String get energySoft02 => '유연한 흐름이 마음을 감쌉니다. 고집을 내려놓고 순리에 맡겨보세요.';
 
   @override
-  String get energySoft03 =>
-      'The day’s softer rhythm may help you begin with what feels manageable.';
+  String get energySoft03 => '따스한 햇살 같은 기운이 깃들어 있습니다. 스스로를 너그럽게 대하세요.';
 
   @override
-  String get energySoft04 =>
-      'A gentler approach can still be strong today; notice where you need ease, not pressure.';
+  String get energySoft04 => '서두르지 않아도 모든 것은 제자리를 찾아갑니다. 마음의 여유를 지키세요.';
 
   @override
-  String get energySoft05 =>
-      'Today’s signs suggest a light touch: enough movement to begin, without forcing the pace.';
+  String get energySoft05 => '부드러운 대화 속에서 오해가 풀릴 수 있습니다. 온화한 태도를 유지하세요.';
 
   @override
-  String get energySoft06 =>
-      'The current is subtle today; simple, thoughtful actions may carry more meaning.';
+  String get energySoft06 => '감정의 날을 세우지 않고 둥글게 보듬기에 적합한 평화로운 날입니다.';
 
   @override
-  String get energySoft07 =>
-      'Even a small opening can matter; today’s gentle pattern leaves space to explore it.';
+  String get energySoft07 => '조용한 위로가 마음에 머뭅니다. 작은 일상 속 따뜻함을 음미해 보세요.';
 
   @override
   String get energySteady00 => '오늘의 기운은 단단하고 안정적이어서, 차분한 판단과 묵직한 발걸음을 지탱해 줍니다.';
@@ -822,80 +785,61 @@ class AppLocalizationsKo extends AppLocalizations {
   String get energySteady04 => '지속 가능한 힘이 내면에 머물고 있습니다. 긴 호흡으로 멀리 바라보세요.';
 
   @override
-  String get energySteady05 =>
-      'There is strength in consistency; notice which next step still makes sense after a pause.';
+  String get energySteady05 => '뿌리가 깊은 나무처럼 안정감이 있습니다. 조급해하지 않아도 충분합니다.';
 
   @override
-  String get energySteady06 =>
-      'The day carries a measured energy, giving your choice room to take shape.';
+  String get energySteady06 => '평온함 속에서 일상의 리듬이 지켜집니다. 꾸준함이 가장 큰 힘입니다.';
 
   @override
-  String get energySteady07 =>
-      'A calm rhythm can be its own guide; progress need not be dramatic today.';
+  String get energySteady07 => '마음의 균형이 단단히 잡혀 있습니다. 계획한 바를 차분히 이어가세요.';
 
   @override
-  String get energyLively00 =>
-      'A playful spark stirs today’s symbolic energy, bringing curiosity and motion.';
+  String get energyLively00 => '활기찬 에너지가 가득 차올라, 생동감 넘치는 교류와 경쾌한 발걸음을 재촉합니다.';
 
   @override
-  String get energyLively01 =>
-      'A curious spark stirs today’s symbolic energy; a fresh angle may be worth exploring.';
+  String get energyLively01 => '생동하는 기운이 마음에 활력을 불어넣습니다. 가벼운 마음으로 시작해 보세요.';
 
   @override
-  String get energyLively02 =>
-      'The day feels more animated; notice what catches your attention without rushing toward it.';
+  String get energyLively02 => '새로운 아이디어가 샘솟는 날입니다. 주변과 긍정적인 자극을 주고받으세요.';
 
   @override
-  String get energyLively03 =>
-      'Today’s cosmic rhythm invites discovery, with space to stay discerning.';
+  String get energyLively03 => '발걸음이 한결 가볍습니다. 망설이던 일에 활기찬 활력을 불어넣어 보세요.';
 
   @override
-  String get energyLively04 =>
-      'A playful current moves through this day; possibilities may appear in unexpected places.';
+  String get energyLively04 => '주변 사람들과의 소통 속에서 기분 좋은 활력이 피어납니다.';
 
   @override
-  String get energyLively05 =>
-      'Curiosity may be a useful signal today; notice where it points before you commit.';
+  String get energyLively05 => '기분 좋은 호기심이 일어납니다. 새로운 시도를 두려워하지 마세요.';
 
   @override
-  String get energyLively06 =>
-      'There is motion in today’s signs; you can explore without committing too quickly.';
+  String get energyLively06 => '밝은 파동이 주변을 환하게 밝힙니다. 당신의 활기를 나누어 보세요.';
 
   @override
-  String get energyLively07 =>
-      'The energy feels lively; let it widen your options before narrowing them.';
+  String get energyLively07 => '활력이 넘치되 들뜨지 않도록 조절하세요. 즐거운 리듬을 만끽하세요.';
 
   @override
-  String get energyBright00 =>
-      'Today’s symbolic energy shines with momentum and room for expression.';
+  String get energyBright00 => '하늘이 맑고 환한 빛으로 가득하여, 긍정적인 전망과 따뜻한 희망을 비춥니다.';
 
   @override
-  String get energyBright01 =>
-      'Today’s symbolic energy brings more light to what you want to express.';
+  String get energyBright01 => '구름이 걷히고 햇살이 비추듯 마음에 명료함이 깃듭니다.';
 
   @override
-  String get energyBright02 =>
-      'A brighter cosmic current may help you see which possibility deserves attention.';
+  String get energyBright02 => '낙관적인 시각이 힘을 발휘하는 날입니다. 긍정의 가능성을 열어두세요.';
 
   @override
-  String get energyBright03 =>
-      'The signs of this day feel open; your next step may become easier to name.';
+  String get energyBright03 => '환한 빛 아래에서 의구심이 눈 녹듯 사라집니다. 자신감을 가지세요.';
 
   @override
-  String get energyBright04 =>
-      'Today carries momentum for expression; share what matters when the moment feels right.';
+  String get energyBright04 => '따뜻한 온기가 마음을 채웁니다. 감사한 마음으로 하루를 대하세요.';
 
   @override
-  String get energyBright05 =>
-      'An opening in today’s rhythm may encourage clarity without demanding haste.';
+  String get energyBright05 => '밝은 시야 속에서 새로운 기회가 눈에 띕니다. 시선을 넓게 두세요.';
 
   @override
-  String get energyBright06 =>
-      'The day’s energy feels outward-facing; notice what you’re ready to bring forward.';
+  String get energyBright06 => '주변의 어둠을 밝히는 온화한 빛이 당신과 함께합니다.';
 
   @override
-  String get energyBright07 =>
-      'A touch of brightness can shift perspective; today’s patterns invite you to look ahead.';
+  String get energyBright07 => '희망적인 직관이 반짝입니다. 맑은 마음으로 결정을 마주하세요.';
 
   @override
   String get energyRadiant00 => '오늘의 상징적 에너지는 생동감 있게 빛나며, 자신감과 맑은 시야를 밝혀줍니다.';
@@ -913,95 +857,76 @@ class AppLocalizationsKo extends AppLocalizations {
   String get energyRadiant04 => '찬란한 흐름 속에서 당신의 긍정적인 파동이 주변과 조화롭게 공명합니다.';
 
   @override
-  String get energyRadiant05 =>
-      'Today’s signs carry an expansive tone; it may be easier to imagine what comes next.';
+  String get energyRadiant05 => '빛이 가장 밝을 때입니다. 명확한 시야를 바탕으로 다음 계획을 세워보세요.';
 
   @override
-  String get energyRadiant06 =>
-      'Let the day’s warmth widen your view while keeping the final choice in your hands.';
+  String get energyRadiant06 => '마음속 열정이 따뜻하게 타오릅니다. 당신이 가진 긍정의 힘을 믿으세요.';
 
   @override
-  String get energyRadiant07 =>
-      'The sky’s symbolic rhythm feels generous; welcome possibilities with grounded judgment.';
+  String get energyRadiant07 => '환한 에너지 속에서 자연스러운 통찰이 피어납니다. 영감을 놓치지 마세요.';
 
   @override
-  String get energyFocused00 =>
-      'Today’s symbolic energy gathers around a clear direction; the action signal takes the lead.';
+  String get energyFocused00 => '에너지가 한 점으로 뚜렷이 모이며, 깊은 몰입과 명료한 주의 집중을 이끕니다.';
 
   @override
-  String get energyFocused01 =>
-      'Today’s action signal comes into focus; notice the one step that feels intentional.';
+  String get energyFocused01 => '불필요한 잔가지가 쳐지고 본질이 선명해지는 날입니다. 핵심에 집중하세요.';
 
   @override
-  String get energyFocused02 =>
-      'The symbolic current leans toward doing, but you can choose the pace.';
+  String get energyFocused02 => '산만함이 줄어들고 마음의 과녁이 뚜렷해집니다. 우선순위를 먼저 매듭지으세요.';
 
   @override
-  String get energyFocused03 =>
-      'A sense of direction runs through today; attend to what you can actually influence.';
+  String get energyFocused03 => '깊이 파고들기에 최적의 기운입니다. 차분히 한 가지 일에 마음을 쏟아보세요.';
 
   @override
-  String get energyFocused04 =>
-      'When options compete, today’s signs invite you to center on one practical move.';
+  String get energyFocused04 => '명확한 통찰이 찾아옵니다. 흐릿했던 문제의 본질을 꿰뚫어 볼 수 있습니다.';
 
   @override
-  String get energyFocused05 =>
-      'Today’s signs gather around one intention; give it your attention without rushing.';
+  String get energyFocused05 => '집중력이 돋보이는 시간입니다. 중요한 과제를 해결하기에 좋은 흐름입니다.';
 
   @override
-  String get energyFocused06 =>
-      'Action has a stronger symbolic pull today; keep your reasons clear before moving.';
+  String get energyFocused06 => '주의가 흩어지지 않도록 환경을 정돈하세요. 몰입의 결실이 큽니다.';
 
   @override
-  String get energyFocused07 =>
-      'This is a day for intention, not intensity; let your chosen direction take shape.';
+  String get energyFocused07 => '군더더기를 덜어내고 정말 중요한 목표 하나를 향해 나아가세요.';
 
   @override
-  String get energyFlowing00 =>
-      'Today’s symbolic energy moves with the tide; the change signal takes the lead.';
+  String get energyFlowing00 => '에너지가 막힘없이 유려하게 흐르며, 유연한 적응과 자연스러운 전환을 돕습니다.';
 
   @override
-  String get energyFlowing01 =>
-      'Today’s change signal comes forward; allow your plans a little room to bend.';
+  String get energyFlowing01 => '강물이 바다로 흐르듯 자연스러운 전개가 이어집니다. 흐름에 몸을 맡기세요.';
 
   @override
-  String get energyFlowing02 =>
-      'A shifting cosmic current runs through the day; adaptability may reveal another path.';
+  String get energyFlowing02 => '변화에 저항하기보다 유연하게 맞춰갈 때 가장 좋은 길이 열립니다.';
 
   @override
-  String get energyFlowing03 =>
-      'The energy of change is more noticeable; stay open to what a new angle shows you.';
+  String get energyFlowing03 => '막혔던 생각의 물꼬가 트이는 날입니다. 자유롭게 생각을 확장해 보세요.';
 
   @override
-  String get energyFlowing04 =>
-      'Today’s signs speak of movement between possibilities, not a fixed destination.';
+  String get energyFlowing04 => '순조로운 리듬이 유지됩니다. 억지로 힘을 주지 않아도 일이 자연스레 풀려갑니다.';
 
   @override
-  String get energyFlowing05 =>
-      'When circumstances shift, a flexible response may serve you better than a rigid plan.';
+  String get energyFlowing05 => '유연한 태도가 뜻밖의 해결책을 가져다줍니다. 열린 마음을 가져보세요.';
 
   @override
-  String get energyFlowing06 =>
-      'A flowing rhythm moves through this day; notice what can evolve without forcing an answer.';
+  String get energyFlowing06 => '경직된 틀을 벗어나 가볍게 흘러가 보세요. 새로움이 당신을 반깁니다.';
 
   @override
-  String get energyFlowing07 =>
-      'The symbolic current leans toward transition; you can move with it at your own pace.';
+  String get energyFlowing07 => '흐름을 타는 지혜가 빛을 발합니다. 순리를 믿고 유연하게 움직이세요.';
 
   @override
   String get defaultUserName => '여행자';
 
   @override
-  String get searchCountries => 'Search countries';
+  String get searchCountries => '국가 검색';
 
   @override
-  String get greetingMorning => 'Good morning,';
+  String get greetingMorning => '좋은 아침입니다,';
 
   @override
-  String get greetingAfternoon => 'Good afternoon,';
+  String get greetingAfternoon => '좋은 오후입니다,';
 
   @override
-  String get greetingEvening => 'Good evening,';
+  String get greetingEvening => '편안한 저녁입니다,';
 
   @override
   String get colorRoleLead => '주요 색상';
@@ -1073,22 +998,20 @@ class AppLocalizationsKo extends AppLocalizations {
   String get errorConfigurationDetail => '앱 빌드 설정을 확인해 주세요.';
 
   @override
-  String get errorNothingRecorded =>
-      'No reading was recorded for this attempt.';
+  String get errorNothingRecorded => '기록된 점술이 없습니다.';
 
   @override
-  String get insufficientHeading => 'NOT ENOUGH TO READ';
+  String get insufficientHeading => '신호가 미약합니다';
 
   @override
-  String get insufficientBody =>
-      'Your profile does not yet contain enough detail for a direction on this one. Adding your birth time and country of birth gives the cycles more to work with.';
+  String get insufficientBody => '명확한 흐름을 읽어내기에 정보가 부족합니다. 조금 뒤에 다시 시도해 보세요.';
 
   @override
-  String get periodElapsedHeading => 'THAT PERIOD HAS PASSED';
+  String get periodElapsedHeading => '시간대가 지났습니다';
 
   @override
   String get periodElapsedBody =>
-      'That period is already over where you are, so there is no window left to read. Pick a later period, or read your current moment instead — today’s reading is not rolled into tomorrow.';
+      '선택하신 시간대의 기운이 이미 흘러갔습니다. 현재 혹은 다가오는 시간대를 선택해 주세요.';
 
   @override
   String colorsToKeepNear(String first, String second) {
@@ -1101,38 +1024,37 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get shareTooltip => 'Share this reading';
+  String get shareTooltip => '결과 공유';
 
   @override
-  String get shareUnavailable => 'Sharing is unavailable right now.';
+  String get shareUnavailable => '공유 기능을 사용할 수 없습니다';
 
   @override
-  String get shareDisclaimer =>
-      'A symbolic perspective for everyday reflection, not a prediction or probability.';
+  String get shareDisclaimer => 'AstraCue 상징적 나침반 결과';
 
   @override
-  String get backToHistory => 'Back to History';
+  String get backToHistory => '기록 목록으로 돌아가기';
 
   @override
-  String get saveFailedRetry => 'Couldn’t save · Retry';
+  String get saveFailedRetry => '저장에 실패했습니다. 다시 시도해 주세요.';
 
   @override
-  String get savingToHistory => 'Saving to History…';
+  String get savingToHistory => '기록에 저장하는 중...';
 
   @override
-  String get responsibleUseLink => 'Responsible Use & Safety Policy';
+  String get responsibleUseLink => '안전한 이용 안내 자세히 보기';
 
   @override
-  String get historyToday => 'TODAY';
+  String get historyToday => '오늘';
 
   @override
-  String get historyCouldNotOpen => 'Your readings could not be opened.';
+  String get historyCouldNotOpen => '기록을 열 수 없습니다';
 
   @override
-  String get historyNotEnoughData => 'NOT ENOUGH DATA';
+  String get historyNotEnoughData => '데이터가 부족하여 열 수 없습니다';
 
   @override
-  String get historyPeriodPassed => 'PERIOD PASSED';
+  String get historyPeriodPassed => '이 시간대는 이미 지났습니다';
 
   @override
   String get zodiacAries => '양자리';
@@ -1176,13 +1098,13 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get profileTitle => 'Profile';
+  String get profileTitle => '프로필';
 
   @override
-  String get openProfile => 'Open your profile';
+  String get openProfile => '프로필 열기';
 
   @override
-  String get saveAction => 'Save';
+  String get saveAction => '저장';
 
   @override
   String get cancelAction => '취소';
@@ -1211,7 +1133,7 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get profileConfirmTitle => 'Save these changes?';
+  String get profileConfirmTitle => '프로필 변경 확인';
 
   @override
   String get profileConfirmBirthTime => '변경 후 2시간 동안 출생 시간이 고정됩니다.';
@@ -1244,17 +1166,17 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
-  String get energyAccumulating => 'Energy is gathering';
+  String get energyAccumulating => '우주의 에너지가 채워지고 있습니다.';
 
   @override
-  String get quotaExhaustedNotice => 'Daily free readings used up';
+  String get quotaExhaustedNotice => '오늘의 무료 점술 횟수를 모두 소진했습니다.';
 
   @override
-  String get watchAdPrompt => 'You can watch a video ad to continue';
+  String get watchAdPrompt => '추가 점술을 위해 에너지를 충전하시겠습니까?';
 
   @override
-  String get watchAdButton => 'Watch ad';
+  String get watchAdButton => '에너지 충전하고 계속하기';
 
   @override
-  String get adUnlockedReward => '✨ Ad watched! 1 instant reading unlocked';
+  String get adUnlockedReward => '새로운 점술 에너지가 충전되었습니다!';
 }

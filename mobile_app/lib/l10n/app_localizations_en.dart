@@ -1280,5 +1280,5 @@ class AppLocalizationsEn extends AppLocalizations {
   String get watchAdButton => 'Watch ad';
 
   @override
-  String get adUnlockedReward => '✨ Ad watched! 1 instant reading unlocked';
+  String get adUnlockedReward => 'Ad watched! 1 instant reading unlocked';
 }

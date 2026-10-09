@@ -61,6 +61,7 @@ AppLocale languageForBirthCountry(String countryCode) {
   return switch (code) {
     'VN' => AppLocale.vietnamese,
     'JP' => AppLocale.japanese,
+    'KR' => AppLocale.korean,
     'TH' => AppLocale.thai,
     'CN' => AppLocale.simplifiedChinese,
     // Including the empty string, a three-letter code, or anything else a
@@ -77,6 +78,7 @@ AppLocale languageForBirthCountry(String countryCode) {
 Map<String, AppLocale> get birthCountryLanguages => <String, AppLocale>{
   'VN': AppLocale.vietnamese,
   'JP': AppLocale.japanese,
+  'KR': AppLocale.korean,
   'TH': AppLocale.thai,
   'CN': AppLocale.simplifiedChinese,
   for (final code in _spanishSpeaking) code: AppLocale.spanish,

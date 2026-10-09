@@ -3,6 +3,7 @@ import 'action_guidance/action_guidance_en.dart';
 import 'action_guidance/action_guidance_es.dart';
 import 'action_guidance/action_guidance_hi.dart';
 import 'action_guidance/action_guidance_ja.dart';
+import 'action_guidance/action_guidance_ko.dart';
 import 'action_guidance/action_guidance_th.dart';
 import 'action_guidance/action_guidance_vi.dart';
 import 'action_guidance/action_guidance_zh.dart';
@@ -121,6 +122,7 @@ const String _balancedKey = 'balanced';
   AppLocale.vietnamese => ('CHỈ DẪN HÀNH ĐỘNG', 'Suy ngẫm:', 'Lưu ý:'),
   AppLocale.spanish => ('GUÍA SIMBÓLICA', 'Para pensar:', 'Ojo con:'),
   AppLocale.japanese => ('今日の指針', '考えること:', '気をつけること:'),
+  AppLocale.korean => ('우주의 안내', '생각해 볼 점:', '주의할 점:'),
   AppLocale.thai => ('แนวทางเชิงสัญลักษณ์', 'ลองพิจารณา:', 'ระวัง:'),
   AppLocale.hindi => ('प्रतीकात्मक मार्गदर्शन', 'सोचें:', 'ध्यान रखें:'),
   AppLocale.simplifiedChinese => ('象征指引', '可以想想:', '留意:'),
@@ -132,6 +134,7 @@ Map<String, (String, String, String)> _copyFor(AppLocale locale) =>
       AppLocale.vietnamese => actionGuidanceVi,
       AppLocale.spanish => actionGuidanceEs,
       AppLocale.japanese => actionGuidanceJa,
+      AppLocale.korean => actionGuidanceKo,
       AppLocale.thai => actionGuidanceTh,
       AppLocale.hindi => actionGuidanceHi,
       AppLocale.simplifiedChinese => actionGuidanceZh,

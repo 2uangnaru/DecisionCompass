@@ -49,7 +49,7 @@ engine.DailyBrief briefWith(String level) => engine.DailyBrief(
 );
 
 void main() {
-  const productLocales = ['en', 'vi', 'ja', 'es', 'th', 'hi_IN', 'zh_Hans_CN'];
+  const productLocales = ['en', 'vi', 'ja', 'es', 'th', 'hi_IN', 'zh_Hans_CN', 'ko'];
 
   group('the content pack', () {
     test('every product locale has a file, with its own locale tag', () {
@@ -413,6 +413,7 @@ void main() {
       expect(formatScore(AppLocale.spanish.intlName, 56.0), '56,0');
       expect(formatScore(AppLocale.vietnamese.intlName, 56.0), '56,0');
       expect(formatScore(AppLocale.japanese.intlName, 56.0), '56.0');
+      expect(formatScore(AppLocale.korean.intlName, 56.0), '56.0');
     });
 
     test('the two sides still read as adding to 100.0 in every locale', () {
@@ -810,6 +811,7 @@ double _tracking(AppLocale locale, double latin) => switch (locale) {
   AppLocale.thai ||
   AppLocale.hindi ||
   AppLocale.japanese ||
-  AppLocale.simplifiedChinese => 0,
+  AppLocale.simplifiedChinese ||
+  AppLocale.korean => 0,
   AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => latin,
 };

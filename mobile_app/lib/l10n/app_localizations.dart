@@ -2298,7 +2298,7 @@ abstract class AppLocalizations {
   /// No description provided for @adUnlockedReward.
   ///
   /// In en, this message translates to:
-  /// **'✨ Ad watched! 1 instant reading unlocked'**
+  /// **'Ad watched! 1 instant reading unlocked'**
   String get adUnlockedReward;
 }
 

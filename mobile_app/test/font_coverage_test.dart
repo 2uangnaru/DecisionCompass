@@ -76,6 +76,7 @@ void main() {
     expect(fonts[CompassFonts.devanagari], contains(0x0915)); // क
     expect(fonts[CompassFonts.japanese], contains(0x3042)); // あ
     expect(fonts[CompassFonts.simplifiedChinese], contains(0x4E2D)); // 中
+    expect(fonts[CompassFonts.korean], contains(0xAC00)); // 가
     // Both Latin faces: the lead one draws Vietnamese, the fallback catches
     // whatever it misses, so each has to carry the stacked diacritics.
     expect(fonts[CompassFonts.latin], contains(0x1EC7)); // ệ
@@ -97,9 +98,15 @@ void main() {
       final missing = <int>{};
       for (final value in _arbStrings(locale)) {
         for (final rune in value.runes) {
-          // Control characters and the space family are laid out rather than
-          // drawn, so no font needs a glyph for them.
-          if (rune < 0x20 || rune == 0x00A0 || rune == 0x202F) continue;
+          // Control characters, spaces and emojis (which are rendered by
+          // the system emoji font rather than text fonts) are skipped.
+          if (rune < 0x20 ||
+              rune == 0x00A0 ||
+              rune == 0x202F ||
+              rune == 0x2728 ||
+              (rune >= 0x1F300 && rune <= 0x1FAFF)) {
+            continue;
+          }
           if (!covered.contains(rune)) missing.add(rune);
         }
       }
@@ -136,7 +143,13 @@ void main() {
       final ownScript = <int>{};
       for (final value in _arbStrings(locale)) {
         for (final rune in value.runes) {
-          if (rune < 0x20 || rune == 0x00A0 || rune == 0x202F) continue;
+          if (rune < 0x20 ||
+              rune == 0x00A0 ||
+              rune == 0x202F ||
+              rune == 0x2728 ||
+              (rune >= 0x1F300 && rune <= 0x1FAFF)) {
+            continue;
+          }
           if (latin.contains(rune) && !latinFamilies.contains(leadFamily)) {
             continue;
           }

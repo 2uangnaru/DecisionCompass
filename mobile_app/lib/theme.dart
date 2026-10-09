@@ -21,6 +21,7 @@ abstract final class CompassFonts {
   static const devanagari = 'NotoSansDevanagari';
   static const japanese = 'NotoSansJP';
   static const simplifiedChinese = 'NotoSansSC';
+  static const korean = 'NotoSansKR';
 
   /// Every bundled family, with [preferred] moved to the front.
   ///
@@ -34,6 +35,7 @@ abstract final class CompassFonts {
       AppLocale.hindi => devanagari,
       AppLocale.japanese => japanese,
       AppLocale.simplifiedChinese => simplifiedChinese,
+      AppLocale.korean => korean,
       // Latin-script languages, Vietnamese included: Montserrat carries
       // beautiful geometric curves with full Vietnamese diacritics coverage,
       // backed by Noto Sans.
@@ -50,6 +52,7 @@ abstract final class CompassFonts {
         devanagari,
         japanese,
         simplifiedChinese,
+        korean,
       ])
         if (family != preferred) family,
     ];
@@ -102,7 +105,9 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
   final lead = switch (locale) {
     AppLocale.thai || AppLocale.hindi => 1.22,
     AppLocale.vietnamese => 1.18,
-    AppLocale.japanese || AppLocale.simplifiedChinese => 1.12,
+    AppLocale.japanese ||
+    AppLocale.simplifiedChinese ||
+    AppLocale.korean => 1.12,
     _ => 1.0,
   };
 
@@ -112,8 +117,8 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
   //   and wrap clumsily into 4 lines. Calibrating headline sizes to 23-24pt
   //   allows graceful 2-line flow with plenty of breathing room.
   // - Spanish is naturally 20-30% longer than English, benefiting from ~25pt.
-  // - Japanese and Simplified Chinese use dense, full-em ideographs where 23.5pt
-  //   matches the optical visual weight of 26.5pt Latin.
+  // - Japanese, Simplified Chinese, and Korean use dense ideographs/syllables
+  //   where 23.5pt matches the optical visual weight of 26.5pt Latin.
   // - Thai and Devanagari have tall vertical glyph components that look heavy
   //   at Latin 30pt; ~23.5pt keeps them balanced.
   // - English with our updated, more poetic copy stays comfortable at 26.5pt.
@@ -127,7 +132,8 @@ ThemeData buildCompassTheme([AppLocale locale = AppLocale.english]) {
     AppLocale.vietnamese => (44.0, 23.0, 19.5, 15.0, 13.5),
     AppLocale.thai || AppLocale.hindi => (44.0, 23.5, 20.0, 15.0, 13.5),
     AppLocale.japanese ||
-    AppLocale.simplifiedChinese => (44.0, 23.5, 20.0, 15.0, 13.5),
+    AppLocale.simplifiedChinese ||
+    AppLocale.korean => (44.0, 23.5, 20.0, 15.0, 13.5),
     AppLocale.spanish => (46.0, 23.5, 20.5, 15.0, 13.5),
     AppLocale.english => (46.0, 23.5, 20.5, 15.5, 14.0),
   };

@@ -93,9 +93,9 @@ void main() {
       }
     });
 
-    test('the four the package serves still come from the package', () {
+    test('the five the package serves still come from the package', () {
       // Only the three it cannot serve are overridden; nothing else changes.
-      for (final tag in ['en', 'es', 'ja', 'zh']) {
+      for (final tag in ['en', 'es', 'ja', 'zh', 'ko']) {
         final ours = CompassCountryLocalizations(Locale(tag));
         expect(
           ours.countryName(countryCode: 'VN'),

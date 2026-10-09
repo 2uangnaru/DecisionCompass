@@ -1136,7 +1136,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get watchAdButton => '观看广告';
 
   @override
-  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
+  String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2270,7 +2270,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get watchAdButton => '观看广告';
 
   @override
-  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
+  String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
 }
 
 /// The translations for Chinese, as used in China, using the Han script (`zh_Hans_CN`).
@@ -3404,5 +3404,5 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get watchAdButton => '观看广告';
 
   @override
-  String get adUnlockedReward => '✨ 广告已观看！已立即解锁1次分析';
+  String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
 }

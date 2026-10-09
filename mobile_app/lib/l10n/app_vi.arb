@@ -363,6 +363,5 @@
   "quotaExhaustedNotice": "Đã dùng hết lượt miễn phí hôm nay",
   "watchAdPrompt": "Bạn có thể xem video quảng cáo để tiếp tục",
   "watchAdButton": "Xem quảng cáo",
-  "adUnlockedReward": "✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!",
-  "profileBirthDateLocked": "Bạn có thể đổi ngày sinh sau {wait} nữa."
+  "adUnlockedReward": "Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!"
 }

@@ -24,7 +24,9 @@ enum AppLocale {
       scriptCode: 'Hans',
       countryCode: 'CN',
     ),
-  );
+  ),
+  korean('ko', '한국어', Locale('ko'));
+
 
   const AppLocale(this.tag, this.nativeName, this.locale);
 

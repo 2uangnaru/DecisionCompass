@@ -34,7 +34,7 @@ class CompassCountryLocalizations extends CountryLocalizations {
   /// birth-country screen is never half-translated.
   static bool covers(Locale locale) =>
       _cldr.containsKey(locale.languageCode) ||
-      const {'en', 'es', 'ja', 'zh'}.contains(locale.languageCode);
+      const {'en', 'es', 'ja', 'zh', 'ko'}.contains(locale.languageCode);
 
   @override
   String? countryName({required String countryCode}) {

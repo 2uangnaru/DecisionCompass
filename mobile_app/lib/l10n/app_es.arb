@@ -355,7 +355,7 @@
   "profileConfirmBirthCountry": "Después, tu país de nacimiento quedará fijo durante 1 hora.",
   "profileBirthTimeUnknownValue": "Desconocida",
   "profileReadingsUnchanged": "Las lecturas que ya guardaste no cambian.",
-  "profileBirthDateLocked": "Podrás cambiar tu fecha de nacimiento dentro de {wait}.",
+  "profileBirthDateLocked": "Podrás cambiar tu fecha de nacimiento de nuevo en {wait}.",
   "profileConfirmBirthDate": "Después, tu fecha de nacimiento quedará fija durante 4 horas.",
   "energyCooldownTitle": "Recargando energía ({countdown})",
   "dailyQuotaExhaustedTitle": "Has usado las 3 lecturas de hoy ({countdown})",
@@ -363,6 +363,5 @@
   "quotaExhaustedNotice": "Lecturas gratuitas diarias agotadas",
   "watchAdPrompt": "Puedes ver un anuncio en video para continuar",
   "watchAdButton": "Ver anuncio",
-  "adUnlockedReward": "✨ ¡Anuncio visto! Se desbloqueó 1 lectura instantánea",
-  "profileBirthDateLocked": "Podrás cambiar tu fecha de nacimiento de nuevo en {wait}."
+  "adUnlockedReward": "¡Anuncio visto! Se desbloqueó 1 lectura instantánea"
 }

@@ -38,7 +38,8 @@ double trackingFor(BuildContext context, double latin) =>
       AppLocale.thai ||
       AppLocale.hindi ||
       AppLocale.japanese ||
-      AppLocale.simplifiedChinese => 0,
+      AppLocale.simplifiedChinese ||
+      AppLocale.korean => 0,
       AppLocale.english || AppLocale.vietnamese || AppLocale.spanish => latin,
     };
 

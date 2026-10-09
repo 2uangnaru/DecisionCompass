@@ -1283,5 +1283,5 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get adUnlockedReward =>
-      '✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!';
+      'Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!';
 }

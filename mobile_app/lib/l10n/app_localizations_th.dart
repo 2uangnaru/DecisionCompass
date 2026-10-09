@@ -1273,5 +1273,5 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get adUnlockedReward =>
-      '✨ ดูโฆษณาแล้ว! ปลดล็อกการวิเคราะห์ทันที 1 ครั้ง';
+      'ดูโฆษณาแล้ว! ปลดล็อกการวิเคราะห์ทันที 1 ครั้ง';
 }

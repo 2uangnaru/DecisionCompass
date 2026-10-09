@@ -1289,5 +1289,5 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get adUnlockedReward =>
-      '✨ ¡Anuncio visto! Se desbloqueó 1 lectura instantánea';
+      '¡Anuncio visto! Se desbloqueó 1 lectura instantánea';
 }

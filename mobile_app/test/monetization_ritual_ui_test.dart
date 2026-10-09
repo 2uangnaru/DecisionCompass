@@ -102,7 +102,7 @@ void main() {
       // Cooldown is lifted directly without any modal sheet
       expect(find.text('Năng Lượng Đang Lắng Đọng'), findsNothing);
       expect(
-        find.text('✨ Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!'),
+        find.text('Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!'),
         findsOneWidget,
       );
       expect(find.text('PHÂN TÍCH'), findsOneWidget);
@@ -190,7 +190,7 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 300));
     expect(
-      find.text('✨ Ad watched! 1 instant reading unlocked'),
+      find.text('Ad watched! 1 instant reading unlocked'),
       findsOneWidget,
     );
   });

@@ -18,9 +18,10 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('the country table', () {
-    test('the four single-language countries map as written', () {
+    test('the single-language countries map as written', () {
       expect(languageForBirthCountry('VN'), AppLocale.vietnamese);
       expect(languageForBirthCountry('JP'), AppLocale.japanese);
+      expect(languageForBirthCountry('KR'), AppLocale.korean);
       expect(languageForBirthCountry('TH'), AppLocale.thai);
       expect(languageForBirthCountry('CN'), AppLocale.simplifiedChinese);
     });
@@ -57,7 +58,7 @@ void main() {
         );
       }
       expect(expected, hasLength(19));
-      expect(birthCountryLanguages, hasLength(23));
+      expect(birthCountryLanguages, hasLength(24));
     });
 
     test('multilingual and traditional-script countries stay English', () {

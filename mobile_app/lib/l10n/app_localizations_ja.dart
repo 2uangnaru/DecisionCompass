@@ -1164,5 +1164,5 @@ class AppLocalizationsJa extends AppLocalizations {
   String get watchAdButton => '広告を見る';
 
   @override
-  String get adUnlockedReward => '✨ 広告を視聴しました！すぐに1回分析できます';
+  String get adUnlockedReward => '広告を視聴しました！すぐに1回分析できます';
 }

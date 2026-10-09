@@ -143,6 +143,20 @@ const Map<AppLocale, List<String>> _forbidden = <AppLocale, List<String>>{
     '辞职',
     '结婚',
   ],
+  AppLocale.korean: <String>[
+    '투자',
+    '돈',
+    '급여',
+    '대출',
+    '구매',
+    '사다',
+    '팔다',
+    '연인',
+    '결혼',
+    '이혼',
+    '퇴사',
+    '헤어지',
+  ],
 };
 
 void main() {

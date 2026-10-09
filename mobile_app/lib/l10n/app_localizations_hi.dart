@@ -1285,8 +1285,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get watchAdButton => 'विज्ञापन देखें';
 
   @override
-  String get adUnlockedReward =>
-      '✨ विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
+  String get adUnlockedReward => 'विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
 }
 
 /// The translations for Hindi, as used in India (`hi_IN`).
@@ -2569,6 +2568,5 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get watchAdButton => 'विज्ञापन देखें';
 
   @override
-  String get adUnlockedReward =>
-      '✨ विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
+  String get adUnlockedReward => 'विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
 }
