@@ -1255,7 +1255,7 @@ class AppLocalizationsTh extends AppLocalizations {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => 'ใช้อ่านฟรีครบ 3 ครั้งแล้ววันนี้';
+  String get dailyQuotaExhaustedTitle => 'ใช้พลังงานของวันนี้หมดแล้ว';
 
   @override
   String get energyAccumulating => 'พลังงานกำลังสะสม';

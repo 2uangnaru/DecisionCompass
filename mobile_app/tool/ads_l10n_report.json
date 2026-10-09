@@ -1,7 +1,7 @@
 {
   "lib/l10n\\app_en": {
     "energyCooldownTitle": "Energy replenishing ({countdown})",
-    "dailyQuotaExhaustedTitle": "All 3 free readings used today",
+    "dailyQuotaExhaustedTitle": "All energy used today",
     "energyAccumulating": "Energy is gathering",
     "quotaExhaustedNotice": "Daily free readings used up",
     "watchAdPrompt": "You can watch a video ad to continue",
@@ -10,7 +10,7 @@
   },
   "lib/l10n\\app_es": {
     "energyCooldownTitle": "Recargando energía ({countdown})",
-    "dailyQuotaExhaustedTitle": "Has usado las 3 lecturas de hoy",
+    "dailyQuotaExhaustedTitle": "Has agotado la energía de hoy",
     "energyAccumulating": "La energía se está acumulando",
     "quotaExhaustedNotice": "Lecturas gratuitas diarias agotadas",
     "watchAdPrompt": "Puedes ver un anuncio en video para continuar",
@@ -19,7 +19,7 @@
   },
   "lib/l10n\\app_hi": {
     "energyCooldownTitle": "ऊर्जा पुनः प्राप्त हो रही है ({countdown})",
-    "dailyQuotaExhaustedTitle": "आज के सभी 3 पठन उपयोग कर लिए हैं",
+    "dailyQuotaExhaustedTitle": "आज की सारी ऊर्जा समाप्त हो गई है",
     "energyAccumulating": "ऊर्जा एकत्रित हो रही है",
     "quotaExhaustedNotice": "आज के निःशुल्क पठन समाप्त हो गए",
     "watchAdPrompt": "आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं",
@@ -28,7 +28,7 @@
   },
   "lib/l10n\\app_hi_IN": {
     "energyCooldownTitle": "ऊर्जा पुनः प्राप्त हो रही है ({countdown})",
-    "dailyQuotaExhaustedTitle": "आज के सभी 3 पठन उपयोग कर लिए हैं",
+    "dailyQuotaExhaustedTitle": "आज की सारी ऊर्जा समाप्त हो गई है",
     "energyAccumulating": "ऊर्जा एकत्रित हो रही है",
     "quotaExhaustedNotice": "आज के निःशुल्क पठन समाप्त हो गए",
     "watchAdPrompt": "आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं",
@@ -37,7 +37,7 @@
   },
   "lib/l10n\\app_ja": {
     "energyCooldownTitle": "エネルギー回復中 ({countdown})",
-    "dailyQuotaExhaustedTitle": "本日の3回分を使い切りました",
+    "dailyQuotaExhaustedTitle": "本日のエネルギーを使い切りました",
     "energyAccumulating": "エネルギーが蓄積されています",
     "quotaExhaustedNotice": "本日の無料リーディング上限に達しました",
     "watchAdPrompt": "動画広告を視聴して続けることができます",
@@ -46,7 +46,7 @@
   },
   "lib/l10n\\app_ko": {
     "energyCooldownTitle": "에너지 충전 중 ({countdown})",
-    "dailyQuotaExhaustedTitle": "오늘 무료 점술 3회를 모두 사용했습니다",
+    "dailyQuotaExhaustedTitle": "오늘의 에너지를 모두 소진했습니다",
     "energyAccumulating": "우주의 에너지가 채워지고 있습니다",
     "quotaExhaustedNotice": "오늘의 무료 점술 횟수를 모두 소진했습니다",
     "watchAdPrompt": "동영상 광고를 시청하여 계속 진행할 수 있습니다",
@@ -55,7 +55,7 @@
   },
   "lib/l10n\\app_th": {
     "energyCooldownTitle": "กำลังฟื้นฟูพลังงาน ({countdown})",
-    "dailyQuotaExhaustedTitle": "ใช้อ่านฟรีครบ 3 ครั้งแล้ววันนี้",
+    "dailyQuotaExhaustedTitle": "ใช้พลังงานของวันนี้หมดแล้ว",
     "energyAccumulating": "พลังงานกำลังสะสม",
     "quotaExhaustedNotice": "ใช้สิทธิ์อ่านฟรีวันนี้หมดแล้ว",
     "watchAdPrompt": "คุณสามารถดูวิดีโอโฆษณาเพื่อดำเนินการต่อ",
@@ -64,7 +64,7 @@
   },
   "lib/l10n\\app_vi": {
     "energyCooldownTitle": "Năng lượng cần hồi phục ({countdown})",
-    "dailyQuotaExhaustedTitle": "Đã dùng hết 3 lượt hôm nay",
+    "dailyQuotaExhaustedTitle": "Đã dùng hết năng lượng hôm nay",
     "energyAccumulating": "Năng lượng đang được tích tụ",
     "quotaExhaustedNotice": "Đã dùng hết lượt miễn phí hôm nay",
     "watchAdPrompt": "Bạn có thể xem video quảng cáo để tiếp tục",
@@ -73,7 +73,7 @@
   },
   "lib/l10n\\app_zh": {
     "energyCooldownTitle": "能量恢复中 ({countdown})",
-    "dailyQuotaExhaustedTitle": "今日3次免费已用完",
+    "dailyQuotaExhaustedTitle": "今日能量已用尽",
     "energyAccumulating": "能量正在汇聚中",
     "quotaExhaustedNotice": "今日免费次数已用尽",
     "watchAdPrompt": "您可以观看视频广告以继续",
@@ -82,7 +82,7 @@
   },
   "lib/l10n\\app_zh_Hans": {
     "energyCooldownTitle": "能量恢复中 ({countdown})",
-    "dailyQuotaExhaustedTitle": "今日3次免费已用完",
+    "dailyQuotaExhaustedTitle": "今日能量已用尽",
     "energyAccumulating": "能量正在汇聚中",
     "quotaExhaustedNotice": "今日免费次数已用尽",
     "watchAdPrompt": "您可以观看视频广告以继续",
@@ -91,7 +91,7 @@
   },
   "lib/l10n\\app_zh_Hans_CN": {
     "energyCooldownTitle": "能量恢复中 ({countdown})",
-    "dailyQuotaExhaustedTitle": "今日3次免费已用完",
+    "dailyQuotaExhaustedTitle": "今日能量已用尽",
     "energyAccumulating": "能量正在汇聚中",
     "quotaExhaustedNotice": "今日免费次数已用尽",
     "watchAdPrompt": "您可以观看视频广告以继续",

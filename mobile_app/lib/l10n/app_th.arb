@@ -358,7 +358,7 @@
   "profileBirthDateLocked": "คุณจะสามารถเปลี่ยนวันเกิดได้อีกครั้งใน {wait}",
   "profileConfirmBirthDate": "หลังจากนี้ วันเกิดจะคงที่เป็นเวลา 4 ชั่วโมง",
   "energyCooldownTitle": "กำลังฟื้นฟูพลังงาน ({countdown})",
-  "dailyQuotaExhaustedTitle": "ใช้อ่านฟรีครบ 3 ครั้งแล้ววันนี้",
+  "dailyQuotaExhaustedTitle": "ใช้พลังงานของวันนี้หมดแล้ว",
   "energyAccumulating": "พลังงานกำลังสะสม",
   "quotaExhaustedNotice": "ใช้สิทธิ์อ่านฟรีวันนี้หมดแล้ว",
   "watchAdPrompt": "คุณสามารถดูวิดีโอโฆษณาเพื่อดำเนินการต่อ",

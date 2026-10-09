@@ -75,7 +75,7 @@ This supplements `CORE_COPY.md` with the **same keys and placeholders**. Locale:
 | historySnapshot | Kết quả được lưu lại đúng như lúc hiển thị và không được tính lại. |
 | everydayReflection | Chỉ để suy ngẫm về chuyện thường ngày. Quyết định quan trọng cần thông tin thực tế và sự hỗ trợ từ người có chuyên môn. |
 | energyCooldownTitle | Năng lượng cần hồi phục ({countdown}) |
-| dailyQuotaExhaustedTitle | Đã dùng hết 3 lượt hôm nay |
+| dailyQuotaExhaustedTitle | Đã dùng hết năng lượng hôm nay |
 | energyAccumulating | Năng lượng đang được tích tụ |
 | quotaExhaustedNotice | Đã dùng hết lượt miễn phí hôm nay |
 | watchAdPrompt | Bạn có thể xem video quảng cáo để tiếp tục |

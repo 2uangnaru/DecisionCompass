@@ -2268,7 +2268,7 @@ abstract class AppLocalizations {
   /// No description provided for @dailyQuotaExhaustedTitle.
   ///
   /// In en, this message translates to:
-  /// **'All 3 free readings used today'**
+  /// **'All energy used today'**
   String get dailyQuotaExhaustedTitle;
 
   /// No description provided for @energyAccumulating.

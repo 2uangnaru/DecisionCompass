@@ -1271,7 +1271,7 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => 'Has usado las 3 lecturas de hoy';
+  String get dailyQuotaExhaustedTitle => 'Has agotado la energía de hoy';
 
   @override
   String get energyAccumulating => 'La energía se está acumulando';

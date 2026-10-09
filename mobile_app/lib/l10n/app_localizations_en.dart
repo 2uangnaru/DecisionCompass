@@ -1263,7 +1263,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => 'All 3 free readings used today';
+  String get dailyQuotaExhaustedTitle => 'All energy used today';
 
   @override
   String get energyAccumulating => 'Energy is gathering';

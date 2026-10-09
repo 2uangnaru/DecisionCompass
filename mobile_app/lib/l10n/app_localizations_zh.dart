@@ -1119,7 +1119,7 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
+  String get dailyQuotaExhaustedTitle => '今日能量已用尽';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';
@@ -2251,7 +2251,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
+  String get dailyQuotaExhaustedTitle => '今日能量已用尽';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';
@@ -3383,7 +3383,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   }
 
   @override
-  String get dailyQuotaExhaustedTitle => '今日3次免费已用完';
+  String get dailyQuotaExhaustedTitle => '今日能量已用尽';
 
   @override
   String get energyAccumulating => '能量正在汇聚中';
