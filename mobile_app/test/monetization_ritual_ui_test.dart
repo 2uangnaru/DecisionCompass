@@ -24,6 +24,7 @@ void main() {
   Future<void> pumpRitualOption1(
     WidgetTester tester, {
     bool isCooldown = true,
+    bool? isQuotaExhausted,
   }) async {
     useScreen(tester, size: const Size(393, 873));
     final rig = ReadingTestRig(
@@ -40,6 +41,7 @@ void main() {
           profile: profile,
           dependencies: rig.dependencies,
           isCooldown: isCooldown,
+          isQuotaExhausted: isQuotaExhausted,
         ),
       ),
     );
@@ -55,7 +57,7 @@ void main() {
     // 1. Fixed bottom Ad banner is present
     expect(find.byType(AdBannerSlot), findsOneWidget);
 
-    // 2. Cooldown elements are present (orb remains PHÂN TÍCH with normal effects)
+    // 2. Cooldown elements are present (orb remains PHÂN TÍCH with amber/dark theme)
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
     expect(find.text('Xem quảng cáo'), findsOneWidget);
@@ -101,26 +103,71 @@ void main() {
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
   });
 
-  testWidgets('Tapping category badge toggles cooldown state preview', (
+  testWidgets('RitualPage shows red theme when daily free quota is exhausted', (
     tester,
   ) async {
-    await pumpRitualOption1(tester, isCooldown: true);
+    await pumpRitualOption1(tester, isCooldown: true, isQuotaExhausted: true);
 
+    expect(find.text('PHÂN TÍCH'), findsOneWidget);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+    expect(find.text('Xem quảng cáo'), findsOneWidget);
+    expect(
+      find.text('Đã dùng hết 3 lượt hôm nay (02:15:34)'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Bạn có thể xem video quảng cáo để tiếp tục'),
+      findsOneWidget,
+    );
+
+    // Tapping locked orb shows quota exhausted notification
+    await tester.tap(find.byKey(const Key('reveal_button')));
+    await tester.pump();
+    expect(
+      find.text(
+        '⏳ Bạn đã dùng hết lượt miễn phí hôm nay. Hãy bấm "Xem quảng cáo" bên dưới để tiếp tục!',
+      ),
+      findsOneWidget,
+    );
+
+    // Tapping ad unlocks directly
+    await tester.tap(find.byKey(const Key('ritual_watch_ad_button')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('PHÂN TÍCH'), findsOneWidget);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
+  });
+
+  testWidgets('Tapping category badge cycles through Cooldown -> Quota Exhausted -> Ready preview', (
+    tester,
+  ) async {
+    await pumpRitualOption1(tester, isCooldown: true, isQuotaExhausted: false);
+
+    // Initial: Cooldown (amber)
+    expect(find.text('Năng lượng cần hồi phục (02:15:34)'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
 
-    // Tap badge to toggle to Ready state
+    // Tap badge 1st time -> Quota Exhausted (red)
+    await tester.tap(find.byKey(const Key('ritual_category_badge')));
+    await tester.pump();
+
+    expect(find.text('Đã dùng hết 3 lượt hôm nay (02:15:34)'), findsOneWidget);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+
+    // Tap badge 2nd time -> Ready (blue)
     await tester.tap(find.byKey(const Key('ritual_category_badge')));
     await tester.pump();
 
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
     expect(find.text('PHÂN TÍCH'), findsOneWidget);
 
-    // Tap badge again to toggle back to Cooldown state
+    // Tap badge 3rd time -> Cooldown (amber) again
     await tester.tap(find.byKey(const Key('ritual_category_badge')));
     await tester.pump();
 
+    expect(find.text('Năng lượng cần hồi phục (02:15:34)'), findsOneWidget);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
-    expect(find.text('PHÂN TÍCH'), findsOneWidget);
   });
 
   test('ReadingQuotaController tracks cooldown, consumes quota, and unlocks with bonus', () async {

@@ -27,6 +27,7 @@ class RitualPage extends StatefulWidget {
     required this.dependencies,
     this.onSafetyAcknowledged,
     this.isCooldown,
+    this.isQuotaExhausted,
   });
 
   final DecisionMode mode;
@@ -39,6 +40,9 @@ class RitualPage extends StatefulWidget {
   /// Optional override for testing/previewing cooldown state.
   final bool? isCooldown;
 
+  /// Optional override for testing/previewing daily quota exhausted state.
+  final bool? isQuotaExhausted;
+
   @override
   State<RitualPage> createState() => _RitualPageState();
 }
@@ -47,15 +51,29 @@ class _RitualPageState extends State<RitualPage>
     with SingleTickerProviderStateMixin, WidgetsBindingObserver {
   var _locked = false;
   late bool _isCooldown;
+  bool? _isQuotaExhaustedOverride;
   late String _countdownString;
   Timer? _countdownTimer;
   Timer? _periodRefreshTimer;
   late final AnimationController _pulseController;
   late AppProfile _profile = widget.profile;
 
+  bool get _isQuotaExhausted {
+    if (_isQuotaExhaustedOverride != null) {
+      return _isQuotaExhaustedOverride!;
+    }
+    if (widget.isQuotaExhausted != null) {
+      return widget.isQuotaExhausted!;
+    }
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    return quota.bonusReadings == 0 &&
+        quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings;
+  }
+
   void _startCountdownTimer() {
     _countdownTimer?.cancel();
-    if (!_isCooldown) return;
+    if (!_isCooldown && !_isQuotaExhausted) return;
     _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (!mounted) {
         timer.cancel();
@@ -68,6 +86,7 @@ class _RitualPageState extends State<RitualPage>
         timer.cancel();
         setState(() {
           _isCooldown = false;
+          _isQuotaExhaustedOverride = false;
           _countdownString = '00:00:00';
         });
       } else {
@@ -81,12 +100,24 @@ class _RitualPageState extends State<RitualPage>
 
   void _toggleCooldownPreview() {
     setState(() {
-      _isCooldown = !_isCooldown;
-      if (_isCooldown) {
+      if (!_isCooldown && !_isQuotaExhausted) {
+        // 1. Chuyển sang Cooldown chờ hồi (màu hổ phách)
+        _isCooldown = true;
+        _isQuotaExhaustedOverride = false;
+        _countdownString = widget.dependencies.quotaManager
+            .remainingTimeString(widget.dependencies.nowLocal());
+        _startCountdownTimer();
+      } else if (_isCooldown && !_isQuotaExhausted) {
+        // 2. Chuyển sang Hết lượt free trong ngày (màu đỏ)
+        _isCooldown = true;
+        _isQuotaExhaustedOverride = true;
         _countdownString = widget.dependencies.quotaManager
             .remainingTimeString(widget.dependencies.nowLocal());
         _startCountdownTimer();
       } else {
+        // 3. Chuyển về Sẵn sàng (màu xanh)
+        _isCooldown = false;
+        _isQuotaExhaustedOverride = false;
         _countdownTimer?.cancel();
       }
     });
@@ -97,6 +128,7 @@ class _RitualPageState extends State<RitualPage>
     if (!mounted) return;
     setState(() {
       _isCooldown = false;
+      _isQuotaExhaustedOverride = false;
     });
     _countdownTimer?.cancel();
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
@@ -112,12 +144,13 @@ class _RitualPageState extends State<RitualPage>
 
   void _notifyCooldownLocked() {
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
+    final message = _isQuotaExhausted
+        ? '⏳ Bạn đã dùng hết lượt miễn phí hôm nay. Hãy bấm "Xem quảng cáo" bên dưới để tiếp tục!'
+        : '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!';
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text(
-          '⏳ Năng lượng đang hồi phục. Hãy bấm "Xem quảng cáo" bên dưới để phân tích ngay!',
-        ),
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(message),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -147,12 +180,18 @@ class _RitualPageState extends State<RitualPage>
   @override
   void initState() {
     super.initState();
+    _isQuotaExhaustedOverride = widget.isQuotaExhausted;
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    final isExhausted = widget.isQuotaExhausted ??
+        (quota.bonusReadings == 0 &&
+            quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings);
+
     _isCooldown = widget.isCooldown ??
-        widget.dependencies.quotaManager
-            .isCooldown(widget.dependencies.nowLocal());
-    _countdownString = widget.dependencies.quotaManager
-        .remainingTimeString(widget.dependencies.nowLocal());
-    if (_isCooldown) {
+        (isExhausted || quota.isCooldown(now));
+
+    _countdownString = quota.remainingTimeString(now);
+    if (_isCooldown || isExhausted) {
       _startCountdownTimer();
     }
     _pulseController = AnimationController(
@@ -319,7 +358,7 @@ class _RitualPageState extends State<RitualPage>
 
   Future<void> _reveal() async {
     if (_locked) return;
-    if (_isCooldown) {
+    if (_isCooldown || _isQuotaExhausted) {
       _notifyCooldownLocked();
       return;
     }
@@ -477,7 +516,10 @@ class _RitualPageState extends State<RitualPage>
           children: [
             Semantics(
               button: true,
-              enabled: !_locked && !selectedPeriodElapsed,
+              enabled: !_locked &&
+                  !selectedPeriodElapsed &&
+                  !_isCooldown &&
+                  !_isQuotaExhausted,
               label:
                   '${l10n.reveal}, ${periodLabel(l10n, _period)}, '
                   '${modeLabel(l10n, widget.mode)}',
@@ -485,7 +527,9 @@ class _RitualPageState extends State<RitualPage>
                 key: const Key('reveal_button'),
                 onTap: _locked || selectedPeriodElapsed
                     ? null
-                    : (_isCooldown ? _notifyCooldownLocked : _reveal),
+                    : ((_isCooldown || _isQuotaExhausted)
+                        ? _notifyCooldownLocked
+                        : _reveal),
                 onLongPress: _toggleCooldownPreview,
                 child: Opacity(
                   opacity: selectedPeriodElapsed ? 0.45 : 1,
@@ -498,8 +542,14 @@ class _RitualPageState extends State<RitualPage>
                       final ringScale = _locked ? 0.96 : 1 + pulse * 0.08;
                       final coreScale = _locked ? 0.96 : 1 + pulse * 0.02;
 
-                      final auraColor = CompassColors.blueLight
-                          .withValues(alpha: 0.2 + pulse * 0.28);
+                      final auraColor = _isQuotaExhausted
+                          ? const Color(0xFFE27C7C)
+                              .withValues(alpha: 0.16 + pulse * 0.20)
+                          : _isCooldown
+                              ? const Color(0xFFE2A84B)
+                                  .withValues(alpha: 0.16 + pulse * 0.20)
+                              : CompassColors.blueLight
+                                  .withValues(alpha: 0.2 + pulse * 0.28);
 
                       return Stack(
                         alignment: Alignment.center,
@@ -531,20 +581,46 @@ class _RitualPageState extends State<RitualPage>
                               height: buttonSize,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
-                                gradient: const RadialGradient(
-                                  colors: [
-                                    Color(0xFF286DA5),
-                                    Color(0xFF153553),
-                                  ],
-                                ),
+                                gradient: _isQuotaExhausted
+                                    ? const RadialGradient(
+                                        colors: [
+                                          Color(0xFF2B141C),
+                                          Color(0xFF150E16),
+                                        ],
+                                      )
+                                    : _isCooldown
+                                        ? const RadialGradient(
+                                            colors: [
+                                              Color(0xFF231F2A),
+                                              Color(0xFF131520),
+                                            ],
+                                          )
+                                        : const RadialGradient(
+                                            colors: [
+                                              Color(0xFF286DA5),
+                                              Color(0xFF153553),
+                                            ],
+                                          ),
                                 border: Border.all(
-                                  color: CompassColors.blueLight,
+                                  color: _isQuotaExhausted
+                                      ? const Color(0xFFE27C7C)
+                                          .withValues(alpha: 0.85)
+                                      : _isCooldown
+                                          ? const Color(0xFFE2A84B)
+                                              .withValues(alpha: 0.85)
+                                          : CompassColors.blueLight,
                                   width: 1.4,
                                 ),
                                 boxShadow: [
                                   BoxShadow(
-                                    color: CompassColors.blueLight
-                                        .withValues(alpha: 0.3),
+                                    color: _isQuotaExhausted
+                                        ? const Color(0xFFE27C7C)
+                                            .withValues(alpha: 0.25)
+                                        : _isCooldown
+                                            ? const Color(0xFFE2A84B)
+                                                .withValues(alpha: 0.25)
+                                            : CompassColors.blueLight
+                                                .withValues(alpha: 0.3),
                                     blurRadius: _locked ? 44 : 26 + pulse * 10,
                                     spreadRadius: _locked ? 6 : 1 + pulse * 2,
                                   ),
@@ -570,7 +646,11 @@ class _RitualPageState extends State<RitualPage>
                                       fontSize: 12,
                                       letterSpacing: trackingFor(context, 2),
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: _isQuotaExhausted
+                                          ? const Color(0xFFF5BDBD)
+                                          : _isCooldown
+                                              ? const Color(0xFFF3E0A2)
+                                              : Colors.white,
                                     ),
                                   ),
                                 ],
@@ -590,19 +670,26 @@ class _RitualPageState extends State<RitualPage>
                   ? l10n.ritualLocked
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
+                  : _isQuotaExhausted
+                  ? 'Đã dùng hết 3 lượt hôm nay ($_countdownString)'
                   : _isCooldown
                   ? 'Năng lượng cần hồi phục ($_countdownString)'
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    fontSize: _isCooldown ? 15.5 : null,
-                    color: _isCooldown ? const Color(0xFFF3E0A2) : null,
+                    fontSize:
+                        (_isCooldown || _isQuotaExhausted) ? 15.5 : null,
+                    color: _isQuotaExhausted
+                        ? const Color(0xFFE27C7C)
+                        : _isCooldown
+                        ? const Color(0xFFF3E0A2)
+                        : null,
                   ),
             ),
             const SizedBox(height: 5),
             Text(
-              _isCooldown
+              (_isCooldown || _isQuotaExhausted)
                   ? 'Bạn có thể xem video quảng cáo để tiếp tục'
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
@@ -610,7 +697,7 @@ class _RitualPageState extends State<RitualPage>
                     fontSize: 12.5,
                   ),
             ),
-            if (_isCooldown) ...[
+            if (_isCooldown || _isQuotaExhausted) ...[
               SizedBox(height: compact ? 10 : 12),
               Material(
                 color: Colors.transparent,
@@ -624,12 +711,19 @@ class _RitualPageState extends State<RitualPage>
                       vertical: 7.5,
                     ),
                     decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF2477C9),
-                          Color(0xFF4EB3E8),
-                        ],
-                      ),
+                      gradient: _isQuotaExhausted
+                          ? const LinearGradient(
+                              colors: [
+                                Color(0xFFB95F62),
+                                Color(0xFFE27C7C),
+                              ],
+                            )
+                          : const LinearGradient(
+                              colors: [
+                                Color(0xFF2477C9),
+                                Color(0xFF4EB3E8),
+                              ],
+                            ),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
                         color: Colors.white.withValues(alpha: 0.28),
@@ -637,7 +731,10 @@ class _RitualPageState extends State<RitualPage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF2477C9).withValues(alpha: 0.35),
+                          color: (_isQuotaExhausted
+                                  ? const Color(0xFFB95F62)
+                                  : const Color(0xFF2477C9))
+                              .withValues(alpha: 0.35),
                           blurRadius: 10,
                           offset: const Offset(0, 2),
                         ),
