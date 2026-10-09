@@ -168,6 +168,41 @@ class _RitualPageState extends State<RitualPage>
     _showNotice(l10n.adUnlockedReward);
   }
 
+  void _onQuotaChanged() {
+    if (mounted) setState(() {});
+  }
+
+  final Set<TimePeriod> _unlockedPeriods = <TimePeriod>{};
+
+  bool _isPeriodLocked(TimePeriod period) {
+    if (period == TimePeriod.now) return false;
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    if (quota.isAvailable(now) && !_isCooldown && !_isQuotaExhausted) {
+      return false;
+    }
+    return !_unlockedPeriods.contains(period);
+  }
+
+  Future<void> _unlockPeriodWithAd(TimePeriod period) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showOptionAdUnlockSheet(
+      context,
+      optionLabel: periodLabel(l10n, period),
+    );
+    if (!confirmed || !mounted) return;
+    await widget.dependencies.quotaManager.earnBonusReading();
+    if (!mounted) return;
+    setState(() {
+      _unlockedPeriods.add(period);
+      _period = period;
+      _isCooldown = false;
+      _isQuotaExhaustedOverride = false;
+    });
+    _countdownTimer?.cancel();
+    _showNotice(l10n.adUnlockedReward);
+  }
+
   void _notifyCooldownLocked() {
     final l10n = AppLocalizations.of(context);
     final message = _isQuotaExhausted
@@ -220,12 +255,14 @@ class _RitualPageState extends State<RitualPage>
       duration: const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
     WidgetsBinding.instance.addObserver(this);
+    widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     _resolveTimezone();
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
     _periodRefreshTimer?.cancel();
     _countdownTimer?.cancel();
     _noticeTimer?.cancel();
@@ -952,9 +989,35 @@ class _RitualPageState extends State<RitualPage>
                     ? l10n.periodCheckingTimezone
                     : l10n.periodTimezoneUnknown,
             };
+            final locked = _isPeriodLocked(period) && !elapsed;
+            final chipText = Text(
+              suffix == null ? label : '$label · $suffix',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: elapsed
+                    ? CompassColors.muted
+                    : locked
+                    ? CompassColors.muted
+                    : selected
+                    ? Colors.white
+                    : CompassColors.secondary,
+              ),
+            );
             return ChoiceChip(
               key: Key('ritual_period_${period.name}'),
-              label: Text(suffix == null ? label : '$label · $suffix'),
+              label: Stack(
+                alignment: Alignment.center,
+                children: [
+                  locked
+                      ? Opacity(opacity: 0.22, child: chipText)
+                      : chipText,
+                  if (locked)
+                    const IgnorePointer(
+                      child: AdOptionBadge(compact: true),
+                    ),
+                ],
+              ),
               selected: selected,
               showCheckmark: false,
               visualDensity: VisualDensity.compact,
@@ -963,6 +1026,10 @@ class _RitualPageState extends State<RitualPage>
               onSelected: elapsed || _locked
                   ? null
                   : (_) {
+                      if (locked) {
+                        _unlockPeriodWithAd(period);
+                        return;
+                      }
                       // A cutoff may have passed since the last paint.
                       if (!_availability(period).selectable) {
                         setState(() {});
@@ -980,15 +1047,6 @@ class _RitualPageState extends State<RitualPage>
               ),
               labelPadding: const EdgeInsets.symmetric(horizontal: 4),
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
-              labelStyle: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-                color: elapsed
-                    ? CompassColors.muted
-                    : selected
-                    ? Colors.white
-                    : CompassColors.secondary,
-              ),
             );
           }).toList(),
         ),

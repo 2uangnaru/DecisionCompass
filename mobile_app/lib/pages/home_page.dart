@@ -47,12 +47,209 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
+class _HomePageState extends State<HomePage>
+    with WidgetsBindingObserver, TickerProviderStateMixin {
   DecisionMode _mode = DecisionMode.yesNo;
 
   /// Overall is the default; the typed enum travels the whole flow, never a
   /// raw wire string.
   engine.ReadingCategory _category = engine.ReadingCategory.general;
+
+  final Set<DecisionMode> _unlockedModes = <DecisionMode>{};
+  final Set<engine.ReadingCategory> _unlockedCategories =
+      <engine.ReadingCategory>{};
+
+  bool _isModeLocked(DecisionMode mode) {
+    if (mode == DecisionMode.yesNo) return false;
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    if (quota.isAvailable(now)) return false;
+    return !_unlockedModes.contains(mode);
+  }
+
+  bool _isCategoryLocked(engine.ReadingCategory category) {
+    if (category == engine.ReadingCategory.general) return false;
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    if (quota.isAvailable(now)) return false;
+    return !_unlockedCategories.contains(category);
+  }
+
+  Future<void> _handleModeTap(DecisionMode mode, String label) async {
+    if (_isModeLocked(mode)) {
+      final confirmed = await showOptionAdUnlockSheet(
+        context,
+        optionLabel: label,
+      );
+      if (!confirmed || !mounted) return;
+      await widget.dependencies.quotaManager.earnBonusReading();
+      if (!mounted) return;
+      setState(() {
+        _unlockedModes.add(mode);
+        _mode = mode;
+      });
+      final l10n = AppLocalizations.of(context);
+      _showNotice(l10n.adUnlockedReward);
+      return;
+    }
+    setState(() => _mode = mode);
+  }
+
+  Future<void> _handleCategoryTap(
+    engine.ReadingCategory category,
+    String label,
+  ) async {
+    if (_isCategoryLocked(category)) {
+      final confirmed = await showOptionAdUnlockSheet(
+        context,
+        optionLabel: label,
+      );
+      if (!confirmed || !mounted) return;
+      await widget.dependencies.quotaManager.earnBonusReading();
+      if (!mounted) return;
+      setState(() {
+        _unlockedCategories.add(category);
+        _category = category;
+      });
+      final l10n = AppLocalizations.of(context);
+      _showNotice(l10n.adUnlockedReward);
+      return;
+    }
+    setState(() => _category = category);
+  }
+
+  void _onQuotaChanged() {
+    if (mounted) setState(() {});
+  }
+
+  String? _notice;
+  Timer? _noticeTimer;
+  bool _noticeHolding = false;
+  static const Duration _noticeDuration = Duration(milliseconds: 3000);
+
+  late final AnimationController _noticeAnimation = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 240),
+    reverseDuration: const Duration(milliseconds: 300),
+  );
+
+  late final Animation<double> _noticeFade = CurvedAnimation(
+    parent: _noticeAnimation,
+    curve: Curves.easeOut,
+    reverseCurve: Curves.easeIn,
+  );
+
+  late final Animation<Offset> _noticeSlide =
+      Tween<Offset>(begin: const Offset(-0.18, 0), end: Offset.zero).animate(
+        CurvedAnimation(
+          parent: _noticeAnimation,
+          curve: Curves.easeOutCubic,
+          reverseCurve: const Threshold(0),
+        ),
+      );
+
+  void _showNotice(String message) {
+    if (_noticeHolding && _notice == message) return;
+    _noticeTimer?.cancel();
+    setState(() {
+      _notice = message;
+      _noticeHolding = true;
+    });
+    if (MediaQuery.of(context).disableAnimations) {
+      _noticeAnimation.value = 1;
+    } else {
+      _noticeAnimation.forward(from: 0);
+    }
+    _noticeTimer = Timer(_noticeDuration, _hideNotice);
+  }
+
+  void _hideNotice() {
+    if (!mounted || _notice == null) return;
+    _noticeHolding = false;
+    if (MediaQuery.of(context).disableAnimations) {
+      _noticeAnimation.value = 0;
+      setState(() => _notice = null);
+      return;
+    }
+    _noticeAnimation.reverse().then((_) {
+      if (mounted && _noticeAnimation.value == 0) {
+        setState(() => _notice = null);
+      }
+    });
+  }
+
+  Widget _noticeOverlay() {
+    final message = _notice;
+    if (message == null) return const SizedBox.shrink();
+    final isSuccess = message.startsWith('✨');
+
+    return Positioned(
+      left: 0,
+      right: 0,
+      top: 10,
+      child: IgnorePointer(
+        child: FadeTransition(
+          opacity: _noticeFade,
+          child: SlideTransition(
+            position: _noticeSlide,
+            child: Semantics(
+              container: true,
+              liveRegion: true,
+              label: message,
+              excludeSemantics: true,
+              child: Container(
+                key: const Key('home_unlocked_notice'),
+                margin: const EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: CompassColors.raised,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: CompassColors.line),
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x66000000),
+                      blurRadius: 18,
+                      offset: Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(top: 1),
+                      child: Icon(
+                        isSuccess
+                            ? Icons.auto_awesome
+                            : Icons.hourglass_bottom_rounded,
+                        size: 16,
+                        color: CompassColors.gold,
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        message,
+                        style: const TextStyle(
+                          fontSize: 12.5,
+                          height: 1.35,
+                          color: CompassColors.text,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
   late AppProfile _profile = widget.profile;
   bool _isSettingsOpen = false;
@@ -86,6 +283,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
     _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
     _loadDescription();
@@ -145,8 +343,21 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   @override
+  void didUpdateWidget(HomePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.dependencies.quotaManager !=
+        widget.dependencies.quotaManager) {
+      oldWidget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+      widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    }
+  }
+
+  @override
   void dispose() {
     _dayChangeTimer?.cancel();
+    _noticeTimer?.cancel();
+    _noticeAnimation.dispose();
+    widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -390,6 +601,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             ),
           ),
         ),
+        _noticeOverlay(),
       ],
     );
   }
@@ -443,7 +655,40 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       runSpacing: 8,
       children: categoryChoices.map((choice) {
         final selected = choice.category == _category;
+        final locked = _isCategoryLocked(choice.category);
         final label = categoryLabel(l10n, choice.category);
+        final chipContent = Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              choice.icon,
+              size: 17,
+              color: selected
+                  ? CompassColors.blueLight
+                  : locked
+                  ? CompassColors.muted
+                  : CompassColors.gold,
+            ),
+            const SizedBox(width: 8),
+            // Flexible so a longer translation wraps inside the chip
+            // instead of pushing the row past a 360dp screen.
+            Flexible(
+              child: Text(
+                label,
+                style: TextStyle(
+                  color: selected
+                      ? CompassColors.blueLight
+                      : locked
+                      ? CompassColors.muted
+                      : CompassColors.text,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
+            ),
+          ],
+        );
+
         return Semantics(
           button: true,
           selected: selected,
@@ -455,33 +700,18 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
             child: GlassCard(
               key: Key(choice.testKey),
               selected: selected,
-              onTap: () => setState(() => _category = choice.category),
+              onTap: () => _handleCategoryTap(choice.category, label),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Stack(
+                alignment: Alignment.center,
                 children: [
-                  Icon(
-                    choice.icon,
-                    size: 17,
-                    color: selected
-                        ? CompassColors.blueLight
-                        : CompassColors.gold,
-                  ),
-                  const SizedBox(width: 8),
-                  // Flexible so a longer translation wraps inside the chip
-                  // instead of pushing the row past a 360dp screen.
-                  Flexible(
-                    child: Text(
-                      label,
-                      style: TextStyle(
-                        color: selected
-                            ? CompassColors.blueLight
-                            : CompassColors.text,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
-                      ),
+                  locked
+                      ? Opacity(opacity: 0.22, child: chipContent)
+                      : chipContent,
+                  if (locked)
+                    const IgnorePointer(
+                      child: AdOptionBadge(compact: true),
                     ),
-                  ),
                 ],
               ),
             ),
@@ -659,12 +889,17 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   }
 
   Widget _modeGrid(AppLocalizations l10n) {
-    Widget card(DecisionMode mode) => _ModeCard(
-      first: modeFirstLabel(l10n, mode),
-      second: modeSecondLabel(l10n, mode),
-      selected: _mode == mode,
-      onTap: () => setState(() => _mode = mode),
-    );
+    Widget card(DecisionMode mode) {
+      final first = modeFirstLabel(l10n, mode);
+      final second = modeSecondLabel(l10n, mode);
+      return _ModeCard(
+        first: first,
+        second: second,
+        selected: _mode == mode,
+        isLocked: _isModeLocked(mode),
+        onTap: () => _handleModeTap(mode, '$first / $second'),
+      );
+    }
 
     return Column(
       children: [
@@ -742,6 +977,7 @@ class _ModeCard extends StatelessWidget {
     required this.second,
     required this.selected,
     required this.onTap,
+    this.isLocked = false,
   });
 
   /// Two already-localized tokens and a separator, never an English label to
@@ -750,58 +986,76 @@ class _ModeCard extends StatelessWidget {
   final String second;
   final bool selected;
   final VoidCallback onTap;
+  final bool isLocked;
 
   @override
   Widget build(BuildContext context) {
+    final textRow = Row(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          first,
+          maxLines: 1,
+          style: TextStyle(
+            color: selected
+                ? CompassColors.blueLight
+                : isLocked
+                ? CompassColors.muted
+                : CompassColors.text,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            letterSpacing: 0.2,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Text(
+            '/',
+            style: TextStyle(
+              color: CompassColors.muted.withValues(alpha: 0.7),
+              fontSize: 12,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ),
+        Text(
+          second,
+          maxLines: 1,
+          style: TextStyle(
+            color: selected
+                ? CompassColors.blueLight
+                : isLocked
+                ? CompassColors.muted
+                : CompassColors.secondary,
+            fontWeight: FontWeight.w700,
+            fontSize: 12,
+            letterSpacing: 0.2,
+          ),
+        ),
+      ],
+    );
+
     return GlassCard(
       selected: selected,
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
-      child: Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                first,
-                maxLines: 1,
-                style: TextStyle(
-                  color: selected
-                      ? CompassColors.blueLight
-                      : CompassColors.text,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  letterSpacing: 0.2,
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 5),
-                child: Text(
-                  '/',
-                  style: TextStyle(
-                    color: CompassColors.muted.withValues(alpha: 0.7),
-                    fontSize: 12,
-                    fontWeight: FontWeight.w400,
-                  ),
-                ),
-              ),
-              Text(
-                second,
-                maxLines: 1,
-                style: TextStyle(
-                  color: selected
-                      ? CompassColors.blueLight
-                      : CompassColors.secondary,
-                  fontWeight: FontWeight.w700,
-                  fontSize: 12,
-                  letterSpacing: 0.2,
-                ),
-              ),
-            ],
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Center(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: isLocked
+                  ? Opacity(opacity: 0.22, child: textRow)
+                  : textRow,
+            ),
           ),
-        ),
+          if (isLocked)
+            const IgnorePointer(
+              child: AdOptionBadge(),
+            ),
+        ],
       ),
     );
   }

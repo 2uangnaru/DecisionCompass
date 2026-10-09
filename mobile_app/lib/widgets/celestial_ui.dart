@@ -372,3 +372,181 @@ class _StarsPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+/// A gentle frosted celestial badge indicating an option requires watching an Ad to unlock.
+class AdOptionBadge extends StatelessWidget {
+  const AdOptionBadge({
+    super.key,
+    this.compact = false,
+  });
+
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: compact ? 6.5 : 9.5,
+        vertical: compact ? 2.5 : 3.5,
+      ),
+      decoration: BoxDecoration(
+        color: const Color(0xE6101D33),
+        borderRadius: BorderRadius.circular(compact ? 12 : 14),
+        border: Border.all(
+          color: CompassColors.blueLight.withValues(alpha: 0.38),
+          width: 0.9,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.55),
+            blurRadius: 10,
+            offset: const Offset(0, 3),
+          ),
+          BoxShadow(
+            color: CompassColors.blueLight.withValues(alpha: 0.16),
+            blurRadius: 12,
+            spreadRadius: 0.5,
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.play_circle_filled_rounded,
+            size: compact ? 10.5 : 12.5,
+            color: const Color(0xFFE2EEF8),
+          ),
+          const SizedBox(width: 3.5),
+          Text(
+            'AD',
+            style: TextStyle(
+              fontSize: compact ? 8.5 : 9.8,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.6,
+              color: const Color(0xFFE2EEF8),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Shows a bottom sheet asking the user to watch an ad to unlock a specific option.
+Future<bool> showOptionAdUnlockSheet(
+  BuildContext context, {
+  required String optionLabel,
+}) async {
+  final l10n = AppLocalizations.of(context);
+  final result = await showModalBottomSheet<bool>(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (sheetContext) => Container(
+      decoration: BoxDecoration(
+        color: CompassColors.raised,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
+        border: Border.all(color: CompassColors.line),
+        boxShadow: const [
+          BoxShadow(color: Colors.black54, blurRadius: 32, spreadRadius: 4),
+        ],
+      ),
+      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: Colors.white24,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            const SizedBox(height: 16),
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  colors: [
+                    CompassColors.gold.withValues(alpha: 0.25),
+                    CompassColors.gold.withValues(alpha: 0.08),
+                  ],
+                ),
+                border: Border.all(
+                  color: CompassColors.gold.withValues(alpha: 0.5),
+                  width: 1.2,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: CompassColors.gold.withValues(alpha: 0.2),
+                    blurRadius: 14,
+                    spreadRadius: 1,
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.play_circle_filled_rounded,
+                size: 28,
+                color: CompassColors.gold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              optionLabel,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              l10n.watchAdPrompt,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 13,
+                color: CompassColors.secondary,
+                height: 1.4,
+              ),
+            ),
+            const SizedBox(height: 20),
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                key: const Key('option_unlock_ad_button'),
+                onPressed: () => Navigator.of(sheetContext).pop(true),
+                icon: const Icon(Icons.play_circle_filled_rounded, size: 18),
+                label: Text(l10n.watchAdButton),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: CompassColors.blueLight,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 13),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            TextButton(
+              onPressed: () => Navigator.of(sheetContext).pop(false),
+              child: Text(
+                l10n.cancelAction,
+                style: const TextStyle(color: CompassColors.muted, fontSize: 13),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+  return result ?? false;
+}
+
