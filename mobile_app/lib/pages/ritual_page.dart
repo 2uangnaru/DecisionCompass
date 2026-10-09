@@ -216,17 +216,10 @@ class _RitualPageState extends State<RitualPage>
       optionLabel: periodLabel(l10n, period),
     );
     if (!confirmed || !mounted) return;
-    await widget.dependencies.quotaManager.earnBonusReading();
-    if (!mounted) return;
     setState(() {
       _unlockedPeriods.add(period);
       _period = period;
-      _isCooldown = false;
-      _isQuotaExhaustedOverride = false;
-      _syncPulseDuration();
     });
-    _countdownTimer?.cancel();
-    _showNotice(l10n.adUnlockedReward);
   }
 
   void _notifyCooldownLocked() {

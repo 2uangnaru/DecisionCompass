@@ -87,9 +87,9 @@ void main() {
         await tester.pump(const Duration(milliseconds: 350));
         await tester.pump(const Duration(milliseconds: 350));
 
-        // Quota should now have 1 bonus reading
-        expect(quota.bonusReadings, 1);
-        expect(find.text(rig.strings.adUnlockedReward), findsOneWidget);
+        // Option is unlocked for selection, but quota must NOT receive bonus readings
+        expect(quota.bonusReadings, 0);
+        expect(find.text(rig.strings.adUnlockedReward), findsNothing);
 
         // Individual unlock: Love is unlocked, so tapping it does not open ad modal
         await tester.ensureVisible(find.byKey(const Key('category_love')));
@@ -159,8 +159,9 @@ void main() {
               await tester.pump(const Duration(milliseconds: 350));
               await tester.pump(const Duration(milliseconds: 350));
 
-              expect(quota.bonusReadings, 1);
-              expect(find.text(rig.strings.adUnlockedReward), findsOneWidget);
+              // Option is unlocked for selection, but quota must NOT receive bonus readings
+              expect(quota.bonusReadings, 0);
+              expect(find.text(rig.strings.adUnlockedReward), findsNothing);
               break;
             }
           }

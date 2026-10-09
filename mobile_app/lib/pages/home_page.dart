@@ -92,14 +92,10 @@ class _HomePageState extends State<HomePage>
         optionLabel: label,
       );
       if (!confirmed || !mounted) return;
-      await widget.dependencies.quotaManager.earnBonusReading();
-      if (!mounted) return;
       setState(() {
         _unlockedModes.add(mode);
         _mode = mode;
       });
-      final l10n = AppLocalizations.of(context);
-      _showNotice(l10n.adUnlockedReward);
       return;
     }
     setState(() => _mode = mode);
@@ -116,14 +112,10 @@ class _HomePageState extends State<HomePage>
         optionLabel: label,
       );
       if (!confirmed || !mounted) return;
-      await widget.dependencies.quotaManager.earnBonusReading();
-      if (!mounted) return;
       setState(() {
         _unlockedCategories.add(category);
         _category = category;
       });
-      final l10n = AppLocalizations.of(context);
-      _showNotice(l10n.adUnlockedReward);
       return;
     }
     setState(() => _category = category);
@@ -133,134 +125,7 @@ class _HomePageState extends State<HomePage>
     if (mounted) setState(() {});
   }
 
-  String? _notice;
-  Timer? _noticeTimer;
-  bool _noticeHolding = false;
-  static const Duration _noticeDuration = Duration(milliseconds: 3000);
 
-  late final AnimationController _noticeAnimation = AnimationController(
-    vsync: this,
-    duration: const Duration(milliseconds: 240),
-    reverseDuration: const Duration(milliseconds: 300),
-  );
-
-  late final Animation<double> _noticeFade = CurvedAnimation(
-    parent: _noticeAnimation,
-    curve: Curves.easeOut,
-    reverseCurve: Curves.easeIn,
-  );
-
-  late final Animation<Offset> _noticeSlide =
-      Tween<Offset>(begin: const Offset(-0.18, 0), end: Offset.zero).animate(
-        CurvedAnimation(
-          parent: _noticeAnimation,
-          curve: Curves.easeOutCubic,
-          reverseCurve: const Threshold(0),
-        ),
-      );
-
-  void _showNotice(String message) {
-    if (_noticeHolding && _notice == message) return;
-    _noticeTimer?.cancel();
-    setState(() {
-      _notice = message;
-      _noticeHolding = true;
-    });
-    if (MediaQuery.of(context).disableAnimations) {
-      _noticeAnimation.value = 1;
-    } else {
-      _noticeAnimation.forward(from: 0);
-    }
-    _noticeTimer = Timer(_noticeDuration, _hideNotice);
-  }
-
-  void _hideNotice() {
-    if (!mounted || _notice == null) return;
-    _noticeHolding = false;
-    if (MediaQuery.of(context).disableAnimations) {
-      _noticeAnimation.value = 0;
-      setState(() => _notice = null);
-      return;
-    }
-    _noticeAnimation.reverse().then((_) {
-      if (mounted && _noticeAnimation.value == 0) {
-        setState(() => _notice = null);
-      }
-    });
-  }
-
-  Widget _noticeOverlay() {
-    final message = _notice;
-    if (message == null) return const SizedBox.shrink();
-    final isSuccess = message.startsWith('✨');
-
-    return Positioned(
-      left: 0,
-      right: 0,
-      top: 10,
-      child: IgnorePointer(
-        child: FadeTransition(
-          opacity: _noticeFade,
-          child: SlideTransition(
-            position: _noticeSlide,
-            child: Semantics(
-              container: true,
-              liveRegion: true,
-              label: message,
-              excludeSemantics: true,
-              child: Container(
-                key: const Key('home_unlocked_notice'),
-                margin: const EdgeInsets.symmetric(horizontal: 20),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: CompassColors.raised,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: CompassColors.line),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x66000000),
-                      blurRadius: 18,
-                      offset: Offset(0, 6),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.only(top: 1),
-                      child: Icon(
-                        isSuccess
-                            ? Icons.auto_awesome
-                            : Icons.hourglass_bottom_rounded,
-                        size: 16,
-                        color: CompassColors.gold,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        message,
-                        style: const TextStyle(
-                          fontSize: 12.5,
-                          height: 1.35,
-                          color: CompassColors.text,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   late AppProfile _profile = widget.profile;
   bool _isSettingsOpen = false;
@@ -366,8 +231,6 @@ class _HomePageState extends State<HomePage>
   @override
   void dispose() {
     _dayChangeTimer?.cancel();
-    _noticeTimer?.cancel();
-    _noticeAnimation.dispose();
     for (final notifier in _categoryTriggers.values) {
       notifier.dispose();
     }
@@ -618,7 +481,6 @@ class _HomePageState extends State<HomePage>
             ),
           ),
         ),
-        _noticeOverlay(),
       ],
     );
   }
