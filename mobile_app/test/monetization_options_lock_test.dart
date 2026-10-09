@@ -105,6 +105,45 @@ void main() {
         expect(find.byKey(const Key('option_unlock_ad_button')), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'resets non-default selections to default when free energy is used up after reading',
+      (tester) async {
+        useScreen(tester, size: const Size(393, 900));
+        final quota = FakeReadingQuotaController(
+          initialCooldown: false,
+          initialUsed: 0,
+        );
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          quotaManager: quota,
+        );
+        await tester.pumpWidget(rig.app);
+        await completeOnboarding(tester);
+
+        // Select non-default category (love) freely during free energy
+        await tester.ensureVisible(find.byKey(const Key('category_love')));
+        await tester.tap(find.byKey(const Key('category_love')));
+        await tester.pump();
+
+        // Perform reading which consumes free quota
+        await revealReading(tester);
+        await tester.pump(const Duration(milliseconds: 5400));
+        await tester.pumpAndSettle();
+
+        // On result page, tap close to return to Home
+        await tester.tap(find.byKey(const Key('result_close')));
+        await tester.pumpAndSettle();
+
+        // Back on Home, quota is in cooldown, category must be reset to general (default)
+        expect(find.byType(HomePage), findsOneWidget);
+        final generalCard = tester.widget<GlassCard>(find.byKey(const Key('category_general')));
+        final loveCard = tester.widget<GlassCard>(find.byKey(const Key('category_love')));
+        expect(generalCard.selected, isTrue);
+        expect(loveCard.selected, isFalse);
+        expect(loveCard.locked, isTrue);
+      },
+    );
   });
 
   group('Monetization Options Lock - RitualPage', () {

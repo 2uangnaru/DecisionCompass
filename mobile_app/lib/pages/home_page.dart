@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../analytics/analytics_event.dart';
+import '../analytics/reward_analytics_attempt.dart';
 import '../category_presentation.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
@@ -12,6 +14,7 @@ import '../localized_presentation.dart';
 import '../localized_rotation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
+import '../reading_mapping.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
@@ -86,16 +89,35 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _handleModeTap(DecisionMode mode, String label) async {
     if (_isModeLocked(mode)) {
+      widget.dependencies.analytics.record(
+        AnalyticsEvent.optionLocked(
+          mode: toEngineMode(mode),
+          category: _category,
+          period: engine.TimePeriod.now,
+          language: widget.dependencies.localeController.locale,
+          placement: RewardPlacement.mode,
+        ),
+      );
+      RewardAnalyticsAttempt? reward;
       _modeTriggers[mode]?.value++;
       final confirmed = await showOptionAdUnlockSheet(
         context,
         optionLabel: label,
+        onRewardCta: () => reward ??= RewardAnalyticsAttempt(
+          analytics: widget.dependencies.analytics,
+          mode: toEngineMode(mode),
+          category: _category,
+          period: engine.TimePeriod.now,
+          language: widget.dependencies.localeController.locale,
+          placement: RewardPlacement.mode,
+        ),
       );
       if (!confirmed || !mounted) return;
       setState(() {
         _unlockedModes.add(mode);
         _mode = mode;
       });
+      reward?.granted();
       return;
     }
     setState(() => _mode = mode);
@@ -106,26 +128,56 @@ class _HomePageState extends State<HomePage>
     String label,
   ) async {
     if (_isCategoryLocked(category)) {
+      widget.dependencies.analytics.record(
+        AnalyticsEvent.optionLocked(
+          mode: toEngineMode(_mode),
+          category: category,
+          period: engine.TimePeriod.now,
+          language: widget.dependencies.localeController.locale,
+          placement: RewardPlacement.category,
+        ),
+      );
+      RewardAnalyticsAttempt? reward;
       _categoryTriggers[category]?.value++;
       final confirmed = await showOptionAdUnlockSheet(
         context,
         optionLabel: label,
+        onRewardCta: () => reward ??= RewardAnalyticsAttempt(
+          analytics: widget.dependencies.analytics,
+          mode: toEngineMode(_mode),
+          category: category,
+          period: engine.TimePeriod.now,
+          language: widget.dependencies.localeController.locale,
+          placement: RewardPlacement.category,
+        ),
       );
       if (!confirmed || !mounted) return;
       setState(() {
         _unlockedCategories.add(category);
         _category = category;
       });
+      reward?.granted();
       return;
     }
     setState(() => _category = category);
   }
 
   void _onQuotaChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      setState(() {
+        _resetLockedSelections();
+      });
+    }
   }
 
-
+  void _resetLockedSelections() {
+    if (_isModeLocked(_mode)) {
+      _mode = DecisionMode.yesNo;
+    }
+    if (_isCategoryLocked(_category)) {
+      _category = engine.ReadingCategory.general;
+    }
+  }
 
   late AppProfile _profile = widget.profile;
   bool _isSettingsOpen = false;
@@ -278,8 +330,13 @@ class _HomePageState extends State<HomePage>
     });
   }
 
-  void _beginReading() {
-    Navigator.of(context).push(
+  Future<void> _beginReading() async {
+    final nowBefore = widget.dependencies.nowLocal();
+    final usedBefore =
+        widget.dependencies.quotaManager.dailyFreeReadingsUsed(nowBefore);
+    final bonusBefore = widget.dependencies.quotaManager.bonusReadings;
+
+    await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => RitualPage(
           mode: _mode,
@@ -296,10 +353,28 @@ class _HomePageState extends State<HomePage>
         ),
       ),
     );
+    if (!mounted) return;
+    final nowAfter = widget.dependencies.nowLocal();
+    final readingConsumed =
+        widget.dependencies.quotaManager.dailyFreeReadingsUsed(nowAfter) !=
+            usedBefore ||
+        widget.dependencies.quotaManager.bonusReadings != bonusBefore;
+
+    setState(() {
+      if (readingConsumed) {
+        _mode = DecisionMode.yesNo;
+        _category = engine.ReadingCategory.general;
+        _unlockedModes.clear();
+        _unlockedCategories.clear();
+      } else {
+        _resetLockedSelections();
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    _resetLockedSelections();
     final l10n = AppLocalizations.of(context);
     return CelestialScaffold(
       child: Column(
@@ -368,10 +443,11 @@ class _HomePageState extends State<HomePage>
                           '${categoryLabel(l10n, _category)}  •  '
                           '${modeLabel(l10n, _mode)}',
                           textAlign: TextAlign.center,
-                          style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: CompassColors.muted,
-                            letterSpacing: trackingFor(context, 0.8),
-                          ),
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: CompassColors.muted,
+                                letterSpacing: trackingFor(context, 0.8),
+                              ),
                         ),
                       ),
                     ],
@@ -926,10 +1002,7 @@ class _ModeCard extends StatelessWidget {
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 15),
       child: Center(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: textRow,
-        ),
+        child: FittedBox(fit: BoxFit.scaleDown, child: textRow),
       ),
     );
 

@@ -4,6 +4,8 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../analytics/analytics_event.dart';
+import '../analytics/reward_analytics_attempt.dart';
 import '../data/models/models.dart' as engine;
 import '../data/period_availability.dart';
 import '../local_engine/time/local_time.dart' show validZone;
@@ -11,6 +13,7 @@ import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
+import '../reading_mapping.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
@@ -172,7 +175,16 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _watchAdAndUnlock() async {
+    final reward = RewardAnalyticsAttempt(
+      analytics: widget.dependencies.analytics,
+      mode: toEngineMode(widget.mode),
+      category: widget.category,
+      period: toEnginePeriod(_period),
+      language: widget.dependencies.localeController.locale,
+      placement: RewardPlacement.reading,
+    );
     await widget.dependencies.quotaManager.earnBonusReading();
+    reward.granted();
     if (!mounted) return;
     setState(() {
       _isCooldown = false;
@@ -186,6 +198,9 @@ class _RitualPageState extends State<RitualPage>
 
   void _onQuotaChanged() {
     if (mounted) {
+      if (_isPeriodLocked(_period)) {
+        _period = TimePeriod.now;
+      }
       _syncPulseDuration();
       setState(() {});
     }
@@ -209,20 +224,51 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _unlockPeriodWithAd(TimePeriod period) async {
+    widget.dependencies.analytics.record(
+      AnalyticsEvent.optionLocked(
+        mode: toEngineMode(widget.mode),
+        category: widget.category,
+        period: toEnginePeriod(period),
+        language: widget.dependencies.localeController.locale,
+        placement: RewardPlacement.period,
+      ),
+    );
+    RewardAnalyticsAttempt? reward;
     _periodTriggers[period]?.value++;
     final l10n = AppLocalizations.of(context);
     final confirmed = await showOptionAdUnlockSheet(
       context,
       optionLabel: periodLabel(l10n, period),
+      onRewardCta: () => reward ??= RewardAnalyticsAttempt(
+        analytics: widget.dependencies.analytics,
+        mode: toEngineMode(widget.mode),
+        category: widget.category,
+        period: toEnginePeriod(period),
+        language: widget.dependencies.localeController.locale,
+        placement: RewardPlacement.period,
+      ),
     );
     if (!confirmed || !mounted) return;
     setState(() {
       _unlockedPeriods.add(period);
       _period = period;
     });
+    reward?.granted();
   }
 
   void _notifyCooldownLocked() {
+    widget.dependencies.analytics.record(
+      AnalyticsEvent.readingLocked(
+        mode: toEngineMode(widget.mode),
+        category: widget.category,
+        period: toEnginePeriod(_period),
+        language: widget.dependencies.localeController.locale,
+        reason: _isQuotaExhausted
+            ? ReadingLockReason.exhausted
+            : ReadingLockReason.cooldown,
+        stage: ReadingLockStage.ritual,
+      ),
+    );
     final l10n = AppLocalizations.of(context);
     final message = _isQuotaExhausted
         ? l10n.quotaExhaustedNotice
@@ -670,6 +716,9 @@ class _RitualPageState extends State<RitualPage>
 
   @override
   Widget build(BuildContext context) {
+    if (_isPeriodLocked(_period)) {
+      _period = TimePeriod.now;
+    }
     final reduceMotion = MediaQuery.of(context).disableAnimations;
     return CelestialScaffold(
       // Keep the choice, reveal control and instruction in one top-to-bottom
@@ -879,8 +928,9 @@ class _RitualPageState extends State<RitualPage>
                                       ),
                                 border: Border.all(
                                   color: _isQuotaExhausted
-                                      ? const Color(0xFFE27C7C)
-                                            .withValues(alpha: 0.45 + pulse * 0.15)
+                                      ? const Color(
+                                          0xFFE27C7C,
+                                        ).withValues(alpha: 0.45 + pulse * 0.15)
                                       : _isCooldown
                                       ? const Color(0xFFE2A84B)
                                             .withValues(alpha: 0.85)
@@ -890,8 +940,9 @@ class _RitualPageState extends State<RitualPage>
                                 boxShadow: [
                                   BoxShadow(
                                     color: _isQuotaExhausted
-                                        ? const Color(0xFFE27C7C)
-                                              .withValues(alpha: 0.10 + pulse * 0.06)
+                                        ? const Color(0xFFE27C7C).withValues(
+                                            alpha: 0.10 + pulse * 0.06,
+                                          )
                                         : _isCooldown
                                         ? const Color(0xFFE2A84B)
                                               .withValues(alpha: 0.25)
@@ -1006,10 +1057,7 @@ class _RitualPageState extends State<RitualPage>
                     ),
                     decoration: BoxDecoration(
                       gradient: const LinearGradient(
-                        colors: [
-                          Color(0xD91A2943),
-                          Color(0xF2142136),
-                        ],
+                        colors: [Color(0xD91A2943), Color(0xF2142136)],
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                       ),
