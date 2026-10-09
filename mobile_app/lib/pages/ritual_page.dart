@@ -998,34 +998,36 @@ class _RitualPageState extends State<RitualPage>
                 child: InkWell(
                   key: const Key('ritual_watch_ad_button'),
                   onTap: _watchAdAndUnlock,
-                  borderRadius: BorderRadius.circular(20),
+                  borderRadius: BorderRadius.circular(22),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 7.5,
+                      horizontal: 18,
+                      vertical: 9,
                     ),
                     decoration: BoxDecoration(
-                      gradient: _isQuotaExhausted
-                          ? const LinearGradient(
-                              colors: [Color(0xFFB95F62), Color(0xFFE27C7C)],
-                            )
-                          : const LinearGradient(
-                              colors: [Color(0xFF2477C9), Color(0xFF4EB3E8)],
-                            ),
-                      borderRadius: BorderRadius.circular(20),
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xD91A2943),
+                          Color(0xF2142136),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(22),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.28),
-                        width: 1.0,
+                        color: CompassColors.blueLight.withValues(alpha: 0.5),
+                        width: 1.2,
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              (_isQuotaExhausted
-                                      ? const Color(0xFFB95F62)
-                                      : const Color(0xFF2477C9))
-                                  .withValues(alpha: 0.35),
-                          blurRadius: 10,
-                          offset: const Offset(0, 2),
+                          color: CompassColors.blue.withValues(alpha: 0.3),
+                          blurRadius: 16,
+                          spreadRadius: 0.5,
+                        ),
+                        const BoxShadow(
+                          color: Colors.black45,
+                          blurRadius: 8,
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
@@ -1033,13 +1035,17 @@ class _RitualPageState extends State<RitualPage>
                       mainAxisSize: MainAxisSize.min,
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Text('🎬', style: TextStyle(fontSize: 13)),
-                        const SizedBox(width: 6),
+                        const Icon(
+                          Icons.play_circle_filled_rounded,
+                          size: 16,
+                          color: CompassColors.blueLight,
+                        ),
+                        const SizedBox(width: 7),
                         Text(
                           l10n.watchAdButton,
                           style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 12,
+                            color: CompassColors.text,
+                            fontSize: 12.5,
                             fontWeight: FontWeight.w700,
                             letterSpacing: 0.4,
                           ),

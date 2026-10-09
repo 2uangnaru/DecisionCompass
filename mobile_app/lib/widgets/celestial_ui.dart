@@ -620,19 +620,61 @@ Future<bool> showOptionAdUnlockSheet(
               ),
             ),
             const SizedBox(height: 20),
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
                 key: const Key('option_unlock_ad_button'),
-                onPressed: () => Navigator.of(sheetContext).pop(true),
-                icon: const Icon(Icons.play_circle_filled_rounded, size: 18),
-                label: Text(l10n.watchAdButton),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: CompassColors.blueLight,
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 13),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
+                onTap: () => Navigator.of(sheetContext).pop(true),
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      colors: [
+                        Color(0xD91A2943),
+                        Color(0xF2142136),
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: CompassColors.blueLight.withValues(alpha: 0.5),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: CompassColors.blue.withValues(alpha: 0.28),
+                        blurRadius: 18,
+                        spreadRadius: 0.5,
+                      ),
+                      const BoxShadow(
+                        color: Colors.black38,
+                        blurRadius: 12,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.play_circle_filled_rounded,
+                        size: 20,
+                        color: CompassColors.blueLight,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        l10n.watchAdButton,
+                        style: const TextStyle(
+                          color: CompassColors.text,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
