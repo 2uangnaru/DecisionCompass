@@ -294,8 +294,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    final yesText = tester.widget<Text>(find.textContaining('YES 71'));
-    final noText = tester.widget<Text>(find.textContaining('NO 28'));
+    final yesText = tester.widget<Text>(find.textContaining('YES 74'));
+    final noText = tester.widget<Text>(find.textContaining('NO 25'));
     expect(yesText.style?.color, CompassColors.blueLight);
     expect(noText.style?.color, const Color(0xFFD88990));
   });

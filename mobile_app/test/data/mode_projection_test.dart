@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 
 import 'package:decision_compass/data/models/models.dart';
+import 'package:decision_compass/local_engine/core/scoring.dart'
+    show displayExponent;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fixture_loader.dart';
@@ -68,7 +70,7 @@ int displayTenthsFor(double score) {
       : s > 0
       ? 1
       : 0;
-  final expanded = (sign * math.pow(s.abs(), 0.55)).toDouble();
+  final expanded = (sign * math.pow(s.abs(), displayExponent)).toDouble();
   return (500 + 400 * expanded.clamp(-1.0, 1.0) + 0.5).floor();
 }
 
@@ -156,7 +158,8 @@ void main() {
           tenths,
           reason:
               '$name: percentages.$first must be '
-              'floor(500 + 400 * sign * |modeScore|^0.55 + 0.5) tenths',
+              'floor(500 + 400 * sign * |modeScore|^\$displayExponent '
+              '+ 0.5) tenths',
         );
         expect(percentages.tenths[second], 1000 - tenths);
         expect(

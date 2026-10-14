@@ -15,6 +15,143 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.5 ruleset — the display curve — 2026-10-14
+
+Engine **4.3.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.5-experimental`** / scoring
+**`v9.5-experimental`**. Scales deliberately **unchanged** at
+`v9.3-cohort-2026-09-30`.
+
+One constant changed. Nothing else did.
+
+| | v9.4 | v9.5 |
+|---|---|---|
+| `DISPLAY_EXPONENT` | 0.55 | **0.45** |
+
+```
+displayed winning % = 50 + 40 * |modeScore| ^ DISPLAY_EXPONENT
+```
+
+### Why
+
+The owner asked for a specific, checkable property: no combination of decision
+mode and category should show a 50-59.9% split in more than one reading in
+five. Under v9.4 that was false for most of them.
+
+The exponent is the only lever that can answer this without answering a
+different question too. The winner is `sign(modeScore)`; the exponent acts on
+`|modeScore|`. No positive exponent can change the sign of a real number, so
+**no reading changes direction under this change** — that is arithmetic, not a
+measurement. Every other candidate lever fails that test: shrinking a `SCALE`
+grows one term of a mixture and can flip the sum, re-weighting a mode changes
+which signals decide it, and `MEDIAN_PUSH` already flips signs by design
+(`0.01` against a fortnight median of `0.10` lands at `-0.035`).
+
+### The measurement
+
+Two held-out cohorts, 700 profiles x 7 modes x 28 consecutive local dates =
+**137,200 readings each**, seeds not the calibration seed. The same readings
+were then re-displayed under each candidate exponent: the score path is
+untouched, so this is an exact projection and not a re-simulation.
+
+Seed **77213**:
+
+| exp | overall in 50-59.9 | worst cell | cells >= 20% | 80%+ | mean win % |
+|---:|---:|---:|---:|---:|---:|
+| 0.55 | 19.5% | 29.4% | 26 / 49 | 4.9% | 67.1 |
+| 0.50 | 15.3% | 22.7% | 4 / 49 | 6.4% | 68.4 |
+| **0.45** | **11.2%** | **16.9%** | **0 / 49** | 8.3% | 69.7 |
+| 0.40 | 7.6% | 11.6% | 0 / 49 | 11.2% | 71.1 |
+| 0.35 | 4.7% | 7.2% | 0 / 49 | 15.3% | 72.7 |
+
+Seed **88402**:
+
+| exp | overall in 50-59.9 | worst cell | cells >= 20% | 80%+ | mean win % |
+|---:|---:|---:|---:|---:|---:|
+| 0.55 | 19.8% | 31.6% | 23 / 49 | 4.8% | 67.1 |
+| 0.50 | 15.4% | 24.2% | 3 / 49 | 6.1% | 68.3 |
+| **0.45** | **11.3%** | **18.9%** | **0 / 49** | 8.0% | 69.6 |
+| 0.40 | 7.7% | 13.2% | 0 / 49 | 10.9% | 71.1 |
+| 0.35 | 4.7% | 7.4% | 0 / 49 | 15.2% | 72.7 |
+
+0.50 does not clear the bar; 0.45 is the first value that does, on both
+cohorts. The bar was set over mode x category; the same cells crossed with
+period were measured at v9.4 but **not** re-measured at 0.45 before this was
+committed, so the 0/49 above does not by itself cover the four future periods. The margin is thin — 18.9% against a 20% bar on seed 88402 — and that
+thinness is recorded here rather than smoothed over. 0.40 would have bought a
+wide margin for roughly a third more mass above 80%.
+
+### What it costs
+
+**The 80%+ share nearly doubles**, 4.9% to 8.3%. Every displayed percentage
+moves, not only the near-ties: the shift peaks at **+2.95 points** for a score
+near 0.134 — a reading shown as 57.4% under v9.4 is shown as 60.4% under v9.5
+— and falls away towards both ends, with a 89.2% reading moving only to 89.4%.
+Observed across the regenerated fixtures: 71.9 -> 74.4, 63.6 -> 66.6 (the
+largest), 80.1 -> 81.7, 89.2 -> 89.4. Lucky-window scores widen in both
+directions: 64 -> 67 above the midpoint, 42 -> 39 and 37 -> 34 below it.
+
+This is a presentation decision and should be read as one. The engine has not
+learned anything; a day it scores 58/42 is now shown as 61/39 on exactly the
+same evidence. The project has moved this constant twice now (0.65 -> 0.55 in
+v9.4, 0.55 -> 0.45 here), and each step buys a more decisive-looking product
+with the same underlying uncertainty.
+
+### What does not change
+
+* **Winners.** Provable, not measured, for the reason given above.
+* **Lucky-window ranking.** A positive power is monotone, so the order of
+  windows by score is identical; only the printed number moves.
+* **Daily brief.** `luckyNumber`, `colors` and `energy` are built without the
+  display curve — the only two callers of `displayTenths`/`displayPercent` in
+  each engine are the headline split and the window score.
+* **Saved readings.** History keeps the numbers it was written with;
+  `history_ruleset_immutability_test.dart` holds that line.
+
+`readingKey` does change, because it hashes the ruleset string. The same
+profile, instant and mode produce a different key either side of this bump.
+
+### Data coverage is not an alternative route to this target
+
+Measured in the same runs, at v9.4:
+
+| | 50-59.9 share | n |
+|---|---:|---:|
+| birth hour given | 17.7% / 18.2% | 93,884 / 95,060 |
+| birth hour unknown | 23.5% / 23.4% | 43,316 / 42,140 |
+
+Knowing the birth hour is worth **5-6 points**. The worst cell needed **11.6**.
+Collecting more birth data — the hour, the birthplace, true solar time, the
+Ascendant — is worth doing on its own merits and would move the average, but it
+cannot reach this particular bar. The spread between cells is a property of the
+mixtures: `ADVANCE / RETREAT` leans `.60` on `M`, a three-day difference, and a
+difference sits near zero by construction.
+
+### A hole this work found in the verification itself
+
+`mobile_app/tool/simulate_v91.dart` hardcodes `period: 'now'`. Every held-out
+simulation recorded in this document before today therefore covered **one of
+the five periods**. The other four were exercised for the first time while
+measuring for this change: 686,000 readings across mode x category x period at
+v9.4, no failures, and they behave as expected — but "never tested" is not the
+same as "tested and passing", and the tool should take the period as a
+dimension rather than a constant.
+
+That run also showed the period matters where the formula says it should:
+`LEFT / RIGHT` leans `.50` on `Y`, which reads the hour branch, and its
+50-59.9 rate ranged from 1.0 per 10 readings at midday to 2.2 in the
+afternoon. `COMMIT / WITHDRAW`, whose `H` is an eight-day median, barely moved
+across periods at all.
+
+### Reproduce
+
+```
+node --test test/*.test.js                         # 196/196
+node scripts/mobile-fixtures.mjs --check
+node scripts/mode-baseline.mjs --check
+cd ../mobile_app && flutter test --no-pub
+```
+
 ## v9.4 ruleset — two mode mixtures — 2026-10-01
 
 Engine **4.3.0-mvp** / ruleset

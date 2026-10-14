@@ -1,6 +1,6 @@
 {
   "engineVersion": "4.3.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.5-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,21 +58,21 @@
   "status": "ready",
   "winner": "ADVANCE",
   "percentages": {
-    "ADVANCE": 75.2,
-    "RETREAT": 24.8
+    "ADVANCE": 77.4,
+    "RETREAT": 22.6
   },
   "dataCoverage": 0.97,
   "modeScore": 0.4320164949,
   "modeBasis": "tactical_momentum",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "c8357e8938bcb1386b49820d006ca433cc6a85531d783f65e96afffa204ac786",
+  "readingKey": "c02fe43b65885108c4795f225442b998f9e5787294f73b42bca4bda124501e3c",
   "axisScores": {
     "action": 0.0269618631,
     "change": 0.1468570722,
     "selected": 0.4320164949
   },
   "scoring": {
-    "system": "v9.4-experimental",
+    "system": "v9.5-experimental",
     "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T14:00",
     "signals": {
@@ -94,23 +94,23 @@
   "evaluatedAtUtc": "2026-09-18T07:00:00.000Z",
   "luckyWindows": [
     {
-      "startUtc": "2026-09-18T08:00:00.000Z",
-      "endUtc": "2026-09-18T10:00:00.000Z",
-      "startLocal": "2026-09-18T15:00:00+07:00",
-      "endLocal": "2026-09-18T17:00:00+07:00",
-      "score": 73,
-      "dataCoverage": 0.97,
-      "hourBranch": 8,
-      "meaning": "symbolic_timing_score_not_probability"
-    },
-    {
       "startUtc": "2026-09-18T07:30:00.000Z",
       "endUtc": "2026-09-18T08:00:00.000Z",
       "startLocal": "2026-09-18T14:30:00+07:00",
       "endLocal": "2026-09-18T15:00:00+07:00",
-      "score": 72,
+      "score": 75,
       "dataCoverage": 0.97,
       "hourBranch": 7,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
+      "startUtc": "2026-09-18T08:00:00.000Z",
+      "endUtc": "2026-09-18T10:00:00.000Z",
+      "startLocal": "2026-09-18T15:00:00+07:00",
+      "endLocal": "2026-09-18T17:00:00+07:00",
+      "score": 75,
+      "dataCoverage": 0.97,
+      "hourBranch": 8,
       "meaning": "symbolic_timing_score_not_probability"
     }
   ],

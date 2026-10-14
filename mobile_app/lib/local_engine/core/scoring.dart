@@ -22,7 +22,7 @@ import 'core.dart';
 import 'numbers.dart';
 
 /// Identifies the scoring system itself, independently of the engine build.
-const String scoringVersion = 'v9.4-experimental';
+const String scoringVersion = 'v9.5-experimental';
 
 /// The nine signals, in the order the Node engine lists them.
 const List<String> signalNames = <String>[
@@ -57,8 +57,16 @@ const double _timingSpread = 0.40;
 /// How far the fourteen-day median pushes today away from itself.
 const double medianPush = 0.5;
 
-/// The display curve's exponent: flatter than the old 0.65, so a real lean shows.
-const double displayExponent = 0.55;
+/// The display curve's exponent.
+///
+/// 0.65 originally, 0.55 in v9.4, 0.45 here. Each step pushes a given score
+/// further from 50 on the display without touching the score itself: the
+/// winner is `sign(modeScore)`, and no exponent can change a sign.
+///
+/// Lowered in v9.5 so that no mode/category/period combination shows a
+/// 50-59.9% split more often than twice in ten readings. See the v9.5 section
+/// of `calculation-engine/VERIFICATION.md` for the measurement and its cost.
+const double displayExponent = 0.45;
 
 /// Identifies the cohort the scales below were measured on.
 ///

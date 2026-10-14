@@ -19,7 +19,7 @@
 import { clamp } from './core.js';
 
 /** Identifies the scoring system itself, independently of the engine build. */
-export const SCORING_VERSION = 'v9.4-experimental';
+export const SCORING_VERSION = 'v9.5-experimental';
 
 /**
  * The nine signals, in a fixed order so that diagnostics, tests and the Dart
@@ -59,8 +59,24 @@ const TIMING_SPREAD = 0.40;
 /** How far the fourteen-day median pushes today away from itself. */
 export const MEDIAN_PUSH = 0.5;
 
-/** The display curve's exponent: flatter than the old 0.65, so a real lean shows. */
-export const DISPLAY_EXPONENT = 0.55;
+/**
+ * The display curve's exponent.
+ *
+ * 0.65 originally, 0.55 in v9.4, 0.45 here. Each step pushes a given score
+ * further from 50 on the display without touching the score itself: the
+ * winner is `sign(modeScore)`, and no exponent can change a sign. That is why
+ * this lever, and not a weight or a scale, is the one that answers "show
+ * fewer near-ties" without answering a different question as well.
+ *
+ * v9.5 lowered it so that no mode/category/period combination shows a
+ * 50-59.9% split more often than twice in ten readings. Measured, not
+ * guessed: at 0.55, twenty-six of the forty-nine mode-by-category cells sat
+ * at or above that rate and the worst was 31.6%; 0.50 still left three or
+ * four; 0.45 cleared all of them. See the v9.5 section of VERIFICATION.md,
+ * including what it costs — the 80%+ share nearly doubles, and a day the
+ * engine scores 58/42 is shown as 61/39 on exactly the same evidence.
+ */
+export const DISPLAY_EXPONENT = 0.45;
 
 /**
  * Normalization scales, one per signal, each fixed at four times the 75th

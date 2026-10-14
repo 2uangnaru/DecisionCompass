@@ -1,6 +1,6 @@
 {
   "engineVersion": "4.3.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.5-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,21 +58,21 @@
   "status": "ready",
   "winner": "RIGHT",
   "percentages": {
-    "LEFT": 19.9,
-    "RIGHT": 80.1
+    "LEFT": 18.3,
+    "RIGHT": 81.7
   },
   "dataCoverage": 0.973,
   "modeScore": -0.5977707468,
   "modeBasis": "symbolic_polarity",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "951d2a9e0108ee5e3886288c1287596ab7d495dd5f8e28543596e3c1718c9fa0",
+  "readingKey": "fef0b4a6d2bc094f6f0050b6cb6d995cbc16614ea2da1d95942182ce2ee97d03",
   "axisScores": {
     "action": 0.0391446956,
     "change": 0.1654057867,
     "selected": -0.5977707468
   },
   "scoring": {
-    "system": "v9.4-experimental",
+    "system": "v9.5-experimental",
     "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T14:00",
     "signals": {
@@ -98,19 +98,19 @@
       "endUtc": "2026-09-18T10:00:00.000Z",
       "startLocal": "2026-09-18T15:00:00+07:00",
       "endLocal": "2026-09-18T17:00:00+07:00",
-      "score": 37,
+      "score": 34,
       "dataCoverage": 0.973,
       "hourBranch": 8,
       "meaning": "symbolic_timing_score_not_probability"
     },
     {
-      "startUtc": "2026-09-18T10:00:00.000Z",
-      "endUtc": "2026-09-18T11:00:00.000Z",
-      "startLocal": "2026-09-18T17:00:00+07:00",
-      "endLocal": "2026-09-18T18:00:00+07:00",
-      "score": 27,
+      "startUtc": "2026-09-18T07:30:00.000Z",
+      "endUtc": "2026-09-18T08:00:00.000Z",
+      "startLocal": "2026-09-18T14:30:00+07:00",
+      "endLocal": "2026-09-18T15:00:00+07:00",
+      "score": 24,
       "dataCoverage": 0.973,
-      "hourBranch": 9,
+      "hourBranch": 7,
       "meaning": "symbolic_timing_score_not_probability"
     }
   ],

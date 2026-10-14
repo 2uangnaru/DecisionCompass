@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:decision_compass/data/history_entry.dart';
+import 'package:decision_compass/local_engine/core/core.dart'
+    show rulesetVersion;
 import 'package:decision_compass/data/shared_preferences_history_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -106,10 +108,7 @@ void main() {
     // The new one is the current ruleset, and the two coexist with different
     // numbers for the same question. That is the point of a snapshot.
     final fresh = entries.singleWhere((e) => e.id == 'saved-under-v94');
-    expect(
-      fresh.reading.rulesetVersion,
-      'civil-midnight-chinese-calendar-symbolic-v9.4-experimental',
-    );
+    expect(fresh.reading.rulesetVersion, rulesetVersion);
     expect(fresh.reading.readingKey, isNot(old.reading.readingKey));
   });
 }

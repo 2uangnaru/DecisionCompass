@@ -1,6 +1,6 @@
 {
   "engineVersion": "4.3.0-mvp",
-  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.4-experimental",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.5-experimental",
   "providers": {
     "lunarJavascript": "1.7.7",
     "iztro": "2.6.1",
@@ -58,21 +58,21 @@
   "status": "ready",
   "winner": "WITHDRAW",
   "percentages": {
-    "COMMIT": 27.4,
-    "WITHDRAW": 72.6
+    "COMMIT": 24.9,
+    "WITHDRAW": 75.1
   },
   "dataCoverage": 0.973,
   "modeScore": -0.3540277253,
   "modeBasis": "durability_horizon",
   "meaning": "symbolic_alignment_not_success_probability",
-  "readingKey": "974cbcc17af1deb7c9d851ca8fa9406000e459a529830eb276d1b705a27aaa2e",
+  "readingKey": "162d72533783e78adea6a10726380eb5969f9daab069a4e1e1b3b352f58ad6b5",
   "axisScores": {
     "action": 0.0243575938,
     "change": 0.2090543468,
     "selected": -0.3540277253
   },
   "scoring": {
-    "system": "v9.4-experimental",
+    "system": "v9.5-experimental",
     "scaleVersion": "v9.3-cohort-2026-09-30",
     "anchorLocal": "2026-09-18T06:00",
     "signals": {
@@ -96,23 +96,23 @@
   "evaluatedAtUtc": "2026-09-17T23:00:00.000Z",
   "luckyWindows": [
     {
+      "startUtc": "2026-09-18T02:00:00.000Z",
+      "endUtc": "2026-09-18T04:00:00.000Z",
+      "startLocal": "2026-09-18T09:00:00+07:00",
+      "endLocal": "2026-09-18T11:00:00+07:00",
+      "score": 30,
+      "dataCoverage": 0.973,
+      "hourBranch": 5,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
       "startUtc": "2026-09-18T04:00:00.000Z",
       "endUtc": "2026-09-18T05:00:00.000Z",
       "startLocal": "2026-09-18T11:00:00+07:00",
       "endLocal": "2026-09-18T12:00:00+07:00",
-      "score": 33,
+      "score": 30,
       "dataCoverage": 0.973,
       "hourBranch": 6,
-      "meaning": "symbolic_timing_score_not_probability"
-    },
-    {
-      "startUtc": "2026-09-18T00:00:00.000Z",
-      "endUtc": "2026-09-18T02:00:00.000Z",
-      "startLocal": "2026-09-18T07:00:00+07:00",
-      "endLocal": "2026-09-18T09:00:00+07:00",
-      "score": 32,
-      "dataCoverage": 0.973,
-      "hourBranch": 4,
       "meaning": "symbolic_timing_score_not_probability"
     }
   ],

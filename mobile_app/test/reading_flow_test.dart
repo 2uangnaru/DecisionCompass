@@ -249,8 +249,8 @@ void main() {
 
       expect(find.byKey(const Key('result_ready')), findsOneWidget);
       expect(find.text('YES'), findsOneWidget);
-      expect(find.text('71.9%'), findsOneWidget);
-      expect(find.text('NO  28.1%'), findsOneWidget);
+      expect(find.text('74.4%'), findsOneWidget);
+      expect(find.text('NO  25.6%'), findsOneWidget);
       // NOW never shows windows.
       expect(find.byKey(const Key('result_lucky_windows')), findsNothing);
       expect(find.byKey(const Key('result_action_guidance')), findsOneWidget);
@@ -269,18 +269,19 @@ void main() {
 
       // v9.4 reversed this fixture: `H` no longer answers almost alone, and
       // the day's own `R` carries a quarter of the weight, which is enough to
-      // turn 69.6% COMMIT into 55.2% WITHDRAW on these inputs. The mode still
+      // turn COMMIT into WITHDRAW on these inputs, shown as 57.5% under
+      // the v9.5 display curve. The mode still
       // shows its own numbers, which is what this test is about.
       expect(find.text('WITHDRAW'), findsWidgets);
       // Scoped to the direction block: the window scores are in the 60s too.
       expect(
         find.descendant(
           of: find.byKey(const Key('result_ready')),
-          matching: find.text('55.2%'),
+          matching: find.text('57.5%'),
         ),
         findsOneWidget,
       );
-      expect(find.text('COMMIT  44.8%'), findsOneWidget);
+      expect(find.text('COMMIT  42.5%'), findsOneWidget);
       final windowCard = find.byKey(const Key('result_lucky_windows'));
       expect(windowCard, findsOneWidget);
       // The engine's own local wall clock (19:00–21:00 and 21:00–23:00 in
@@ -291,9 +292,9 @@ void main() {
       // scored by the same mode weights as the headline.
       expect(find.text(window(19, 21)), findsOneWidget);
       expect(find.text(window(21, 23)), findsOneWidget);
-      // Scores read as percentages; both windows scored 64 in this fixture.
+      // Scores read as percentages; both windows scored 67 in this fixture.
       expect(
-        find.descendant(of: windowCard, matching: find.text('64%')),
+        find.descendant(of: windowCard, matching: find.text('67%')),
         findsNWidgets(2),
       );
       expect(
@@ -324,11 +325,11 @@ void main() {
 
       // The winner is still whichever side the polarity signal lands on —
       // `Y` keeps the largest share in v9.4 — but at half its old weight it
-      // no longer carries the result nearly alone, so the same inputs read
-      // 80.1% instead of 82.5%.
+      // no longer carries the result nearly alone. The same inputs read
+      // 81.7% under the v9.5 display curve.
       expect(find.text('RIGHT'), findsWidgets);
-      expect(find.text('80.1%'), findsOneWidget);
-      expect(find.text('LEFT  19.9%'), findsOneWidget);
+      expect(find.text('81.7%'), findsOneWidget);
+      expect(find.text('LEFT  18.3%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (

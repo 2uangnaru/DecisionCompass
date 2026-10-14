@@ -259,7 +259,10 @@ test('the display band is 10 to 90, one decimal, exact halves', () => {
   assert.equal(displayTenths(0), 500);
   assert.equal(displayTenths(1), 900);
   assert.equal(displayTenths(-1), 100);
-  assert.equal(DISPLAY_EXPONENT, 0.55);
+  // Pinned so the curve cannot move by accident. 0.65 -> 0.55 in v9.4,
+  // 0.55 -> 0.45 in v9.5; each change is a release decision with its
+  // own section in VERIFICATION.md, and this line is what forces one.
+  assert.equal(DISPLAY_EXPONENT, 0.45);
   for (const score of [-1, -.73, -.2, -.004, 0, .004, .2, .73, 1]) {
     const tenths = displayTenths(score);
     assert.ok(Number.isInteger(tenths), `not an integer number of tenths at ${score}`);
