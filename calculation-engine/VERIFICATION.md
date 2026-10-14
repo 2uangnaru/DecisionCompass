@@ -75,9 +75,23 @@ Seed **88402**:
 | 0.35 | 4.7% | 7.4% | 0 / 49 | 15.2% | 72.7 |
 
 0.50 does not clear the bar; 0.45 is the first value that does, on both
-cohorts. The bar was set over mode x category; the same cells crossed with
-period were measured at v9.4 but **not** re-measured at 0.45 before this was
-committed, so the 0/49 above does not by itself cover the four future periods. The margin is thin — 18.9% against a 20% bar on seed 88402 — and that
+cohorts.
+
+The bar was set over mode x category, so it was then checked over mode x
+category x period as well — 245 cells, every one with at least 200 usable
+readings, from 686,000 readings on seed 77213 at the shipped 0.45:
+
+| | per 10 readings |
+|---|---:|
+| cells at or above the 2.0 bar | **0 of 245** |
+| worst cell ( / love / midday) | 1.79 |
+| median cell | 1.11 |
+| best cell ( / study / midday) | 0.40 |
+
+Elapsed periods are excluded from the rate: a period already over shows no
+percentage at all, so it cannot land in the band. Their share is uneven by
+construction — the harness steps in UTC across twenty zones, so morning loses
+43% of its readings that way and carries the widest error of any row. The margin is thin — 18.9% against a 20% bar on seed 88402 — and that
 thinness is recorded here rather than smoothed over. 0.40 would have bought a
 wide margin for roughly a third more mass above 80%.
 
