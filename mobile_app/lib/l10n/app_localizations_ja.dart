@@ -325,6 +325,12 @@ class AppLocalizationsJa extends AppLocalizations {
   String get loadingModeLeftRight => '受け取ることと表すことの両極を比べています';
 
   @override
+  String get loadingModeReasonEmotion => '理性の明晰さと感情の深まりを照らし合わせています';
+
+  @override
+  String get loadingModeConfrontAvoid => '真正面から向き合う勇気と慎重に身を引く機を測っています';
+
+  @override
   String get orbitMoment => 'この瞬間';
 
   @override
@@ -508,6 +514,18 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get choiceRight => '右';
+
+  @override
+  String get choiceReason => '理性';
+
+  @override
+  String get choiceEmotion => '感情';
+
+  @override
+  String get choiceConfront => '直面';
+
+  @override
+  String get choiceAvoid => '回避';
 
   @override
   String get energyLevelQuiet => '静穏';

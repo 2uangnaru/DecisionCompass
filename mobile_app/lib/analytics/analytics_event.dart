@@ -1,6 +1,13 @@
 import '../app_locale.dart';
 import '../data/models/models.dart' as engine;
 import '../data/reading_api_exception.dart';
+import '../data/reading_quota_controller.dart';
+
+enum ReadingLockReason { cooldown, exhausted }
+
+enum ReadingLockStage { ritual, loading, commit }
+
+enum RewardPlacement { reading, mode, category, period }
 
 /// Closed, typed payloads: no profile, response, identifier or arbitrary text
 /// can be supplied to an analytics event.
@@ -70,5 +77,65 @@ class AnalyticsEvent {
     'category': category.toJson(),
     'time_period': period.toJson(),
     'error_kind': kind.name,
+  });
+
+  factory AnalyticsEvent.readingLocked({
+    required engine.DecisionMode mode,
+    required engine.ReadingCategory category,
+    required engine.TimePeriod period,
+    required AppLocale language,
+    required ReadingLockReason reason,
+    required ReadingLockStage stage,
+  }) => AnalyticsEvent._('reading_locked', {
+    ..._reading(mode, category, period, language),
+    'lock_reason': reason.name,
+    'lock_stage': stage.name,
+  });
+
+  factory AnalyticsEvent.optionLocked({
+    required engine.DecisionMode mode,
+    required engine.ReadingCategory category,
+    required engine.TimePeriod period,
+    required AppLocale language,
+    required RewardPlacement placement,
+  }) => AnalyticsEvent._('option_locked', {
+    ..._reading(mode, category, period, language),
+    'placement': placement.name,
+  });
+
+  factory AnalyticsEvent.rewardCtaTapped({
+    required engine.DecisionMode mode,
+    required engine.ReadingCategory category,
+    required engine.TimePeriod period,
+    required AppLocale language,
+    required RewardPlacement placement,
+  }) => AnalyticsEvent._('reward_cta_tapped', {
+    ..._reading(mode, category, period, language),
+    'placement': placement.name,
+    'grant_source': 'prototype',
+  });
+
+  /// Only an app-owned prototype reward; never an ad impression or revenue.
+  factory AnalyticsEvent.rewardGranted({
+    required engine.DecisionMode mode,
+    required engine.ReadingCategory category,
+    required engine.TimePeriod period,
+    required AppLocale language,
+    required RewardPlacement placement,
+  }) => AnalyticsEvent._('reward_granted', {
+    ..._reading(mode, category, period, language),
+    'placement': placement.name,
+    'grant_source': 'prototype',
+  });
+
+  factory AnalyticsEvent.readingEntitlementUsed({
+    required engine.DecisionMode mode,
+    required engine.ReadingCategory category,
+    required engine.TimePeriod period,
+    required AppLocale language,
+    required ReadingEntitlementSource source,
+  }) => AnalyticsEvent._('reading_entitlement_used', {
+    ..._reading(mode, category, period, language),
+    'entitlement_source': source.name,
   });
 }

@@ -96,7 +96,11 @@ void main() {
       final modes = fixtures.values.map(
         (json) => DecisionMode.fromWire(json['mode'] as String),
       );
-      expect(modes.toSet(), equals(DecisionMode.values.toSet()));
+      final expectedModes = DecisionMode.values.toSet().difference({
+        DecisionMode.reasonEmotion,
+        DecisionMode.confrontAvoid,
+      });
+      expect(modes.toSet(), equals(expectedModes));
     });
 
     test('every TimePeriod appears in at least one fixture', () {

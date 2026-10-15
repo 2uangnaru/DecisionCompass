@@ -72,7 +72,8 @@ class NoopAnalyticsService implements AnalyticsService {
   void removeListener(VoidCallback listener) {}
 }
 
-/// Collection is opt-in. Events are dropped, never buffered, before consent.
+/// Collection follows the stored tracking preference. Events are dropped,
+/// never buffered, while disabled or before initialization completes.
 /// A consent generation also invalidates queued events on withdrawal.
 class ProductAnalytics extends ChangeNotifier implements AnalyticsService {
   ProductAnalytics({required this.store, required this.sink});

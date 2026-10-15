@@ -36,6 +36,8 @@ const labels = <DecisionMode, (String, String)>{
   DecisionMode.keepLetGo: ('KEEP', 'LET GO'),
   DecisionMode.commitWithdraw: ('COMMIT', 'WITHDRAW'),
   DecisionMode.leftRight: ('LEFT', 'RIGHT'),
+  DecisionMode.reasonEmotion: ('REASON', 'EMOTION'),
+  DecisionMode.confrontAvoid: ('CONFRONT', 'AVOID'),
   DecisionMode.forwardBackward: ('FORWARD', 'BACKWARD'),
 };
 
@@ -100,8 +102,12 @@ void main() {
     }
   }
 
-  test('the mixture table covers every mode a reader can choose', () {
-    expect(mixtures.keys.toSet(), equals(DecisionMode.selectable.toSet()));
+  test('the mixture table covers every scored mode', () {
+    final engineModes = DecisionMode.selectable.toSet().difference({
+      DecisionMode.reasonEmotion,
+      DecisionMode.confrontAvoid,
+    });
+    expect(mixtures.keys.toSet(), equals(engineModes));
     // The retired mode has no mixture: v9.1 does not score it at all.
     expect(mixtures.containsKey(DecisionMode.forwardBackward), isFalse);
     for (final mixture in mixtures.values) {
@@ -111,9 +117,13 @@ void main() {
   });
 
   test('every selectable mode has at least one scored fixture', () {
+    final engineModes = DecisionMode.selectable.toSet().difference({
+      DecisionMode.reasonEmotion,
+      DecisionMode.confrontAvoid,
+    });
     expect(
       scored.values.map((pair) => pair.$1.mode).toSet(),
-      equals(DecisionMode.selectable.toSet()),
+      equals(engineModes),
       reason: 'a mode with no scored fixture is not signal-tested',
     );
   });
@@ -196,7 +206,7 @@ void main() {
       'Y': 0.52,
     };
     final scores = <DecisionMode, double>{
-      for (final mode in DecisionMode.selectable)
+      for (final mode in mixtures.keys)
         mode: mixedScore(mode, normalized),
     };
     expect(scores.length, 7);

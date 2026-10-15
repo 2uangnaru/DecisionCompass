@@ -348,6 +348,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get loadingModeLeftRight => 'Cân bằng xu hướng tiếp nhận và thể hiện';
 
   @override
+  String get loadingModeReasonEmotion =>
+      'Cân bằng giữa lý trí sáng suốt và tiếng gọi cảm xúc';
+
+  @override
+  String get loadingModeConfrontAvoid =>
+      'Cân nhắc giữa việc trực diện đối mặt và sự lùi bước khôn ngoan';
+
+  @override
   String get orbitMoment => 'KHOẢNH KHẮC';
 
   @override
@@ -541,6 +549,18 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get choiceRight => 'PHẢI';
+
+  @override
+  String get choiceReason => 'LÝ TRÍ';
+
+  @override
+  String get choiceEmotion => 'CẢM XÚC';
+
+  @override
+  String get choiceConfront => 'ĐỐI MẶT';
+
+  @override
+  String get choiceAvoid => 'NÉ TRÁNH';
 
   @override
   String get energyLevelQuiet => 'TĨNH LẶNG';

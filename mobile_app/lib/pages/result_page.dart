@@ -249,19 +249,11 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   /// Back to where a new reading is started.
   ///
-  /// A single `pop` already lands on Home from the current reading, and on
-  /// History from a snapshot opened there — which is the behaviour that path
-  /// has always had, and is left alone.
-  ///
-  /// The one case that needs more is a snapshot reached *through* the current
-  /// reading: two or three routes are in the way, and popping one of them
-  /// lands on History rather than anywhere a direction can be chosen.
+  /// Always returns directly to Home so the reader can choose a new decision,
+  /// while the Back / Close buttons continue to return to History when opened
+  /// from History.
   void _tryAnotherDirection() {
-    if (widget.closesToCurrentReading) {
-      Navigator.of(context).popUntil((route) => route.isFirst);
-      return;
-    }
-    Navigator.of(context).pop();
+    Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   @override

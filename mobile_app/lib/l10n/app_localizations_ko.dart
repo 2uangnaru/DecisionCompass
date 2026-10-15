@@ -327,6 +327,12 @@ class AppLocalizationsKo extends AppLocalizations {
   String get loadingModeLeftRight => '좌우의 갈림길을 편견 없이 바라보세요.';
 
   @override
+  String get loadingModeReasonEmotion => '이성의 명료함과 감성의 울림 사이를 살피고 있습니다';
+
+  @override
+  String get loadingModeConfrontAvoid => '정면으로 마주함과 신중히 비켜섬의 타이밍을 재고 있습니다';
+
+  @override
   String get orbitMoment => '시간의 기운';
 
   @override
@@ -513,6 +519,18 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get choiceRight => '오른쪽';
+
+  @override
+  String get choiceReason => '이성';
+
+  @override
+  String get choiceEmotion => '감성';
+
+  @override
+  String get choiceConfront => '직면';
+
+  @override
+  String get choiceAvoid => '회피';
 
   @override
   String get energyLevelQuiet => '고요';

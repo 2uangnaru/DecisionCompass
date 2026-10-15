@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../analytics/analytics_event.dart';
 import '../analytics/reading_analytics_attempt.dart';
 import '../data/models/models.dart' as engine;
 import '../data/period_availability.dart';
@@ -151,6 +152,7 @@ class _LoadingPageState extends State<LoadingPage>
   @override
   void initState() {
     super.initState();
+    widget.dependencies.adService.preloadInterstitial();
     _durationMs =
         _minimumRitual.inMilliseconds + Random().nextInt(_ritualJitterMs);
     _startPhraseCycle();
@@ -194,6 +196,7 @@ class _LoadingPageState extends State<LoadingPage>
     final ritualFloor = Future<void>.delayed(
       Duration(milliseconds: _durationMs),
     );
+    var quotaStage = ReadingLockStage.loading;
     try {
       if (!_quotaConsumed) await _requireEntitlement();
       final request = _request ??= await _buildRequest();
@@ -213,10 +216,25 @@ class _LoadingPageState extends State<LoadingPage>
       // attempts spend nothing. Commit using the LOCAL completion day, never
       // the UTC instant kept in the immutable calculation snapshot.
       if (!_quotaConsumed && _hasUsableScore(reading)) {
-        await widget.dependencies.quotaManager.consumeReading(
-          widget.dependencies.nowLocal(),
+        quotaStage = ReadingLockStage.commit;
+        final localNow = widget.dependencies.nowLocal();
+        final readingsBefore = widget.dependencies.quotaManager
+            .dailyCompletedReadingsCount(localNow);
+        final source = await widget.dependencies.quotaManager.consumeReading(
+          localNow,
         );
         _quotaConsumed = true;
+        if (source != null) _analyticsAttempt?.entitlementUsed(source);
+
+        // KỊCH BẢN INTERSTITIAL AD:
+        // Lần 1 trong ngày: Trải nghiệm sạch 100%, không quảng cáo.
+        // Từ lần 2 trong ngày trở đi: Bắn Interstitial ad ngay sau khi loading xong,
+        // đóng quảng cáo xong mới bung hiệu ứng hào quang chuyển sang trang Kết quả.
+        if (readingsBefore >= 1) {
+          await widget.dependencies.adService.showInterstitial(
+            onDismissed: () {},
+          );
+        }
       }
       if (!mounted) return;
       final reduceMotion =
@@ -229,6 +247,18 @@ class _LoadingPageState extends State<LoadingPage>
       _attemptRunning = false;
       _showResult(reading);
     } on ReadingQuotaUnavailableException catch (failure) {
+      widget.dependencies.analytics.record(
+        AnalyticsEvent.readingLocked(
+          mode: toEngineMode(widget.mode),
+          category: widget.category,
+          period: toEnginePeriod(widget.period),
+          language: widget.dependencies.localeController.locale,
+          reason: failure.exhausted
+              ? ReadingLockReason.exhausted
+              : ReadingLockReason.cooldown,
+          stage: quotaStage,
+        ),
+      );
       await ritualFloor;
       _settleFailure(
         ReadingApiException(

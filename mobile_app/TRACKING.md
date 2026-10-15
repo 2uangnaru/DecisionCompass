@@ -16,10 +16,13 @@ checklist.
 
 ## Consent and privacy
 
-- Off by default. An optional switch on Welcome allows opt-in; the same switch
+- The existing preference is honored. In the current implementation an absent
+  `usage_analytics_consent_v1` key defaults to enabled; this differs from the
+  original off-by-default plan. This instrumentation patch does not change it.
+  The optional switch on Welcome can disable/enable tracking; the same switch
   is available at the bottom of Home's gear > shield > Responsible Use sheet.
   Safety agreement and analytics consent are independent. Declining never
-  restricts readings. Copy is translated in all seven supported languages.
+  restricts readings. Tracking controls are separate from reading access.
 - Preferences use `usage_analytics_consent_v1`. Withdrawal gates custom events
   immediately and invalidates queued events. No pre-consent custom events are
   buffered or replayed. An in-flight event already dispatched before withdrawal
@@ -54,6 +57,64 @@ checklist.
 | `history_opened` | First displayed frame of each History page entry | none | No rebuild/retry events |
 | `share_requested` | Result's share action invokes platform sharing | `source`: `generated` or `history` | Share-in-flight guard; not a successful-share claim |
 | `language_changed` | Successful persistence of a different manually selected UI language | `previous_language`, `new_language` | Same-language taps and failed saves excluded |
+| `reading_locked` | A deliberate Reveal tap is refused, or Loading rejects entry/commit for quota | reading context + `lock_reason`: `cooldown` / `exhausted`, `lock_stage`: `ritual` / `loading` / `commit` | One per refusal; repeated real taps count as repeated actions, not timer/rebuild impressions |
+| `option_locked` | User taps a locked mode/category/period and its unlock sheet is requested | reading context + `placement`: `mode` / `category` / `period` | One per locked-option tap; no event from rendering AD badges |
+| `reward_cta_tapped` | User confirms the reward CTA (not simply opening its sheet) | reading context + `placement`: `reading` / `mode` / `category` / `period`, `grant_source`: `prototype` | One per confirmation operation; no event on sheet cancellation |
+| `reward_granted` | Bonus credit save succeeds, or the requested option is successfully unlocked | same as reward CTA | Once per tracked reward operation; no delayed grant after absent/changed consent |
+| `reading_entitlement_used` | Successful quota commit returns its actual spent credit | reading context + `entitlement_source`: `free` / `bonus` | Once per Loading attempt; failed commits, non-billable statuses and History replay excluded |
+
+Here "reading context" is only `decision_mode`, `category`, `time_period`,
+`ui_language`; it never includes a profile, result, location or identifier.
+There are now thirteen app-owned custom event names. Existing collection and
+consent behavior is unchanged by the monetization instrumentation.
+
+## Monetization instrumentation — 2026-10-09
+
+These events describe app-owned prototype behavior, **not real ads**, impressions,
+ad completion, eCPM, paid transactions or revenue. `placement=reading` means a
+bonus reading credit; the other placements mean selection-only unlocks and must
+never be included in bonus-credit totals. Sheet cancellation is not a reward CTA.
+An option unlock does not grant a credit or reset the free cooldown.
+
+The quota controller returns a typed credit receipt after the existing successful
+serialized write. This identifies what was really spent even if another reward
+was queued concurrently. `bonus` remains first priority, three free readings,
+three-hour cooldown and local-midnight reset remain unchanged. The non-spending
+Noop preview returns no receipt and emits no entitlement-consumption event.
+
+Credit consumption and visible completion are different events: a credit may
+commit before the Result's first frame. An app closure/navigation in that gap
+can yield consumption without `reading_completed`; this patch does not change
+the result-recovery policy. Analytics is best-effort and separate from quota;
+it is not a durable financial or credit ledger. Failed telemetry delivery must
+not block the app or change a reward. No tracking is retried by the quota controller.
+
+Reward and reading operations whose initial event was not accepted by the
+analytics service do not later
+emit paired grant/consumption events when collection is enabled mid-operation.
+Withdrawing/re-enabling invalidates those pending pairs. Consent is not bypassed
+to make a funnel appear complete. There are no operation IDs or profile-derived
+user properties; use user-based, placement-filtered funnels rather than claiming
+precise per-question attribution from aggregate counts.
+
+Useful reports once the real connection is verified:
+
+- Unique `reading_locked` users / active analytics users: quota friction;
+  split by `lock_reason`, and keep entry/commit failures distinct from Ritual taps.
+- User funnel `reading_locked` -> `reward_cta_tapped` -> `reward_granted` ->
+  `reading_entitlement_used`, filtering reward placement to `reading` and the
+  final source to `bonus`. Users can hold older bonus credits, so the final
+  consumption is not necessarily the immediately preceding grant.
+- `option_locked` -> reward CTA -> grant, separately for each option placement:
+  selection-unlock adoption and sheet dismissal/drop-off.
+- Free versus bonus consumption, by UI language/mode/category/time period.
+- Compare return-to-app cohorts for users encountering a gate versus others;
+  this is observational, not proof that the gate caused a retention change.
+
+Grant / CTA event-count ratios are operational aggregate ratios, not ad-view
+rates or user conversion. Match the placement/source and reporting scope, allow
+for boundary timing, repeat taps, consent changes and undelivered events.
+No new Firebase project, dashboard or live delivery was configured here.
 
 Mode/category/period values are existing engine wire enums; language values are
 the supported BCP-47 tags. `elapsed_ms` uses a monotonic Stopwatch from Loading
@@ -92,7 +153,7 @@ The automatic birth-country language default is not a manual language event.
    Use the same define for an intended analytics-enabled release build. Without
    it the Dart sink is no-op and native collection is deactivated, even if JSON
    exists. Without JSON the manifest remains deactivated as well.
-6. Install the enabled build on an Android test device. Leave consent OFF first,
+6. Install the enabled build on an Android test device. Turn tracking OFF first,
    confirm no custom events, then explicitly turn it ON and exercise the flows.
 7. Enable DebugView:
 
@@ -115,7 +176,8 @@ The automatic birth-country language default is not a manual language event.
 
 GA4 Admin > Custom definitions: create event-scoped dimensions for
 `decision_mode`, `category`, `time_period`, `ui_language`, `error_kind`, `source`,
-`previous_language`, `new_language`. Register `elapsed_ms` as an event-scoped
+`previous_language`, `new_language`, `lock_reason`, `lock_stage`, `placement`,
+`grant_source`, `entitlement_source`. Register `elapsed_ms` as an event-scoped
 custom metric with millisecond units. Registration does not backfill past data.
 
 Use Firebase/GA4 active-user and engagement reports for DAU/WAU/MAU. Build user-
@@ -138,7 +200,21 @@ make multiple readings. Share-request rate is not confirmed outbound shares.
 History engagement can use unique History viewers / active analytics users.
 Normal reports may be delayed; use DebugView for instrumentation validation.
 
-## Verification
+## Monetization verification — 2026-10-09
+
+- New dedicated monetization analytics coverage: eleven unit tests and twelve
+  widget-flow tests, plus a credit-receipt regression in the quota suite.
+- Final full `flutter test --no-pub`: **1,217 passed, zero failures**.
+- Final `flutter analyze --no-pub`: **no issues found**.
+- Coverage includes deliberate versus rebuild/timer actions, all four reward
+  placements, cancellation, successful free/bonus commits, retries, non-billable
+  responses, preflight/commit quota rejection, History replay, fixed immutable
+  payloads, withdrawal/re-enable and contained sink failures.
+- Scoring engines and localized copy were not changed. No real Firebase config
+  is present, no live delivery/dashboard is verified, and this instrumentation
+  update was not built into a new APK or pushed during this task.
+
+## Original analytics verification (earlier implementation)
 
 Local unit/widget tests exercise fixed payloads, consent persistence, refusal,
 withdrawal, queue invalidation, retries, rebuilds, historical Result exclusion,

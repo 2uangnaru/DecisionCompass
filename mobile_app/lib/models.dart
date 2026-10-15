@@ -12,6 +12,8 @@ enum DecisionMode {
   keepLetGo,
   commitWithdraw,
   leftRight,
+  reasonEmotion,
+  confrontAvoid,
 
   /// Retired with ruleset v9.1. Offered nowhere; rendered in history so an
   /// old reading still shows the pair it was actually calculated for.
@@ -39,6 +41,8 @@ const englishChoiceLabels = <DecisionMode, ({String first, String second})>{
   DecisionMode.keepLetGo: (first: 'KEEP', second: 'LET GO'),
   DecisionMode.commitWithdraw: (first: 'COMMIT', second: 'WITHDRAW'),
   DecisionMode.leftRight: (first: 'LEFT', second: 'RIGHT'),
+  DecisionMode.reasonEmotion: (first: 'REASON', second: 'EMOTION'),
+  DecisionMode.confrontAvoid: (first: 'CONFRONT', second: 'AVOID'),
   DecisionMode.forwardBackward: (first: 'FORWARD', second: 'BACKWARD'),
 };
 

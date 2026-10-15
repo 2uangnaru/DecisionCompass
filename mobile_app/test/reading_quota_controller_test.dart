@@ -3,6 +3,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  test(
+    'commit receipt reports actual credit without changing bonus-first rules',
+    () async {
+      SharedPreferences.setMockInitialValues({});
+      final q = SharedPreferencesReadingQuotaController();
+      final now = DateTime(2026, 10, 9, 9);
+      await q.earnBonusReading();
+      expect(await q.consumeReading(now), ReadingEntitlementSource.bonus);
+      expect(q.dailyFreeReadingsUsed(now), 0);
+      expect(await q.consumeReading(now), ReadingEntitlementSource.free);
+      expect(q.dailyFreeReadingsUsed(now), 1);
+    },
+  );
   TestWidgetsFlutterBinding.ensureInitialized();
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
@@ -176,4 +189,29 @@ void main() {
       );
     },
   );
+
+  test('dailyCompletedReadingsCount tracks all completions and survives reload', () async {
+    final now = DateTime(2026, 10, 9, 9);
+    final q = SharedPreferencesReadingQuotaController();
+    await q.ensureLoaded();
+    expect(q.dailyCompletedReadingsCount(now), 0);
+
+    // First reading: free
+    await q.consumeReading(now);
+    expect(q.dailyCompletedReadingsCount(now), 1);
+
+    // Second reading: bonus
+    await q.earnBonusReading();
+    await q.consumeReading(now.add(const Duration(minutes: 5)));
+    expect(q.dailyCompletedReadingsCount(now), 2);
+
+    // Reload from SharedPreferences
+    final restored = SharedPreferencesReadingQuotaController();
+    await restored.ensureLoaded();
+    expect(restored.dailyCompletedReadingsCount(now), 2);
+
+    // Next day resets count
+    final nextDay = DateTime(2026, 10, 10, 9);
+    expect(restored.dailyCompletedReadingsCount(nextDay), 0);
+  });
 }

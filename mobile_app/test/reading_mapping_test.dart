@@ -15,6 +15,8 @@ void main() {
         DecisionMode.keepLetGo: engine.DecisionMode.keepLetGo,
         DecisionMode.commitWithdraw: engine.DecisionMode.commitWithdraw,
         DecisionMode.leftRight: engine.DecisionMode.leftRight,
+        DecisionMode.reasonEmotion: engine.DecisionMode.reasonEmotion,
+        DecisionMode.confrontAvoid: engine.DecisionMode.confrontAvoid,
         // Retired, but still mapped: history has to reach the engine enum to
         // render a reading taken before v9.1.
         DecisionMode.forwardBackward: engine.DecisionMode.forwardBackward,
@@ -47,7 +49,7 @@ void main() {
         toEngineMode(DecisionMode.forwardBackward).wireValue,
         'forward_backward',
       );
-      expect(DecisionMode.selectable, hasLength(7));
+      expect(DecisionMode.selectable, hasLength(9));
       expect(
         toEngineMode(DecisionMode.leftRight),
         isNot(engine.DecisionMode.yesNo),
@@ -74,6 +76,8 @@ void main() {
         engine.DecisionMode.keepLetGo: ('KEEP', 'LET GO'),
         engine.DecisionMode.commitWithdraw: ('COMMIT', 'WITHDRAW'),
         engine.DecisionMode.leftRight: ('LEFT', 'RIGHT'),
+        engine.DecisionMode.reasonEmotion: ('REASON', 'EMOTION'),
+        engine.DecisionMode.confrontAvoid: ('CONFRONT', 'AVOID'),
         engine.DecisionMode.forwardBackward: ('FORWARD', 'BACKWARD'),
       };
 

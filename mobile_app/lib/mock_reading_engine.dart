@@ -10,6 +10,8 @@ ReadingResult createMockReading(DecisionMode mode, TimePeriod period) {
     DecisionMode.commitWithdraw => ('COMMIT', 57, 'WITHDRAW'),
     DecisionMode.forwardBackward => ('FORWARD', 57, 'BACKWARD'),
     DecisionMode.leftRight => ('RIGHT', 54, 'LEFT'),
+    DecisionMode.reasonEmotion => ('REASON', 62, 'EMOTION'),
+    DecisionMode.confrontAvoid => ('CONFRONT', 59, 'AVOID'),
   };
 
   final difference = (preset.$2 - 50).abs();

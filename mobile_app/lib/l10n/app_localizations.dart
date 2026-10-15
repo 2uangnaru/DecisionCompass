@@ -729,6 +729,18 @@ abstract class AppLocalizations {
   /// **'Balancing receptive and expressive polarity'**
   String get loadingModeLeftRight;
 
+  /// No description provided for @loadingModeReasonEmotion.
+  ///
+  /// In en, this message translates to:
+  /// **'Balancing clarity of reason against emotional depth'**
+  String get loadingModeReasonEmotion;
+
+  /// No description provided for @loadingModeConfrontAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'Weighing direct confrontation against protective retreat'**
+  String get loadingModeConfrontAvoid;
+
   /// No description provided for @orbitMoment.
   ///
   /// In en, this message translates to:
@@ -1088,6 +1100,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'RIGHT'**
   String get choiceRight;
+
+  /// No description provided for @choiceReason.
+  ///
+  /// In en, this message translates to:
+  /// **'REASON'**
+  String get choiceReason;
+
+  /// No description provided for @choiceEmotion.
+  ///
+  /// In en, this message translates to:
+  /// **'EMOTION'**
+  String get choiceEmotion;
+
+  /// No description provided for @choiceConfront.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFRONT'**
+  String get choiceConfront;
+
+  /// No description provided for @choiceAvoid.
+  ///
+  /// In en, this message translates to:
+  /// **'AVOID'**
+  String get choiceAvoid;
 
   /// No description provided for @energyLevelQuiet.
   ///

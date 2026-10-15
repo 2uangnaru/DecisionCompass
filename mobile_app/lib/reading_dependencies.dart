@@ -8,6 +8,7 @@ import 'data/locale_controller.dart';
 import 'data/profile_repository.dart';
 import 'data/reading_quota_controller.dart';
 import 'data/reading_repository.dart';
+import 'services/ad_service.dart';
 
 /// Everything the reading flow needs from outside the widget tree, passed down
 /// by constructor so no page ever builds an HTTP client or touches a plugin
@@ -24,6 +25,7 @@ class ReadingDependencies {
     required this.localeController,
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
+    this.adService = const NoOpAdService(),
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -48,6 +50,7 @@ class ReadingDependencies {
   final LocaleController localeController;
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
+  final AdService adService;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

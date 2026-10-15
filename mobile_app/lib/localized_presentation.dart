@@ -86,6 +86,8 @@ String modeFirstLabel(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.keepLetGo => l10n.choiceKeep,
       DecisionMode.commitWithdraw => l10n.choiceCommit,
       DecisionMode.leftRight => l10n.choiceLeft,
+      DecisionMode.reasonEmotion => l10n.choiceReason,
+      DecisionMode.confrontAvoid => l10n.choiceConfront,
       DecisionMode.forwardBackward => l10n.choiceForward,
     };
 
@@ -98,6 +100,8 @@ String modeSecondLabel(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.keepLetGo => l10n.choiceLetGo,
       DecisionMode.commitWithdraw => l10n.choiceWithdraw,
       DecisionMode.leftRight => l10n.choiceRight,
+      DecisionMode.reasonEmotion => l10n.choiceEmotion,
+      DecisionMode.confrontAvoid => l10n.choiceAvoid,
       DecisionMode.forwardBackward => l10n.choiceBackward,
     };
 
@@ -117,6 +121,8 @@ String modeLoadingPhrase(AppLocalizations l10n, DecisionMode mode) =>
       DecisionMode.keepLetGo => l10n.loadingModeKeepLetGo,
       DecisionMode.commitWithdraw => l10n.loadingModeCommitWithdraw,
       DecisionMode.leftRight => l10n.loadingModeLeftRight,
+      DecisionMode.reasonEmotion => l10n.loadingModeReasonEmotion,
+      DecisionMode.confrontAvoid => l10n.loadingModeConfrontAvoid,
       DecisionMode.forwardBackward => l10n.loadingModeForwardBackward,
     };
 

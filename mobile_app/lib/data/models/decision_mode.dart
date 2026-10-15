@@ -13,6 +13,8 @@ enum DecisionMode {
   keepLetGo('keep_let_go'),
   commitWithdraw('commit_withdraw'),
   leftRight('left_right'),
+  reasonEmotion('reason_emotion'),
+  confrontAvoid('confront_avoid'),
 
   /// Retired with ruleset v9.1, kept so saved readings still parse.
   ///

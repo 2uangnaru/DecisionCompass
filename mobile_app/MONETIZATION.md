@@ -22,12 +22,37 @@ Updated 2026-10-09. This note describes app-owned entitlement logic, not live ad
 
 ## Verification
 
+The 2026-10-09 instrumentation extension records locked reading actions,
+selection-option gates, prototype reward CTA/grants and actual free/bonus
+credit use. See `TRACKING.md`. It does not change any entitlement or UX rule,
+does not treat option unlocks as bonus credits, and does not count real ads or
+revenue. Tracking acceptance/withdrawal and the optional no-op sink still apply.
+
 Regression coverage is in `test/reading_quota_controller_test.dart`, `test/monetization_completion_test.dart` and `test/monetization_ritual_ui_test.dart`.
 
 These cover the fourth-use refusal, local-day accounting, the three-hour boundary, 00:00 reset, restart and legacy state, concurrent commits, untouched bonus cooldown, failure and retry, non-billable states, direct-entry and preview bypasses, and leaving an unfinished attempt.
 
+## Interstitial Ad Implementation (2026-10-15)
+
+- **Scenario**:
+  - **1st reading of the day**: 100% clean experience, no interstitial ad shown.
+  - **2nd reading of the day onwards**: Interstitial ad triggers immediately after analysis loading finishes. The aperture transition and navigation to the Result page only happen after the ad is dismissed (or if ad loading fails / times out after 8s safety window).
+- **AdMob IDs & Real ID Replacement**:
+  - Currently configured with Google's official Test AdMob Unit IDs (safe for testing without getting banned).
+  - Android Manifest: `ca-app-pub-3940256099942544~3347511713` (Test App ID in `AndroidManifest.xml`).
+  - iOS Info.plist: `ca-app-pub-3940256099942544~1458002511` (Test App ID in `Info.plist`).
+  - Ad Unit ID: Configured in `lib/services/ad_service.dart` via `AdConstants`.
+  - When ready with real AdMob account:
+    1. Update App ID in `android/app/src/main/AndroidManifest.xml` and `ios/Runner/Info.plist`.
+    2. Set `realAndroidInterstitialUnitId` and `realIosInterstitialUnitId` in `lib/services/ad_service.dart`.
+- **Fail-safe Design**:
+  - Preloads in background at app start and on loading page initialization.
+  - An 8-second safety timeout ensures the user is never stuck if the ad fails to show or hangs.
+  - In airplane mode or if AdMob fails to fill, it immediately bypasses and reveals the result.
+
 ## Still outside this change
 
-Rewarded ads remain a prototype: the current button directly calls `earnBonusReading`. In a live ad integration this must only follow the SDK reward callback. Banner SDK integration, ad consent, ad failure/reconciliation and the previously reported large-text layout issue are not implemented or fixed by this quota patch.
+Rewarded ads remain a prototype: the current button directly calls `earnBonusReading`. In a live ad integration this must only follow the SDK reward callback. Banner SDK integration, ad consent, and server-side entitlement are not implemented.
 
 This is local device enforcement, not tamper-proof server entitlement. Do not claim protection against manually changing the device clock, clearing app data or multiple app installations.
+

@@ -253,19 +253,15 @@ void main() {
       expect(rig.historyRepository.saved, hasLength(1));
     });
 
-    testWidgets('Try another direction still goes back to History', (
+    testWidgets('Try another direction goes back to Home', (
       tester,
     ) async {
-      // Left exactly as it was. The label arguably promises Home here too,
-      // but this path was not the one being fixed, and changing where a
-      // button lands on a route nobody asked about is how a navigation fix
-      // turns into a navigation bug.
       await openSavedFromHome(tester);
       await tester.ensureVisible(find.byKey(const Key('result_try_another')));
       await tester.tap(find.byKey(const Key('result_try_another')));
       await tester.pumpAndSettle();
-      expect(find.byType(HistoryPage), findsOneWidget);
-      expect(find.byType(HomePage), findsNothing);
+      expect(find.byType(HomePage), findsOneWidget);
+      expect(find.byType(HistoryPage), findsNothing);
     });
   });
 

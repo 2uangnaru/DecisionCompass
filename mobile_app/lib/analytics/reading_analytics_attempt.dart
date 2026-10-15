@@ -1,6 +1,7 @@
 import '../app_locale.dart';
 import '../data/models/models.dart' as engine;
 import '../data/reading_api_exception.dart';
+import '../data/reading_quota_controller.dart';
 import 'analytics_event.dart';
 import 'analytics_service.dart';
 
@@ -32,6 +33,23 @@ class ReadingAnalyticsAttempt {
   final int _version;
   bool _started = false;
   bool _settled = false;
+  bool _entitlementRecorded = false;
+
+  /// The source returned by a successful commit, never guessed before it.
+  void entitlementUsed(ReadingEntitlementSource source) {
+    if (_settled || _entitlementRecorded) return;
+    _entitlementRecorded = true;
+    if (!_started || _version != analytics.consentVersion) return;
+    analytics.record(
+      AnalyticsEvent.readingEntitlementUsed(
+        mode: mode,
+        category: category,
+        period: period,
+        language: language,
+        source: source,
+      ),
+    );
+  }
 
   void completed() {
     if (_settled) return;

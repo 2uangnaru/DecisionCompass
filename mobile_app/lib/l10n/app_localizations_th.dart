@@ -342,6 +342,14 @@ class AppLocalizationsTh extends AppLocalizations {
   String get loadingModeLeftRight => 'กำลังปรับสมดุลระหว่างการรับและการแสดงออก';
 
   @override
+  String get loadingModeReasonEmotion =>
+      'ชั่งน้ำหนักระหว่างความชัดเจนของเหตุผลกับความรู้สึกลึกซึ้ง';
+
+  @override
+  String get loadingModeConfrontAvoid =>
+      'ประเมินความกล้าในการเผชิญหน้ากับการรักษาระยะอย่างรอบคอบ';
+
+  @override
   String get orbitMoment => 'ช่วงเวลา';
 
   @override
@@ -535,6 +543,18 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get choiceRight => 'ขวา';
+
+  @override
+  String get choiceReason => 'เหตุผล';
+
+  @override
+  String get choiceEmotion => 'อารมณ์';
+
+  @override
+  String get choiceConfront => 'เผชิญหน้า';
+
+  @override
+  String get choiceAvoid => 'หลีกเลี่ยง';
 
   @override
   String get energyLevelQuiet => 'สงบ';

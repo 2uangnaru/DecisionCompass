@@ -4,6 +4,9 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+/// The credit actually spent by a successful serialized quota commit.
+enum ReadingEntitlementSource { free, bonus }
+
 /// Contract for managing user reading energy, daily quota, and rewarded unlocks.
 abstract interface class ReadingQuotaController implements Listenable {
   bool isAvailable(DateTime now);
@@ -17,11 +20,15 @@ abstract interface class ReadingQuotaController implements Listenable {
   /// Whether natural daily free energy is currently ready (not in cooldown and not exhausted).
   bool isFreeEnergyReady(DateTime now);
 
+  /// Number of completed readings today (both free and bonus).
+  int dailyCompletedReadingsCount(DateTime now);
+
   Future<void> earnBonusReading();
 
   /// Commit one successful reading using the device LOCAL completion time.
   /// Throws when no entitlement remains; never call before calculation succeeds.
-  Future<void> consumeReading(DateTime now);
+  /// Returns the actual credit source, or null for a non-spending preview.
+  Future<ReadingEntitlementSource?> consumeReading(DateTime now);
   Future<void> ensureLoaded();
 }
 
@@ -53,12 +60,13 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
   DateTime? _lastReadingTime;
   String? _storedDateString;
   int _usedToday = 0;
+  int _completedToday = 0;
   int _bonusReadings = 0;
   bool _loaded = false;
   Future<void>? _loading;
   Future<void> _pending = Future<void>.value();
 
-  Future<void> _serialize(Future<void> Function() operation) {
+  Future<T> _serialize<T>(Future<T> Function() operation) {
     final next = _pending.then((_) => operation());
     _pending = next.then<void>((_) {}, onError: (Object _, StackTrace __) {});
     return next;
@@ -72,11 +80,17 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
     return _storedDateString == _dateKey(now.toLocal()) ? _usedToday : 0;
   }
 
+  @override
+  int dailyCompletedReadingsCount(DateTime now) {
+    return _storedDateString == _dateKey(now.toLocal()) ? _completedToday : 0;
+  }
+
   void _normalizeDay(DateTime now) {
     final todayKey = _dateKey(now.toLocal());
     if (_storedDateString != todayKey) {
       _storedDateString = todayKey;
       _usedToday = 0;
+      _completedToday = 0;
       // Product rule: local midnight resets BOTH free quota and cooldown.
       // Bonus credits are independent and survive the reset.
       _lastReadingTime = null;
@@ -144,34 +158,51 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
   Future<void> earnBonusReading() => _serialize(() async {
     await ensureLoaded();
     final nextBonus = _bonusReadings + 1;
-    await _persist(used: _usedToday, bonus: nextBonus, last: _lastReadingTime);
+    await _persist(
+      used: _usedToday,
+      completed: _completedToday,
+      bonus: nextBonus,
+      last: _lastReadingTime,
+    );
     _bonusReadings = nextBonus;
     notifyListeners();
   });
 
   @override
-  Future<void> consumeReading(DateTime now) => _serialize(() async {
-    await ensureLoaded();
-    final local = now.toLocal();
-    _normalizeDay(local);
-    if (!isAvailable(local)) {
-      throw ReadingQuotaUnavailableException(
-        exhausted: _usedToday >= maxDailyFreeReadings,
-      );
-    }
-    final useBonus = _bonusReadings > 0;
-    final nextBonus = useBonus ? _bonusReadings - 1 : _bonusReadings;
-    final nextUsed = useBonus ? _usedToday : _usedToday + 1;
-    final nextLast = useBonus ? _lastReadingTime : local;
-    await _persist(used: nextUsed, bonus: nextBonus, last: nextLast);
-    _bonusReadings = nextBonus;
-    _usedToday = nextUsed;
-    _lastReadingTime = nextLast;
-    notifyListeners();
-  });
+  Future<ReadingEntitlementSource?> consumeReading(DateTime now) =>
+      _serialize(() async {
+        await ensureLoaded();
+        final local = now.toLocal();
+        _normalizeDay(local);
+        if (!isAvailable(local)) {
+          throw ReadingQuotaUnavailableException(
+            exhausted: _usedToday >= maxDailyFreeReadings,
+          );
+        }
+        final useBonus = _bonusReadings > 0;
+        final nextBonus = useBonus ? _bonusReadings - 1 : _bonusReadings;
+        final nextUsed = useBonus ? _usedToday : _usedToday + 1;
+        final nextCompleted = _completedToday + 1;
+        final nextLast = useBonus ? _lastReadingTime : local;
+        await _persist(
+          used: nextUsed,
+          completed: nextCompleted,
+          bonus: nextBonus,
+          last: nextLast,
+        );
+        _bonusReadings = nextBonus;
+        _usedToday = nextUsed;
+        _completedToday = nextCompleted;
+        _lastReadingTime = nextLast;
+        notifyListeners();
+        return useBonus
+            ? ReadingEntitlementSource.bonus
+            : ReadingEntitlementSource.free;
+      });
 
   Future<void> _persist({
     required int used,
+    required int completed,
     required int bonus,
     required DateTime? last,
   }) async {
@@ -181,6 +212,7 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
       jsonEncode({
         'date': _storedDateString,
         'used': used,
+        'completed': completed,
         'bonus': bonus,
         'lastEpochMs': last?.millisecondsSinceEpoch,
       }),
@@ -213,6 +245,9 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
       _usedToday = state == null
           ? (prefs.getInt(_keyUsedToday) ?? 0)
           : state['used'] as int;
+      _completedToday = state == null
+          ? (prefs.getInt('reading_quota_completed_today') ?? _usedToday)
+          : (state['completed'] as int? ?? state['used'] as int? ?? _usedToday);
       _bonusReadings = state == null
           ? (prefs.getInt(_keyBonusReadings) ?? 0)
           : state['bonus'] as int;
@@ -256,13 +291,16 @@ class NoopReadingQuotaController implements ReadingQuotaController {
   int dailyFreeReadingsUsed(DateTime now) => 0;
 
   @override
+  int dailyCompletedReadingsCount(DateTime now) => 0;
+
+  @override
   int get maxDailyFreeReadings => 3;
 
   @override
   Future<void> earnBonusReading() async {}
 
   @override
-  Future<void> consumeReading(DateTime now) async {}
+  Future<ReadingEntitlementSource?> consumeReading(DateTime now) async => null;
 
   @override
   Future<void> ensureLoaded() async {}
@@ -282,15 +320,18 @@ class FakeReadingQuotaController extends ChangeNotifier
     Duration initialRemaining = const Duration(hours: 3),
     int initialBonus = 0,
     int initialUsed = 0,
+    int initialCompleted = 0,
   }) : _isCooldown = initialCooldown,
        _remaining = initialRemaining,
        _bonus = initialBonus,
-       _usedToday = initialUsed;
+       _usedToday = initialUsed,
+       _completedToday = initialCompleted;
 
   bool _isCooldown;
   Duration _remaining;
   int _bonus;
   int _usedToday;
+  int _completedToday;
 
   void setCooldown(bool cooldown, {Duration? remaining}) {
     _isCooldown = cooldown;
@@ -300,6 +341,11 @@ class FakeReadingQuotaController extends ChangeNotifier
 
   void setUsedToday(int used) {
     _usedToday = used;
+    notifyListeners();
+  }
+
+  void setCompletedToday(int count) {
+    _completedToday = count;
     notifyListeners();
   }
 
@@ -329,6 +375,9 @@ class FakeReadingQuotaController extends ChangeNotifier
   int dailyFreeReadingsUsed(DateTime now) => _usedToday;
 
   @override
+  int dailyCompletedReadingsCount(DateTime now) => _completedToday;
+
+  @override
   int get maxDailyFreeReadings => 3;
 
   @override
@@ -344,17 +393,22 @@ class FakeReadingQuotaController extends ChangeNotifier
   }
 
   @override
-  Future<void> consumeReading(DateTime now) async {
+  Future<ReadingEntitlementSource?> consumeReading(DateTime now) async {
     if (!isAvailable(now)) {
       throw const ReadingQuotaUnavailableException(exhausted: false);
     }
-    if (_bonus > 0) {
+    final useBonus = _bonus > 0;
+    _completedToday++;
+    if (useBonus) {
       _bonus--;
     } else {
       _usedToday++;
       _isCooldown = true;
     }
     notifyListeners();
+    return useBonus
+        ? ReadingEntitlementSource.bonus
+        : ReadingEntitlementSource.free;
   }
 
   @override

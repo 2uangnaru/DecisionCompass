@@ -884,6 +884,14 @@ class _HomePageState extends State<HomePage>
             Expanded(child: card(DecisionMode.advanceRetreat)),
           ],
         ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(child: card(DecisionMode.reasonEmotion)),
+            const SizedBox(width: 10),
+            Expanded(child: card(DecisionMode.confrontAvoid)),
+          ],
+        ),
       ],
     );
   }

@@ -26,6 +26,7 @@ import 'data/shared_preferences_profile_repository.dart';
 import 'data/reading_quota_controller.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
+import 'services/ad_service.dart';
 
 /// AstraCue calculates entirely on the device.
 ///
@@ -64,6 +65,8 @@ Future<void> main() async {
     store: const SharedPreferencesLocaleStore(),
     analytics: analytics,
   );
+  final adService = AdMobService();
+  unawaited(adService.initialize());
   // Load while the first Flutter frame animates. The app keeps the language-
   // neutral startup view until both tasks finish, so saved languages never
   // flash through English content.
@@ -101,6 +104,7 @@ Future<void> main() async {
         localeController: localeController,
         analytics: analytics,
         quotaManager: quotaManager,
+        adService: adService,
       ),
     ),
   );

@@ -216,8 +216,7 @@ class _OrbitVisualState extends State<OrbitVisual>
     // travel fractional turns per 14 seconds. Elapsed time never wraps, so
     // their angles and the orbit labels stay continuous at that boundary.
     _ticker = createTicker((elapsed) {
-      _progress.value =
-          elapsed.inMicroseconds / _orbitDuration.inMicroseconds;
+      _progress.value = elapsed.inMicroseconds / _orbitDuration.inMicroseconds;
     })..start();
   }
 
@@ -237,10 +236,12 @@ class _OrbitVisualState extends State<OrbitVisual>
     );
     final theme = Theme.of(context);
     final textStyle = TextStyle(
-      fontFamily: theme.textTheme.displayLarge?.fontFamily ??
+      fontFamily:
+          theme.textTheme.displayLarge?.fontFamily ??
           theme.textTheme.bodyMedium?.fontFamily ??
           CompassFonts.display,
-      fontFamilyFallback: theme.textTheme.displayLarge?.fontFamilyFallback ??
+      fontFamilyFallback:
+          theme.textTheme.displayLarge?.fontFamilyFallback ??
           theme.textTheme.bodyMedium?.fontFamilyFallback ??
           CompassFonts.fallbackFor(AppLocale.english),
       color: CompassColors.secondary.withValues(alpha: 0.86),
@@ -333,7 +334,8 @@ class _OrbitPainter extends CustomPainter {
     }
 
     final effectiveTextStyle = (textStyle ?? const TextStyle()).copyWith(
-      color: textStyle?.color ?? CompassColors.secondary.withValues(alpha: 0.86),
+      color:
+          textStyle?.color ?? CompassColors.secondary.withValues(alpha: 0.86),
       fontSize: textStyle?.fontSize ?? 8,
       letterSpacing: textStyle?.letterSpacing ?? 1.1,
       fontWeight: textStyle?.fontWeight ?? FontWeight.w600,
@@ -381,11 +383,7 @@ class _StarsPainter extends CustomPainter {
 
 /// A gentle frosted celestial badge indicating an option requires watching an Ad to unlock.
 class AdOptionBadge extends StatefulWidget {
-  const AdOptionBadge({
-    super.key,
-    this.compact = false,
-    this.trigger,
-  });
+  const AdOptionBadge({super.key, this.compact = false, this.trigger});
 
   final bool compact;
   final Listenable? trigger;
@@ -403,11 +401,17 @@ class _AdOptionBadgeState extends State<AdOptionBadge>
 
   late final Animation<double> _scaleAnimation = TweenSequence<double>([
     TweenSequenceItem(
-      tween: Tween(begin: 1.0, end: 1.30).chain(CurveTween(curve: Curves.easeOutBack)),
+      tween: Tween(
+        begin: 1.0,
+        end: 1.30,
+      ).chain(CurveTween(curve: Curves.easeOutBack)),
       weight: 45,
     ),
     TweenSequenceItem(
-      tween: Tween(begin: 1.30, end: 1.0).chain(CurveTween(curve: Curves.easeInOut)),
+      tween: Tween(
+        begin: 1.30,
+        end: 1.0,
+      ).chain(CurveTween(curve: Curves.easeInOut)),
       weight: 55,
     ),
   ]).animate(_bounceController);
@@ -448,21 +452,14 @@ class _AdOptionBadgeState extends State<AdOptionBadge>
       decoration: BoxDecoration(
         color: const Color(0xF00A1526),
         borderRadius: BorderRadius.circular(widget.compact ? 8 : 10),
-        border: Border.all(
-          color: const Color(0x6680BAFF),
-          width: 0.85,
-        ),
+        border: Border.all(color: const Color(0x6680BAFF), width: 0.85),
         boxShadow: const [
           BoxShadow(
             color: Color(0x66000000),
             blurRadius: 4,
             offset: Offset(0, 1.5),
           ),
-          BoxShadow(
-            color: Color(0x2880BAFF),
-            blurRadius: 6,
-            spreadRadius: 0.5,
-          ),
+          BoxShadow(color: Color(0x2880BAFF), blurRadius: 6, spreadRadius: 0.5),
         ],
       ),
       child: Row(
@@ -488,10 +485,7 @@ class _AdOptionBadgeState extends State<AdOptionBadge>
       ),
     );
 
-    return ScaleTransition(
-      scale: _scaleAnimation,
-      child: badge,
-    );
+    return ScaleTransition(scale: _scaleAnimation, child: badge);
   }
 }
 
@@ -526,10 +520,7 @@ class AdLockOptionWrapper extends StatelessWidget {
           top: badgeTop,
           right: badgeRight,
           child: IgnorePointer(
-            child: AdOptionBadge(
-              compact: compact,
-              trigger: trigger,
-            ),
+            child: AdOptionBadge(compact: compact, trigger: trigger),
           ),
         ),
       ],
@@ -541,6 +532,7 @@ class AdLockOptionWrapper extends StatelessWidget {
 Future<bool> showOptionAdUnlockSheet(
   BuildContext context, {
   required String optionLabel,
+  VoidCallback? onRewardCta,
 }) async {
   final l10n = AppLocalizations.of(context);
   final result = await showModalBottomSheet<bool>(
@@ -624,17 +616,17 @@ Future<bool> showOptionAdUnlockSheet(
               color: Colors.transparent,
               child: InkWell(
                 key: const Key('option_unlock_ad_button'),
-                onTap: () => Navigator.of(sheetContext).pop(true),
+                onTap: () {
+                  onRewardCta?.call();
+                  Navigator.of(sheetContext).pop(true);
+                },
                 borderRadius: BorderRadius.circular(18),
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                      colors: [
-                        Color(0xD91A2943),
-                        Color(0xF2142136),
-                      ],
+                      colors: [Color(0xD91A2943), Color(0xF2142136)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -684,7 +676,10 @@ Future<bool> showOptionAdUnlockSheet(
               onPressed: () => Navigator.of(sheetContext).pop(false),
               child: Text(
                 l10n.cancelAction,
-                style: const TextStyle(color: CompassColors.muted, fontSize: 13),
+                style: const TextStyle(
+                  color: CompassColors.muted,
+                  fontSize: 13,
+                ),
               ),
             ),
           ],
@@ -694,4 +689,3 @@ Future<bool> showOptionAdUnlockSheet(
   );
   return result ?? false;
 }
-

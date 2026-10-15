@@ -162,6 +162,8 @@ void main() {
         'keep_let_go',
         'commit_withdraw',
         'left_right',
+        'reason_emotion',
+        'confront_avoid',
         // Retired with v9.1 and last on purpose: it is never offered, only
         // parsed, so a saved reading still names the pair it was calculated
         // for instead of being relabelled COMMIT/WITHDRAW.

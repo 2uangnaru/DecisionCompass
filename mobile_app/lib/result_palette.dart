@@ -49,6 +49,10 @@ Color choiceAccentColor(DecisionMode mode, {required bool isFirst}) {
       isFirst ? const Color(0xFF7ABEEB) : const Color(0xFFB9A8E5),
     DecisionMode.leftRight =>
       isFirst ? const Color(0xFFB6CCEA) : const Color(0xFFE8C979),
+    DecisionMode.reasonEmotion =>
+      isFirst ? const Color(0xFF6CB8ED) : const Color(0xFFEB8A9C),
+    DecisionMode.confrontAvoid =>
+      isFirst ? const Color(0xFFE89A65) : const Color(0xFFA6A8D0),
     // Retired, but a saved reading still has to be painted.
     DecisionMode.forwardBackward =>
       isFirst ? const Color(0xFF7ABEEB) : const Color(0xFFB9A8E5),

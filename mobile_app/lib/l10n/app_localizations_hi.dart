@@ -351,6 +351,14 @@ class AppLocalizationsHi extends AppLocalizations {
       'ग्रहण करने और व्यक्त करने की प्रवृत्ति संतुलित कर रहे हैं';
 
   @override
+  String get loadingModeReasonEmotion =>
+      'तर्क की स्पष्टता और भावनाओं की गहराई को संतुलित कर रहे हैं';
+
+  @override
+  String get loadingModeConfrontAvoid =>
+      'सीधे सामना करने और सतर्क बचाव के बीच संतुलन बना रहे हैं';
+
+  @override
   String get orbitMoment => 'यह पल';
 
   @override
@@ -545,6 +553,18 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get choiceRight => 'दाएँ';
+
+  @override
+  String get choiceReason => 'तर्क';
+
+  @override
+  String get choiceEmotion => 'भावना';
+
+  @override
+  String get choiceConfront => 'सामना';
+
+  @override
+  String get choiceAvoid => 'बचाव';
 
   @override
   String get energyLevelQuiet => 'शांत';
@@ -1632,6 +1652,14 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
       'ग्रहण करने और व्यक्त करने की प्रवृत्ति संतुलित कर रहे हैं';
 
   @override
+  String get loadingModeReasonEmotion =>
+      'तर्क की स्पष्टता और भावनाओं की गहराई को संतुलित कर रहे हैं';
+
+  @override
+  String get loadingModeConfrontAvoid =>
+      'सीधे सामना करने और सतर्क बचाव के बीच संतुलन बना रहे हैं';
+
+  @override
   String get orbitMoment => 'यह पल';
 
   @override
@@ -1826,6 +1854,18 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get choiceRight => 'दाएँ';
+
+  @override
+  String get choiceReason => 'तर्क';
+
+  @override
+  String get choiceEmotion => 'भावना';
+
+  @override
+  String get choiceConfront => 'सामना';
+
+  @override
+  String get choiceAvoid => 'बचाव';
 
   @override
   String get energyLevelQuiet => 'शांत';

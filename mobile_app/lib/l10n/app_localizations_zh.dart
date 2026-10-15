@@ -324,6 +324,12 @@ class AppLocalizationsZh extends AppLocalizations {
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
 
   @override
+  String get loadingModeReasonEmotion => '权衡理智的明晰与情感的共鸣';
+
+  @override
+  String get loadingModeConfrontAvoid => '衡量正面应对与审慎避让之间的契机';
+
+  @override
   String get orbitMoment => '此刻';
 
   @override
@@ -504,6 +510,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get choiceRight => '右';
+
+  @override
+  String get choiceReason => '理智';
+
+  @override
+  String get choiceEmotion => '情感';
+
+  @override
+  String get choiceConfront => '面对';
+
+  @override
+  String get choiceAvoid => '回避';
 
   @override
   String get energyLevelQuiet => '宁静';
@@ -1456,6 +1474,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
 
   @override
+  String get loadingModeReasonEmotion => '权衡理智的明晰与情感的共鸣';
+
+  @override
+  String get loadingModeConfrontAvoid => '衡量正面应对与审慎避让之间的契机';
+
+  @override
   String get orbitMoment => '此刻';
 
   @override
@@ -1636,6 +1660,18 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get choiceRight => '右';
+
+  @override
+  String get choiceReason => '理智';
+
+  @override
+  String get choiceEmotion => '情感';
+
+  @override
+  String get choiceConfront => '面对';
+
+  @override
+  String get choiceAvoid => '回避';
 
   @override
   String get energyLevelQuiet => '宁静';
@@ -2588,6 +2624,12 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get loadingModeLeftRight => '正在平衡接纳与表达的倾向';
 
   @override
+  String get loadingModeReasonEmotion => '权衡理智的明晰与情感的共鸣';
+
+  @override
+  String get loadingModeConfrontAvoid => '衡量正面应对与审慎避让之间的契机';
+
+  @override
   String get orbitMoment => '此刻';
 
   @override
@@ -2768,6 +2810,18 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get choiceRight => '右';
+
+  @override
+  String get choiceReason => '理智';
+
+  @override
+  String get choiceEmotion => '情感';
+
+  @override
+  String get choiceConfront => '面对';
+
+  @override
+  String get choiceAvoid => '回避';
 
   @override
   String get energyLevelQuiet => '宁静';

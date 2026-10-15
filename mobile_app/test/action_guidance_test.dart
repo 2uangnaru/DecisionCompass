@@ -1,6 +1,14 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/action_guidance.dart';
 import 'package:decision_compass/data/models/models.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_en.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_es.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_hi.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_ja.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_ko.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_th.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_vi.dart';
+import 'package:decision_compass/data/action_guidance/action_guidance_zh.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'data/fixture_loader.dart';
@@ -35,7 +43,21 @@ const Map<DecisionMode, (String, String)> _pair =
       DecisionMode.keepLetGo: ('KEEP', 'LET GO'),
       DecisionMode.commitWithdraw: ('COMMIT', 'WITHDRAW'),
       DecisionMode.leftRight: ('LEFT', 'RIGHT'),
+      DecisionMode.reasonEmotion: ('REASON', 'EMOTION'),
+      DecisionMode.confrontAvoid: ('CONFRONT', 'AVOID'),
     };
+
+/// The seven core modes that currently have dedicated action guidance dictionaries.
+/// New modes (reasonEmotion, confrontAvoid) safely fall back to the balanced reflection.
+const List<DecisionMode> _modesWithDedicatedGuidance = <DecisionMode>[
+  DecisionMode.yesNo,
+  DecisionMode.actWait,
+  DecisionMode.advanceRetreat,
+  DecisionMode.stayGo,
+  DecisionMode.keepLetGo,
+  DecisionMode.commitWithdraw,
+  DecisionMode.leftRight,
+];
 
 /// Words the guidance must never contain, per language.
 ///
@@ -175,7 +197,7 @@ void main() {
           locale: locale,
           reading: balanced,
         );
-        for (final mode in DecisionMode.selectable) {
+        for (final mode in _modesWithDedicatedGuidance) {
           for (final winner in <String>[_pair[mode]!.$1, _pair[mode]!.$2]) {
             final guidance = resolveActionGuidance(
               locale: locale,
@@ -209,7 +231,7 @@ void main() {
 
     test('the two sides of a pair never say the same thing', () {
       for (final locale in AppLocale.values) {
-        for (final mode in DecisionMode.selectable) {
+        for (final mode in _modesWithDedicatedGuidance) {
           final first = resolveActionGuidance(
             locale: locale,
             reading: _reading(base, mode: mode, winner: _pair[mode]!.$1),
@@ -233,7 +255,7 @@ void main() {
       // because only the category and the polarity were consulted.
       for (final locale in AppLocale.values) {
         final headlines = <String>{};
-        for (final mode in DecisionMode.selectable) {
+        for (final mode in _modesWithDedicatedGuidance) {
           headlines.add(
             resolveActionGuidance(
               locale: locale,
@@ -243,7 +265,7 @@ void main() {
         }
         expect(
           headlines.length,
-          DecisionMode.selectable.length,
+          _modesWithDedicatedGuidance.length,
           reason: '${locale.tag}: two modes share a headline',
         );
       }
@@ -254,7 +276,7 @@ void main() {
     test('no language tells the reader to act on money or a relationship', () {
       for (final entry in _forbidden.entries) {
         final locale = entry.key;
-        for (final mode in DecisionMode.selectable) {
+        for (final mode in _modesWithDedicatedGuidance) {
           for (final winner in <String>[_pair[mode]!.$1, _pair[mode]!.$2]) {
             final guidance = resolveActionGuidance(
               locale: locale,
@@ -327,7 +349,7 @@ void main() {
 
     test('no headline claims a single signal it cannot know', () {
       for (final entry in overclaims.entries) {
-        for (final mode in DecisionMode.selectable) {
+        for (final mode in _modesWithDedicatedGuidance) {
           for (final winner in <String>[_pair[mode]!.$1, _pair[mode]!.$2]) {
             final headline = resolveActionGuidance(
               locale: entry.key,
@@ -391,12 +413,16 @@ void main() {
           winner: 'COMMIT',
         ),
       );
-      final balancedText = resolveActionGuidance(
+      final balancedJson = readFixture('synthetic_balanced.json');
+      balancedJson['readingKey'] = legacy.readingKey;
+      balancedJson['period'] = legacy.period.wireValue;
+      balancedJson['context'] = legacy.context.toJson();
+      final balancedForLegacy = resolveActionGuidance(
         locale: AppLocale.english,
-        reading: balanced,
+        reading: ReadingResponse.fromJson(balancedJson),
       );
       expect(guidance.headline, isNot(commit.headline));
-      expect(guidance.headline, balancedText.headline);
+      expect(guidance.headline, balancedForLegacy.headline);
     });
 
     test('it is deterministic — the same reading gives the same words', () {
@@ -520,4 +546,133 @@ void main() {
       }
     });
   });
+
+  group('period awareness and decisive variant rotation', () {
+    test('Vietnamese guidance uses action tags Nên and Tránh', () {
+      final guidance = resolveActionGuidance(
+        locale: AppLocale.vietnamese,
+        reading: base,
+      );
+      expect(guidance.title, 'CHỈ DẪN HÀNH ĐỘNG');
+      expect(guidance.shouldDoTag, 'Nên:');
+      expect(guidance.avoidTag, 'Tránh:');
+    });
+
+    test('headline incorporates time period for non-now periods across languages', () {
+      for (final period in [
+        TimePeriod.morning,
+        TimePeriod.afternoon,
+        TimePeriod.evening,
+      ]) {
+        final json = readFixture('ready_yes_no_now.json');
+        json['period'] = period.wireValue;
+        final reading = ReadingResponse.fromJson(json);
+
+        final viGuidance = resolveActionGuidance(
+          locale: AppLocale.vietnamese,
+          reading: reading,
+        );
+        final enGuidance = resolveActionGuidance(
+          locale: AppLocale.english,
+          reading: reading,
+        );
+
+        expect(viGuidance.headline.isNotEmpty, isTrue);
+        expect(enGuidance.headline.isNotEmpty, isTrue);
+
+        if (period == TimePeriod.morning) {
+          expect(viGuidance.headline.toLowerCase(), contains('sáng'));
+          expect(enGuidance.headline.toLowerCase(), contains('morning'));
+        } else if (period == TimePeriod.afternoon) {
+          expect(viGuidance.headline.toLowerCase(), contains('chiều'));
+          expect(enGuidance.headline.toLowerCase(), contains('afternoon'));
+        } else if (period == TimePeriod.evening) {
+          expect(viGuidance.headline.toLowerCase(), contains('tối'));
+          expect(enGuidance.headline.toLowerCase(), contains('evening'));
+        }
+      }
+    });
+
+    test('readingKey rotation produces non-repetitive variants', () {
+      final json = readFixture('ready_career_now.json');
+      final variants = <String>{};
+
+      for (var i = 0; i < 5; i++) {
+        json['readingKey'] = 'sample_reading_key_$i';
+        final reading = ReadingResponse.fromJson(json);
+        final guidance = resolveActionGuidance(
+          locale: AppLocale.vietnamese,
+          reading: reading,
+        );
+        variants.add(guidance.headline);
+      }
+
+      expect(variants.length, greaterThan(1));
+    });
+
+    test('all 8 languages have exactly 315 keys matching vi', () {
+      expect(actionGuidanceVi.length, 315);
+      expect(actionGuidanceEn.length, 315);
+      expect(actionGuidanceEs.length, 315);
+      expect(actionGuidanceJa.length, 315);
+      expect(actionGuidanceKo.length, 315);
+      expect(actionGuidanceZh.length, 315);
+      expect(actionGuidanceTh.length, 315);
+      expect(actionGuidanceHi.length, 315);
+      expect(actionGuidanceEn.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceEs.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceJa.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceKo.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceZh.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceTh.keys.toSet(), actionGuidanceVi.keys.toSet());
+      expect(actionGuidanceHi.keys.toSet(), actionGuidanceVi.keys.toSet());
+    });
+
+    test('zh, th, and hi readingKey rotation produces variants', () {
+      final json = readFixture('ready_career_now.json');
+      for (final locale in [
+        AppLocale.simplifiedChinese,
+        AppLocale.thai,
+        AppLocale.hindi,
+      ]) {
+        final variants = <String>{};
+        for (var i = 0; i < 5; i++) {
+          json['readingKey'] = 'sample_reading_key_$i';
+          final reading = ReadingResponse.fromJson(json);
+          final guidance = resolveActionGuidance(
+            locale: locale,
+            reading: reading,
+          );
+          variants.add(guidance.headline);
+        }
+        expect(variants.length, greaterThan(1), reason: '${locale.tag} variant rotation');
+      }
+    });
+  });
+
+  group('modes pending dedicated guidance', () {
+    test('safely fall back to the balanced guidance in every language', () {
+      for (final locale in AppLocale.values) {
+        for (final mode in [
+          DecisionMode.reasonEmotion,
+          DecisionMode.confrontAvoid,
+        ]) {
+          final pair = _pair[mode]!;
+          for (final winner in [pair.$1, pair.$2]) {
+            final guidance = resolveActionGuidance(
+              locale: locale,
+              reading: _reading(base, mode: mode, winner: winner),
+            );
+            expect(guidance.title.trim().isNotEmpty, isTrue);
+            expect(guidance.headline.trim().isNotEmpty, isTrue);
+            expect(guidance.shouldDo.trim().isNotEmpty, isTrue);
+            expect(guidance.avoid.trim().isNotEmpty, isTrue);
+            expect(guidance.shouldDoTag.trim().isNotEmpty, isTrue);
+            expect(guidance.avoidTag.trim().isNotEmpty, isTrue);
+          }
+        }
+      }
+    });
+  });
 }
+

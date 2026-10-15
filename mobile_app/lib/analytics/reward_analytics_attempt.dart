@@ -1,0 +1,53 @@
+import '../app_locale.dart';
+import '../data/models/models.dart' as engine;
+import 'analytics_event.dart';
+import 'analytics_service.dart';
+
+/// A confirmed reward CTA, not a sheet impression or a real ad view.
+/// Analytics deduplication does not change reward or quota business rules.
+class RewardAnalyticsAttempt {
+  RewardAnalyticsAttempt({
+    required this.analytics,
+    required this.mode,
+    required this.category,
+    required this.period,
+    required this.language,
+    required this.placement,
+  }) : _version = analytics.consentVersion {
+    _started = analytics.record(
+      AnalyticsEvent.rewardCtaTapped(
+        mode: mode,
+        category: category,
+        period: period,
+        language: language,
+        placement: placement,
+      ),
+    );
+  }
+
+  final AnalyticsService analytics;
+  final engine.DecisionMode mode;
+  final engine.ReadingCategory category;
+  final engine.TimePeriod period;
+  final AppLocale language;
+  final RewardPlacement placement;
+  final int _version;
+  bool _started = false;
+  bool _granted = false;
+
+  /// Call only after the credit save or the option unlock succeeded.
+  void granted() {
+    if (_granted) return;
+    _granted = true;
+    if (!_started || _version != analytics.consentVersion) return;
+    analytics.record(
+      AnalyticsEvent.rewardGranted(
+        mode: mode,
+        category: category,
+        period: period,
+        language: language,
+        placement: placement,
+      ),
+    );
+  }
+}

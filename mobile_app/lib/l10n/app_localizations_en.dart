@@ -345,6 +345,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Balancing receptive and expressive polarity';
 
   @override
+  String get loadingModeReasonEmotion =>
+      'Balancing clarity of reason against emotional depth';
+
+  @override
+  String get loadingModeConfrontAvoid =>
+      'Weighing direct confrontation against protective retreat';
+
+  @override
   String get orbitMoment => 'MOMENT';
 
   @override
@@ -539,6 +547,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get choiceRight => 'RIGHT';
+
+  @override
+  String get choiceReason => 'REASON';
+
+  @override
+  String get choiceEmotion => 'EMOTION';
+
+  @override
+  String get choiceConfront => 'CONFRONT';
+
+  @override
+  String get choiceAvoid => 'AVOID';
 
   @override
   String get energyLevelQuiet => 'QUIET';

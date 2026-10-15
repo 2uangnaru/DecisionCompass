@@ -17,6 +17,8 @@ engine.DecisionMode toEngineMode(DecisionMode mode) => switch (mode) {
   DecisionMode.commitWithdraw => engine.DecisionMode.commitWithdraw,
   DecisionMode.forwardBackward => engine.DecisionMode.forwardBackward,
   DecisionMode.leftRight => engine.DecisionMode.leftRight,
+  DecisionMode.reasonEmotion => engine.DecisionMode.reasonEmotion,
+  DecisionMode.confrontAvoid => engine.DecisionMode.confrontAvoid,
 };
 
 DecisionMode fromEngineMode(engine.DecisionMode mode) => switch (mode) {
@@ -28,6 +30,8 @@ DecisionMode fromEngineMode(engine.DecisionMode mode) => switch (mode) {
   engine.DecisionMode.commitWithdraw => DecisionMode.commitWithdraw,
   engine.DecisionMode.forwardBackward => DecisionMode.forwardBackward,
   engine.DecisionMode.leftRight => DecisionMode.leftRight,
+  engine.DecisionMode.reasonEmotion => DecisionMode.reasonEmotion,
+  engine.DecisionMode.confrontAvoid => DecisionMode.confrontAvoid,
 };
 
 engine.TimePeriod toEnginePeriod(TimePeriod period) => switch (period) {

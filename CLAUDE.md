@@ -1,6 +1,27 @@
 # AstraCue: Cosmic Decisions — Project Handoff
 
-Updated: 2026-09-21
+Updated: 2026-10-15
+
+## Calculation Engine Handoff: 2 New Decision Modes — 2026-10-15
+
+The mobile app UI, palettes, data models, wire mapping, mock engine presets, and
+full 8-language localization (EN, VI, ES, ZH, JA, KO, TH, HI) have been completed
+for two new selectable decision modes:
+1. `reason_emotion` (Wire value: `reason_emotion`, Labels: `REASON` / `EMOTION`, Vietnamese: `Lý trí` / `Cảm xúc`)
+2. `confront_avoid` (Wire value: `confront_avoid`, Labels: `CONFRONT` / `AVOID`, Vietnamese: `Đối mặt` / `Né tránh`)
+
+**Tasks reserved for Claude (Calculation Engine & Scoring Algorithm)**:
+1. In `calculation-engine/src/core.js`:
+   - Add `reason_emotion` and `confront_avoid` to `MODES` array.
+2. In `calculation-engine/src/scoring.js`:
+   - Define signal mixtures in `MODE_SIGNALS` for `reason_emotion` and `confront_avoid` (must sum to 1.0, selecting appropriate signal weights among P, C, L, T, M, R, G, H, Y).
+3. In `mobile_app/lib/local_engine/core/scoring.dart`:
+   - Mirror the exact same signal mixtures in `modeSignals`.
+4. In `calculation-engine/scripts/mobile-fixtures.mjs`:
+   - Add fixture generation scenarios for `reason_emotion` and `confront_avoid`.
+   - Run `node scripts/mobile-fixtures.mjs --write` to generate fixture JSONs in `mobile_app/test/fixtures/`.
+5. In `mobile_app/test/data/mode_projection_test.dart` and `reading_response_test.dart`:
+   - Update `mixtures` and remove the temporary `.difference({...})` fixture assertions once new fixtures exist.
 
 ## Current quota handoff — 2026-10-09
 
@@ -21,8 +42,16 @@ banner serving was added. Do not call the commercial ad integration complete.
 
 ## Current analytics handoff — 2026-10-09
 
+Monetization instrumentation now also covers `reading_locked`, `option_locked`,
+`reward_cta_tapped`, `reward_granted`, and `reading_entitlement_used` (thirteen
+custom event names total). Rewards are explicitly marked `grant_source=prototype`;
+reading credits and selection-only unlocks have separate placements. A typed
+receipt from the existing successful quota commit supplies the actual free/bonus
+source. Do not change bonus-first, quota/cooldown, UI or scoring under the guise
+of instrumentation. See `mobile_app/TRACKING.md` for triggers and reporting caveats.
+
 Android product tracking is now instrumented via `mobile_app/lib/analytics/`
-and injectable `ReadingDependencies.analytics`. Eight typed custom events,
+and injectable `ReadingDependencies.analytics`. Thirteen typed custom events,
 optional persisted consent, seven-language controls and a Firebase SDK adapter
 are implemented. The production calculation remains fully local; formulas and
 reading results were not changed. See `mobile_app/TRACKING.md` for exact triggers,
