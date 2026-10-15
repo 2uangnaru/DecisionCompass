@@ -211,7 +211,7 @@ probability that a decision succeeds.
 LEFT/RIGHT is symbolic polarity only: LEFT is receptive/inward; RIGHT is
 expressive/outward. It must never be used for physical navigation or safety.
 
-Current test state checked on 2026-09-21: `47/47` Node tests pass.
+Current test state checked on 2026-10-15: `196/196` Node tests pass.
 
 ### 3.2 Flutter prototype
 
@@ -325,13 +325,13 @@ The current APK is a visual prototype, not a functional MVP.
 
 Resolve these before tagging a release:
 
-- Engine metadata was normalized to `4.0.0-mvp` /
-  `civil-midnight-chinese-calendar-symbolic-v9.1-experimental` on 2026-09-30
-  across `src/core.js`, `package.json`, `README.md` and the Dart port. Keep
-  them together.
-- `calculation-engine/package.json`, the beginning of
-  `calculation-engine/README.md`, and `calculation-engine/VERIFICATION.md` still
-  say `3.0.0-mvp`.
+- Engine metadata is `4.3.0-mvp` /
+  `civil-midnight-chinese-calendar-symbolic-v9.6-experimental` across
+  `src/core.js`, `package.json`, `README.md` and the Dart port, resynchronized
+  on 2026-10-15. Keep them together.
+- `calculation-engine/VERIFICATION.md`'s header still says `3.0.0-mvp`; that is
+  the engine version on 2026-09-19, when the checks in that first section ran,
+  and it is history rather than drift. Each later section states its own.
 - Do not alter score formulas merely to make old snapshots pass. Update metadata
   and add an explicit migration/version note.
 - `.claude/` and `mobile_app/.claude/` are currently untracked local IDE launch
@@ -425,6 +425,11 @@ Milestone A acceptance criteria:
 4. Release identifiers/signing, privacy documents, store assets and device QA.
 
 ## 9. Suggested first task for Claude
+
+**Historical — this task is done.** The Dart port, the DTOs and the round-trip
+fixtures all exist and are verified against Node; the `47/47` below is the Node
+suite as it stood on 2026-09-21 and is `196/196` today. Kept for the shape of
+the acceptance criteria, not as work to pick up.
 
 Take Milestone A items 1 and 3 only, unless the user explicitly expands scope:
 

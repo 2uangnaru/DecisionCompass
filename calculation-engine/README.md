@@ -1,8 +1,8 @@
 # AstraCue: Cosmic Decisions — Calculation Engine
 
-Engine MVP 4.0.0-mvp, ruleset
-`civil-midnight-chinese-calendar-symbolic-v9.1-experimental`, cập nhật
-30/09/2026. Nhận hồ sơ người dùng
+Engine MVP 4.3.0-mvp, ruleset
+`civil-midnight-chinese-calendar-symbolic-v9.6-experimental`, cập nhật
+15/10/2026. Nhận hồ sơ người dùng
 và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
 trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
 trong đường tính kết quả.
@@ -63,7 +63,7 @@ timeout. Engine không tự bật GPS hoặc xin quyền từ điện thoại.
 | Western | Sun/Moon/Mercury/Venus/Mars/Jupiter/Saturn thực, natal–transit aspects |
 | Thần số học | Life Path, Personal Year/Month/Day |
 | Cosmic | Pha Mặt Trăng, vận tốc Mercury, direct/stationary/retrograde |
-| Fusion | Hai trục nền A/C, 7 decision modes với projection riêng, phần trăm, độ phủ dữ liệu |
+| Fusion | Hai trục nền A/C, 9 decision modes với projection riêng, phần trăm, độ phủ dữ liệu |
 | Daily energy | Tông biểu tượng của toàn ngày địa phương từ fusion General của sáu module, trung bình theo độ dài thực từng khung giờ |
 | Time windows | NOW, Morning/Midday/Afternoon/Evening, Top 2, hết buổi, còn một khung, DST fold/gap |
 | Audit | Version, input snapshot, module đóng góp, reading key, kết quả có thể tái lập |
@@ -87,8 +87,11 @@ ngược lại là `FLOWING`. Nếu độ phủ <0.2, trả `unavailable` và in
 cho cùng nhãn, không phụ thuộc mode/category/period; ngày DST 23/25 giờ dùng
 đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v2.md`.
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
-COMMIT/WITHDRAW và LEFT/RIGHT. LEFT/RIGHT dùng symbolic polarity
-(LEFT = receptive/inward, RIGHT = expressive/outward), không đổi nhãn từ YES/NO.
+COMMIT/WITHDRAW, LEFT/RIGHT, REASON/EMOTION và CONFRONT/AVOID.
+LEFT/RIGHT vẫn là biểu tượng (LEFT = receptive/inward,
+RIGHT = expressive/outward), không dùng để định hướng di chuyển và không đổi
+nhãn từ YES/NO; từ v9.6 nó chấm bằng `I` (ấn đối với thực thương) thay cho
+quy ước âm/dương `Y`, nên `modeBasis` là `receptive_expressive`.
 
 `forward_backward` đã nghỉ hưu ở ruleset v9.1 và được thay bằng
 `commit_withdraw`. Hai mode hỏi hai câu khác nhau và chấm bằng tín hiệu khác
@@ -96,10 +99,11 @@ nhau, nên engine **từ chối** tính mới cho `forward_backward`
 (`LEGACY_DECISION_MODE:forward_backward`); các bản đọc đã lưu vẫn giữ nguyên
 nhãn FORWARD/BACKWARD và phần trăm cũ, không bị đổi tên thành COMMIT/WITHDRAW.
 
-### Hệ chấm điểm v9.1 (thử nghiệm)
+### Hệ chấm điểm v9.6 (thử nghiệm)
 
-Thay vì chiếu một cặp trục `A`/`C` lên bảy đường cố định, v9.1 rút ra chín tín
-hiệu — xem `src/scoring.js` để biết công thức đầy đủ:
+Thay vì chiếu một cặp trục `A`/`C` lên mấy đường cố định, từ v9.1 engine rút ra
+các tín hiệu riêng; v9.6 có mười hai — xem `src/scoring.js` để biết công thức
+đầy đủ:
 
 | Tín hiệu | Đọc gì |
 |---|---|
@@ -112,6 +116,13 @@ hiệu — xem `src/scoring.js` để biết công thức đầy đủ:
 | `G` | Grounding: `.35P − .45C − .20·(P cuối tuần tới − P hôm nay)` |
 | `H` | Horizon: trung vị của hôm nay tới ngày +7 |
 | `Y` | Polarity: quy ước âm/dương, `Y` dương chọn LEFT |
+| `I` | Receptivity: chính ấn + thiên ấn đối với thực thần + thương quan trên năm lớp vận hành, dương chọn LEFT |
+| `K` | Faculty: tổng aspect của Mercury đối với của Moon, dương chọn REASON |
+| `S` | Standing: chỉ số mùa của bản mệnh trừ tải quan sát, cộng thiên lệch của Trực; dương chọn CONFRONT |
+
+Ba tín hiệu `I`, `K`, `S` đọc thẳng diagnostics của từng module chứ không đi qua
+hai trục `{a, c}` — chỗ mà Thập Thần, 12 Trực và chỉ số mùa đã bị bình quân
+hoá mất. Xem mục v9.6 trong `VERIFICATION.md`.
 
 Mỗi tín hiệu được chuẩn hoá `tanh(raw / scale)` với `scale` cố định, đã đánh
 phiên bản (`SCALE_VERSION`), đo offline bằng `scripts/calibrate-v91.mjs`. Không
@@ -125,13 +136,16 @@ có học hoặc chỉnh theo từng người dùng lúc chạy.
 | STAY / GO | `.70G + .20P + .10L` |
 | KEEP / LET GO | `.70R + .20P + .10L` |
 | COMMIT / WITHDRAW | `.60H + .25R + .10P + .05L` |
-| LEFT / RIGHT | `.50Y + .35P + .15L` |
+| LEFT / RIGHT | `.50I + .30P + .15Y + .05L` |
+| REASON / EMOTION | `.50K + .30P + .20L` |
+| CONFRONT / AVOID | `.55S + .25C + .10P + .10L` |
 
 Mỗi mixture được chia cho `sqrt(tổng bình phương trọng số)` của chính nó
 (`MODE_GAIN`). Trung bình có trọng số của nhiều tín hiệu gần độc lập thì hẹp
 hơn từng tín hiệu riêng lẻ, nên ở v9.1 một mode bốn tín hiệu luôn "nhạt" hơn
-một mode một tín hiệu — LEFT/RIGHT đạt 80%+ ở 24.6% số lần đọc trong khi
-YES/NO không bao giờ chạm tới. Hệ số này chỉ suy ra từ trọng số, luôn dương,
+một mode một tín hiệu — đo ở v9.1, LEFT/RIGHT đạt 80%+ ở 24.6% số lần đọc
+trong khi YES/NO không bao giờ chạm tới (con số đó thuộc mixture cũ; v9.6 đã
+đổi mixture của chính LEFT/RIGHT). Hệ số này chỉ suy ra từ trọng số, luôn dương,
 nên không bao giờ đổi bên thắng, chỉ đổi khoảng cách so với 50%.
 
 Score được clamp về `[-1, 1]`, rồi so với trung vị score thô của 14 ngày dương
