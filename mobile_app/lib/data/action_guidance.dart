@@ -7,6 +7,7 @@ import 'action_guidance/action_guidance_ko.dart';
 import 'action_guidance/action_guidance_th.dart';
 import 'action_guidance/action_guidance_vi.dart';
 import 'action_guidance/action_guidance_zh.dart';
+import 'action_guidance/cosmic_headline_composer.dart';
 import 'models/models.dart';
 
 /// The short reflection shown beneath a reading result.
@@ -43,19 +44,16 @@ class ActionGuidance {
   final String avoidTag;
 }
 
-/// Which side of the pair a reading named.
-enum _Lean { first, second, balanced }
-
-_Lean _leanOf(ReadingResponse reading) {
+CosmicLean _leanOf(ReadingResponse reading) {
   if (reading.status == ReadingStatus.balanced || reading.winner == null) {
-    return _Lean.balanced;
+    return CosmicLean.balanced;
   }
   final labels = _englishPair[reading.mode];
-  if (labels == null) return _Lean.balanced;
-  if (reading.winner == labels.$1) return _Lean.first;
-  if (reading.winner == labels.$2) return _Lean.second;
+  if (labels == null) return CosmicLean.balanced;
+  if (reading.winner == labels.$1) return CosmicLean.first;
+  if (reading.winner == labels.$2) return CosmicLean.second;
   // A winner the app does not recognise is not guessed at.
-  return _Lean.balanced;
+  return CosmicLean.balanced;
 }
 
 /// The engine's own wire labels, used only to tell the two sides apart.
@@ -111,7 +109,21 @@ ActionGuidance resolveActionGuidance({
   final period = reading.period.wireValue;
   final variant = _resolveVariant(reading);
 
-  if (lean == _Lean.balanced || reading.mode.legacy) {
+  final profileRaw = reading.inputSnapshot.raw['profile'];
+  final birthCountryCode =
+      (profileRaw is Map ? profileRaw['birthCountry'] : null) as String?;
+
+  final cosmicHeadline = composeCosmicHeadline(
+    locale: locale,
+    category: reading.category,
+    period: reading.period,
+    mode: reading.mode,
+    lean: lean,
+    variant: variant,
+    birthCountryCode: birthCountryCode,
+  );
+
+  if (lean == CosmicLean.balanced || reading.mode.legacy) {
     final cat = category.wireValue;
     final hasExactPeriodKey =
         table.containsKey('$cat:$_balancedKey:$period:v$variant') ||
@@ -139,13 +151,13 @@ ActionGuidance resolveActionGuidance({
       title: tags.$1,
       shouldDoTag: tags.$2,
       avoidTag: tags.$3,
-      headline: localizedEntry.$1,
+      headline: cosmicHeadline,
       shouldDo: localizedEntry.$2,
       avoid: localizedEntry.$3,
     );
   }
 
-  final side = lean == _Lean.first ? 'first' : 'second';
+  final side = lean == CosmicLean.first ? 'first' : 'second';
   final cat = category.wireValue;
   final mode = reading.mode.wireValue;
 
@@ -155,7 +167,7 @@ ActionGuidance resolveActionGuidance({
       table.containsKey('$mode:$side:$period:v$variant') ||
       table.containsKey('$mode:$side:$period');
 
-  final entry = table['$cat:$mode:$side:$period:v$variant'] ??
+  final baseEntry = table['$cat:$mode:$side:$period:v$variant'] ??
       table['$cat:$mode:$side:$period'] ??
       table['$cat:$mode:$side:v$variant'] ??
       table['$cat:$mode:$side'] ??
@@ -164,6 +176,16 @@ ActionGuidance resolveActionGuidance({
       table['$mode:$side:v$variant'] ??
       table['$mode:$side'] ??
       table[_balancedKey]!;
+
+  final dedicated = getDedicatedNewModeGuidance(
+    locale: locale,
+    mode: reading.mode,
+    lean: lean,
+  );
+
+  final entry = dedicated != null
+      ? (baseEntry.$1, dedicated.$1, dedicated.$2)
+      : baseEntry;
 
   final localizedEntry = _localizePeriodGuidance(
     locale: locale,
@@ -176,7 +198,7 @@ ActionGuidance resolveActionGuidance({
     title: tags.$1,
     shouldDoTag: tags.$2,
     avoidTag: tags.$3,
-    headline: localizedEntry.$1,
+    headline: cosmicHeadline,
     shouldDo: localizedEntry.$2,
     avoid: localizedEntry.$3,
   );

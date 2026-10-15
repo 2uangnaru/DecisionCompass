@@ -651,7 +651,7 @@ void main() {
   });
 
   group('modes pending dedicated guidance', () {
-    test('safely fall back to the balanced guidance in every language', () {
+    test('safely resolves with non-empty guidance in every language', () {
       for (final locale in AppLocale.values) {
         for (final mode in [
           DecisionMode.reasonEmotion,
@@ -672,6 +672,142 @@ void main() {
           }
         }
       }
+    });
+
+    test('new modes differentiate first vs second side and balanced', () {
+      for (final locale in AppLocale.values) {
+        final balancedGuidance = resolveActionGuidance(
+          locale: locale,
+          reading: balanced,
+        );
+        for (final mode in [
+          DecisionMode.reasonEmotion,
+          DecisionMode.confrontAvoid,
+        ]) {
+          final pair = _pair[mode]!;
+          final first = resolveActionGuidance(
+            locale: locale,
+            reading: _reading(base, mode: mode, winner: pair.$1),
+          );
+          final second = resolveActionGuidance(
+            locale: locale,
+            reading: _reading(base, mode: mode, winner: pair.$2),
+          );
+
+          expect(first.headline, isNot(second.headline),
+              reason: '${locale.tag} ${mode.wireValue} headline symmetry');
+          expect(first.shouldDo, isNot(second.shouldDo),
+              reason: '${locale.tag} ${mode.wireValue} shouldDo symmetry');
+          expect(first.headline, isNot(balancedGuidance.headline),
+              reason: '${locale.tag} ${mode.wireValue} first fell into balanced');
+          expect(second.headline, isNot(balancedGuidance.headline),
+              reason: '${locale.tag} ${mode.wireValue} second fell into balanced');
+        }
+      }
+    });
+
+    test('new modes respect forbidden word restrictions in all languages', () {
+      for (final entry in _forbidden.entries) {
+        final locale = entry.key;
+        for (final mode in [
+          DecisionMode.reasonEmotion,
+          DecisionMode.confrontAvoid,
+        ]) {
+          final pair = _pair[mode]!;
+          for (final winner in [pair.$1, pair.$2]) {
+            final guidance = resolveActionGuidance(
+              locale: locale,
+              reading: _reading(base, mode: mode, winner: winner),
+            );
+            final body = <String>[
+              guidance.headline,
+              guidance.shouldDo,
+              guidance.avoid,
+            ].join(' ').toLowerCase();
+
+            for (final word in entry.value) {
+              expect(
+                body.contains(word.toLowerCase()),
+                isFalse,
+                reason:
+                    '${locale.tag} ${mode.wireValue} $winner contains forbidden "$word": $body',
+              );
+            }
+          }
+        }
+      }
+    });
+  });
+
+  group('cosmic headline properties', () {
+    test('headlines never mention percentages or raw numbers', () {
+      for (final locale in AppLocale.values) {
+        for (final mode in DecisionMode.values) {
+          if (mode == DecisionMode.forwardBackward) continue;
+          final pair = _pair[mode]!;
+          for (final winner in [pair.$1, pair.$2]) {
+            for (final cat in ReadingCategory.values) {
+              final json = readFixture('ready_yes_no_now.json');
+              json['mode'] = mode.wireValue;
+              json['winner'] = winner;
+              json['category'] = cat.wireValue;
+              final percentages = <String, Object?>{};
+              percentages[pair.$1] = winner == pair.$1 ? 62.5 : 37.5;
+              percentages[pair.$2] = winner == pair.$1 ? 37.5 : 62.5;
+              json['percentages'] = percentages;
+              final reading = ReadingResponse.fromJson(json);
+
+              final guidance = resolveActionGuidance(
+                locale: locale,
+                reading: reading,
+              );
+
+              expect(guidance.headline.contains('%'), isFalse,
+                  reason: '${locale.tag} contains %');
+              expect(guidance.headline.contains(RegExp(r'\d')), isFalse,
+                  reason: '${locale.tag} contains digits: ${guidance.headline}');
+            }
+          }
+        }
+      }
+    });
+
+    test('Smart Cultural Adaptor adjusts English headline based on birth country', () {
+      ReadingResponse readingWithCountry(String? country) {
+        final json = readFixture('ready_yes_no_now.json');
+        final profile = Map<String, Object?>.from(
+            (json['inputSnapshot'] as Map<String, Object?>)['profile'] as Map<String, Object?>);
+        profile['birthCountry'] = country;
+        final snapshot = Map<String, Object?>.from(json['inputSnapshot'] as Map<String, Object?>);
+        snapshot['profile'] = profile;
+        json['inputSnapshot'] = snapshot;
+        return ReadingResponse.fromJson(json);
+      }
+
+      final vnReading = readingWithCountry('VN');
+      final inReading = readingWithCountry('IN');
+      final usReading = readingWithCountry('US');
+
+      final vnGuidance = resolveActionGuidance(
+        locale: AppLocale.english,
+        reading: vnReading,
+      );
+      final inGuidance = resolveActionGuidance(
+        locale: AppLocale.english,
+        reading: inReading,
+      );
+      final usGuidance = resolveActionGuidance(
+        locale: AppLocale.english,
+        reading: usReading,
+      );
+
+      expect(vnGuidance.headline.isNotEmpty, isTrue);
+      expect(inGuidance.headline.isNotEmpty, isTrue);
+      expect(usGuidance.headline.isNotEmpty, isTrue);
+
+      expect(vnGuidance.headline, isNot(inGuidance.headline));
+      expect(vnGuidance.headline, isNot(usGuidance.headline));
+      expect(inGuidance.headline, isNot(usGuidance.headline));
     });
   });
 }
