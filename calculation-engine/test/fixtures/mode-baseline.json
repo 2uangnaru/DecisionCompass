@@ -81,11 +81,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 24.8,
-      "RIGHT": 75.2
+      "LEFT": 31.6,
+      "RIGHT": 68.4
     },
-    "modeScore": -0.3594537462,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1787125906,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 37.4,
+      "EMOTION": 62.6
+    },
+    "modeScore": -0.0770106421,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|general|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.9,
+      "AVOID": 21.1
+    },
+    "modeScore": 0.4868476786,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.973,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -172,11 +198,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 25.6,
-      "RIGHT": 74.4
+      "LEFT": 32.3,
+      "RIGHT": 67.7
     },
-    "modeScore": -0.3335737155,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1630264035,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 37.3,
+      "EMOTION": 62.7
+    },
+    "modeScore": -0.0776611321,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.976,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|love|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 77.2,
+      "AVOID": 22.8
+    },
+    "modeScore": 0.4253586811,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.976,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -263,11 +315,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 25.4,
-      "RIGHT": 74.6
+      "LEFT": 32.7,
+      "RIGHT": 67.3
     },
-    "modeScore": -0.3386903398,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1556096588,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 38.1,
+      "EMOTION": 61.9
+    },
+    "modeScore": -0.0674775597,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.967,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|career|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.7,
+      "AVOID": 21.3
+    },
+    "modeScore": 0.4788508738,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.967,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -354,11 +432,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 28.2,
-      "RIGHT": 71.8
+      "LEFT": 36.8,
+      "RIGHT": 63.2
     },
-    "modeScore": -0.2602228831,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.0846753765,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 48.8,
+      "EMOTION": 51.2
+    },
+    "modeScore": -0.0004107815,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.97,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|money|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79.5,
+      "AVOID": 20.5
+    },
+    "modeScore": 0.5069889149,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.97,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -445,11 +549,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 18.7,
-      "RIGHT": 81.3
+      "LEFT": 24,
+      "RIGHT": 76
     },
-    "modeScore": -0.5803967746,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.3827834778,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 27.6,
+      "EMOTION": 72.4
+    },
+    "modeScore": -0.2753810523,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|study|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.3,
+      "AVOID": 21.7
+    },
+    "modeScore": 0.4618051373,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.973,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -536,11 +666,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 22.4,
-      "RIGHT": 77.6
+      "LEFT": 28.2,
+      "RIGHT": 71.8
     },
-    "modeScore": -0.4372880457,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.2594119578,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 32.2,
+      "EMOTION": 67.8
+    },
+    "modeScore": -0.1663344451,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.9775,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|friends|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.1,
+      "AVOID": 21.9
+    },
+    "modeScore": 0.45639658,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.9775,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -627,11 +783,37 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 24.8,
-      "RIGHT": 75.2
+      "LEFT": 31.6,
+      "RIGHT": 68.4
     },
-    "modeScore": -0.3594537462,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1787125906,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 37.4,
+      "EMOTION": 62.6
+    },
+    "modeScore": -0.0770106421,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "known_hour|now|other|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.9,
+      "AVOID": 21.1
+    },
+    "modeScore": 0.4868476786,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.973,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -832,11 +1014,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 18.6,
-      "RIGHT": 81.4
+      "LEFT": 26.3,
+      "RIGHT": 73.7
     },
-    "modeScore": -0.5832433195,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.3123383513,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.973,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -846,7 +1028,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 41,
+        "score": 68,
         "dataCoverage": 0.973
       },
       {
@@ -855,7 +1037,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 37,
+        "score": 68,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 27.4,
+      "EMOTION": 72.6
+    },
+    "modeScore": -0.2799264587,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 33,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 30,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|general|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78,
+      "AVOID": 22
+    },
+    "modeScore": 0.4533993459,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 82,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 81,
         "dataCoverage": 0.973
       }
     ]
@@ -1056,11 +1302,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 18.8,
-      "RIGHT": 81.2
+      "LEFT": 26.5,
+      "RIGHT": 73.5
     },
-    "modeScore": -0.5767360477,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.3053307607,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.976,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -1070,7 +1316,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 38,
+        "score": 67,
         "dataCoverage": 0.976
       },
       {
@@ -1079,7 +1325,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 35,
+        "score": 66,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 26.6,
+      "EMOTION": 73.4
+    },
+    "modeScore": -0.3025598066,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 32,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 29,
+        "dataCoverage": 0.976
+      }
+    ]
+  },
+  "known_hour|future|love|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 76.2,
+      "AVOID": 23.8
+    },
+    "modeScore": 0.3902774943,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.976,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 80,
+        "dataCoverage": 0.976
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 79,
         "dataCoverage": 0.976
       }
     ]
@@ -1280,11 +1590,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 17.7,
-      "RIGHT": 82.3
+      "LEFT": 26.4,
+      "RIGHT": 73.6
     },
-    "modeScore": -0.6206805048,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.30990772,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.967,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -1294,7 +1604,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 36,
+        "score": 65,
         "dataCoverage": 0.967
       },
       {
@@ -1303,7 +1613,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 32,
+        "score": 63,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 27.2,
+      "EMOTION": 72.8
+    },
+    "modeScore": -0.285892065,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 31,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 27,
+        "dataCoverage": 0.967
+      }
+    ]
+  },
+  "known_hour|future|career|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 77.5,
+      "AVOID": 22.5
+    },
+    "modeScore": 0.4353077198,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.967,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.967
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 80,
         "dataCoverage": 0.967
       }
     ]
@@ -1504,11 +1878,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.8,
-      "RIGHT": 80.2
+      "LEFT": 28.9,
+      "RIGHT": 71.1
     },
-    "modeScore": -0.5349739166,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.241879532,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.97,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -1518,7 +1892,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 40,
+        "score": 68,
         "dataCoverage": 0.97
       },
       {
@@ -1527,7 +1901,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 35,
+        "score": 66,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 29.6,
+      "EMOTION": 70.4
+    },
+    "modeScore": -0.2242111617,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 33,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 29,
+        "dataCoverage": 0.97
+      }
+    ]
+  },
+  "known_hour|future|money|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.3,
+      "AVOID": 21.7
+    },
+    "modeScore": 0.4635515229,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.97,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.97
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 80,
         "dataCoverage": 0.97
       }
     ]
@@ -1728,11 +2166,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 12.3,
-      "RIGHT": 87.7
+      "LEFT": 19.1,
+      "RIGHT": 80.9
     },
-    "modeScore": -0.8778463386,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.5624022669,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.973,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -1742,7 +2180,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 27,
+        "score": 38,
         "dataCoverage": 0.973
       },
       {
@@ -1751,7 +2189,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 25,
+        "score": 37,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 20,
+      "EMOTION": 80
+    },
+    "modeScore": -0.5270322781,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 24,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 22,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|study|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 76.8,
+      "AVOID": 23.2
+    },
+    "modeScore": 0.4123555042,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 80,
         "dataCoverage": 0.973
       }
     ]
@@ -1952,11 +2454,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 15.5,
-      "RIGHT": 84.5
+      "LEFT": 22.9,
+      "RIGHT": 77.1
     },
-    "modeScore": -0.7183888205,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.4214340854,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.9775,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -1966,7 +2468,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 32,
+        "score": 60,
         "dataCoverage": 0.9775
       },
       {
@@ -1975,7 +2477,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 30,
+        "score": 57,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 23.2,
+      "EMOTION": 76.8
+    },
+    "modeScore": -0.4091769766,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 28,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T11:00:00.000Z",
+        "endUtc": "2026-09-18T12:00:00.000Z",
+        "startLocal": "2026-09-18T18:00:00+07:00",
+        "endLocal": "2026-09-18T19:00:00+07:00",
+        "hourBranch": 9,
+        "score": 25,
+        "dataCoverage": 0.9775
+      }
+    ]
+  },
+  "known_hour|future|friends|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 76.8,
+      "AVOID": 23.2
+    },
+    "modeScore": 0.4121841897,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.9775,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.9775
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 80,
         "dataCoverage": 0.9775
       }
     ]
@@ -2176,11 +2742,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 18.6,
-      "RIGHT": 81.4
+      "LEFT": 26.3,
+      "RIGHT": 73.7
     },
-    "modeScore": -0.5832433195,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.3123383513,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.973,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -2190,7 +2756,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 41,
+        "score": 68,
         "dataCoverage": 0.973
       },
       {
@@ -2199,7 +2765,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 37,
+        "score": 68,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|reason_emotion": {
+    "status": "ready",
+    "winner": "EMOTION",
+    "percentages": {
+      "REASON": 27.4,
+      "EMOTION": 72.6
+    },
+    "modeScore": -0.2799264587,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 33,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 30,
+        "dataCoverage": 0.973
+      }
+    ]
+  },
+  "known_hour|future|other|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78,
+      "AVOID": 22
+    },
+    "modeScore": 0.4533993459,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.973,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 82,
+        "dataCoverage": 0.973
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 81,
         "dataCoverage": 0.973
       }
     ]
@@ -2284,13 +2914,39 @@
   },
   "unknown_hour|now|general|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 29.1,
-      "RIGHT": 70.9
+      "LEFT": 58.4,
+      "RIGHT": 41.6
     },
-    "modeScore": -0.2361950608,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0310092838,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 66.9,
+      "EMOTION": 33.1
+    },
+    "modeScore": 0.1466110893,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|general|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79.6,
+      "AVOID": 20.4
+    },
+    "modeScore": 0.5115654855,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.6641,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2375,13 +3031,39 @@
   },
   "unknown_hour|now|love|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 29.5,
-      "RIGHT": 70.5
+      "LEFT": 59.1,
+      "RIGHT": 40.9
     },
-    "modeScore": -0.2261996283,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0372488743,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 67,
+      "EMOTION": 33
+    },
+    "modeScore": 0.1489080443,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6256,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|love|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 77.7,
+      "AVOID": 22.3
+    },
+    "modeScore": 0.4405724791,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.6256,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2466,13 +3148,39 @@
   },
   "unknown_hour|now|career|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 28.2,
-      "RIGHT": 71.8
+      "LEFT": 53,
+      "RIGHT": 47
     },
-    "modeScore": -0.2600461267,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0030969708,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 65.4,
+      "EMOTION": 34.6
+    },
+    "modeScore": 0.1203772775,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.7149,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|career|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79,
+      "AVOID": 21
+    },
+    "modeScore": 0.4891686444,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.7149,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2557,13 +3265,39 @@
   },
   "unknown_hour|now|money|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 29.6,
-      "RIGHT": 70.4
+      "LEFT": 59.4,
+      "RIGHT": 40.6
     },
-    "modeScore": -0.2228635414,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0399699312,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 66.9,
+      "EMOTION": 33.1
+    },
+    "modeScore": 0.1479468115,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.731,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|money|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79.6,
+      "AVOID": 20.4
+    },
+    "modeScore": 0.5108996936,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.731,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2648,13 +3382,39 @@
   },
   "unknown_hour|now|study|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 28.8,
-      "RIGHT": 71.2
+      "LEFT": 56.3,
+      "RIGHT": 43.7
     },
-    "modeScore": -0.2438653252,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0164732331,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 66.1,
+      "EMOTION": 33.9
+    },
+    "modeScore": 0.13162439,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.7291,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|study|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 80.2,
+      "AVOID": 19.8
+    },
+    "modeScore": 0.5373434222,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.7291,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2739,13 +3499,39 @@
   },
   "unknown_hour|now|friends|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 29.3,
-      "RIGHT": 70.7
+      "LEFT": 58.5,
+      "RIGHT": 41.5
     },
-    "modeScore": -0.23067798,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0321901423,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 66.6,
+      "EMOTION": 33.4
+    },
+    "modeScore": 0.1420524872,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.67175,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|friends|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79,
+      "AVOID": 21
+    },
+    "modeScore": 0.4887738155,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.67175,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -2830,13 +3616,39 @@
   },
   "unknown_hour|now|other|left_right": {
     "status": "ready",
-    "winner": "RIGHT",
+    "winner": "LEFT",
     "percentages": {
-      "LEFT": 29.1,
-      "RIGHT": 70.9
+      "LEFT": 58.4,
+      "RIGHT": 41.6
     },
-    "modeScore": -0.2361950608,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": 0.0310092838,
+    "modeBasis": "receptive_expressive",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 66.9,
+      "EMOTION": 33.1
+    },
+    "modeScore": 0.1466110893,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6641,
+    "windowStatus": "not_applicable",
+    "luckyWindows": []
+  },
+  "unknown_hour|now|other|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79.6,
+      "AVOID": 20.4
+    },
+    "modeScore": 0.5115654855,
+    "modeBasis": "standing_against_pressure",
     "dataCoverage": 0.6641,
     "windowStatus": "not_applicable",
     "luckyWindows": []
@@ -3037,11 +3849,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.8,
-      "RIGHT": 80.2
+      "LEFT": 31.9,
+      "RIGHT": 68.1
     },
-    "modeScore": -0.5363819242,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1716975287,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.6641,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -3051,7 +3863,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 37,
+        "score": 70,
         "dataCoverage": 0.6641
       },
       {
@@ -3060,7 +3872,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 34,
+        "score": 70,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 59.6,
+      "EMOTION": 40.4
+    },
+    "modeScore": 0.0422128411,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|general|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.3,
+      "AVOID": 21.7
+    },
+    "modeScore": 0.4647904766,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 81,
         "dataCoverage": 0.6641
       }
     ]
@@ -3261,11 +4137,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.7,
-      "RIGHT": 80.3
+      "LEFT": 32,
+      "RIGHT": 68
     },
-    "modeScore": -0.5389244405,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1687831258,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.6256,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -3275,7 +4151,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 37,
+        "score": 70,
         "dataCoverage": 0.6256
       },
       {
@@ -3284,7 +4160,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 33,
+        "score": 69,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 59.9,
+      "EMOTION": 40.1
+    },
+    "modeScore": 0.0449298205,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.6256
+      }
+    ]
+  },
+  "unknown_hour|future|love|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 76.2,
+      "AVOID": 23.8
+    },
+    "modeScore": 0.3920830166,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.6256,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 80,
+        "dataCoverage": 0.6256
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 79,
         "dataCoverage": 0.6256
       }
     ]
@@ -3485,11 +4425,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.6,
-      "RIGHT": 80.4
+      "LEFT": 31.7,
+      "RIGHT": 68.3
     },
-    "modeScore": -0.5451269576,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1769580007,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.7149,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -3499,7 +4439,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 38,
+        "score": 71,
         "dataCoverage": 0.7149
       },
       {
@@ -3508,7 +4448,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 34,
+        "score": 70,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 58.9,
+      "EMOTION": 41.1
+    },
+    "modeScore": 0.0354654867,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 67,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.7149
+      }
+    ]
+  },
+  "unknown_hour|future|career|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 77.9,
+      "AVOID": 22.1
+    },
+    "modeScore": 0.4492810913,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.7149,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.7149
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 80,
         "dataCoverage": 0.7149
       }
     ]
@@ -3709,11 +4713,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 20.2,
-      "RIGHT": 79.8
+      "LEFT": 32.6,
+      "RIGHT": 67.4
     },
-    "modeScore": -0.5217100187,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1575972983,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.731,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -3723,7 +4727,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 37,
+        "score": 70,
         "dataCoverage": 0.731
       },
       {
@@ -3732,7 +4736,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 33,
+        "score": 69,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 61.2,
+      "EMOTION": 38.8
+    },
+    "modeScore": 0.0594339209,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.731
+      }
+    ]
+  },
+  "unknown_hour|future|money|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.4,
+      "AVOID": 21.6
+    },
+    "modeScore": 0.4672797885,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.731,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.731
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 80,
         "dataCoverage": 0.731
       }
     ]
@@ -3933,11 +5001,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.7,
-      "RIGHT": 80.3
+      "LEFT": 31.5,
+      "RIGHT": 68.5
     },
-    "modeScore": -0.540165442,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1796344853,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.7291,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -3947,7 +5015,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 37,
+        "score": 70,
         "dataCoverage": 0.7291
       },
       {
@@ -3956,7 +5024,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 33,
+        "score": 69,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 58.7,
+      "EMOTION": 41.3
+    },
+    "modeScore": 0.0339481676,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.7291
+      }
+    ]
+  },
+  "unknown_hour|future|study|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 79.1,
+      "AVOID": 20.9
+    },
+    "modeScore": 0.4938225701,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.7291,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 82,
+        "dataCoverage": 0.7291
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 81,
         "dataCoverage": 0.7291
       }
     ]
@@ -4157,11 +5289,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.4,
-      "RIGHT": 80.6
+      "LEFT": 31.5,
+      "RIGHT": 68.5
     },
-    "modeScore": -0.5507840792,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1798485344,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.67175,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -4171,7 +5303,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 36,
+        "score": 69,
         "dataCoverage": 0.67175
       },
       {
@@ -4180,7 +5312,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 33,
+        "score": 69,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 58.9,
+      "EMOTION": 41.1
+    },
+    "modeScore": 0.035013122,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 65,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 64,
+        "dataCoverage": 0.67175
+      }
+    ]
+  },
+  "unknown_hour|future|friends|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 77.7,
+      "AVOID": 22.3
+    },
+    "modeScore": 0.4407129045,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.67175,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.67175
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 80,
         "dataCoverage": 0.67175
       }
     ]
@@ -4381,11 +5577,11 @@
     "status": "ready",
     "winner": "RIGHT",
     "percentages": {
-      "LEFT": 19.8,
-      "RIGHT": 80.2
+      "LEFT": 31.9,
+      "RIGHT": 68.1
     },
-    "modeScore": -0.5363819242,
-    "modeBasis": "symbolic_polarity",
+    "modeScore": -0.1716975287,
+    "modeBasis": "receptive_expressive",
     "dataCoverage": 0.6641,
     "windowStatus": "two_available",
     "luckyWindows": [
@@ -4395,7 +5591,7 @@
         "startLocal": "2026-09-18T19:00:00+07:00",
         "endLocal": "2026-09-18T21:00:00+07:00",
         "hourBranch": 10,
-        "score": 37,
+        "score": 70,
         "dataCoverage": 0.6641
       },
       {
@@ -4404,7 +5600,71 @@
         "startLocal": "2026-09-18T23:00:00+07:00",
         "endLocal": "2026-09-19T00:00:00+07:00",
         "hourBranch": 0,
-        "score": 34,
+        "score": 70,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|reason_emotion": {
+    "status": "ready",
+    "winner": "REASON",
+    "percentages": {
+      "REASON": 59.6,
+      "EMOTION": 40.4
+    },
+    "modeScore": 0.0422128411,
+    "modeBasis": "deliberation_feeling",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 66,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T14:00:00.000Z",
+        "endUtc": "2026-09-18T16:00:00.000Z",
+        "startLocal": "2026-09-18T21:00:00+07:00",
+        "endLocal": "2026-09-18T23:00:00+07:00",
+        "hourBranch": 11,
+        "score": 65,
+        "dataCoverage": 0.6641
+      }
+    ]
+  },
+  "unknown_hour|future|other|confront_avoid": {
+    "status": "ready",
+    "winner": "CONFRONT",
+    "percentages": {
+      "CONFRONT": 78.3,
+      "AVOID": 21.7
+    },
+    "modeScore": 0.4647904766,
+    "modeBasis": "standing_against_pressure",
+    "dataCoverage": 0.6641,
+    "windowStatus": "two_available",
+    "luckyWindows": [
+      {
+        "startUtc": "2026-09-18T12:00:00.000Z",
+        "endUtc": "2026-09-18T14:00:00.000Z",
+        "startLocal": "2026-09-18T19:00:00+07:00",
+        "endLocal": "2026-09-18T21:00:00+07:00",
+        "hourBranch": 10,
+        "score": 81,
+        "dataCoverage": 0.6641
+      },
+      {
+        "startUtc": "2026-09-18T16:00:00.000Z",
+        "endUtc": "2026-09-18T17:00:00.000Z",
+        "startLocal": "2026-09-18T23:00:00+07:00",
+        "endLocal": "2026-09-19T00:00:00+07:00",
+        "hourBranch": 0,
+        "score": 81,
         "dataCoverage": 0.6641
       }
     ]

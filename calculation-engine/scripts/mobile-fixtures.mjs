@@ -50,6 +50,23 @@ const SCENARIOS = [
     expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
   },
   {
+    // v9.6. `K` is Mercury against the Moon, so an unknown birth hour would
+    // thin the natal positions this leans on; the known-hour profile is the
+    // honest one to pin it with.
+    file: 'ready_reason_emotion.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T08:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'reason_emotion', period: 'now', category: 'study',
+    expect: { status: 'ready', windowStatus: 'not_applicable', luckyWindows: 0 },
+  },
+  {
+    // v9.6. `S` reads the day officer as well as the chart, so this one takes
+    // a future period: the officer is the same all day, the rest is not.
+    file: 'ready_confront_avoid.json', profile: PROFILE_KNOWN_HOUR,
+    context: { instantUtc: '2026-09-18T07:30:00Z', deviceTimezone: ZONE_VN },
+    mode: 'confront_avoid', period: 'evening', category: 'career',
+    expect: { status: 'ready', windowStatus: 'two_available', luckyWindows: 2 },
+  },
+  {
     file: 'ready_left_right.json', profile: PROFILE_KNOWN_HOUR,
     context: { instantUtc: '2026-09-18T07:30:00Z', deviceTimezone: ZONE_VN },
     mode: 'left_right', period: 'afternoon',

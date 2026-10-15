@@ -284,6 +284,12 @@ class ReadingCalculator {
           raw['R'] = base.r;
         case 'Y':
           raw['Y'] = base.y;
+        case 'I':
+          raw['I'] = base.i;
+        case 'K':
+          raw['K'] = base.k;
+        case 'S':
+          raw['S'] = base.s;
         case 'T':
           raw['T'] = timing(
             base.q,

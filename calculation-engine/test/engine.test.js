@@ -20,13 +20,15 @@ test('same inputs deterministic and same segment does not reroll',()=>{
   assert.deepEqual(first.percentages,later.percentages);assert.equal(first.readingKey,later.readingKey);
 });
 test('each decision mode has its own semantic projection without altering the calculation key',()=>{
-  const modes=['yes_no','act_wait','advance_retreat','stay_go','keep_let_go','commit_withdraw','left_right'];
+  const modes=['yes_no','act_wait','advance_retreat','stay_go','keep_let_go',
+    'commit_withdraw','left_right','reason_emotion','confront_avoid'];
   const readings=modes.map(mode=>engine.calculate({context,mode}));
   assert.ok(readings.every(r=>Object.values(r.percentages).reduce((a,b)=>a+b,0)===100));
   assert.ok(readings.every(r=>r.readingKey===readings[0].readingKey));
   assert.deepEqual(readings.map(r=>r.modeBasis),[
     'overall_acceptance','action_timing','tactical_momentum','change_alignment',
-    'release_alignment','durability_horizon','symbolic_polarity'
+    'release_alignment','durability_horizon','receptive_expressive',
+    'deliberation_feeling','standing_against_pressure'
   ]);
   // Under v9.1 each mode mixes a different set of signals, so the seven
   // readings of the same instant are genuinely different numbers rather than

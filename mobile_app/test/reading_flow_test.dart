@@ -323,13 +323,13 @@ void main() {
       await revealReading(tester, modeLabel: 'LEFT', periodName: 'afternoon');
       await pumpPastRitual(tester);
 
-      // The winner is still whichever side the polarity signal lands on —
-      // `Y` keeps the largest share in v9.4 — but at half its old weight it
-      // no longer carries the result nearly alone. The same inputs read
-      // 81.7% under the v9.5 display curve.
+      // v9.6 moved this mode off the parity convention entirely: `I` — 印
+      // against 食傷 — now leads, `Y` keeps 0.15, and the same inputs read
+      // 65.4% the other way. The mode still shows its own numbers, which is
+      // what this test is about.
       expect(find.text('RIGHT'), findsWidgets);
-      expect(find.text('81.7%'), findsOneWidget);
-      expect(find.text('LEFT  18.3%'), findsOneWidget);
+      expect(find.text('65.4%'), findsOneWidget);
+      expect(find.text('LEFT  34.6%'), findsOneWidget);
     });
 
     testWidgets('a balanced reading shows both sides and no winner', (

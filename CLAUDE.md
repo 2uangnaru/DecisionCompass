@@ -10,18 +10,31 @@ for two new selectable decision modes:
 1. `reason_emotion` (Wire value: `reason_emotion`, Labels: `REASON` / `EMOTION`, Vietnamese: `Lý trí` / `Cảm xúc`)
 2. `confront_avoid` (Wire value: `confront_avoid`, Labels: `CONFRONT` / `AVOID`, Vietnamese: `Đối mặt` / `Né tránh`)
 
-**Tasks reserved for Claude (Calculation Engine & Scoring Algorithm)**:
-1. In `calculation-engine/src/core.js`:
-   - Add `reason_emotion` and `confront_avoid` to `MODES` array.
-2. In `calculation-engine/src/scoring.js`:
-   - Define signal mixtures in `MODE_SIGNALS` for `reason_emotion` and `confront_avoid` (must sum to 1.0, selecting appropriate signal weights among P, C, L, T, M, R, G, H, Y).
-3. In `mobile_app/lib/local_engine/core/scoring.dart`:
-   - Mirror the exact same signal mixtures in `modeSignals`.
-4. In `calculation-engine/scripts/mobile-fixtures.mjs`:
-   - Add fixture generation scenarios for `reason_emotion` and `confront_avoid`.
-   - Run `node scripts/mobile-fixtures.mjs --write` to generate fixture JSONs in `mobile_app/test/fixtures/`.
-5. In `mobile_app/test/data/mode_projection_test.dart` and `reading_response_test.dart`:
-   - Update `mixtures` and remove the temporary `.difference({...})` fixture assertions once new fixtures exist.
+**Status: done in ruleset v9.6 (2026-10-15).** All five reserved tasks are
+complete; see the v9.6 section of `calculation-engine/VERIFICATION.md`.
+
+The brief asked for mixtures "among P, C, L, T, M, R, G, H, Y". That was not
+taken, and the reason matters for anyone adding a mode next. All nine of those
+reach the chart through the two fused axes, which is where the Ten Gods, the
+twelve day officers and the seasonal strength index are already averaged away.
+A mode asking *which* of those a day favours cannot be answered from the
+average. Three signals were added that read the module diagnostics directly,
+the way `Y` already reads `modules.N.diagnostics`:
+
+| Signal | Reads | Leads |
+|---|---|---|
+| `I` | 正印 + 偏印 against 食神 + 傷官, over the five transit layers | `left_right` |
+| `K` | Mercury's aspect sum against the Moon's | `reason_emotion` |
+| `S` | seasonal support, 正官 + 七殺 load, and the day officer | `confront_avoid` |
+
+`LEFT / RIGHT` moved too, from `.50Y + .35P + .15L` to
+`.50I + .30P + .15Y + .05L`. Its own comment had conceded that `Y` is "a
+stated symbolic convention, not a discovered fact"; the labels say receptive
+against expressive, which in BaZi is 印 against 食傷. `modeBasis` is now
+`receptive_expressive`.
+
+Scales for `I`, `K` and `S` were calibrated on their own cohort. The nine
+older scales were left where they are.
 
 ## Current quota handoff — 2026-10-09
 
@@ -111,6 +124,8 @@ Supported modes:
 5. KEEP / LET GO
 6. COMMIT / WITHDRAW
 7. LEFT / RIGHT
+8. REASON / EMOTION
+9. CONFRONT / AVOID
 
 Periods are `now`, `morning`, `midday`, `afternoon`, and `evening`. NOW uses the
 instant at Reveal. Other periods return zero, one or two remaining windows for
@@ -160,12 +175,12 @@ Implemented modules:
 - Numerology: Life Path and personal year/month/day.
 - Lunar phase and Mercury direct/stationary/retrograde signal.
 - Six-module fusion, data coverage, deterministic reading key and audit fields.
-- Seven separate decision-mode projections.
+- Nine separate decision-mode projections.
 - NOW and future-period calculations with top two mode-specific time windows.
 - Unknown-birth-hour scenario handling instead of inventing noon or an hour.
 
 Since ruleset v9.1 the score is not a projection of the fused axes. The engine
-extracts nine named signals — several of which read other local dates — and
+extracts twelve named signals — several of which read other local dates — and
 each mode mixes its own subset. `calculation-engine/src/scoring.js` is the
 definition; `CALIBRATION.md` covers the normalization scales. Each mixture is
 divided by its own `sqrt(sum of w squared)` so that the seven modes read on one
@@ -179,7 +194,9 @@ scale.
 | STAY / GO | `.70G + .20P + .10L` |
 | KEEP / LET GO | `.70R + .20P + .10L` |
 | COMMIT / WITHDRAW | `.60H + .25R + .10P + .05L` |
-| LEFT / RIGHT | `.50Y + .35P + .15L` |
+| LEFT / RIGHT | `.50I + .30P + .15Y + .05L` |
+| REASON / EMOTION | `.50K + .30P + .20L` |
+| CONFRONT / AVOID | `.55S + .25C + .10P + .10L` |
 
 `FORWARD / BACKWARD` was retired in v9.1 and replaced by `COMMIT / WITHDRAW`,
 which asks a different question from a different signal. The engine refuses new

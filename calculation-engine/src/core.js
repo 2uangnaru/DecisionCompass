@@ -1,5 +1,5 @@
 export const VERSION = '4.3.0-mvp';
-export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v9.5-experimental';
+export const RULESET = 'civil-midnight-chinese-calendar-symbolic-v9.6-experimental';
 export const WEIGHTS = Object.freeze({ B: .18, Z: .18, T: .10, W: .18, V: .16, N: .15, U: .05 });
 export const LUCK_BASELINE = 0.05;
 
@@ -55,7 +55,9 @@ export const MODES = Object.freeze({
   stay_go: Object.freeze({ labels: ['STAY', 'GO'], basis: 'change_alignment' }),
   keep_let_go: Object.freeze({ labels: ['KEEP', 'LET GO'], basis: 'release_alignment' }),
   commit_withdraw: Object.freeze({ labels: ['COMMIT', 'WITHDRAW'], basis: 'durability_horizon' }),
-  left_right: Object.freeze({ labels: ['LEFT', 'RIGHT'], basis: 'symbolic_polarity' }),
+  left_right: Object.freeze({ labels: ['LEFT', 'RIGHT'], basis: 'receptive_expressive' }),
+  reason_emotion: Object.freeze({ labels: ['REASON', 'EMOTION'], basis: 'deliberation_feeling' }),
+  confront_avoid: Object.freeze({ labels: ['CONFRONT', 'AVOID'], basis: 'standing_against_pressure' }),
 });
 
 /**

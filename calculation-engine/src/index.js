@@ -107,6 +107,9 @@ export function createCalculator(inputProfile) {
       else if(name==='L')raw.L=base.l;
       else if(name==='R')raw.R=base.r;
       else if(name==='Y')raw.Y=base.y;
+      else if(name==='I')raw.I=base.i;
+      else if(name==='K')raw.K=base.k;
+      else if(name==='S')raw.S=base.s;
       else if(name==='T') {
         raw.T=timing(base.q,laterAlignments(date,Number(clock.slice(0,2)),zone,category));
       }

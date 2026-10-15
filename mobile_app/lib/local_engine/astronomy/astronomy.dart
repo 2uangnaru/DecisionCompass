@@ -291,6 +291,9 @@ ModuleResult western(Sky sky, NatalSky natal, [String category = 'general']) {
       c += w * hit.c;
       if (hit.strength > 0) {
         aspects.add(<String, Object?>{
+          // `a` travels with the aspect so a signal can ask how one body
+          // is doing today without re-deriving the geometry.
+          'a': hit.a,
           'transit': transit.key,
           'natal': natalEntry.key,
           'angle': hit.angle,

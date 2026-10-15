@@ -19,7 +19,7 @@
 import { clamp } from './core.js';
 
 /** Identifies the scoring system itself, independently of the engine build. */
-export const SCORING_VERSION = 'v9.5-experimental';
+export const SCORING_VERSION = 'v9.6-experimental';
 
 /**
  * The nine signals, in a fixed order so that diagnostics, tests and the Dart
@@ -35,7 +35,7 @@ export const SCORING_VERSION = 'v9.5-experimental';
  * - `H` horizon: the durable middle of the coming week.
  * - `Y` polarity: an explicitly symbolic yin/yang convention.
  */
-export const SIGNALS = Object.freeze(['P', 'C', 'L', 'T', 'M', 'R', 'G', 'H', 'Y']);
+export const SIGNALS = Object.freeze(['P', 'C', 'L', 'T', 'M', 'R', 'G', 'H', 'Y', 'I', 'K', 'S']);
 
 /** `P` reads only the three personal-chart modules. */
 const PROSPECT_MODULES = Object.freeze(['B', 'Z', 'W']);
@@ -58,6 +58,82 @@ const TIMING_SPREAD = 0.40;
 
 /** How far the fourteen-day median pushes today away from itself. */
 export const MEDIAN_PUSH = 0.5;
+
+// ---------------------------------------------------------------------------
+// Signals that read the tradition directly
+// ---------------------------------------------------------------------------
+//
+// The nine signals above all reach the chart through `{a, c, coverage}`, which
+// is where the Ten Gods, the twelve day officers and the seasonal strength
+// index are averaged away. A mode whose question is about *which* of those a
+// day favours cannot be answered from the average, so these three read the
+// module diagnostics the way `Y` already reads `modules.N.diagnostics`.
+
+/** 正印 + 偏印 — what is taken in. */
+const RESOURCE_GODS = Object.freeze(['support', 'reflection']);
+/** 食神 + 傷官 — what is put out. */
+const OUTPUT_GODS = Object.freeze(['expression', 'challenge']);
+/** 正官 + 七殺 — what presses from outside. */
+const AUTHORITY_GODS = Object.freeze(['responsibility', 'pressure']);
+
+const sumGods = (mass, gods) => gods.reduce((s, g) => s + (mass[g] ?? 0), 0);
+
+/**
+ * `I` — receptive against expressive, 印 against 食傷.
+ *
+ * Positive is receptive, and positive selects LEFT. This replaces the parity
+ * convention as what LEFT / RIGHT leads on: the old `Y` asked whether the
+ * calendar's indices were even, which is a convention the code already
+ * admitted to rather than anything the chart says.
+ */
+export function receptivity(mass) {
+  if (!mass) return 0;
+  return sumGods(mass, RESOURCE_GODS) - sumGods(mass, OUTPUT_GODS);
+}
+
+/** Which of the twelve officers lean towards facing a thing, and which away. */
+const OFFICER_BIAS = Object.freeze({
+  hold: 1.0, establish: 0.7, stable: 0.6, success: 0.4,
+  full: 0.2, open: 0.1, balance: 0.0, remove: -0.2,
+  break: -0.5, receive: -0.6, danger: -0.8, close: -1.0,
+});
+
+/**
+ * `S` — whether today is one to face a thing or to step around it.
+ *
+ * The classical reading is 身強殺淺 against 身弱殺重: a self with footing can
+ * meet pressure, one without it should not. Three terms, in that order —
+ * the reader's own seasonal support, the weight of 官殺 in today's transit,
+ * and the day officer, which is the almanac's own answer to the same question.
+ *
+ * `supportIndex` is two of five normalised seasonal shares, so an even spread
+ * sits at 0.40 and that is the neutral point rather than a fitted one. The
+ * engine does not compute Yong Shen (see `chart.strengthMethod`), so this is a
+ * descriptive strength index and not a full classical judgement.
+ */
+export function confrontation(supportIndex, mass, officer) {
+  const strength = (supportIndex ?? 0.40) - 0.40;
+  const load = mass ? sumGods(mass, AUTHORITY_GODS) - 0.20 : 0;
+  return 0.45 * strength - 0.40 * load + 0.15 * (OFFICER_BIAS[officer] ?? 0);
+}
+
+/**
+ * `K` — whether today supports the deliberating mind or the feeling one.
+ *
+ * Mercury against the Moon, which is the one place the Western module speaks
+ * to this question without being asked to stand in for something else. Each
+ * aspect already carries its own `a`; this only asks which body it touched.
+ */
+export function faculty(modules) {
+  const aspects = modules.W?.diagnostics?.aspects;
+  if (!aspects?.length) return 0;
+  let mercury = 0, moon = 0;
+  for (const hit of aspects) {
+    if (hit.transit === 'mercury' || hit.natal === 'mercury') mercury += hit.a;
+    if (hit.transit === 'moon' || hit.natal === 'moon') moon += hit.a;
+  }
+  return mercury - moon;
+}
 
 /**
  * The display curve's exponent.
@@ -117,6 +193,14 @@ export const SCALES = Object.freeze({
   G: 0.1432921879,
   H: 0.1769609522,
   Y: 0.8748830544,
+  // Measured by `node scripts/calibrate-v91.mjs --profiles 160 --seed 20260930`
+  // on the v9.6 cohort, by the same `4 x p75|raw|` rule as the nine above.
+  // The eight older scales drifted x0.95-x1.08 on that run and were left
+  // alone: a scale change moves every percentage the app has ever shown,
+  // and nothing about adding a mode justifies moving the other seven.
+  I: 0.9800000000,
+  K: 2.0270313108,
+  S: 0.5898715596,
 });
 
 /**
@@ -161,7 +245,14 @@ export const MODE_SIGNALS = Object.freeze({
   stay_go: Object.freeze({ G: 0.70, P: 0.20, L: 0.10 }),
   keep_let_go: Object.freeze({ R: 0.70, P: 0.20, L: 0.10 }),
   commit_withdraw: Object.freeze({ H: 0.60, R: 0.25, P: 0.10, L: 0.05 }),
-  left_right: Object.freeze({ Y: 0.50, P: 0.35, L: 0.15 }),
+  // v9.6 moved LEFT / RIGHT off the parity convention. `I` says the same
+  // thing the labels do — receptive against expressive — out of the Ten
+  // Gods rather than out of whether an index is even. `Y` keeps a small
+  // share: the calendar's own yin and yang is still a stated tradition,
+  // it just should not have been carrying half the answer.
+  left_right: Object.freeze({ I: 0.50, P: 0.30, Y: 0.15, L: 0.05 }),
+  reason_emotion: Object.freeze({ K: 0.50, P: 0.30, L: 0.20 }),
+  confront_avoid: Object.freeze({ S: 0.55, C: 0.25, P: 0.10, L: 0.10 }),
 });
 
 /**
@@ -297,6 +388,7 @@ export function momentSignals(modules, weights, calendar) {
   const p = prospect(modules, weights);
   const c = changePressure(modules, weights);
   const l = luck(modules);
+  const godMass = modules.B?.diagnostics?.transitGodMass ?? null;
   const zSupport = cov(modules, 'Z') * axisA(modules, 'Z');
   const bSupport = cov(modules, 'B') * axisA(modules, 'B');
   return {
@@ -304,6 +396,13 @@ export function momentSignals(modules, weights, calendar) {
     q: alignment(p, l),
     zSupport, bSupport,
     r: release(p, c, zSupport),
+    i: receptivity(godMass),
+    k: faculty(modules),
+    s: confrontation(
+      modules.B?.diagnostics?.supportIndex,
+      godMass,
+      modules.T?.diagnostics?.officer,
+    ),
     y: polarity({
       dayStem: calendar.day.stem,
       hourBranch: calendar.hour.branch,

@@ -50,7 +50,7 @@ test('health reports the engine version and ruleset from the engine itself', asy
   });
   // Bumped with the expanded full-day energy tones.
   assert.equal(VERSION, '4.3.0-mvp');
-  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v9.5-experimental');
+  assert.equal(RULESET, 'civil-midnight-chinese-calendar-symbolic-v9.6-experimental');
 });
 
 test('a YES/NO NOW request returns a real engine reading', async () => {
@@ -102,7 +102,7 @@ test('LEFT/RIGHT keeps its own mode and percentages', async () => {
   assert.equal(response.status, 200);
   const reading = await response.json();
   assert.equal(reading.mode, 'left_right');
-  assert.equal(reading.modeBasis, 'symbolic_polarity');
+  assert.equal(reading.modeBasis, 'receptive_expressive');
   assert.equal(reading.percentages.LEFT + reading.percentages.RIGHT, 100);
 });
 

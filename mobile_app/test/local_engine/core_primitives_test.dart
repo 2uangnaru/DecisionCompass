@@ -82,7 +82,7 @@ void main() {
     });
 
     test('each mode mixes its own set of signals', () {
-      // One raw signal set, read by all seven mixtures. Two modes agreeing
+      // One raw signal set, read by every mixture. Two modes agreeing
       // here by coincidence would mean one of them is redundant.
       final raw = <String, double>{
         'P': 0.18,
@@ -94,6 +94,9 @@ void main() {
         'G': -0.05,
         'H': 0.12,
         'Y': 0.44,
+        'I': 0.21,
+        'K': -0.33,
+        'S': 0.16,
       };
       final normalized = normalizeAll(raw);
       final scores = <String, double>{

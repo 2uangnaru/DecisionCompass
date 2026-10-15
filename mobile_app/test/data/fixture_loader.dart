@@ -15,6 +15,8 @@ const fixtureFiles = <String>[
   'ready_yes_no_now.json',
   'ready_commit_withdraw_two_windows.json',
   'ready_left_right.json',
+  'ready_reason_emotion.json',
+  'ready_confront_avoid.json',
   'ready_advance_retreat.json',
   'ready_act_wait_midday.json',
   'one_remaining.json',

@@ -147,6 +147,9 @@ test('unknown hour and unknown convention keep their scenario policy per categor
 });
 
 test('the signal mixtures are untouched by the category work', () => {
+  // v9.6 added two modes and moved LEFT / RIGHT onto `I`. As with v9.4,
+  // that came from an explicit mixture task and not from anything in this
+  // file's subject.
   // Still here for its original purpose: category weights must never reach
   // into a mode mixture. The two values that changed in v9.4 were changed by
   // an explicit mixture task, not by anything in this file's subject — see
@@ -159,7 +162,9 @@ test('the signal mixtures are untouched by the category work', () => {
     stay_go: { G: .70, P: .20, L: .10 },
     keep_let_go: { R: .70, P: .20, L: .10 },
     commit_withdraw: { H: .60, R: .25, P: .10, L: .05 },
-    left_right: { Y: 0.50, P: 0.35, L: 0.15 },
+    left_right: { I: 0.50, P: 0.30, Y: 0.15, L: 0.05 },
+    reason_emotion: { K: 0.50, P: 0.30, L: 0.20 },
+    confront_avoid: { S: 0.55, C: 0.25, P: 0.10, L: 0.10 },
   });
   // Each mixture states relative emphasis and sums to one; the divisor that
   // puts the seven modes on one scale is derived from those same weights.
@@ -178,7 +183,10 @@ test('the signal mixtures are untouched by the category work', () => {
       stay_go: 'change_alignment',
       keep_let_go: 'release_alignment',
       commit_withdraw: 'durability_horizon',
-      left_right: 'symbolic_polarity',
+      // v9.6 renamed this: the basis is no longer a parity convention.
+      left_right: 'receptive_expressive',
+      reason_emotion: 'deliberation_feeling',
+      confront_avoid: 'standing_against_pressure',
     },
   );
 });

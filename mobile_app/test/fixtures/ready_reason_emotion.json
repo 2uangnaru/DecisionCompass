@@ -1,0 +1,210 @@
+{
+  "engineVersion": "4.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.6-experimental",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2026d"
+  },
+  "mode": "reason_emotion",
+  "period": "now",
+  "category": "study",
+  "context": {
+    "instantMs": 1789720200000,
+    "instantUtc": "2026-09-18T08:30:00.000Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "zoneSource": "device",
+    "offsetSeconds": 25200,
+    "localDate": "2026-09-18",
+    "region": "Asia",
+    "countryCandidates": [
+      "VN"
+    ],
+    "locationStatus": "not_provided",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2026d"
+  },
+  "birthData": {
+    "status": "exact",
+    "timeKnown": true,
+    "timezoneSource": "birth_country_zone_candidates",
+    "timezoneCandidates": [
+      "Asia/Bangkok",
+      "Asia/Ho_Chi_Minh"
+    ]
+  },
+  "warnings": [],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "birthTimezone": null,
+      "traditionalProfile": "male",
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-18T08:30:00.000Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "zoneSource": "device"
+    },
+    "period": "now",
+    "mode": "reason_emotion",
+    "category": "study"
+  },
+  "status": "ready",
+  "winner": "EMOTION",
+  "percentages": {
+    "REASON": 27.6,
+    "EMOTION": 72.4
+  },
+  "dataCoverage": 0.973,
+  "modeScore": -0.2753810523,
+  "modeBasis": "deliberation_feeling",
+  "meaning": "symbolic_alignment_not_success_probability",
+  "readingKey": "be7040c508d6b4b95c02c7dcbfa2865f7caaf52fda4b56f8cd8fb00cdc51fead",
+  "axisScores": {
+    "action": 0.0418112913,
+    "change": 0.2085217825,
+    "selected": -0.2753810523
+  },
+  "scoring": {
+    "system": "v9.6-experimental",
+    "scaleVersion": "v9.3-cohort-2026-09-30",
+    "anchorLocal": "2026-09-18T15:00",
+    "signals": {
+      "K": -0.451056919,
+      "P": -0.0705244007,
+      "L": 0.219
+    },
+    "normalized": {
+      "K": -0.2189195067,
+      "P": -0.403001868,
+      "L": 0.2800895452
+    },
+    "rawModeScore": -0.2828207266,
+    "priorDatesUsed": 14,
+    "priorMedian": -0.2977000751,
+    "adjustedModeScore": -0.2753810523,
+    "meaning": "symbolic_alignment_not_success_probability"
+  },
+  "evaluatedAtUtc": "2026-09-18T08:00:00.000Z",
+  "luckyWindows": [],
+  "windowStatus": "not_applicable",
+  "dailyBrief": {
+    "luckyNumber": 1,
+    "colors": {
+      "lead": {
+        "key": "mint",
+        "name": "Mint",
+        "hex": "#AADBB2",
+        "element": "wood",
+        "stem": 1
+      },
+      "supporting": {
+        "key": "solar_coral",
+        "name": "Solar Coral",
+        "hex": "#E88862",
+        "element": "fire",
+        "stem": 2
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    },
+    "energy": {
+      "level": "flowing",
+      "index": 53,
+      "dataCoverage": 0.973
+    }
+  },
+  "segments": [
+    {
+      "startUtc": "2026-09-18T08:00:00.000Z",
+      "endUtc": "2026-09-18T10:00:00.000Z",
+      "includedFromUtc": "2026-09-18T08:00:00.000Z",
+      "durationSeconds": 7200,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0341470588,
+          "c": 0.0106617647,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0052245,
+            "c": 0.00163125
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.00265,
+          "c": 0.0354289063,
+          "weight": 0.15,
+          "contribution": {
+            "a": 0.0003975,
+            "c": 0.0053143359
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.465,
+          "c": 0.6,
+          "weight": 0.11,
+          "contribution": {
+            "a": 0.05115,
+            "c": 0.066
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.2310524686,
+          "c": 0.1414916147,
+          "weight": 0.18,
+          "contribution": {
+            "a": -0.0415894444,
+            "c": 0.0254684906
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.03375,
+            "c": 0.04875
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.18,
+          "contribution": {
+            "a": 0.0936,
+            "c": 0.108
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3085747128,
+          "c": 0.040154118,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.0154287356,
+            "c": 0.0020077059
+          }
+        }
+      }
+    }
+  ],
+  "monetizationHandledByApp": true
+}

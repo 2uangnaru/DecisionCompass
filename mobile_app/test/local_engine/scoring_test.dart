@@ -64,6 +64,9 @@ void main() {
         'G': -0.05,
         'H': 0.12,
         'Y': 0.44,
+        'I': 0.21,
+        'K': -0.33,
+        'S': 0.16,
       };
       final normalized = normalizeAll(raw);
       final scores = <double>[
@@ -426,7 +429,7 @@ void main() {
     );
   });
 
-  group('the mixtures are the same seven the reference engine pins', () {
+  group('the mixtures are the same nine the reference engine pins', () {
     // The Dart port is only useful if it is the same engine. These literals
     // are copied from `calculation-engine/test/scoring.test.js`, so a weight
     // edited in one language and not the other fails on both sides rather
@@ -440,8 +443,11 @@ void main() {
         'keep_let_go': {'R': 0.70, 'P': 0.20, 'L': 0.10},
         // v9.4: was {'H': 0.80, 'P': 0.15, 'L': 0.05}.
         'commit_withdraw': {'H': 0.60, 'R': 0.25, 'P': 0.10, 'L': 0.05},
-        // v9.4: was {'Y': 0.70, 'P': 0.20, 'L': 0.10}.
-        'left_right': {'Y': 0.50, 'P': 0.35, 'L': 0.15},
+        // v9.4: was {'Y': 0.70, 'P': 0.20, 'L': 0.10}. v9.6 moved it onto
+        // `I` — 印 against 食傷 — which is what the labels already claimed.
+        'left_right': {'I': 0.50, 'P': 0.30, 'Y': 0.15, 'L': 0.05},
+        'reason_emotion': {'K': 0.50, 'P': 0.30, 'L': 0.20},
+        'confront_avoid': {'S': 0.55, 'C': 0.25, 'P': 0.10, 'L': 0.10},
       });
     });
 
@@ -471,7 +477,9 @@ void main() {
         'stay_go': '1.3608276348795436',
         'keep_let_go': '1.3608276348795436',
         'commit_withdraw': '1.5161960871578068',
-        'left_right': '1.5911145683514600',
+        'left_right': '1.6552117772047359',
+        'reason_emotion': '1.6222142113076254',
+        'confront_avoid': '1.6116459280507605',
       });
     });
 

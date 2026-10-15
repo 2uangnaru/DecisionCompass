@@ -10,7 +10,7 @@ import 'numbers.dart';
 
 const String engineVersion = '4.3.0-mvp';
 const String rulesetVersion =
-    'civil-midnight-chinese-calendar-symbolic-v9.5-experimental';
+    'civil-midnight-chinese-calendar-symbolic-v9.6-experimental';
 
 /// Default module weights: BaZi, Zi Wei, almanac, Western, Vedic, numerology, cosmic.
 const Map<String, double> defaultWeights = <String, double>{
@@ -176,7 +176,15 @@ const Map<String, ModeDefinition> modes = <String, ModeDefinition>{
   ),
   'left_right': ModeDefinition(
     labels: <String>['LEFT', 'RIGHT'],
-    basis: 'symbolic_polarity',
+    basis: 'receptive_expressive',
+  ),
+  'reason_emotion': ModeDefinition(
+    labels: <String>['REASON', 'EMOTION'],
+    basis: 'deliberation_feeling',
+  ),
+  'confront_avoid': ModeDefinition(
+    labels: <String>['CONFRONT', 'AVOID'],
+    basis: 'standing_against_pressure',
   ),
 };
 

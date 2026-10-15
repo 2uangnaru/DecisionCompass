@@ -384,6 +384,8 @@ ModuleResult scoreBaZi(BaZiChart chart, CalendarAt cal, double ms) {
 
   final parts = <(double, Evidence)>[];
   final layerDiagnostics = <String, Object?>{};
+  final godMass = <String, double>{};
+  var godTotal = 0.0;
 
   for (final entry in timing.entries) {
     final p = entry.value;
@@ -418,6 +420,12 @@ ModuleResult scoreBaZi(BaZiChart chart, CalendarAt cal, double ms) {
       _layers[entry.key]!,
       Evidence(blended.a, blended.c, blended.coverage * chart.coverage),
     ));
+    for (final (stemWeight, stem) in stems) {
+      final god = tenGod(dayMaster, stem);
+      final w = _layers[entry.key]! * stemWeight;
+      godMass[god] = (godMass[god] ?? 0) + w;
+      godTotal += w;
+    }
     layerDiagnostics[entry.key] = <String, Object?>{
       'pillar': p.text,
       'relations': <List<String>>[
@@ -426,7 +434,18 @@ ModuleResult scoreBaZi(BaZiChart chart, CalendarAt cal, double ms) {
     };
   }
 
+  if (godTotal > 0) {
+    for (final god in godMass.keys.toList())
+      godMass[god] = godMass[god]! / godTotal;
+  }
   return ModuleResult(blend(parts), <String, Object?>{
+    // How much of each Ten God the transit layers carry. From the
+    // *transit* pillars, never the natal four: a signal built on the natal
+    // chart alone hands one reader the same answer for life. The day
+    // master is natal, so the same date still reads differently for two
+    // people.
+    'transitGodMass': godTotal > 0 ? godMass : null,
+    'supportIndex': chart.supportIndex,
     'activeDecade': decade == null
         ? null
         : <String, Object?>{

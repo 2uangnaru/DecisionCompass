@@ -78,7 +78,9 @@ export function western(sky,natal,category='general') {
     if (natal.positions[n]==null) continue;
     const w=pw*nw, hit=aspect(sky.positions[p],natal.positions[n],p);
     q+=w; a+=w*hit.a; c+=w*hit.c;
-    if(hit.strength>0) aspects.push({transit:p,natal:n,angle:hit.angle,strength:hit.strength});
+    // `a` travels with the aspect so a signal can ask how one body is
+    // doing today without re-deriving the geometry.
+    if(hit.strength>0) aspects.push({transit:p,natal:n,angle:hit.angle,strength:hit.strength,a:hit.a,weight:w});
   }
   return moduleResult(q?evidence(clamp(3*a/q),clamp(3*c/q),Math.min(1,q)):evidence(),
     {aspects,natal,houseSystem:null,categoryProfile:profile?category:'default_transit_natal',

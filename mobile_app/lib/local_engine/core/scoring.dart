@@ -22,7 +22,7 @@ import 'core.dart';
 import 'numbers.dart';
 
 /// Identifies the scoring system itself, independently of the engine build.
-const String scoringVersion = 'v9.5-experimental';
+const String scoringVersion = 'v9.6-experimental';
 
 /// The nine signals, in the order the Node engine lists them.
 const List<String> signalNames = <String>[
@@ -35,6 +35,9 @@ const List<String> signalNames = <String>[
   'G',
   'H',
   'Y',
+  'I',
+  'K',
+  'S',
 ];
 
 /// `P` reads only the three personal-chart modules.
@@ -97,6 +100,12 @@ const Map<String, double> scales = <String, double>{
   'G': 0.1432921879,
   'H': 0.1769609522,
   'Y': 0.8748830544,
+  // Measured on the v9.6 cohort by the same rule as the nine above; see
+  // `calculation-engine/CALIBRATION.md`. The eight older scales were
+  // deliberately left where they are.
+  'I': 0.9800000000,
+  'K': 2.0270313108,
+  'S': 0.5898715596,
 };
 
 /// Which signals each mode mixes, and in what proportion.
@@ -107,31 +116,43 @@ const Map<String, double> scales = <String, double>{
 /// made it by far the most extreme mode, because `Y` carries half its weight
 /// on three terms that are each exactly +1 or -1. It keeps the largest share,
 /// so the polarity convention still decides it.
-const Map<String, Map<String, double>> modeSignals =
-    <String, Map<String, double>>{
-      'yes_no': <String, double>{'P': 0.45, 'C': 0.20, 'L': 0.35},
-      'act_wait': <String, double>{'P': 0.30, 'C': 0.10, 'T': 0.30, 'L': 0.30},
-      'advance_retreat': <String, double>{'P': 0.25, 'M': 0.60, 'L': 0.15},
-      'stay_go': <String, double>{'G': 0.70, 'P': 0.20, 'L': 0.10},
-      'keep_let_go': <String, double>{'R': 0.70, 'P': 0.20, 'L': 0.10},
-      // v9.4 moved these two and nothing else. COMMIT / WITHDRAW was
-      // `.80H + .15P + .05L`: `H` is the median of the eight days ahead, so
-      // consecutive dates shared seven of their eight terms and the mode
-      // named one direction for a whole week on 88-89% of simulated
-      // profiles. `R` — the day's own support minus pressure — now takes a
-      // quarter. LEFT / RIGHT was `.70Y + .20P + .10L`: `Y` is a parity
-      // convention of terms that are each exactly +1 or -1, which made this
-      // the only mode reaching 80%+ on about a fifth of readings. Its share
-      // halves and the personal share nearly doubles. Both still lead their
-      // mode, so neither question changed meaning.
-      'commit_withdraw': <String, double>{
-        'H': 0.60,
-        'R': 0.25,
-        'P': 0.10,
-        'L': 0.05,
-      },
-      'left_right': <String, double>{'Y': 0.50, 'P': 0.35, 'L': 0.15},
-    };
+const Map<String, Map<String, double>>
+modeSignals = <String, Map<String, double>>{
+  'yes_no': <String, double>{'P': 0.45, 'C': 0.20, 'L': 0.35},
+  'act_wait': <String, double>{'P': 0.30, 'C': 0.10, 'T': 0.30, 'L': 0.30},
+  'advance_retreat': <String, double>{'P': 0.25, 'M': 0.60, 'L': 0.15},
+  'stay_go': <String, double>{'G': 0.70, 'P': 0.20, 'L': 0.10},
+  'keep_let_go': <String, double>{'R': 0.70, 'P': 0.20, 'L': 0.10},
+  // v9.4 moved these two and nothing else. COMMIT / WITHDRAW was
+  // `.80H + .15P + .05L`: `H` is the median of the eight days ahead, so
+  // consecutive dates shared seven of their eight terms and the mode
+  // named one direction for a whole week on 88-89% of simulated
+  // profiles. `R` — the day's own support minus pressure — now takes a
+  // quarter. LEFT / RIGHT was `.70Y + .20P + .10L`: `Y` is a parity
+  // convention of terms that are each exactly +1 or -1, which made this
+  // the only mode reaching 80%+ on about a fifth of readings. Its share
+  // halves and the personal share nearly doubles. Both still lead their
+  // mode, so neither question changed meaning.
+  'commit_withdraw': <String, double>{
+    'H': 0.60,
+    'R': 0.25,
+    'P': 0.10,
+    'L': 0.05,
+  },
+  // v9.6 moved LEFT / RIGHT off the parity convention. `I` says the
+  // same thing the labels do — receptive against expressive — out of
+  // the Ten Gods rather than out of whether an index is even. `Y`
+  // keeps a small share: the calendar's own yin and yang is still a
+  // stated tradition, it just should not have carried half the answer.
+  'left_right': <String, double>{'I': 0.50, 'P': 0.30, 'Y': 0.15, 'L': 0.05},
+  'reason_emotion': <String, double>{'K': 0.50, 'P': 0.30, 'L': 0.20},
+  'confront_avoid': <String, double>{
+    'S': 0.55,
+    'C': 0.25,
+    'P': 0.10,
+    'L': 0.10,
+  },
+};
 
 /// What each mixture is divided by, so that the seven modes read on one scale.
 ///
@@ -271,6 +292,107 @@ double polarity({
     0.10 * baZiChange;
 
 /// Every quantity one evaluated instant contributes to a score.
+
+// ---------------------------------------------------------------------------
+// Signals that read the tradition directly
+// ---------------------------------------------------------------------------
+//
+// The nine signals above all reach the chart through `{a, c, coverage}`, which
+// is where the Ten Gods, the twelve day officers and the seasonal strength
+// index are averaged away. A mode whose question is about *which* of those a
+// day favours cannot be answered from the average, so these three read the
+// module diagnostics the way `Y` already reads `modules['N']`.
+
+/// 正印 + 偏印 — what is taken in.
+const List<String> _resourceGods = <String>['support', 'reflection'];
+
+/// 食神 + 傷官 — what is put out.
+const List<String> _outputGods = <String>['expression', 'challenge'];
+
+/// 正官 + 七殺 — what presses from outside.
+const List<String> _authorityGods = <String>['responsibility', 'pressure'];
+
+double _sumGods(Map<String, double> mass, List<String> gods) =>
+    gods.fold<double>(0, (sum, g) => sum + (mass[g] ?? 0));
+
+/// Today's Ten God mass, as `scoreBaZi` emitted it, or null for a chart too
+/// thin to name a day master.
+Map<String, double>? transitGodMass(Map<String, ModuleResult> modules) {
+  final raw = modules['B']?.diagnostics['transitGodMass'];
+  if (raw is! Map) return null;
+  return <String, double>{
+    for (final entry in raw.entries)
+      entry.key as String: (entry.value as num).toDouble(),
+  };
+}
+
+/// `I` — receptive against expressive, 印 against 食傷.
+///
+/// Positive is receptive, and positive selects LEFT. This replaces the parity
+/// convention as what LEFT / RIGHT leads on: the old `Y` asked whether the
+/// calendar's indices were even, which is a convention the code already
+/// admitted to rather than anything the chart says.
+double receptivity(Map<String, double>? mass) {
+  if (mass == null) return 0;
+  return _sumGods(mass, _resourceGods) - _sumGods(mass, _outputGods);
+}
+
+/// Which of the twelve officers lean towards facing a thing, and which away.
+const Map<String, double> _officerBias = <String, double>{
+  'hold': 1.0,
+  'establish': 0.7,
+  'stable': 0.6,
+  'success': 0.4,
+  'full': 0.2,
+  'open': 0.1,
+  'balance': 0.0,
+  'remove': -0.2,
+  'break': -0.5,
+  'receive': -0.6,
+  'danger': -0.8,
+  'close': -1.0,
+};
+
+/// `S` — whether today is one to face a thing or to step around it.
+///
+/// The classical reading is 身強殺淺 against 身弱殺重: a self with footing can
+/// meet pressure, one without it should not. Three terms, in that order — the
+/// reader's own seasonal support, the weight of 官殺 in today's transit, and
+/// the day officer, which is the almanac's own answer to the same question.
+///
+/// `supportIndex` is two of five normalised seasonal shares, so an even spread
+/// sits at 0.40 and that is the neutral point rather than a fitted one. The
+/// engine does not compute Yong Shen, so this is a descriptive strength index
+/// and not a full classical judgement.
+double confrontation(
+  double? supportIndex,
+  Map<String, double>? mass,
+  Object? officer,
+) {
+  final strength = (supportIndex ?? 0.40) - 0.40;
+  final load = mass == null ? 0.0 : _sumGods(mass, _authorityGods) - 0.20;
+  return 0.45 * strength - 0.40 * load + 0.15 * (_officerBias[officer] ?? 0.0);
+}
+
+/// `K` — whether today supports the deliberating mind or the feeling one.
+///
+/// Mercury against the Moon, which is the one place the Western module speaks
+/// to this question without being asked to stand in for something else. Each
+/// aspect already carries its own `a`; this only asks which body it touched.
+double faculty(Map<String, ModuleResult> modules) {
+  final aspects = modules['W']?.diagnostics['aspects'];
+  if (aspects is! List || aspects.isEmpty) return 0;
+  var mercury = 0.0;
+  var moon = 0.0;
+  for (final hit in aspects) {
+    if (hit is! Map) continue;
+    final a = (hit['a'] as num?)?.toDouble() ?? 0;
+    if (hit['transit'] == 'mercury' || hit['natal'] == 'mercury') mercury += a;
+    if (hit['transit'] == 'moon' || hit['natal'] == 'moon') moon += a;
+  }
+  return mercury - moon;
+}
+
 class MomentSignals {
   const MomentSignals({
     required this.p,
@@ -279,6 +401,9 @@ class MomentSignals {
     required this.q,
     required this.r,
     required this.y,
+    required this.i,
+    required this.k,
+    required this.s,
     required this.ziWeiSupport,
     required this.baZiSupport,
   });
@@ -289,6 +414,9 @@ class MomentSignals {
   final double q;
   final double r;
   final double y;
+  final double i;
+  final double k;
+  final double s;
 
   /// Coverage-scaled module support axes, kept so `H` never re-opens a module.
   final double ziWeiSupport;
@@ -304,6 +432,7 @@ MomentSignals momentSignals(
   final p = prospect(modules, weights);
   final c = changePressure(modules, weights);
   final l = luck(modules);
+  final godMass = transitGodMass(modules);
   final ziWeiSupport = _cov(modules, 'Z') * _a(modules, 'Z');
   final baZiSupport = _cov(modules, 'B') * _a(modules, 'B');
   return MomentSignals(
@@ -314,6 +443,13 @@ MomentSignals momentSignals(
     ziWeiSupport: ziWeiSupport,
     baZiSupport: baZiSupport,
     r: release(p, c, ziWeiSupport),
+    i: receptivity(godMass),
+    k: faculty(modules),
+    s: confrontation(
+      (modules['B']?.diagnostics['supportIndex'] as num?)?.toDouble(),
+      godMass,
+      modules['T']?.diagnostics['officer'],
+    ),
     y: polarity(
       dayStem: dayStem,
       hourBranch: hourBranch,

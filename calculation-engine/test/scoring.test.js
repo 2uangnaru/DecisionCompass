@@ -147,8 +147,12 @@ test('the seven mixtures are exactly these, and a change has to be deliberate', 
     keep_let_go: { R: 0.70, P: 0.20, L: 0.10 },
     // v9.4: was { H: 0.80, P: 0.15, L: 0.05 }.
     commit_withdraw: { H: 0.60, R: 0.25, P: 0.10, L: 0.05 },
-    // v9.4: was { Y: 0.70, P: 0.20, L: 0.10 }.
-    left_right: { Y: 0.50, P: 0.35, L: 0.15 },
+    // v9.4: was { Y: 0.70, P: 0.20, L: 0.10 }. v9.6 moved it off the
+    // parity convention: `I` is 印 against 食傷, which is the thing the
+    // labels already claimed to be about.
+    left_right: { I: 0.50, P: 0.30, Y: 0.15, L: 0.05 },
+    reason_emotion: { K: 0.50, P: 0.30, L: 0.20 },
+    confront_avoid: { S: 0.55, C: 0.25, P: 0.10, L: 0.10 },
   });
 
   // The gain is derived from the weights and nothing else, so it is pinned by
@@ -179,7 +183,11 @@ test('each mode still leads on a signal no other mode leans on as hard', () => {
       stay_go: 'G',
       keep_let_go: 'R',
       commit_withdraw: 'H',
-      left_right: 'Y',
+      // v9.6: `I`, not `Y`. Nothing leads on `Y` now; it keeps a 0.15
+      // share of LEFT / RIGHT and leads nothing, which is the point.
+      left_right: 'I',
+      reason_emotion: 'K',
+      confront_avoid: 'S',
     },
   );
   // Five of the seven own their leading signal outright: nobody else leans on
@@ -218,7 +226,8 @@ test('every mode mixes a normalized set that sums to one, and no two agree', () 
     assert.ok(Math.abs(total - 1) < 1e-9, `${mode} sums to ${total}`);
     assert.deepEqual(signalsNeededBy(mode), Object.keys(mixture));
   }
-  const normalized = normalizeAll({ P: .18, C: -.22, L: .09, T: .31, M: -.14, R: .07, G: -.05, H: .12, Y: .44 });
+  const normalized = normalizeAll({ P: .18, C: -.22, L: .09, T: .31, M: -.14,
+    R: .07, G: -.05, H: .12, Y: .44, I: .21, K: -.33, S: .16 });
   const scores = Object.keys(MODE_SIGNALS).map(mode => modeScore(mode, normalized));
   assert.equal(new Set(scores).size, scores.length, 'two modes collapsed onto the same score');
   assert.throws(() => modeScore('yes_no', { P: 0, C: 0 }), /MISSING_SIGNAL/);

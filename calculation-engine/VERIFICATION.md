@@ -15,6 +15,163 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.6 ruleset — two modes, three signals that read the tradition — 2026-10-15
+
+Engine **4.3.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.6-experimental`** / scoring
+**`v9.6-experimental`**. Scales for the nine older signals deliberately
+**unchanged** at `v9.3-cohort-2026-09-30`.
+
+| | v9.5 | v9.6 |
+|---|---|---|
+| Modes | 7 | **9** |
+| Signals | 9 | **12** |
+| `LEFT / RIGHT` | `.50Y + .35P + .15L` | **`.50I + .30P + .15Y + .05L`** |
+| `REASON / EMOTION` | — | **`.50K + .30P + .20L`** |
+| `CONFRONT / AVOID` | — | **`.55S + .25C + .10P + .10L`** |
+
+### Why these three signals and not a mixture of the nine
+
+The app's UI, palettes and eight-language copy for the two new modes landed
+first (`d0896c1`), with no engine behind them: `signalsNeededBy` threw
+`INVALID_DECISION_MODE` and both buttons produced an error screen on `main`.
+
+The obvious repair was to mix the modes out of the existing nine. It was
+rejected after reading what those nine actually are. All of them reach the
+chart through `{a, c, coverage}` — the two fused axes — which is where the Ten
+Gods, the twelve day officers and the seasonal strength index have already been
+averaged away. A mode whose question is *which* of those a day favours cannot
+be answered from the average; mixing it out of `P` and `C` would have produced
+a number that moved, without being about anything.
+
+`Y` already showed the way out: it reads `modules.N.diagnostics.personalDay`
+directly rather than through the axes. These three do the same.
+
+| Signal | Reads | Doctrine |
+|---|---|---|
+| `I` | 正印 + 偏印 against 食神 + 傷官, over the five transit layers | Resource against Output — what is taken in against what is put out |
+| `K` | Mercury's aspect sum against the Moon's | the deliberating mind against the feeling one |
+| `S` | seasonal support, 正官 + 七殺 load, and the day officer | 身強殺淺 against 身弱殺重 |
+
+`I` is read from the **transit** pillars, never the natal four. A signal built
+on the natal chart alone hands one reader the same answer for life — the exact
+defect v9.2 had to repair in `Y`, in the other direction. The day master is
+natal, so the same date still reads differently for two people.
+
+`S` takes its neutral point from the definition rather than from a fit:
+`supportIndex` is two of five normalised seasonal shares, so an even spread is
+0.40. The engine does not compute Yong Shen (`chart.strengthMethod` says so),
+which makes this a descriptive strength index and not a full classical
+judgement. The 身強殺淺 reading inherits that limit and the code says so.
+
+### Why LEFT / RIGHT moved
+
+Its own comment conceded the problem: *"This is a stated symbolic convention,
+not a discovered fact."* `Y` is the parity — even or odd — of the day stem, the
+hour branch and the personal day. v9.2 had already cut it from `.70` to `.50`
+because at `.70` two readers with the same date and hour branch got the same
+polarity, so the mode read nothing about the person.
+
+The labels say receptive against expressive. In BaZi that is 印 against 食傷,
+which is exactly `I`. The mode now leads on the thing it always claimed to be
+about. `Y` keeps `.15`: the calendar's own yin and yang is a real tradition, it
+simply should not have carried half the answer.
+
+`modeBasis` changed with it, `symbolic_polarity` to `receptive_expressive`.
+
+### Scales
+
+Measured by `node scripts/calibrate-v91.mjs --profiles 160 --seed 20260930`,
+by the same `4 x p75|raw|` rule as the nine before them.
+
+| | scale | saturated | within ±0.25 |
+|---|---:|---:|---:|
+| `I` | 0.9800000000 | 0.0% | 76.7% |
+| `K` | 2.0270313108 | 0.0% | 76.0% |
+| `S` | 0.5898715596 | 0.0% | 71.7% |
+
+For comparison on the same held-out run: `P` 81.0%, `H` 82.2%, `L` 78.3%,
+`C` 58.5%. The three new signals sit inside the band the existing ones occupy —
+neither dead nor saturated.
+
+The eight older scales drifted x0.95 to x1.08 on that cohort and were **left
+alone**. A scale change moves every percentage the app has ever shown, and
+nothing about adding a mode justifies moving the other seven. `yes_no` reads
+76.7 / 23.3 before and after this change, which is the check that it held.
+
+### What the guards caught
+
+Eight Node tests and six Flutter tests failed on the first run, every one of
+them a snapshot pinning the seven-mode world. None was a logic error. They are
+listed here because they are the reason this change is reviewable at all:
+
+* the two mixture tables (`scoring.test.js`, `category.test.js`)
+* the leading-signal table — `left_right` moved from `Y` to `I`, and nothing
+  leads on `Y` any more
+* the `modeBasis` list, in three places including the HTTP surface
+* the mode-baseline size, 196 results to 252
+* four probe vectors that enumerated nine signals by hand
+* the derived-gain pin, which needed **no** change: it recomputes
+  `1/sqrt(sum of w squared)` for every mode in the table rather than listing
+  literals, so the two new modes were checked the moment they existed. That is
+  what a guard should look like.
+
+`mobile-fixtures.mjs` gained a scenario per new mode, and the two placeholder
+`.difference({reasonEmotion, confrontAvoid})` exclusions in the Flutter
+contract tests were removed now that real fixtures exist.
+
+### Results
+
+| | |
+|---|---|
+| Node | 196 / 196 |
+| Flutter | 1235 / 1235 |
+| `flutter analyze` | clean |
+| Dart port against Node | identical to the digit on all nine modes |
+
+### The 5x/4x bar still holds, on 315 cells
+
+v9.5 brought every mode-by-category-by-period cell under two readings in ten
+showing a 50-59.9% split. Two new modes make that 315 cells rather than 245,
+and 70 of them had never been measured. Re-run on the same held-out cohort,
+176,200 readings at the shipped scales:
+
+| | per 10 readings |
+|---|---:|
+| cells at or above the 2.0 bar | **0 of 315** |
+| worst cell (`reason_emotion` / love / afternoon) | 1.93 |
+| median cell | 1.19 |
+| best cell | 0.47 |
+
+Per mode, mean and worst of its 35 cells:
+
+| mode | mean | worst |
+|---|---:|---:|
+| `act_wait` | 0.71 | 0.90 |
+| `confront_avoid` | 1.02 | 1.21 |
+| `stay_go` | 1.12 | 1.52 |
+| `keep_let_go` | 1.14 | 1.52 |
+| `advance_retreat` | 1.18 | 1.75 |
+| `yes_no` | 1.22 | 1.40 |
+| `left_right` | 1.44 | 1.64 |
+| `commit_withdraw` | 1.48 | 1.79 |
+| `reason_emotion` | 1.60 | 1.93 |
+
+`reason_emotion` has the thinnest margin of any mode — 1.93 against a 2.0 bar
+is 0.07, which is inside the per-cell error of roughly 0.1. It is recorded
+that way rather than rounded off: if a later change moves it at all, that cell
+is the one to re-measure first.
+
+Moving `LEFT / RIGHT` off the parity convention repaired a cell as a side
+effect. Under v9.5 its afternoon column reached 2.2 per 10 — the only cell of
+the seven modes that was period-sensitive enough to stand out — and its worst
+is now 1.64. `Y` reads the hour branch, so a mode leaning half its weight on it
+was always going to swing with the time of day. `I` does not.
+
+None of these numbers is a target. The bar was set by the owner, the rest is
+what the system does.
+
+
 ## v9.5 ruleset — the display curve — 2026-10-14
 
 Engine **4.3.0-mvp** / ruleset

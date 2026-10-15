@@ -24,7 +24,10 @@ const mixtures = <DecisionMode, Map<String, double>>{
   // v9.4 moved these two, and only these two. The tripwire fired on all nine
   // affected fixtures, which is what it is for.
   DecisionMode.commitWithdraw: {'H': 0.60, 'R': 0.25, 'P': 0.10, 'L': 0.05},
-  DecisionMode.leftRight: {'Y': 0.50, 'P': 0.35, 'L': 0.15},
+  // v9.6 moved LEFT / RIGHT off the parity convention and added two modes.
+  DecisionMode.leftRight: {'I': 0.50, 'P': 0.30, 'Y': 0.15, 'L': 0.05},
+  DecisionMode.reasonEmotion: {'K': 0.50, 'P': 0.30, 'L': 0.20},
+  DecisionMode.confrontAvoid: {'S': 0.55, 'C': 0.25, 'P': 0.10, 'L': 0.10},
 };
 
 /// The two English labels each mode's percentages are keyed by.
@@ -103,10 +106,7 @@ void main() {
   }
 
   test('the mixture table covers every scored mode', () {
-    final engineModes = DecisionMode.selectable.toSet().difference({
-      DecisionMode.reasonEmotion,
-      DecisionMode.confrontAvoid,
-    });
+    final engineModes = DecisionMode.selectable.toSet();
     expect(mixtures.keys.toSet(), equals(engineModes));
     // The retired mode has no mixture: v9.1 does not score it at all.
     expect(mixtures.containsKey(DecisionMode.forwardBackward), isFalse);
@@ -117,10 +117,7 @@ void main() {
   });
 
   test('every selectable mode has at least one scored fixture', () {
-    final engineModes = DecisionMode.selectable.toSet().difference({
-      DecisionMode.reasonEmotion,
-      DecisionMode.confrontAvoid,
-    });
+    final engineModes = DecisionMode.selectable.toSet();
     expect(
       scored.values.map((pair) => pair.$1.mode).toSet(),
       equals(engineModes),
@@ -191,7 +188,7 @@ void main() {
   });
 
   test('each mode reads a different mixture of the same signals', () {
-    // One synthetic signal set, mixed seven ways. A fixture only carries the
+    // One synthetic signal set, mixed nine ways. A fixture only carries the
     // signals its own mode asked for, and comparing two fixtures would compare
     // two different instants, so the mixtures are isolated from the moment.
     const normalized = <String, double>{
@@ -204,12 +201,14 @@ void main() {
       'G': -0.07,
       'H': 0.15,
       'Y': 0.52,
+      'I': 0.26,
+      'K': -0.41,
+      'S': 0.19,
     };
     final scores = <DecisionMode, double>{
-      for (final mode in mixtures.keys)
-        mode: mixedScore(mode, normalized),
+      for (final mode in mixtures.keys) mode: mixedScore(mode, normalized),
     };
-    expect(scores.length, 7);
+    expect(scores.length, 9);
     expect(
       scores.values.toSet().length,
       scores.length,

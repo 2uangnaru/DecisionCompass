@@ -230,7 +230,7 @@ void main() {
 
     expect(yesNo['modeBasis'], 'overall_acceptance');
     expect(commitWithdraw['modeBasis'], 'durability_horizon');
-    expect(leftRight['modeBasis'], 'symbolic_polarity');
+    expect(leftRight['modeBasis'], 'receptive_expressive');
   });
 
   test('a FORWARD/BACKWARD reading survives as itself, never as COMMIT', () {

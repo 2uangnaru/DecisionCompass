@@ -1,0 +1,488 @@
+{
+  "engineVersion": "4.3.0-mvp",
+  "rulesetVersion": "civil-midnight-chinese-calendar-symbolic-v9.6-experimental",
+  "providers": {
+    "lunarJavascript": "1.7.7",
+    "iztro": "2.6.1",
+    "astronomyEngine": "2.1.19",
+    "geoTz": "8.1.9",
+    "momentTimezone": "0.6.4",
+    "tzdb": "2026d"
+  },
+  "mode": "confront_avoid",
+  "period": "evening",
+  "category": "career",
+  "context": {
+    "instantMs": 1789716600000,
+    "instantUtc": "2026-09-18T07:30:00.000Z",
+    "timezone": "Asia/Ho_Chi_Minh",
+    "zoneSource": "device",
+    "offsetSeconds": 25200,
+    "localDate": "2026-09-18",
+    "region": "Asia",
+    "countryCandidates": [
+      "VN"
+    ],
+    "locationStatus": "not_provided",
+    "locationZoneCandidates": [],
+    "tzdbVersion": "2026d"
+  },
+  "birthData": {
+    "status": "exact",
+    "timeKnown": true,
+    "timezoneSource": "birth_country_zone_candidates",
+    "timezoneCandidates": [
+      "Asia/Bangkok",
+      "Asia/Ho_Chi_Minh"
+    ]
+  },
+  "warnings": [],
+  "inputSnapshot": {
+    "profile": {
+      "birthDate": "1998-06-21",
+      "birthTime": "14:30",
+      "birthCountry": "VN",
+      "birthTimezone": null,
+      "traditionalProfile": "male",
+      "revision": 1
+    },
+    "context": {
+      "instantUtc": "2026-09-18T07:30:00.000Z",
+      "timezone": "Asia/Ho_Chi_Minh",
+      "zoneSource": "device"
+    },
+    "period": "evening",
+    "mode": "confront_avoid",
+    "category": "career"
+  },
+  "status": "ready",
+  "winner": "CONFRONT",
+  "percentages": {
+    "CONFRONT": 77.5,
+    "AVOID": 22.5
+  },
+  "dataCoverage": 0.967,
+  "modeScore": 0.4353077198,
+  "modeBasis": "standing_against_pressure",
+  "meaning": "symbolic_alignment_not_success_probability",
+  "readingKey": "bfea77eb64dd7eb0f8aa2852d4ecb3089e8c464736520d7be51946c4ac33c525",
+  "axisScores": {
+    "action": 0.0235820616,
+    "change": 0.1415407876,
+    "selected": 0.4353077198
+  },
+  "scoring": {
+    "system": "v9.6-experimental",
+    "scaleVersion": "v9.3-cohort-2026-09-30",
+    "anchorLocal": "2026-09-18T18:00",
+    "signals": {
+      "S": 0.1467699115,
+      "C": 0.1986896367,
+      "P": -0.0028675299,
+      "L": 0.019
+    },
+    "normalized": {
+      "S": 0.2438060474,
+      "C": 0.5762429862,
+      "P": -0.0173693786,
+      "L": 0.024961962
+    },
+    "rawModeScore": 0.4495095341,
+    "priorDatesUsed": 14,
+    "priorMedian": 0.4779131627,
+    "adjustedModeScore": 0.4353077198,
+    "meaning": "symbolic_alignment_not_success_probability"
+  },
+  "evaluatedAtUtc": "2026-09-18T11:00:00.000Z",
+  "luckyWindows": [
+    {
+      "startUtc": "2026-09-18T12:00:00.000Z",
+      "endUtc": "2026-09-18T14:00:00.000Z",
+      "startLocal": "2026-09-18T19:00:00+07:00",
+      "endLocal": "2026-09-18T21:00:00+07:00",
+      "score": 81,
+      "dataCoverage": 0.967,
+      "hourBranch": 10,
+      "meaning": "symbolic_timing_score_not_probability"
+    },
+    {
+      "startUtc": "2026-09-18T16:00:00.000Z",
+      "endUtc": "2026-09-18T17:00:00.000Z",
+      "startLocal": "2026-09-18T23:00:00+07:00",
+      "endLocal": "2026-09-19T00:00:00+07:00",
+      "score": 80,
+      "dataCoverage": 0.967,
+      "hourBranch": 0,
+      "meaning": "symbolic_timing_score_not_probability"
+    }
+  ],
+  "windowStatus": "two_available",
+  "dailyBrief": {
+    "luckyNumber": 1,
+    "colors": {
+      "lead": {
+        "key": "mint",
+        "name": "Mint",
+        "hex": "#AADBB2",
+        "element": "wood",
+        "stem": 1
+      },
+      "supporting": {
+        "key": "solar_coral",
+        "name": "Solar Coral",
+        "hex": "#E88862",
+        "element": "fire",
+        "stem": 2
+      },
+      "meaning": "symbolic_colour_pairing_not_yong_shen"
+    },
+    "energy": {
+      "level": "flowing",
+      "index": 53,
+      "dataCoverage": 0.973
+    }
+  },
+  "segments": [
+    {
+      "startUtc": "2026-09-18T11:00:00.000Z",
+      "endUtc": "2026-09-18T12:00:00.000Z",
+      "includedFromUtc": "2026-09-18T11:00:00.000Z",
+      "durationSeconds": 3600,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0355588235,
+          "c": 0.0441911765,
+          "weight": 0.22,
+          "contribution": {
+            "a": 0.0066495,
+            "c": 0.00826375
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.0306725,
+          "c": -0.0269075,
+          "weight": 0.2,
+          "contribution": {
+            "a": 0.0061345,
+            "c": -0.0053815
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.065,
+          "c": 0.6,
+          "weight": 0.12,
+          "contribution": {
+            "a": 0.0078,
+            "c": 0.072
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0961232802,
+          "c": 0.0669128717,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.014418492,
+            "c": 0.0100369308
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.052,
+            "c": 0.06
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3091677198,
+          "c": 0.0354091182,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.015458386,
+            "c": 0.0017704559
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T12:00:00.000Z",
+      "endUtc": "2026-09-18T14:00:00.000Z",
+      "includedFromUtc": "2026-09-18T12:00:00.000Z",
+      "durationSeconds": 7200,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0413823529,
+          "c": -0.0004558824,
+          "weight": 0.22,
+          "contribution": {
+            "a": 0.0077385,
+            "c": -0.00008525
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.051235,
+          "c": -0.0260325,
+          "weight": 0.2,
+          "contribution": {
+            "a": 0.010247,
+            "c": -0.0052065
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.465,
+          "c": 0.6,
+          "weight": 0.12,
+          "contribution": {
+            "a": 0.0558,
+            "c": 0.072
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0931658673,
+          "c": 0.0654378696,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.0139748801,
+            "c": 0.0098156804
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.052,
+            "c": 0.06
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3093301217,
+          "c": 0.0338262382,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.0154665061,
+            "c": 0.0016913119
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T14:00:00.000Z",
+      "endUtc": "2026-09-18T16:00:00.000Z",
+      "includedFromUtc": "2026-09-18T14:00:00.000Z",
+      "durationSeconds": 7200,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0296470588,
+          "c": -0.0434264706,
+          "weight": 0.22,
+          "contribution": {
+            "a": 0.005544,
+            "c": -0.00812075
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.02520375,
+          "c": -0.0225325,
+          "weight": 0.2,
+          "contribution": {
+            "a": 0.00504075,
+            "c": -0.0045065
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.465,
+          "c": 0.6,
+          "weight": 0.12,
+          "contribution": {
+            "a": 0.0558,
+            "c": 0.072
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0872537174,
+          "c": 0.0624892406,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.0130880576,
+            "c": 0.0093733861
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.052,
+            "c": 0.06
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3096020568,
+          "c": 0.0306591405,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.0154801028,
+            "c": 0.001532957
+          }
+        }
+      }
+    },
+    {
+      "startUtc": "2026-09-18T16:00:00.000Z",
+      "endUtc": "2026-09-18T17:00:00.000Z",
+      "includedFromUtc": "2026-09-18T16:00:00.000Z",
+      "durationSeconds": 3600,
+      "modules": {
+        "B": {
+          "status": "partial",
+          "coverage": 0.85,
+          "a": 0.0482647059,
+          "c": 0.0353676471,
+          "weight": 0.22,
+          "contribution": {
+            "a": 0.0090255,
+            "c": 0.00661375
+          }
+        },
+        "Z": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.03176625,
+          "c": -0.0277825,
+          "weight": 0.2,
+          "contribution": {
+            "a": 0.00635325,
+            "c": -0.0055565
+          }
+        },
+        "T": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.065,
+          "c": 0.6,
+          "weight": 0.12,
+          "contribution": {
+            "a": 0.0078,
+            "c": 0.072
+          }
+        },
+        "W": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.0853886235,
+          "c": 0.0615641894,
+          "weight": 0.15,
+          "contribution": {
+            "a": -0.0128082935,
+            "c": 0.0092346284
+          }
+        },
+        "V": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": -0.225,
+          "c": 0.325,
+          "weight": 0.16,
+          "contribution": {
+            "a": -0.036,
+            "c": 0.052
+          }
+        },
+        "N": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.52,
+          "c": 0.6,
+          "weight": 0.1,
+          "contribution": {
+            "a": 0.052,
+            "c": 0.06
+          }
+        },
+        "U": {
+          "status": "calculated",
+          "coverage": 1,
+          "a": 0.3098035392,
+          "c": 0.0274907927,
+          "weight": 0.05,
+          "contribution": {
+            "a": 0.015490177,
+            "c": 0.0013745396
+          }
+        }
+      }
+    }
+  ],
+  "monetizationHandledByApp": true
+}

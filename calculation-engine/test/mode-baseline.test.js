@@ -75,7 +75,9 @@ const calculators = Object.fromEntries(
 
 test('every mode still produces exactly its committed numbers', () => {
   // 2 birth-hour states x 2 contexts x 7 categories x 7 modes.
-  assert.equal(Object.keys(baseline).length, 196, 'the baseline lost coverage');
+  // 252 under v9.6: nine modes rather than seven, over the same profiles,
+  // contexts and categories.
+  assert.equal(Object.keys(baseline).length, 252, 'the baseline lost coverage');
 
   const moved = [];
   for (const [profileName, calculator] of Object.entries(calculators)) {

@@ -96,10 +96,7 @@ void main() {
       final modes = fixtures.values.map(
         (json) => DecisionMode.fromWire(json['mode'] as String),
       );
-      final expectedModes = DecisionMode.values.toSet().difference({
-        DecisionMode.reasonEmotion,
-        DecisionMode.confrontAvoid,
-      });
+      final expectedModes = DecisionMode.values.toSet();
       expect(modes.toSet(), equals(expectedModes));
     });
 

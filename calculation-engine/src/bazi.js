@@ -90,8 +90,17 @@ export function scoreBaZi(chart,cal,ms) {
   const timing={yearly:cal.year,monthly:cal.month,daily:cal.day,hourly:cal.hour};
   if(decade)timing.decade=decade.pillar;
   const parts=[],layerDiagnostics={};
+  // How much of each Ten God the transit layers carry. Read from the
+  // *transit* pillars, never the natal four: a signal built on the natal
+  // chart alone hands one reader the same answer for life. The day master
+  // is natal, so the same date still reads differently for two people.
+  const godMass={};let godTotal=0;
   for(const [name,p]of Object.entries(timing)) {
     const stems=[[.4,p.stem],...HIDDEN[p.branch].map(s=>[.6/HIDDEN[p.branch].length,s])];
+    for(const [sw,s]of stems) {
+      const god=tenGod(dm,s),w=LAYERS[name]*sw;
+      godMass[god]=(godMass[god]??0)+w;godTotal+=w;
+    }
     const gv=[0,1].map(k=>stems.reduce((sum,[w,s])=>sum+w*GODS[tenGod(dm,s)][k],0));
     const bv=[0,1].map(k=>known.reduce((sum,{w,p:n})=>sum+w/total*branchVector(p.branch,n.branch)[k],0));
     // The 15% favorable-element component stays absent: no manufactured Yong Shen.
@@ -100,6 +109,8 @@ export function scoreBaZi(chart,cal,ms) {
     parts.push([LAYERS[name],e]);
     layerDiagnostics[name]={pillar:p,relations:known.map(({p:n})=>relations(p.branch,n.branch))};
   }
+  if(godTotal)for(const god of Object.keys(godMass))godMass[god]/=godTotal;
   return moduleResult(blend(parts),{chart,activeDecade:decade,layers:layerDiagnostics,
+    transitGodMass:godTotal?godMass:null,supportIndex:chart.supportIndex,
     excludedRules:['automatic_yong_shen','special_chart_transformations'],method:'bazi_expanded_v2_generated_inputs'});
 }
