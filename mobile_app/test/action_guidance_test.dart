@@ -809,27 +809,6 @@ void main() {
       expect(vnGuidance.headline, isNot(usGuidance.headline));
       expect(inGuidance.headline, isNot(usGuidance.headline));
     });
-
-    test('Option B 2-tier guidance decomposes cosmic reason and clean action headline', () {
-      for (final locale in AppLocale.values) {
-        for (final mode in _modesWithDedicatedGuidance) {
-          final guidance = resolveActionGuidance(
-            locale: locale,
-            reading: _reading(base, mode: mode, winner: _pair[mode]!.$1),
-          );
-          expect(guidance.cosmicReason, isNotNull, reason: '${locale.tag} ${mode.wireValue}');
-          expect(guidance.cosmicReason!.trim(), isNotEmpty);
-          expect(guidance.actionHeadline, isNotNull);
-          expect(guidance.actionHeadline!.trim(), isNotEmpty);
-          // Action headline in Option B must never have semicolons
-          expect(
-            guidance.actionHeadline!.contains(';'),
-            isFalse,
-            reason: '${locale.tag} ${mode.wireValue} action headline contains semicolon: ${guidance.actionHeadline}',
-          );
-        }
-      }
-    });
   });
 }
 

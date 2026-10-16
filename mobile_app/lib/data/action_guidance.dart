@@ -19,8 +19,6 @@ class ActionGuidance {
   const ActionGuidance({
     required this.title,
     required this.headline,
-    this.actionHeadline,
-    this.cosmicReason,
     required this.shouldDo,
     required this.avoid,
     required this.shouldDoTag,
@@ -30,14 +28,8 @@ class ActionGuidance {
   /// Section title, e.g. "COSMIC GUIDANCE", "CHỈ DẪN HÀNH ĐỘNG".
   final String title;
 
-  /// Full headline (context + mechanism), backward-compatible.
+  /// What the reading leaned toward, contextualized by mode and category.
   final String headline;
-
-  /// Focused action directive without semicolons for Tier 2 UI presentation.
-  final String? actionHeadline;
-
-  /// Cosmic rhythm / planetary mechanism reason for Tier 1 UI presentation.
-  final String? cosmicReason;
 
   /// Something to turn over. Never an instruction to act recklessly in the world.
   final String shouldDo;
@@ -121,7 +113,7 @@ ActionGuidance resolveActionGuidance({
   final birthCountryCode =
       (profileRaw is Map ? profileRaw['birthCountry'] : null) as String?;
 
-  final cosmicGuidance = composeCosmicGuidance(
+  final cosmicHeadline = composeCosmicHeadline(
     locale: locale,
     category: reading.category,
     period: reading.period,
@@ -159,9 +151,7 @@ ActionGuidance resolveActionGuidance({
       title: tags.$1,
       shouldDoTag: tags.$2,
       avoidTag: tags.$3,
-      headline: cosmicGuidance.fullHeadline,
-      actionHeadline: cosmicGuidance.actionHeadline,
-      cosmicReason: cosmicGuidance.cosmicReason,
+      headline: cosmicHeadline,
       shouldDo: localizedEntry.$2,
       avoid: localizedEntry.$3,
     );
@@ -208,9 +198,7 @@ ActionGuidance resolveActionGuidance({
     title: tags.$1,
     shouldDoTag: tags.$2,
     avoidTag: tags.$3,
-    headline: cosmicGuidance.fullHeadline,
-    actionHeadline: cosmicGuidance.actionHeadline,
-    cosmicReason: cosmicGuidance.cosmicReason,
+    headline: cosmicHeadline,
     shouldDo: localizedEntry.$2,
     avoid: localizedEntry.$3,
   );

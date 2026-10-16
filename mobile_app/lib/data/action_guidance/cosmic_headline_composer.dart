@@ -8,26 +8,11 @@ import '../models/models.dart';
 /// Lean direction of the decision reading.
 enum CosmicLean { first, second, balanced }
 
-/// Two-tier cosmic guidance representation for Option B UI presentation.
-class CosmicGuidanceText {
-  const CosmicGuidanceText({
-    required this.fullHeadline,
-    required this.actionHeadline,
-    this.cosmicReason,
-  });
-
-  /// Full headline (context + mechanism), backward-compatible.
-  final String fullHeadline;
-
-  /// Clean, decisive action directive (Tier 2 in UI, no semicolons).
-  final String actionHeadline;
-
-  /// Gentle cosmic rhythm / planetary mechanism (Tier 1 in UI).
-  final String? cosmicReason;
-}
-
-/// Composes both the full headline and the 2-tier Option B decomposed guidance.
-CosmicGuidanceText composeCosmicGuidance({
+/// Composes the unified cosmic headline directly combining
+/// the cultural context lens [Category x Period] with the planetary mechanism [Mode x Side x Variant].
+/// When [locale] is English, [birthCountryCode] is used by the Smart Cultural Adaptor
+/// to tailor the philosophical resonance (Eastern Heritage, Vedic Cosmic, or Western Classical).
+String composeCosmicHeadline({
   required AppLocale locale,
   required ReadingCategory category,
   required TimePeriod period,
@@ -53,130 +38,7 @@ CosmicGuidanceText composeCosmicGuidance({
       mechTable['balanced:balanced:$v'] ??
       mechTable['balanced:balanced:0']!;
 
-  final fullHeadline = '$contextClause$sep$mechanismClause';
-  final split = _splitMechanism(locale, mechanismClause);
-
-  return CosmicGuidanceText(
-    fullHeadline: fullHeadline,
-    actionHeadline: split.$2,
-    cosmicReason: split.$1,
-  );
-}
-
-/// Composes the unified cosmic headline directly combining
-/// the cultural context lens [Category x Period] with the planetary mechanism [Mode x Side x Variant].
-/// When [locale] is English, [birthCountryCode] is used by the Smart Cultural Adaptor
-/// to tailor the philosophical resonance (Eastern Heritage, Vedic Cosmic, or Western Classical).
-String composeCosmicHeadline({
-  required AppLocale locale,
-  required ReadingCategory category,
-  required TimePeriod period,
-  required DecisionMode mode,
-  required CosmicLean lean,
-  required int variant,
-  String? birthCountryCode,
-}) => composeCosmicGuidance(
-  locale: locale,
-  category: category,
-  period: period,
-  mode: mode,
-  lean: lean,
-  variant: variant,
-  birthCountryCode: birthCountryCode,
-).fullHeadline;
-
-(String?, String) _splitMechanism(AppLocale locale, String text) {
-  final trimmed = text.trim();
-  switch (locale) {
-    case AppLocale.vietnamese:
-    case AppLocale.english:
-    case AppLocale.spanish:
-    case AppLocale.hindi:
-      if (trimmed.contains(';')) {
-        final idx = trimmed.indexOf(';');
-        final reason = _capitalize(trimmed.substring(0, idx).trim());
-        var action = _capitalize(trimmed.substring(idx + 1).trim());
-        if (!action.endsWith('.') && !action.endsWith('!') && !action.endsWith('?')) {
-          action = '$action.';
-        }
-        return (reason, action);
-      } else if (trimmed.contains(',')) {
-        final idx = trimmed.indexOf(',');
-        final reason = _capitalize(trimmed.substring(0, idx).trim());
-        var action = _capitalize(trimmed.substring(idx + 1).trim());
-        if (!action.endsWith('.') && !action.endsWith('!') && !action.endsWith('?')) {
-          action = '$action.';
-        }
-        return (reason, action);
-      }
-      return (null, _capitalize(trimmed));
-
-    case AppLocale.simplifiedChinese:
-      if (trimmed.contains('；')) {
-        final idx = trimmed.indexOf('；');
-        final reason = trimmed.substring(0, idx).trim();
-        var action = trimmed.substring(idx + 1).trim();
-        if (!action.endsWith('。')) action = '$action。';
-        return (reason, action);
-      } else if (trimmed.contains(';')) {
-        final idx = trimmed.indexOf(';');
-        final reason = trimmed.substring(0, idx).trim();
-        var action = trimmed.substring(idx + 1).trim();
-        if (!action.endsWith('。')) action = '$action。';
-        return (reason, action);
-      } else if (trimmed.contains('，')) {
-        final idx = trimmed.indexOf('，');
-        final reason = trimmed.substring(0, idx).trim();
-        var action = trimmed.substring(idx + 1).trim();
-        if (!action.endsWith('。')) action = '$action。';
-        return (reason, action);
-      }
-      return (null, trimmed);
-
-    case AppLocale.japanese:
-      final periodIdx = trimmed.indexOf('。');
-      if (periodIdx != -1 && periodIdx < trimmed.length - 1) {
-        final reason = trimmed.substring(0, periodIdx).trim();
-        final action = trimmed.substring(periodIdx + 1).trim();
-        return (reason, action);
-      } else if (trimmed.contains('、')) {
-        final commaIdx = trimmed.indexOf('、');
-        final reason = trimmed.substring(0, commaIdx).trim();
-        var action = trimmed.substring(commaIdx + 1).trim();
-        if (!action.endsWith('。')) action = '$action。';
-        return (reason, action);
-      }
-      return (null, trimmed);
-
-    case AppLocale.korean:
-      final dotMatch = RegExp(r'[.．]\s+').firstMatch(trimmed);
-      if (dotMatch != null) {
-        final reason = trimmed.substring(0, dotMatch.start).trim();
-        final action = trimmed.substring(dotMatch.end).trim();
-        return (reason, action);
-      }
-      final clauseMatch = RegExp(r'(볼 때|있어|있으며)\s+').firstMatch(trimmed);
-      if (clauseMatch != null) {
-        final reason = trimmed.substring(0, clauseMatch.end).trim();
-        final action = trimmed.substring(clauseMatch.end).trim();
-        return (reason, action);
-      }
-      return (null, trimmed);
-
-    case AppLocale.thai:
-      final spaceIdx = trimmed.indexOf(' ');
-      if (spaceIdx != -1) {
-        final reason = trimmed.substring(0, spaceIdx).trim();
-        final action = trimmed.substring(spaceIdx + 1).trim();
-        return (reason, action);
-      }
-      return (null, trimmed);
-  }
-}
-
-String _capitalize(String s) {
-  if (s.isEmpty) return s;
-  return s[0].toUpperCase() + s.substring(1);
+  return '$contextClause$sep$mechanismClause';
 }
 
 /// Returns dedicated (shouldDo, avoid) for new modes: reasonEmotion & confrontAvoid.
