@@ -46,14 +46,12 @@ CosmicGuidanceText composeCosmicGuidance({
 
   final ctxTable = _contextTableFor(locale);
   final mechTable = _mechanismTableFor(locale, birthCountryCode);
-  final sep = _separatorFor(locale);
-
   final contextClause = ctxTable['$catKey:$perKey'] ?? ctxTable['general:now']!;
   final mechanismClause = mechTable['$modKey:$sideKey:$v'] ??
       mechTable['balanced:balanced:$v'] ??
       mechTable['balanced:balanced:0']!;
 
-  final fullHeadline = '$contextClause$sep$mechanismClause';
+  final fullHeadline = _formatUnifiedHeadline(locale, contextClause, mechanismClause);
   final split = _splitMechanism(locale, mechanismClause);
 
   return CosmicGuidanceText(
@@ -94,7 +92,10 @@ String composeCosmicHeadline({
     case AppLocale.hindi:
       if (trimmed.contains(';')) {
         final idx = trimmed.indexOf(';');
-        final reason = _capitalize(trimmed.substring(0, idx).trim());
+        var reason = _capitalize(trimmed.substring(0, idx).trim());
+        if (!reason.endsWith('.') && !reason.endsWith('!') && !reason.endsWith('?')) {
+          reason = '$reason.';
+        }
         var action = _capitalize(trimmed.substring(idx + 1).trim());
         if (!action.endsWith('.') && !action.endsWith('!') && !action.endsWith('?')) {
           action = '$action.';
@@ -102,7 +103,10 @@ String composeCosmicHeadline({
         return (reason, action);
       } else if (trimmed.contains(',')) {
         final idx = trimmed.indexOf(',');
-        final reason = _capitalize(trimmed.substring(0, idx).trim());
+        var reason = _capitalize(trimmed.substring(0, idx).trim());
+        if (!reason.endsWith('.') && !reason.endsWith('!') && !reason.endsWith('?')) {
+          reason = '$reason.';
+        }
         var action = _capitalize(trimmed.substring(idx + 1).trim());
         if (!action.endsWith('.') && !action.endsWith('!') && !action.endsWith('?')) {
           action = '$action.';
@@ -179,6 +183,59 @@ String _capitalize(String s) {
   return s[0].toUpperCase() + s.substring(1);
 }
 
+String _formatUnifiedHeadline(AppLocale locale, String context, String mechanism) {
+  final c = context.trim().replaceAll(RegExp(r'[,;.\s]+$'), '');
+  final m = mechanism.trim();
+  switch (locale) {
+    case AppLocale.vietnamese:
+    case AppLocale.english:
+    case AppLocale.spanish:
+    case AppLocale.hindi:
+      if (m.contains(';')) {
+        final idx = m.indexOf(';');
+        final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        return '$c. $p1. $p2.';
+      } else if (m.contains(',')) {
+        final idx = m.indexOf(',');
+        final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        return '$c. $p1. $p2.';
+      }
+      return '$c. ${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+
+    case AppLocale.simplifiedChinese:
+      if (m.contains('；')) {
+        final idx = m.indexOf('；');
+        final p1 = m.substring(0, idx).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        final p2 = m.substring(idx + 1).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        return '$c。$p1。$p2。';
+      }
+      return '$c。${m.replaceAll(RegExp(r'[；;。，\s]+$'), '')}。';
+
+    case AppLocale.japanese:
+      final periodIdx = m.indexOf('。');
+      if (periodIdx != -1 && periodIdx < m.length - 1) {
+        final p1 = m.substring(0, periodIdx).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        final p2 = m.substring(periodIdx + 1).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        return '$c。$p1。$p2。';
+      }
+      return '$c。${m.replaceAll(RegExp(r'[。、\s]+$'), '')}。';
+
+    case AppLocale.korean:
+      final dotMatch = RegExp(r'[.．]\s+').firstMatch(m);
+      if (dotMatch != null) {
+        final p1 = m.substring(0, dotMatch.start).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        final p2 = m.substring(dotMatch.end).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        return '$c. $p1. $p2.';
+      }
+      return '$c. ${m.replaceAll(RegExp(r'[.．\s]+$'), '')}.';
+
+    case AppLocale.thai:
+      return '$c $m';
+  }
+}
+
 /// Returns dedicated (shouldDo, avoid) for new modes: reasonEmotion & confrontAvoid.
 (String, String)? getDedicatedNewModeGuidance({
   required AppLocale locale,
@@ -191,17 +248,6 @@ String _capitalize(String s) {
   final table = _newModesGuidanceFor(locale);
   return table[key];
 }
-
-String _separatorFor(AppLocale locale) => switch (locale) {
-  AppLocale.vietnamese => '; ',
-  AppLocale.english => '; ',
-  AppLocale.spanish => '; ',
-  AppLocale.simplifiedChinese => '；',
-  AppLocale.japanese => '、',
-  AppLocale.korean => ', ',
-  AppLocale.thai => ' ',
-  AppLocale.hindi => '; ',
-};
 
 Map<String, String> _contextTableFor(AppLocale locale) => switch (locale) {
   AppLocale.vietnamese => _viContexts,

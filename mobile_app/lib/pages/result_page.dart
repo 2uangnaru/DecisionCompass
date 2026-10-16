@@ -781,71 +781,33 @@ class _ActionGuidanceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.auto_awesome_rounded,
-                color: CompassColors.gold,
-                size: 18,
+              const Padding(
+                padding: EdgeInsets.only(top: 2),
+                child: Icon(
+                  Icons.auto_awesome_rounded,
+                  color: CompassColors.gold,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
                 child: Text(
-                  guidance.title,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.gold,
-                    letterSpacing: trackingFor(context, 1.2),
-                    fontWeight: FontWeight.w700,
+                  guidance.headline,
+                  style: const TextStyle(
+                    color: Color(0xFFF0D590),
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600,
+                    height: 1.48,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 12),
-          if (guidance.cosmicReason != null &&
-              guidance.cosmicReason!.isNotEmpty) ...[
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.auto_awesome,
-                  color: CompassColors.gold,
-                  size: 13,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    guidance.cosmicReason!,
-                    style: const TextStyle(
-                      color: CompassColors.gold,
-                      fontSize: 12.5,
-                      fontWeight: FontWeight.w500,
-                      height: 1.35,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              guidance.actionHeadline ?? guidance.headline,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: CompassColors.text,
-                fontSize: 14.5,
-                fontWeight: FontWeight.w700,
-                height: 1.4,
-              ),
-            ),
-          ] else ...[
-            Text(
-              guidance.headline,
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: CompassColors.text,
-                fontWeight: FontWeight.w600,
-                height: 1.45,
-              ),
-            ),
-          ],
           const SizedBox(height: 14),
+          const Divider(height: 1, color: CompassColors.line),
+          const SizedBox(height: 12),
           _GuidanceItem(
             tag: guidance.shouldDoTag,
             tagColor: CompassColors.teal,
