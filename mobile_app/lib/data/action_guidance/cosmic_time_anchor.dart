@@ -450,7 +450,10 @@ CosmicTimeAnchor extractCosmicAnchor({
     if (birthDateStr != null && birthDateStr.isNotEmpty) {
       final birthDate = DateTime.tryParse(birthDateStr);
       if (birthDate != null) {
-        final birthCal = civilCalendar(birthDateStr);
+        final dateOnly = birthDateStr.contains('T')
+            ? birthDateStr.split('T').first
+            : (birthDateStr.length >= 10 ? birthDateStr.substring(0, 10) : birthDateStr);
+        final birthCal = civilCalendar(dateOnly);
         final natalStem = birthCal.day.stem;
         final elem = stemElements[natalStem];
         elementText = _localizeElement(locale, elem);
