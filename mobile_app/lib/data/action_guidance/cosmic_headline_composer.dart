@@ -68,7 +68,6 @@ String _formatUnifiedHeadline(AppLocale locale, String context, String mechanism
 
     case AppLocale.english:
     case AppLocale.spanish:
-    case AppLocale.hindi:
       if (m.contains(';')) {
         final idx = m.indexOf(';');
         final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
@@ -81,6 +80,16 @@ String _formatUnifiedHeadline(AppLocale locale, String context, String mechanism
         return '$c. $p1. $p2.';
       }
       return '$c. ${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+
+    case AppLocale.hindi:
+      final cleanM = m.replaceAll(RegExp(r'[,;.\s।]+$'), '');
+      if (cleanM.contains(';')) {
+        final idx = cleanM.indexOf(';');
+        final p1 = cleanM.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s।]+$'), '');
+        final p2 = cleanM.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s।]+$'), '');
+        return '$c। $p1। $p2।';
+      }
+      return '$c। $cleanM।';
 
     case AppLocale.simplifiedChinese:
       if (m.contains('；')) {
@@ -121,7 +130,6 @@ String _formatUnifiedHeadlineWithSentence(AppLocale locale, String sentence1, St
     case AppLocale.vietnamese:
     case AppLocale.english:
     case AppLocale.spanish:
-    case AppLocale.hindi:
       if (m.contains(';')) {
         final idx = m.indexOf(';');
         final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
@@ -129,6 +137,16 @@ String _formatUnifiedHeadlineWithSentence(AppLocale locale, String sentence1, St
         return '$s1\n\n$p1. $p2.';
       }
       return '$s1\n\n${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+
+    case AppLocale.hindi:
+      final cleanM = m.replaceAll(RegExp(r'[,;.\s।]+$'), '');
+      if (cleanM.contains(';')) {
+        final idx = cleanM.indexOf(';');
+        final p1 = cleanM.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s।]+$'), '');
+        final p2 = cleanM.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s।]+$'), '');
+        return '$s1\n\n$p1। $p2।';
+      }
+      return '$s1\n\n$cleanM।';
 
     case AppLocale.simplifiedChinese:
       if (m.contains('；')) {
