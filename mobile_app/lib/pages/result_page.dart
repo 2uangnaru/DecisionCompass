@@ -370,6 +370,13 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
               const SizedBox(height: 24),
               if (reading.status == engine.ReadingStatus.ready ||
                   reading.status == engine.ReadingStatus.balanced) ...[
+                _CosmicContextCard(
+                  guidance: resolveActionGuidance(
+                    locale: widget.dependencies.localeController.locale,
+                    reading: reading,
+                  ),
+                ),
+                const SizedBox(height: 14),
                 _ActionGuidanceCard(
                   guidance: resolveActionGuidance(
                     locale: widget.dependencies.localeController.locale,
@@ -768,6 +775,54 @@ class _Explanation extends StatelessWidget {
   }
 }
 
+class _CosmicContextCard extends StatelessWidget {
+  const _CosmicContextCard({required this.guidance});
+
+  final ActionGuidance guidance;
+
+  @override
+  Widget build(BuildContext context) {
+    return GlassCard(
+      key: const Key('result_cosmic_context'),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.auto_awesome_rounded,
+                color: CompassColors.gold,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  guidance.contextTitle,
+                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                    color: CompassColors.gold,
+                    letterSpacing: trackingFor(context, 1.2),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Text(
+            guidance.headline,
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              color: CompassColors.text,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              height: 1.5,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _ActionGuidanceCard extends StatelessWidget {
   const _ActionGuidanceCard({required this.guidance});
 
@@ -783,8 +838,8 @@ class _ActionGuidanceCard extends StatelessWidget {
           Row(
             children: [
               const Icon(
-                Icons.auto_awesome_rounded,
-                color: CompassColors.gold,
+                Icons.checklist_rounded,
+                color: CompassColors.teal,
                 size: 18,
               ),
               const SizedBox(width: 8),
@@ -792,22 +847,13 @@ class _ActionGuidanceCard extends StatelessWidget {
                 child: Text(
                   guidance.title,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.gold,
+                    color: CompassColors.teal,
                     letterSpacing: trackingFor(context, 1.2),
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 12),
-          Text(
-            guidance.headline,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CompassColors.text,
-              fontWeight: FontWeight.w600,
-              height: 1.45,
-            ),
           ),
           const SizedBox(height: 14),
           _GuidanceItem(

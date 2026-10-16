@@ -18,6 +18,7 @@ import 'models/models.dart';
 class ActionGuidance {
   const ActionGuidance({
     required this.title,
+    required this.contextTitle,
     required this.headline,
     required this.shouldDo,
     required this.avoid,
@@ -25,8 +26,11 @@ class ActionGuidance {
     required this.avoidTag,
   });
 
-  /// Section title, e.g. "COSMIC GUIDANCE", "CHỈ DẪN HÀNH ĐỘNG".
+  /// Section title for action guidance, e.g. "CHỈ DẪN HÀNH ĐỘNG".
   final String title;
+
+  /// Section title for cosmic context analysis, e.g. "BỐI CẢNH VẬN TRÌNH".
+  final String contextTitle;
 
   /// What the reading leaned toward, contextualized by mode and category.
   final String headline;
@@ -149,6 +153,7 @@ ActionGuidance resolveActionGuidance({
 
     return ActionGuidance(
       title: tags.$1,
+      contextTitle: _contextTitleFor(locale),
       shouldDoTag: tags.$2,
       avoidTag: tags.$3,
       headline: cosmicHeadline,
@@ -196,6 +201,7 @@ ActionGuidance resolveActionGuidance({
 
   return ActionGuidance(
     title: tags.$1,
+    contextTitle: _contextTitleFor(locale),
     shouldDoTag: tags.$2,
     avoidTag: tags.$3,
     headline: cosmicHeadline,
@@ -415,16 +421,28 @@ ActionGuidance resolveActionGuidance({
 
 const String _balancedKey = 'balanced';
 
+/// Localized section title for cosmic context analysis card.
+String _contextTitleFor(AppLocale locale) => switch (locale) {
+  AppLocale.english => 'COSMIC CONTEXT',
+  AppLocale.vietnamese => 'BỐI CẢNH VẬN TRÌNH',
+  AppLocale.spanish => 'CONTEXTO CÓSMICO',
+  AppLocale.japanese => '運気の背景',
+  AppLocale.korean => '운의 흐름과 배경',
+  AppLocale.thai => 'บริบทของจังหวะเวลา',
+  AppLocale.hindi => 'समय का संदर्भ',
+  AppLocale.simplifiedChinese => '运势背景',
+};
+
 /// (title, shouldDoTag, avoidTag)
 (String, String, String) _tagsFor(AppLocale locale) => switch (locale) {
-  AppLocale.english => ('COSMIC GUIDANCE', 'Consider:', 'Watch for:'),
+  AppLocale.english => ('ACTION GUIDANCE', 'Consider:', 'Watch for:'),
   AppLocale.vietnamese => ('CHỈ DẪN HÀNH ĐỘNG', 'Nên:', 'Tránh:'),
-  AppLocale.spanish => ('GUÍA SIMBÓLICA', 'Para pensar:', 'Ojo con:'),
-  AppLocale.japanese => ('今日の指針', '考えること:', '気をつけること:'),
-  AppLocale.korean => ('우주의 안내', '생각해 볼 점:', '주의할 점:'),
-  AppLocale.thai => ('แนวทางเชิงสัญลักษณ์', 'ลองพิจารณา:', 'ระวัง:'),
-  AppLocale.hindi => ('प्रतीकात्मक मार्गदर्शन', 'सोचें:', 'ध्यान रखें:'),
-  AppLocale.simplifiedChinese => ('象征指引', '可以想想:', '留意:'),
+  AppLocale.spanish => ('GUÍA DE ACCIÓN', 'Para pensar:', 'Ojo con:'),
+  AppLocale.japanese => ('行動の指針', '考えること:', '気をつけること:'),
+  AppLocale.korean => ('행동 지침', '생각해 볼 점:', '주의할 점:'),
+  AppLocale.thai => ('แนวทางการปฏิบัติ', 'ลองพิจารณา:', 'ระวัง:'),
+  AppLocale.hindi => ('कार्य मार्गदर्शन', 'सोचें:', 'ध्यान रखें:'),
+  AppLocale.simplifiedChinese => ('行动指引', '可以想想:', '留意:'),
 };
 
 Map<String, (String, String, String)> _copyFor(AppLocale locale) =>

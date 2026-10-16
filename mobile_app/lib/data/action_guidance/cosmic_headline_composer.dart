@@ -31,14 +31,71 @@ String composeCosmicHeadline({
 
   final ctxTable = _contextTableFor(locale);
   final mechTable = _mechanismTableFor(locale, birthCountryCode);
-  final sep = _separatorFor(locale);
 
   final contextClause = ctxTable['$catKey:$perKey'] ?? ctxTable['general:now']!;
   final mechanismClause = mechTable['$modKey:$sideKey:$v'] ??
       mechTable['balanced:balanced:$v'] ??
       mechTable['balanced:balanced:0']!;
 
-  return '$contextClause$sep$mechanismClause';
+  return _formatUnifiedHeadline(locale, contextClause, mechanismClause);
+}
+
+String _capitalize(String s) {
+  if (s.isEmpty) return s;
+  return s[0].toUpperCase() + s.substring(1);
+}
+
+String _formatUnifiedHeadline(AppLocale locale, String context, String mechanism) {
+  final c = context.trim().replaceAll(RegExp(r'[,;.\s]+$'), '');
+  final m = mechanism.trim();
+  switch (locale) {
+    case AppLocale.vietnamese:
+    case AppLocale.english:
+    case AppLocale.spanish:
+    case AppLocale.hindi:
+      if (m.contains(';')) {
+        final idx = m.indexOf(';');
+        final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        return '$c. $p1. $p2.';
+      } else if (m.contains(',')) {
+        final idx = m.indexOf(',');
+        final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        return '$c. $p1. $p2.';
+      }
+      return '$c. ${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+
+    case AppLocale.simplifiedChinese:
+      if (m.contains('；')) {
+        final idx = m.indexOf('；');
+        final p1 = m.substring(0, idx).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        final p2 = m.substring(idx + 1).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        return '$c。$p1。$p2。';
+      }
+      return '$c。${m.replaceAll(RegExp(r'[；;。，\s]+$'), '')}。';
+
+    case AppLocale.japanese:
+      final periodIdx = m.indexOf('。');
+      if (periodIdx != -1 && periodIdx < m.length - 1) {
+        final p1 = m.substring(0, periodIdx).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        final p2 = m.substring(periodIdx + 1).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        return '$c。$p1。$p2。';
+      }
+      return '$c。${m.replaceAll(RegExp(r'[。、\s]+$'), '')}。';
+
+    case AppLocale.korean:
+      final dotMatch = RegExp(r'[.．]\s+').firstMatch(m);
+      if (dotMatch != null) {
+        final p1 = m.substring(0, dotMatch.start).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        final p2 = m.substring(dotMatch.end).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        return '$c. $p1. $p2.';
+      }
+      return '$c. ${m.replaceAll(RegExp(r'[.．\s]+$'), '')}.';
+
+    case AppLocale.thai:
+      return '$c $m';
+  }
 }
 
 /// Returns dedicated (shouldDo, avoid) for new modes: reasonEmotion & confrontAvoid.
@@ -53,17 +110,6 @@ String composeCosmicHeadline({
   final table = _newModesGuidanceFor(locale);
   return table[key];
 }
-
-String _separatorFor(AppLocale locale) => switch (locale) {
-  AppLocale.vietnamese => '; ',
-  AppLocale.english => '; ',
-  AppLocale.spanish => '; ',
-  AppLocale.simplifiedChinese => '；',
-  AppLocale.japanese => '、',
-  AppLocale.korean => ', ',
-  AppLocale.thai => ' ',
-  AppLocale.hindi => '; ',
-};
 
 Map<String, String> _contextTableFor(AppLocale locale) => switch (locale) {
   AppLocale.vietnamese => _viContexts,
