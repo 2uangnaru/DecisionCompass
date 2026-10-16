@@ -782,6 +782,7 @@ class _CosmicContextCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final paragraphs = guidance.headline.split('\n\n');
     return GlassCard(
       key: const Key('result_cosmic_context'),
       child: Column(
@@ -808,15 +809,18 @@ class _CosmicContextCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          Text(
-            guidance.headline,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: CompassColors.text,
-              fontSize: 14,
-              fontWeight: FontWeight.w500,
-              height: 1.5,
+          for (var i = 0; i < paragraphs.length; i++) ...[
+            if (i > 0) const SizedBox(height: 10),
+            Text(
+              paragraphs[i],
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: CompassColors.text,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                height: 1.5,
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );

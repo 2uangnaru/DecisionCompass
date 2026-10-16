@@ -126,39 +126,39 @@ String _formatUnifiedHeadlineWithSentence(AppLocale locale, String sentence1, St
         final idx = m.indexOf(';');
         final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
         final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
-        return '$s1 $p1. $p2.';
+        return '$s1\n\n$p1. $p2.';
       }
-      return '$s1 ${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+      return '$s1\n\n${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
 
     case AppLocale.simplifiedChinese:
       if (m.contains('；')) {
         final idx = m.indexOf('；');
         final p1 = m.substring(0, idx).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
         final p2 = m.substring(idx + 1).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
-        return '$s1$p1。$p2。';
+        return '$s1\n\n$p1。$p2。';
       }
-      return '$s1${m.replaceAll(RegExp(r'[；;。，\s]+$'), '')}。';
+      return '$s1\n\n${m.replaceAll(RegExp(r'[；;。，\s]+$'), '')}。';
 
     case AppLocale.japanese:
       final periodIdx = m.indexOf('。');
       if (periodIdx != -1 && periodIdx < m.length - 1) {
         final p1 = m.substring(0, periodIdx).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
         final p2 = m.substring(periodIdx + 1).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
-        return '$s1$p1。$p2。';
+        return '$s1\n\n$p1。$p2。';
       }
-      return '$s1${m.replaceAll(RegExp(r'[。、\s]+$'), '')}。';
+      return '$s1\n\n${m.replaceAll(RegExp(r'[。、\s]+$'), '')}。';
 
     case AppLocale.korean:
       final dotMatch = RegExp(r'[.．]\s+').firstMatch(m);
       if (dotMatch != null) {
         final p1 = m.substring(0, dotMatch.start).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
         final p2 = m.substring(dotMatch.end).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
-        return '$s1 $p1. $p2.';
+        return '$s1\n\n$p1. $p2.';
       }
-      return '$s1 ${m.replaceAll(RegExp(r'[.．\s]+$'), '')}.';
+      return '$s1\n\n${m.replaceAll(RegExp(r'[.．\s]+$'), '')}.';
 
     case AppLocale.thai:
-      return '$s1 $m';
+      return '$s1\n\n$m';
   }
 }
 
