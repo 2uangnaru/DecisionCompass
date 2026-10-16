@@ -8,6 +8,7 @@ import 'action_guidance/action_guidance_th.dart';
 import 'action_guidance/action_guidance_vi.dart';
 import 'action_guidance/action_guidance_zh.dart';
 import 'action_guidance/cosmic_headline_composer.dart';
+import 'action_guidance/cosmic_time_anchor.dart';
 import 'models/models.dart';
 
 /// The short reflection shown beneath a reading result.
@@ -108,7 +109,7 @@ ActionGuidance resolveActionGuidance({
 }) {
   final tags = _tagsFor(locale);
   final table = _copyFor(locale);
-  final lean = _leanOf(reading);
+  final lean = reading.mode.legacy ? CosmicLean.balanced : _leanOf(reading);
   final category = reading.category;
   final period = reading.period.wireValue;
   final variant = _resolveVariant(reading);
@@ -116,6 +117,12 @@ ActionGuidance resolveActionGuidance({
   final profileRaw = reading.inputSnapshot.raw['profile'];
   final birthCountryCode =
       (profileRaw is Map ? profileRaw['birthCountry'] : null) as String?;
+
+  final anchor = extractCosmicAnchor(
+    reading: reading,
+    locale: locale,
+    lean: lean,
+  );
 
   final cosmicHeadline = composeCosmicHeadline(
     locale: locale,
@@ -125,6 +132,7 @@ ActionGuidance resolveActionGuidance({
     lean: lean,
     variant: variant,
     birthCountryCode: birthCountryCode,
+    anchor: anchor,
   );
 
   if (lean == CosmicLean.balanced || reading.mode.legacy) {

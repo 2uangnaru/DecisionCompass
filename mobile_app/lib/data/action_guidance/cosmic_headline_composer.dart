@@ -4,12 +4,15 @@
 
 import '../../app_locale.dart';
 import '../models/models.dart';
+import 'cosmic_time_anchor.dart';
 
 /// Lean direction of the decision reading.
 enum CosmicLean { first, second, balanced }
 
 /// Composes the unified cosmic headline directly combining
 /// the cultural context lens [Category x Period] with the planetary mechanism [Mode x Side x Variant].
+/// When [anchor] is provided, uses the spiritually grounded context sentence embedding
+/// Can Chi, Day Officer, and Natal Five Element / Zodiac Sign calculations.
 /// When [locale] is English, [birthCountryCode] is used by the Smart Cultural Adaptor
 /// to tailor the philosophical resonance (Eastern Heritage, Vedic Cosmic, or Western Classical).
 String composeCosmicHeadline({
@@ -20,6 +23,7 @@ String composeCosmicHeadline({
   required CosmicLean lean,
   required int variant,
   String? birthCountryCode,
+  CosmicTimeAnchor? anchor,
 }) {
   final catKey = category.wireValue;
   final perKey = period.wireValue;
@@ -29,14 +33,18 @@ String composeCosmicHeadline({
       : (lean == CosmicLean.first ? 'first' : 'second');
   final v = variant % 3;
 
-  final ctxTable = _contextTableFor(locale);
   final mechTable = _mechanismTableFor(locale, birthCountryCode);
-
-  final contextClause = ctxTable['$catKey:$perKey'] ?? ctxTable['general:now']!;
   final mechanismClause = mechTable['$modKey:$sideKey:$v'] ??
       mechTable['balanced:balanced:$v'] ??
       mechTable['balanced:balanced:0']!;
 
+  if (anchor != null) {
+    final contextSentence = anchor.buildContextSentence();
+    return _formatUnifiedHeadlineWithSentence(locale, contextSentence, mechanismClause);
+  }
+
+  final ctxTable = _contextTableFor(locale);
+  final contextClause = ctxTable['$catKey:$perKey'] ?? ctxTable['general:now']!;
   return _formatUnifiedHeadline(locale, contextClause, mechanismClause);
 }
 
@@ -103,6 +111,54 @@ String _formatUnifiedHeadline(AppLocale locale, String context, String mechanism
 
     case AppLocale.thai:
       return '$c $m';
+  }
+}
+
+String _formatUnifiedHeadlineWithSentence(AppLocale locale, String sentence1, String mechanism) {
+  final s1 = sentence1.trim();
+  final m = mechanism.trim();
+  switch (locale) {
+    case AppLocale.vietnamese:
+    case AppLocale.english:
+    case AppLocale.spanish:
+    case AppLocale.hindi:
+      if (m.contains(';')) {
+        final idx = m.indexOf(';');
+        final p1 = _capitalize(m.substring(0, idx).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        final p2 = _capitalize(m.substring(idx + 1).trim().replaceAll(RegExp(r'[,;.\s]+$'), ''));
+        return '$s1 $p1. $p2.';
+      }
+      return '$s1 ${_capitalize(m.replaceAll(RegExp(r'[,;.\s]+$'), ''))}.';
+
+    case AppLocale.simplifiedChinese:
+      if (m.contains('；')) {
+        final idx = m.indexOf('；');
+        final p1 = m.substring(0, idx).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        final p2 = m.substring(idx + 1).trim().replaceAll(RegExp(r'[；;。，\s]+$'), '');
+        return '$s1$p1。$p2。';
+      }
+      return '$s1${m.replaceAll(RegExp(r'[；;。，\s]+$'), '')}。';
+
+    case AppLocale.japanese:
+      final periodIdx = m.indexOf('。');
+      if (periodIdx != -1 && periodIdx < m.length - 1) {
+        final p1 = m.substring(0, periodIdx).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        final p2 = m.substring(periodIdx + 1).trim().replaceAll(RegExp(r'[。、\s]+$'), '');
+        return '$s1$p1。$p2。';
+      }
+      return '$s1${m.replaceAll(RegExp(r'[。、\s]+$'), '')}。';
+
+    case AppLocale.korean:
+      final dotMatch = RegExp(r'[.．]\s+').firstMatch(m);
+      if (dotMatch != null) {
+        final p1 = m.substring(0, dotMatch.start).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        final p2 = m.substring(dotMatch.end).trim().replaceAll(RegExp(r'[.．\s]+$'), '');
+        return '$s1 $p1. $p2.';
+      }
+      return '$s1 ${m.replaceAll(RegExp(r'[.．\s]+$'), '')}.';
+
+    case AppLocale.thai:
+      return '$s1 $m';
   }
 }
 
