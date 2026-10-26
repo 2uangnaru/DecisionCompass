@@ -1,6 +1,9 @@
 {
   "@@locale": "vi",
   "appName": "AstraCue",
+  "adNotReady": "Quảng cáo hiện chưa sẵn sàng. Bạn thử lại sau một chút nhé.",
+  "adPrivacyOptions": "Lựa chọn quyền riêng tư quảng cáo",
+  "adRewardNotSaved": "Không lưu được phần thưởng nên chưa có gì được cộng. Bạn thử lại nhé.",
   "analyticsConsentTitle": "Thống kê sử dụng (không bắt buộc)",
   "analyticsConsentBody": "Cho phép Firebase/Google Analytics thu thập thông tin sử dụng app và thiết bị để cải thiện AstraCue. Không gửi tên, thông tin sinh hoặc lá số của bạn. Bạn có thể tắt trong mục Sử dụng có trách nhiệm.",
   "analyticsConsentSaveFailed": "Không thể lưu lựa chọn này. Thống kê đã tắt trong phiên này.",

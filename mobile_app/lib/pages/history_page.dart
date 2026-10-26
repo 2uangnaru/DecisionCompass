@@ -7,6 +7,7 @@ import '../l10n/app_localizations.dart';
 import '../localized_presentation.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../services/ad_service.dart';
 import '../result_palette.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
@@ -17,6 +18,7 @@ class HistoryPage extends StatefulWidget {
     super.key,
     required this.dependencies,
     this.openedFromCurrentReading = false,
+    this.protectFirstDailyFlow = false,
   });
 
   final ReadingDependencies dependencies;
@@ -28,6 +30,7 @@ class HistoryPage extends StatefulWidget {
   /// History was opened from Home. A snapshot opened from here inherits the
   /// answer, because only then does closing it have somewhere to go.
   final bool openedFromCurrentReading;
+  final bool protectFirstDailyFlow;
 
   @override
   State<HistoryPage> createState() => _HistoryPageState();
@@ -37,6 +40,34 @@ class _HistoryPageState extends State<HistoryPage> {
   // Loaded once per page visit; a fresh push re-reads storage, so a reading
   // saved just before opening History always shows up.
   late Future<List<HistoryEntry>> _entries;
+  bool _opening = false;
+
+  Future<void> _openEntry(HistoryEntry entry) async {
+    if (_opening || ModalRoute.of(context)?.isCurrent != true) return;
+    _opening = true;
+    try {
+      if (!widget.protectFirstDailyFlow) {
+        await widget.dependencies.adService.showInterstitial(
+          onDismissed: () {},
+          placement: InterstitialPlacement.history,
+        );
+      }
+      if (!mounted || ModalRoute.of(context)?.isCurrent != true) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ResultPage(
+            reading: entry.reading,
+            dependencies: widget.dependencies,
+            autoSave: false,
+            closesToCurrentReading: widget.openedFromCurrentReading,
+            protectFirstDailyFlow: widget.protectFirstDailyFlow,
+          ),
+        ),
+      );
+    } finally {
+      _opening = false;
+    }
+  }
 
   @override
   void initState() {
@@ -118,6 +149,7 @@ class _HistoryPageState extends State<HistoryPage> {
                     today: _isoDate(widget.dependencies.nowLocal()),
                     dependencies: widget.dependencies,
                     closesToCurrentReading: widget.openedFromCurrentReading,
+                    onOpen: _openEntry,
                   );
                 },
               ),
@@ -231,9 +263,11 @@ class _HistoryList extends StatelessWidget {
     required this.today,
     required this.dependencies,
     required this.closesToCurrentReading,
+    required this.onOpen,
   });
 
   final List<HistoryEntry> entries;
+  final void Function(HistoryEntry) onOpen;
   final String today;
   final ReadingDependencies dependencies;
 
@@ -274,6 +308,7 @@ class _HistoryList extends StatelessWidget {
           entry: entry,
           dependencies: dependencies,
           closesToCurrentReading: closesToCurrentReading,
+          onOpen: onOpen,
         ),
       );
     }
@@ -286,9 +321,11 @@ class _HistoryRow extends StatelessWidget {
     required this.entry,
     required this.dependencies,
     required this.closesToCurrentReading,
+    required this.onOpen,
   });
 
   final HistoryEntry entry;
+  final void Function(HistoryEntry) onOpen;
   final ReadingDependencies dependencies;
 
   /// See [ResultPage.closesToCurrentReading].
@@ -306,16 +343,7 @@ class _HistoryRow extends StatelessWidget {
       winner: reading.winner,
     );
     return GlassCard(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute<void>(
-          builder: (_) => ResultPage(
-            reading: reading,
-            dependencies: dependencies,
-            autoSave: false,
-            closesToCurrentReading: closesToCurrentReading,
-          ),
-        ),
-      ),
+      onTap: () => onOpen(entry),
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

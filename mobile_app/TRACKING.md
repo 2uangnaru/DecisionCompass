@@ -1,5 +1,8 @@
 # AstraCue — minimal Android analytics
 
+The 2026-10-26 ads lifecycle extension is documented in `ADS_LIFECYCLE.md`
+and at the end of this file; older prototype-only notes are historical.
+
 Implemented 2026-10-09. Firebase Analytics is optional and separate from the
 offline reading engine. No ads, billing, Crashlytics, Remote Config, account,
 server or formula changes are included.
@@ -243,3 +246,12 @@ Official references:
 - https://firebase.google.com/docs/analytics/flutter/events
 - https://firebase.google.com/docs/analytics/debugview
 - https://developers.google.com/tag-platform/security/guides/app-consent?platform=android
+
+## Ads extension — 2026-10-26
+
+`ADS_LIFECYCLE.md` documents eleven new typed-vocabulary ad lifecycle events,
+separate impression/paid callbacks (the impression event is
+`app_ad_impression`, never Firebase's own `ad_impression`), fixed skip reasons and the move from direct
+prototype grants to SDK earned-callback grants (`grant_source=sdk`). Older
+prototype descriptions above are historical. Consent/no-op and sensitive-data
+boundaries are unchanged. Test units do not prove real revenue or native QA.

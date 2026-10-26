@@ -3,7 +3,7 @@ import '../data/models/models.dart' as engine;
 import 'analytics_event.dart';
 import 'analytics_service.dart';
 
-/// A confirmed reward CTA, not a sheet impression or a real ad view.
+/// A deliberate reward CTA and successful saved grant, not an ad impression.
 /// Analytics deduplication does not change reward or quota business rules.
 class RewardAnalyticsAttempt {
   RewardAnalyticsAttempt({
@@ -13,6 +13,7 @@ class RewardAnalyticsAttempt {
     required this.period,
     required this.language,
     required this.placement,
+    this.grantSource = RewardGrantSource.prototype,
   }) : _version = analytics.consentVersion {
     _started = analytics.record(
       AnalyticsEvent.rewardCtaTapped(
@@ -21,6 +22,7 @@ class RewardAnalyticsAttempt {
         period: period,
         language: language,
         placement: placement,
+        grantSource: grantSource,
       ),
     );
   }
@@ -31,6 +33,7 @@ class RewardAnalyticsAttempt {
   final engine.TimePeriod period;
   final AppLocale language;
   final RewardPlacement placement;
+  final RewardGrantSource grantSource;
   final int _version;
   bool _started = false;
   bool _granted = false;
@@ -47,6 +50,7 @@ class RewardAnalyticsAttempt {
         period: period,
         language: language,
         placement: placement,
+        grantSource: grantSource,
       ),
     );
   }

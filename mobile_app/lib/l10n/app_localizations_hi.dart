@@ -13,6 +13,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady =>
+      'अभी विज्ञापन तैयार नहीं हैं। कृपया थोड़ी देर बाद फिर कोशिश करें।';
+
+  @override
+  String get adPrivacyOptions => 'विज्ञापन गोपनीयता विकल्प';
+
+  @override
+  String get adRewardNotSaved =>
+      'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
+
+  @override
   String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';
 
   @override
@@ -1312,6 +1323,17 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get appName => 'AstraCue';
+
+  @override
+  String get adNotReady =>
+      'अभी विज्ञापन तैयार नहीं हैं। कृपया थोड़ी देर बाद फिर कोशिश करें।';
+
+  @override
+  String get adPrivacyOptions => 'विज्ञापन गोपनीयता विकल्प';
+
+  @override
+  String get adRewardNotSaved =>
+      'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
 
   @override
   String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';

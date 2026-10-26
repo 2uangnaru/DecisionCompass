@@ -13,6 +13,17 @@ class AppLocalizationsEs extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady =>
+      'Los anuncios no están disponibles ahora. Inténtalo de nuevo en un momento.';
+
+  @override
+  String get adPrivacyOptions => 'Opciones de privacidad de anuncios';
+
+  @override
+  String get adRewardNotSaved =>
+      'No se pudo guardar tu recompensa, así que no se añadió nada. Inténtalo de nuevo.';
+
+  @override
   String get analyticsConsentTitle => 'Estadísticas de uso (opcional)';
 
   @override

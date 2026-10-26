@@ -65,8 +65,7 @@ Future<void> main() async {
     store: const SharedPreferencesLocaleStore(),
     analytics: analytics,
   );
-  final adService = AdMobService();
-  unawaited(adService.initialize());
+  final adService = AdMobService(analytics: analytics);
   // Load while the first Flutter frame animates. The app keeps the language-
   // neutral startup view until both tasks finish, so saved languages never
   // flash through English content.
@@ -81,6 +80,8 @@ Future<void> main() async {
       minimumStartupDuration: const Duration(milliseconds: 3000),
       startupPreparation: startupPreparation,
       onContentReady: () {
+        // UMP may show a native form; only start after the first content frame.
+        unawaited(adService.initialize());
         if (defaultTargetPlatform == TargetPlatform.android) {
           unawaited(
             const MethodChannel('astracue/startup')
@@ -88,6 +89,7 @@ Future<void> main() async {
           );
         }
       },
+      onDetached: adService.dispose,
       dependencies: ReadingDependencies(
         repository: repository,
         contextProvider: contextProvider,

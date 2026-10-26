@@ -1,6 +1,27 @@
 # AstraCue: Cosmic Decisions — Project Handoff
 
-Updated: 2026-10-15
+Updated: 2026-10-26
+
+## Ads lifecycle handoff — 2026-10-26 (supersedes older ads notes below)
+
+Implementation/spec: `mobile_app/ADS_LIFECYCLE.md`. Automatic interstitials
+have exactly two candidate actions: later **free** analysis completions and
+explicit History snapshot taps. Never on Home/back/resume. The first daily
+reading and History opened within its flow stay clean. Bonus-funded analysis
+never calls an interstitial. A shared persisted 30-second gap starts at native
+interstitial dismissal; no reward gap and no daily interstitial cap.
+
+`ManagedAdService` owns two single-ad caches, the shared fullscreen lock,
+15-second load timeout, 2/4/8/16/32/64-second retry and 50-minute cache refresh.
+There is no show-duration timeout or late catch-up display. Native AdMob and
+UMP are isolated in `ad_service.dart`; tests inject `AdsBackend` rather than
+pretending a fake proves native rendering. Reward buttons now require the SDK
+earned callback; NoOp never grants. Test harness rewards are explicitly fake.
+Only Google test units are configured. Banner remains a prototype. Production
+IDs/UMP account setup, device QA and policy acceptance are NOT verified.
+
+The older quota/analytics notes describing direct prototype grants and the
+old eight-second interstitial show timeout are historical, not current code.
 
 ## Calculation Engine Handoff: 2 New Decision Modes — 2026-10-15
 

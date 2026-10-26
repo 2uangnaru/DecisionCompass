@@ -9,6 +9,8 @@ enum ReadingLockStage { ritual, loading, commit }
 
 enum RewardPlacement { reading, mode, category, period }
 
+enum RewardGrantSource { prototype, sdk }
+
 /// Closed, typed payloads: no profile, response, identifier or arbitrary text
 /// can be supplied to an analytics event.
 class AnalyticsEvent {
@@ -17,6 +19,80 @@ class AnalyticsEvent {
 
   final String name;
   final Map<String, Object> parameters;
+
+  /// Closed lifecycle vocabulary. Never log SDK error descriptions/IDs.
+  factory AnalyticsEvent.adLifecycle({
+    required String action,
+    required String format,
+    String? placement,
+    String? reason,
+    double? value,
+    String? currency,
+    String? precision,
+  }) {
+    const actions = {
+      'request',
+      'loaded',
+      'load_failed',
+      'skipped',
+      'show_requested',
+      'show_failed',
+      'impression',
+      'clicked',
+      'paid',
+      'dismissed',
+      'reward_save_failed',
+    };
+    const placements = {
+      'afterAnalysis',
+      'history',
+      'reading',
+      'mode',
+      'category',
+      'period',
+    };
+    const reasons = {
+      'policy_unavailable',
+      'first_daily_flow',
+      'interstitial_gap',
+      'disposed',
+      'background',
+      'consent_or_initialization',
+      'fullscreen_busy',
+      'not_ready',
+      'load_timeout',
+      'sdk_load_failed',
+      'load_exception',
+    };
+    if (!actions.contains(action) ||
+        !{'interstitial', 'rewarded'}.contains(format) ||
+        (placement != null && !placements.contains(placement)) ||
+        (reason != null && !reasons.contains(reason))) {
+      throw ArgumentError('invalid_ad_event');
+    }
+    // `ad_impression` is Firebase's own (SDK-collected or reserved) name;
+    // reusing it would double-count or be dropped. The app's copy is apart.
+    final name = action == 'impression' ? 'app_ad_impression' : 'ad_$action';
+    return AnalyticsEvent._(name, {
+      'ad_format': format,
+      if (placement != null) 'placement': placement,
+      if (reason != null) 'reason': reason,
+      if (action == 'paid' && value != null && value.isFinite && value >= 0)
+        'value_micros': value,
+      if (action == 'paid' &&
+          currency != null &&
+          RegExp(r'^[A-Z]{3}$').hasMatch(currency))
+        'currency': currency,
+      if (action == 'paid' &&
+          {
+            'unknown',
+            'estimated',
+            'publisherProvided',
+            'precise',
+          }.contains(precision))
+        'precision': precision!,
+    });
+  }
 
   factory AnalyticsEvent.onboardingStarted() =>
       AnalyticsEvent._('onboarding_started', {});
@@ -109,23 +185,25 @@ class AnalyticsEvent {
     required engine.TimePeriod period,
     required AppLocale language,
     required RewardPlacement placement,
+    RewardGrantSource grantSource = RewardGrantSource.prototype,
   }) => AnalyticsEvent._('reward_cta_tapped', {
     ..._reading(mode, category, period, language),
     'placement': placement.name,
-    'grant_source': 'prototype',
+    'grant_source': grantSource.name,
   });
 
-  /// Only an app-owned prototype reward; never an ad impression or revenue.
+  /// A saved credit/option unlock, never an impression or revenue event.
   factory AnalyticsEvent.rewardGranted({
     required engine.DecisionMode mode,
     required engine.ReadingCategory category,
     required engine.TimePeriod period,
     required AppLocale language,
     required RewardPlacement placement,
+    RewardGrantSource grantSource = RewardGrantSource.prototype,
   }) => AnalyticsEvent._('reward_granted', {
     ..._reading(mode, category, period, language),
     'placement': placement.name,
-    'grant_source': 'prototype',
+    'grant_source': grantSource.name,
   });
 
   factory AnalyticsEvent.readingEntitlementUsed({

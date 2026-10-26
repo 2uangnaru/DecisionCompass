@@ -13,6 +13,17 @@ class AppLocalizationsVi extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady =>
+      'Quảng cáo hiện chưa sẵn sàng. Bạn thử lại sau một chút nhé.';
+
+  @override
+  String get adPrivacyOptions => 'Lựa chọn quyền riêng tư quảng cáo';
+
+  @override
+  String get adRewardNotSaved =>
+      'Không lưu được phần thưởng nên chưa có gì được cộng. Bạn thử lại nhé.';
+
+  @override
   String get analyticsConsentTitle => 'Thống kê sử dụng (không bắt buộc)';
 
   @override

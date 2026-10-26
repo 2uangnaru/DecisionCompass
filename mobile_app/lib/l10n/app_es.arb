@@ -1,6 +1,9 @@
 {
   "@@locale": "es",
   "appName": "AstraCue",
+  "adNotReady": "Los anuncios no están disponibles ahora. Inténtalo de nuevo en un momento.",
+  "adPrivacyOptions": "Opciones de privacidad de anuncios",
+  "adRewardNotSaved": "No se pudo guardar tu recompensa, así que no se añadió nada. Inténtalo de nuevo.",
   "analyticsConsentTitle": "Estadísticas de uso (opcional)",
   "analyticsConsentBody": "Permite que Firebase/Google Analytics recopile información de uso de la app y del dispositivo para mejorar AstraCue. No enviamos tu nombre, datos de nacimiento ni cartas. Puedes desactivarlo en Uso responsable.",
   "analyticsConsentSaveFailed": "No se pudo guardar esta preferencia. Las estadísticas están desactivadas en esta sesión.",

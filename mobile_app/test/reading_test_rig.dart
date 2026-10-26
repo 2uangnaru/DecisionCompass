@@ -23,6 +23,7 @@ import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/reading_dependencies.dart';
+import 'package:decision_compass/services/ad_service.dart';
 import 'package:decision_compass/theme.dart';
 import 'package:decision_compass/widgets/header_settings_capsule.dart';
 import 'package:flutter/material.dart';
@@ -56,6 +57,7 @@ class ReadingTestRig {
     InMemoryLocaleStore? localeStore,
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
+    this.adService = const TestRewardAdService(),
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
@@ -119,6 +121,7 @@ class ReadingTestRig {
   final InMemoryLocaleStore localeStore;
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
+  final AdService adService;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -146,6 +149,7 @@ class ReadingTestRig {
     localeController: localeController,
     analytics: analytics,
     quotaManager: quotaManager,
+    adService: adService,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own
@@ -182,6 +186,19 @@ class ReadingTestRig {
   /// The single request the flow sent, or null when it sent none.
   ReadingRequest? get sentRequest =>
       repository.requests.isEmpty ? null : repository.requests.single;
+}
+
+/// Explicit SDK-reward fake, NEVER a production no-op granting free credits.
+class TestRewardAdService extends NoOpAdService {
+  const TestRewardAdService();
+  @override
+  Future<AdOutcome> showRewarded({
+    required Future<void> Function() onEarnedReward,
+    String placement = 'reading',
+  }) async {
+    await onEarnedReward();
+    return AdOutcome.rewarded;
+  }
 }
 
 /// A `MaterialApp` carrying the app's own localizations and theme, for tests

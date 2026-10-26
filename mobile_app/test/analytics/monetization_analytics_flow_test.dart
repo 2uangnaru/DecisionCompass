@@ -108,10 +108,7 @@ void main() {
     expect(events('reward_cta_tapped'), hasLength(1));
     expect(events('reward_granted'), hasLength(1));
     expect(events('reward_granted').single.parameters['placement'], 'reading');
-    expect(
-      events('reward_granted').single.parameters['grant_source'],
-      'prototype',
-    );
+    expect(events('reward_granted').single.parameters['grant_source'], 'sdk');
     await tester.pump(const Duration(seconds: 1));
     expect(events('reward_granted'), hasLength(1));
     await tester.pumpWidget(const SizedBox.shrink());

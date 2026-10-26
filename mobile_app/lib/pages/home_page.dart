@@ -53,6 +53,28 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage>
     with WidgetsBindingObserver, TickerProviderStateMixin {
   DecisionMode _mode = DecisionMode.yesNo;
+  bool _rewardBusy = false;
+
+  Future<void> _rewardOption(String placement, VoidCallback unlock) async {
+    if (_rewardBusy) return;
+    _rewardBusy = true;
+    try {
+      final outcome = await widget.dependencies.adService.showRewarded(
+        placement: placement,
+        onEarnedReward: () async {
+          if (mounted) unlock();
+        },
+      );
+      if (!mounted) return;
+      final notice = rewardOutcomeNotice(AppLocalizations.of(context), outcome);
+      if (notice != null) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(notice)));
+      }
+    } finally {
+      _rewardBusy = false;
+    }
+  }
 
   /// Overall is the default; the typed enum travels the whole flow, never a
   /// raw wire string.
@@ -105,6 +127,7 @@ class _HomePageState extends State<HomePage>
         optionLabel: label,
         onRewardCta: () => reward ??= RewardAnalyticsAttempt(
           analytics: widget.dependencies.analytics,
+          grantSource: RewardGrantSource.sdk,
           mode: toEngineMode(mode),
           category: _category,
           period: engine.TimePeriod.now,
@@ -113,11 +136,13 @@ class _HomePageState extends State<HomePage>
         ),
       );
       if (!confirmed || !mounted) return;
-      setState(() {
-        _unlockedModes.add(mode);
-        _mode = mode;
+      await _rewardOption('mode', () {
+        setState(() {
+          _unlockedModes.add(mode);
+          _mode = mode;
+        });
+        reward?.granted();
       });
-      reward?.granted();
       return;
     }
     setState(() => _mode = mode);
@@ -144,6 +169,7 @@ class _HomePageState extends State<HomePage>
         optionLabel: label,
         onRewardCta: () => reward ??= RewardAnalyticsAttempt(
           analytics: widget.dependencies.analytics,
+          grantSource: RewardGrantSource.sdk,
           mode: toEngineMode(_mode),
           category: category,
           period: engine.TimePeriod.now,
@@ -152,11 +178,13 @@ class _HomePageState extends State<HomePage>
         ),
       );
       if (!confirmed || !mounted) return;
-      setState(() {
-        _unlockedCategories.add(category);
-        _category = category;
+      await _rewardOption('category', () {
+        setState(() {
+          _unlockedCategories.add(category);
+          _category = category;
+        });
+        reward?.granted();
       });
-      reward?.granted();
       return;
     }
     setState(() => _category = category);
@@ -332,8 +360,9 @@ class _HomePageState extends State<HomePage>
 
   Future<void> _beginReading() async {
     final nowBefore = widget.dependencies.nowLocal();
-    final usedBefore =
-        widget.dependencies.quotaManager.dailyFreeReadingsUsed(nowBefore);
+    final usedBefore = widget.dependencies.quotaManager.dailyFreeReadingsUsed(
+      nowBefore,
+    );
     final bonusBefore = widget.dependencies.quotaManager.bonusReadings;
 
     await Navigator.of(context).push(
@@ -550,6 +579,7 @@ class _HomePageState extends State<HomePage>
           onOpenResponsibleUse: () => showResponsibleUseSheet(
             context,
             analytics: widget.dependencies.analytics,
+            ads: widget.dependencies.adService,
           ),
           onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(

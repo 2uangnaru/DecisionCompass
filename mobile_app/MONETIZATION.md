@@ -1,6 +1,7 @@
 # Reading quota implementation
 
-Updated 2026-10-09. This note describes app-owned entitlement logic, not live ad serving.
+Updated 2026-10-26. Quota rules are unchanged. Ad lifecycle implementation and
+remaining production prerequisites are documented in `ADS_LIFECYCLE.md`.
 
 ## Confirmed rules
 
@@ -23,36 +24,37 @@ Updated 2026-10-09. This note describes app-owned entitlement logic, not live ad
 ## Verification
 
 The 2026-10-09 instrumentation extension records locked reading actions,
-selection-option gates, prototype reward CTA/grants and actual free/bonus
-credit use. See `TRACKING.md`. It does not change any entitlement or UX rule,
-does not treat option unlocks as bonus credits, and does not count real ads or
-revenue. Tracking acceptance/withdrawal and the optional no-op sink still apply.
+selection-option gates, reward CTA/grants and actual free/bonus
+credit use. See `TRACKING.md`. Option unlocks remain separate from bonus
+credits. The 2026-10-26 SDK flow uses `grant_source=sdk` and adds separate ad
+lifecycle events. Tracking acceptance/withdrawal and the optional no-op sink
+still apply; test ads are not evidence of commercial revenue.
 
 Regression coverage is in `test/reading_quota_controller_test.dart`, `test/monetization_completion_test.dart` and `test/monetization_ritual_ui_test.dart`.
 
 These cover the fourth-use refusal, local-day accounting, the three-hour boundary, 00:00 reset, restart and legacy state, concurrent commits, untouched bonus cooldown, failure and retry, non-billable states, direct-entry and preview bypasses, and leaving an unfinished attempt.
 
-## Interstitial Ad Implementation (2026-10-15)
+## Ads lifecycle (2026-10-26)
 
-- **Scenario**:
-  - **1st reading of the day**: 100% clean experience, no interstitial ad shown.
-  - **2nd reading of the day onwards**: Interstitial ad triggers immediately after analysis loading finishes. The aperture transition and navigation to the Result page only happen after the ad is dismissed (or if ad loading fails / times out after 8s safety window).
-- **AdMob IDs & Real ID Replacement**:
-  - Currently configured with Google's official Test AdMob Unit IDs (safe for testing without getting banned).
-  - Android Manifest: `ca-app-pub-3940256099942544~3347511713` (Test App ID in `AndroidManifest.xml`).
-  - iOS Info.plist: `ca-app-pub-3940256099942544~1458002511` (Test App ID in `Info.plist`).
-  - Ad Unit ID: Configured in `lib/services/ad_service.dart` via `AdConstants`.
-  - When ready with real AdMob account:
-    1. Update App ID in `android/app/src/main/AndroidManifest.xml` and `ios/Runner/Info.plist`.
-    2. Set `realAndroidInterstitialUnitId` and `realIosInterstitialUnitId` in `lib/services/ad_service.dart`.
-- **Fail-safe Design**:
-  - Preloads in background at app start and on loading page initialization.
-  - An 8-second safety timeout ensures the user is never stuck if the ad fails to show or hangs.
-  - In airplane mode or if AdMob fails to fill, it immediately bypasses and reveals the result.
+- First daily successful reading and its immediate History flow: no interstitial.
+- Later successful **free** readings: an interstitial candidate before Result.
+- A reading consuming bonus credit: no post-analysis interstitial.
+- History row tap: a candidate unless within the first reading's protected flow.
+- No ads on Home, app resume, or a timer. No queued/delayed catch-up.
+- A shared 30-second minimum gap from interstitial dismissal, persistent across
+  restart/midnight. No separate reward gap and no daily interstitial cap.
+- Missing/unavailable ad: continue immediately; a ready native fullscreen ad:
+  wait for its actual dismissal/failure, never an eight-second fake dismissal.
+- Reward grants only after `onUserEarnedReward`, with deduplication. Reading
+  credit persists immediately; dismissing an unearned ad grants nothing.
+- Preload/retry/expiry/UMP details and verification: `ADS_LIFECYCLE.md`.
 
 ## Still outside this change
 
-Rewarded ads remain a prototype: the current button directly calls `earnBonusReading`. In a live ad integration this must only follow the SDK reward callback. Banner SDK integration, ad consent, and server-side entitlement are not implemented.
+Only test AdMob IDs are configured. UMP is wired, but requires real account
+message configuration and device QA. Banner SDK integration and server-side
+entitlement are not implemented. The banner placeholder has no custom refresh
+timer; use SDK/AdMob automatic refresh when real banners are connected.
 
 This is local device enforcement, not tamper-proof server entitlement. Do not claim protection against manually changing the device clock, clearing app data or multiple app installations.
 

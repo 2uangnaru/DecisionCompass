@@ -1,179 +1,173 @@
 import 'dart:async';
 import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
-/// Configuration constants for AdMob.
+import '../analytics/analytics_service.dart';
+import 'ad_policy.dart';
+import 'ad_runtime.dart';
+export 'ad_runtime.dart';
+
+/// Google's TEST units. No production ad IDs are configured by this change.
 class AdConstants {
-  // ===========================================================================
-  // CẤU HÌNH ADMOB ID
-  // Hiện tại đang dùng TEST AD UNIT ID CHÍNH THỨC CỦA GOOGLE.
-  // Khi bạn đã có ID thật từ Google AdMob, chỉ cần thay các chuỗi dưới đây:
-  // ===========================================================================
-
-  /// Android Test Interstitial Ad Unit ID của Google
-  static const String testAndroidInterstitialUnitId =
+  static const testAndroidInterstitialUnitId =
       'ca-app-pub-3940256099942544/1033173712';
-
-  /// iOS Test Interstitial Ad Unit ID của Google
-  static const String testIosInterstitialUnitId =
+  static const testIosInterstitialUnitId =
       'ca-app-pub-3940256099942544/4411468910';
-
-  /// TODO: Điền ID thật cho Android tại đây khi có tài khoản AdMob
+  static const testAndroidRewardedUnitId =
+      'ca-app-pub-3940256099942544/5224354917';
+  static const testIosRewardedUnitId = 'ca-app-pub-3940256099942544/1712485313';
   static const String? realAndroidInterstitialUnitId = null;
-
-  /// TODO: Điền ID thật cho iOS tại đây khi có tài khoản AdMob
   static const String? realIosInterstitialUnitId = null;
-
-  /// Lấy Ad Unit ID phù hợp theo nền tảng
-  static String get interstitialAdUnitId {
-    if (kIsWeb) return '';
-    if (Platform.isAndroid) {
-      return realAndroidInterstitialUnitId ?? testAndroidInterstitialUnitId;
-    }
-    if (Platform.isIOS) {
-      return realIosInterstitialUnitId ?? testIosInterstitialUnitId;
-    }
-    return '';
-  }
+  static String get interstitialAdUnitId => kIsWeb
+      ? ''
+      : Platform.isAndroid
+      ? realAndroidInterstitialUnitId ?? testAndroidInterstitialUnitId
+      : Platform.isIOS
+      ? realIosInterstitialUnitId ?? testIosInterstitialUnitId
+      : '';
+  static String get rewardedAdUnitId => kIsWeb
+      ? ''
+      : Platform.isAndroid
+      ? testAndroidRewardedUnitId
+      : Platform.isIOS
+      ? testIosRewardedUnitId
+      : '';
 }
 
-/// Abstract contract for ad handling across the app.
-abstract interface class AdService {
-  Future<void> initialize();
-  void preloadInterstitial();
-  Future<void> showInterstitial({required VoidCallback onDismissed});
-  bool get isInterstitialLoaded;
+class AdMobService extends ManagedAdService {
+  AdMobService({
+    String? adUnitId,
+    AnalyticsService analytics = const NoopAnalyticsService(),
+  }) : super(
+         backend: GoogleAdsBackend(interstitialUnit: adUnitId),
+         policy: AdPolicy(store: SharedPreferencesAdPolicyStore()),
+         analytics: analytics,
+       );
 }
 
-/// No-op implementation for headless tests and unsupported platforms.
-class NoOpAdService implements AdService {
-  const NoOpAdService();
+class GoogleAdsBackend implements AdsBackend {
+  GoogleAdsBackend({this.interstitialUnit});
+  final String? interstitialUnit;
+  Future<void>? _sdkInitialization;
 
-  @override
-  Future<void> initialize() async {}
-
-  @override
-  void preloadInterstitial() {}
-
-  @override
-  Future<void> showInterstitial({required VoidCallback onDismissed}) async {
-    onDismissed();
-  }
-
-  @override
-  bool get isInterstitialLoaded => false;
-}
-
-/// Production AdMob implementation.
-class AdMobService implements AdService {
-  AdMobService({this.adUnitId});
-
-  final String? adUnitId;
-  InterstitialAd? _interstitialAd;
-  bool _isAdLoading = false;
-  bool _initialized = false;
-
-  String get _resolvedUnitId => adUnitId ?? AdConstants.interstitialAdUnitId;
-
-  @override
-  bool get isInterstitialLoaded => _interstitialAd != null;
-
-  @override
-  Future<void> initialize() async {
-    if (_initialized || kIsWeb) return;
+  Future<void> _initializeSdk() => _sdkInitialization ??= _startSdk();
+  Future<void> _startSdk() async {
     try {
       await MobileAds.instance.initialize();
-      _initialized = true;
-      preloadInterstitial();
-    } catch (e) {
-      debugPrint('[AdService] MobileAds initialize failed: $e');
+    } catch (_) {
+      _sdkInitialization = null;
+      rethrow;
     }
   }
 
-  @override
-  void preloadInterstitial() {
-    if (kIsWeb || _interstitialAd != null || _isAdLoading) return;
-    final unitId = _resolvedUnitId;
-    if (unitId.isEmpty) return;
+  /// No ad units on this platform: nothing to gather, and no ads.
+  static bool get _supported => AdConstants.interstitialAdUnitId.isNotEmpty;
 
-    _isAdLoading = true;
-    InterstitialAd.load(
-      adUnitId: unitId,
+  @override
+  Future<bool> updateConsentInfo() {
+    if (!_supported) return Future.value(true);
+    final done = Completer<bool>();
+    ConsentInformation.instance.requestConsentInfoUpdate(
+      ConsentRequestParameters(),
+      () {
+        if (!done.isCompleted) done.complete(true);
+      },
+      (_) {
+        if (!done.isCompleted) done.complete(false);
+      },
+    );
+    return done.future;
+  }
+
+  // Both plugin futures complete from the native dismissal listener, so
+  // their completion is the closure signal the coordinator waits for.
+  @override
+  Future<void> showConsentFormIfRequired() => _supported
+      ? ConsentForm.loadAndShowConsentFormIfRequired((_) {})
+      : Future.value();
+  @override
+  Future<void> showPrivacyOptionsForm() =>
+      _supported ? ConsentForm.showPrivacyOptionsForm((_) {}) : Future.value();
+  @override
+  Future<bool> canRequestAds() => _supported
+      ? ConsentInformation.instance.canRequestAds()
+      : Future.value(false);
+  @override
+  Future<bool> privacyOptionsRequired() async =>
+      _supported &&
+      await ConsentInformation.instance.getPrivacyOptionsRequirementStatus() ==
+          PrivacyOptionsRequirementStatus.required;
+  @override
+  Future<void> initializeSdk() => _initializeSdk();
+
+  @override
+  Future<void> load(
+    AdFormat format,
+    void Function(FullscreenAd) onLoaded,
+    VoidCallback onFailed,
+  ) {
+    if (format == AdFormat.interstitial) {
+      return InterstitialAd.load(
+        adUnitId: interstitialUnit ?? AdConstants.interstitialAdUnitId,
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          onAdLoaded: (ad) => onLoaded(GoogleFullscreenAd(interstitial: ad)),
+          onAdFailedToLoad: (_) => onFailed(),
+        ),
+      );
+    }
+    return RewardedAd.load(
+      adUnitId: AdConstants.rewardedAdUnitId,
       request: const AdRequest(),
-      adLoadCallback: InterstitialAdLoadCallback(
-        onAdLoaded: (ad) {
-          _interstitialAd = ad;
-          _isAdLoading = false;
-          debugPrint('[AdService] Interstitial Ad loaded successfully.');
-        },
-        onAdFailedToLoad: (error) {
-          _interstitialAd = null;
-          _isAdLoading = false;
-          debugPrint('[AdService] Interstitial Ad failed to load: ${error.message}');
-        },
+      rewardedAdLoadCallback: RewardedAdLoadCallback(
+        onAdLoaded: (ad) => onLoaded(GoogleFullscreenAd(rewarded: ad)),
+        onAdFailedToLoad: (_) => onFailed(),
       ),
     );
   }
+}
+
+/// Public only so tests can prove the identity the coordinator relies on.
+@visibleForTesting
+class GoogleFullscreenAd implements FullscreenAd {
+  GoogleFullscreenAd({this.interstitial, this.rewarded})
+    : assert((interstitial == null) != (rewarded == null));
+  final InterstitialAd? interstitial;
+  final RewardedAd? rewarded;
+
+  /// The native ad: a fresh wrapper per load callback must not look new.
+  @override
+  Object get identity => (interstitial ?? rewarded)!;
+  @override
+  Future<void> show({
+    required VoidCallback onDismissed,
+    required VoidCallback onFailed,
+    required VoidCallback onImpression,
+    required VoidCallback onClick,
+    required void Function(double, String, String) onPaid,
+    required VoidCallback onReward,
+  }) {
+    FullScreenContentCallback<T> callbacks<T extends Ad>() =>
+        FullScreenContentCallback<T>(
+          onAdDismissedFullScreenContent: (_) => onDismissed(),
+          onAdFailedToShowFullScreenContent: (_, _) => onFailed(),
+          onAdImpression: (_) => onImpression(),
+          onAdClicked: (_) => onClick(),
+        );
+    void paid(Ad _, double value, PrecisionType precision, String currency) =>
+        onPaid(value, currency, precision.name);
+    if (interstitial != null) {
+      interstitial!.fullScreenContentCallback = callbacks<InterstitialAd>();
+      interstitial!.onPaidEvent = paid;
+      return interstitial!.show();
+    }
+    rewarded!.fullScreenContentCallback = callbacks<RewardedAd>();
+    rewarded!.onPaidEvent = paid;
+    return rewarded!.show(onUserEarnedReward: (_, _) => onReward());
+  }
 
   @override
-  Future<void> showInterstitial({required VoidCallback onDismissed}) async {
-    final ad = _interstitialAd;
-    if (ad == null) {
-      debugPrint('[AdService] No Interstitial Ad ready. Bypassing safely.');
-      preloadInterstitial();
-      onDismissed();
-      return;
-    }
-
-    final completer = Completer<void>();
-    var handled = false;
-    void completeOnce() {
-      if (!handled) {
-        handled = true;
-        onDismissed();
-        if (!completer.isCompleted) {
-          completer.complete();
-        }
-      }
-    }
-
-    // Safety timeout: In case the native ad view hangs or doesn't invoke callbacks within 8s
-    final timer = Timer(const Duration(seconds: 8), () {
-      if (!handled) {
-        debugPrint('[AdService] Interstitial Ad timeout. Bypassing.');
-        completeOnce();
-      }
-    });
-
-    ad.fullScreenContentCallback = FullScreenContentCallback(
-      onAdDismissedFullScreenContent: (ad) {
-        timer.cancel();
-        ad.dispose();
-        _interstitialAd = null;
-        preloadInterstitial();
-        completeOnce();
-      },
-      onAdFailedToShowFullScreenContent: (ad, error) {
-        timer.cancel();
-        ad.dispose();
-        _interstitialAd = null;
-        debugPrint('[AdService] Failed to show Interstitial Ad: ${error.message}');
-        preloadInterstitial();
-        completeOnce();
-      },
-    );
-
-    try {
-      await ad.show();
-    } catch (e) {
-      timer.cancel();
-      _interstitialAd = null;
-      debugPrint('[AdService] Exception while showing ad: $e');
-      preloadInterstitial();
-      completeOnce();
-    }
-
-    return completer.future;
-  }
+  Future<void> dispose() => (interstitial ?? rewarded!).dispose();
 }

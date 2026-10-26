@@ -14,6 +14,7 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../services/ad_service.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
@@ -175,6 +176,8 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _watchAdAndUnlock() async {
+    if (_rewardBusy) return;
+    _rewardBusy = true;
     final reward = RewardAnalyticsAttempt(
       analytics: widget.dependencies.analytics,
       mode: toEngineMode(widget.mode),
@@ -182,10 +185,26 @@ class _RitualPageState extends State<RitualPage>
       period: toEnginePeriod(_period),
       language: widget.dependencies.localeController.locale,
       placement: RewardPlacement.reading,
+      grantSource: RewardGrantSource.sdk,
     );
-    await widget.dependencies.quotaManager.earnBonusReading();
-    reward.granted();
+    AdOutcome outcome;
+    try {
+      outcome = await widget.dependencies.adService.showRewarded(
+        onEarnedReward: () async {
+          // Durable quota commit even if this route was closed during the ad.
+          await widget.dependencies.quotaManager.earnBonusReading();
+          reward.granted();
+        },
+      );
+    } finally {
+      _rewardBusy = false;
+    }
     if (!mounted) return;
+    if (outcome != AdOutcome.rewarded) {
+      final notice = rewardOutcomeNotice(AppLocalizations.of(context), outcome);
+      if (notice != null) _showNotice(notice);
+      return;
+    }
     setState(() {
       _isCooldown = false;
       _isQuotaExhaustedOverride = false;
@@ -207,6 +226,7 @@ class _RitualPageState extends State<RitualPage>
   }
 
   final Set<TimePeriod> _unlockedPeriods = <TimePeriod>{};
+  bool _rewardBusy = false;
   final Map<TimePeriod, ValueNotifier<int>> _periodTriggers = {};
 
   ValueNotifier<int> _periodTrigger(TimePeriod p) =>
@@ -241,6 +261,7 @@ class _RitualPageState extends State<RitualPage>
       optionLabel: periodLabel(l10n, period),
       onRewardCta: () => reward ??= RewardAnalyticsAttempt(
         analytics: widget.dependencies.analytics,
+        grantSource: RewardGrantSource.sdk,
         mode: toEngineMode(widget.mode),
         category: widget.category,
         period: toEnginePeriod(period),
@@ -249,11 +270,26 @@ class _RitualPageState extends State<RitualPage>
       ),
     );
     if (!confirmed || !mounted) return;
-    setState(() {
-      _unlockedPeriods.add(period);
-      _period = period;
-    });
-    reward?.granted();
+    if (_rewardBusy) return;
+    _rewardBusy = true;
+    try {
+      final outcome = await widget.dependencies.adService.showRewarded(
+        placement: 'period',
+        onEarnedReward: () async {
+          if (!mounted) return;
+          setState(() {
+            _unlockedPeriods.add(period);
+            _period = period;
+          });
+          reward?.granted();
+        },
+      );
+      if (!mounted) return;
+      final notice = rewardOutcomeNotice(AppLocalizations.of(context), outcome);
+      if (notice != null) _showNotice(notice);
+    } finally {
+      _rewardBusy = false;
+    }
   }
 
   void _notifyCooldownLocked() {
@@ -805,6 +841,7 @@ class _RitualPageState extends State<RitualPage>
                   : () => showResponsibleUseSheet(
                       context,
                       analytics: widget.dependencies.analytics,
+                      ads: widget.dependencies.adService,
                     ),
               icon: const Icon(Icons.shield_outlined, size: 20),
             ),

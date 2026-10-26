@@ -13,6 +13,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady => '广告暂时无法播放，请稍后重试。';
+
+  @override
+  String get adPrivacyOptions => '广告隐私选项';
+
+  @override
+  String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
+
+  @override
   String get analyticsConsentTitle => '使用情况统计（可选）';
 
   @override
@@ -1163,6 +1172,15 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady => '广告暂时无法播放，请稍后重试。';
+
+  @override
+  String get adPrivacyOptions => '广告隐私选项';
+
+  @override
+  String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
+
+  @override
   String get analyticsConsentTitle => '使用情况统计（可选）';
 
   @override
@@ -2311,6 +2329,15 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get appName => 'AstraCue';
+
+  @override
+  String get adNotReady => '广告暂时无法播放，请稍后重试。';
+
+  @override
+  String get adPrivacyOptions => '广告隐私选项';
+
+  @override
+  String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
 
   @override
   String get analyticsConsentTitle => '使用情况统计（可选）';

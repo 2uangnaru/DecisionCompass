@@ -13,6 +13,17 @@ class AppLocalizationsTh extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady =>
+      'โฆษณายังไม่พร้อมในขณะนี้ โปรดลองอีกครั้งในอีกสักครู่';
+
+  @override
+  String get adPrivacyOptions => 'ตัวเลือกความเป็นส่วนตัวของโฆษณา';
+
+  @override
+  String get adRewardNotSaved =>
+      'บันทึกรางวัลไม่สำเร็จ จึงยังไม่มีการเพิ่มสิทธิ์ โปรดลองอีกครั้ง';
+
+  @override
   String get analyticsConsentTitle => 'สถิติการใช้งาน (ไม่บังคับ)';
 
   @override

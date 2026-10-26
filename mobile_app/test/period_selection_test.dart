@@ -304,8 +304,14 @@ void main() {
 
       // Away for an hour, back after morning closed. No timer fired while the
       // app was not running.
+      // Follow Flutter's real Android transition sequence. A direct
+      // paused -> resumed jump is invalid for AppLifecycleListener.
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.paused);
       clock = DateTime(2026, 9, 18, 11, 0);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
       tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
       await tester.pump();
 

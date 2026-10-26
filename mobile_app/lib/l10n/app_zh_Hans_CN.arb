@@ -1,6 +1,9 @@
 {
   "@@locale": "zh_Hans_CN",
   "appName": "AstraCue",
+  "adNotReady": "广告暂时无法播放，请稍后重试。",
+  "adPrivacyOptions": "广告隐私选项",
+  "adRewardNotSaved": "奖励未能保存，因此没有增加任何次数。请重试。",
   "analyticsConsentTitle": "使用情况统计（可选）",
   "analyticsConsentBody": "允许 Firebase/Google Analytics 收集应用使用情况和设备信息，以帮助改进 AstraCue。不会发送你的姓名、出生信息或命盘。你可以在「负责任使用」中关闭此功能。",
   "analyticsConsentSaveFailed": "无法保存此设置。本次使用期间已关闭统计。",

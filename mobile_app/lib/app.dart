@@ -107,10 +107,12 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   @override
   void initState() {
     super.initState();
-    final onDetached = widget.onDetached;
-    if (onDetached != null) {
-      _lifecycle = AppLifecycleListener(onDetach: onDetached);
-    }
+    _lifecycle = AppLifecycleListener(
+      onStateChange: (state) => widget.dependencies.adService.setForeground(
+        state == AppLifecycleState.resumed,
+      ),
+      onDetach: widget.onDetached,
+    );
     // Held before the first frame in `main`, but a test may hand over a
     // controller that has not read its store yet.
     widget.dependencies.localeController.ensureLoaded();

@@ -123,6 +123,24 @@ abstract class AppLocalizations {
   /// **'AstraCue'**
   String get appName;
 
+  /// No description provided for @adNotReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Ads aren\'t ready right now. Please try again shortly.'**
+  String get adNotReady;
+
+  /// No description provided for @adPrivacyOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Ad privacy choices'**
+  String get adPrivacyOptions;
+
+  /// No description provided for @adRewardNotSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Your reward couldn\'t be saved, so nothing was added. Please try again.'**
+  String get adRewardNotSaved;
+
   /// No description provided for @analyticsConsentTitle.
   ///
   /// In en, this message translates to:

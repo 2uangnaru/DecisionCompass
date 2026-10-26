@@ -1,6 +1,9 @@
 {
   "@@locale": "ko",
   "appName": "AstraCue",
+  "adNotReady": "지금은 광고를 볼 수 없어요. 잠시 후 다시 시도해 주세요.",
+  "adPrivacyOptions": "광고 개인정보 설정",
+  "adRewardNotSaved": "보상을 저장하지 못해 아무것도 추가되지 않았어요. 다시 시도해 주세요.",
   "analyticsConsentTitle": "이용 현황 분석 (선택)",
   "analyticsConsentBody": "AstraCue 서비스 품질 개선을 위해 Firebase 및 Google Analytics를 통한 이용 통계 수집을 허용합니다. 이름, 출생 정보, 개인 점술 내용은 일절 전송되지 않으며, '안전한 이용' 메뉴에서 언제든지 끌 수 있습니다.",
   "analyticsConsentSaveFailed": "설정을 저장하지 못했습니다. 이번 세션 동안 분석 기능이 꺼집니다.",

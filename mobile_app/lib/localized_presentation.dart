@@ -17,12 +17,22 @@ import 'app_profile.dart';
 import 'data/models/models.dart' as engine;
 import 'l10n/app_localizations.dart';
 import 'models.dart';
+import 'services/ad_runtime.dart' show AdOutcome;
 
 /// The active language. Falls back to English for a locale this build has no
 /// entry for, which can only happen if the device resolves something outside
 /// `AppLocale`.
 AppLocale appLocaleOf(BuildContext context) =>
     AppLocale.forLocale(Localizations.localeOf(context)) ?? AppLocale.english;
+
+/// What a reader is told after a reward ad, or null when nothing needs
+/// saying: a voluntary close is not an error and a grant speaks for itself.
+String? rewardOutcomeNotice(AppLocalizations l10n, AdOutcome outcome) =>
+    switch (outcome) {
+      AdOutcome.skipped || AdOutcome.failed => l10n.adNotReady,
+      AdOutcome.rewardSaveFailed => l10n.adRewardNotSaved,
+      AdOutcome.dismissed || AdOutcome.rewarded => null,
+    };
 
 /// The name `intl` wants for dates, times and numbers on this screen.
 String intlLocaleOf(BuildContext context) => appLocaleOf(context).intlName;

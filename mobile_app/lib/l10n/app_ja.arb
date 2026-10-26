@@ -1,6 +1,9 @@
 {
   "@@locale": "ja",
   "appName": "AstraCue",
+  "adNotReady": "現在、広告を表示できません。少し待ってからもう一度お試しください。",
+  "adPrivacyOptions": "広告のプライバシー設定",
+  "adRewardNotSaved": "特典を保存できなかったため、追加されていません。もう一度お試しください。",
   "analyticsConsentTitle": "利用状況の分析（任意）",
   "analyticsConsentBody": "AstraCueの改善のため、Firebase/Google Analyticsによるアプリの利用状況と端末情報の収集を許可します。名前、出生情報、命盤は送信しません。「責任ある利用」でいつでもオフにできます。",
   "analyticsConsentSaveFailed": "設定を保存できませんでした。このセッションでは分析をオフにしました。",

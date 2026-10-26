@@ -16,6 +16,7 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../services/ad_service.dart';
 import '../theme.dart';
 import '../widgets/celestial_ui.dart';
 import 'result_page.dart';
@@ -115,6 +116,7 @@ class _LoadingPageState extends State<LoadingPage>
   var _attemptRunning = false;
   ReadingAnalyticsAttempt? _analyticsAttempt;
   bool _quotaConsumed = false;
+  bool _protectFirstDailyFlow = false;
 
   bool _hasUsableScore(engine.ReadingResponse reading) {
     if (reading.status != engine.ReadingStatus.ready &&
@@ -224,15 +226,19 @@ class _LoadingPageState extends State<LoadingPage>
           localNow,
         );
         _quotaConsumed = true;
+        _protectFirstDailyFlow = readingsBefore == 0;
         if (source != null) _analyticsAttempt?.entitlementUsed(source);
 
-        // KỊCH BẢN INTERSTITIAL AD:
-        // Lần 1 trong ngày: Trải nghiệm sạch 100%, không quảng cáo.
-        // Từ lần 2 trong ngày trở đi: Bắn Interstitial ad ngay sau khi loading xong,
-        // đóng quảng cáo xong mới bung hiệu ứng hào quang chuyển sang trang Kết quả.
-        if (readingsBefore >= 1) {
+        // Only later FREE completions are automatic ad candidates. A bonus
+        // already came from a reward. The service applies shared policy/cache
+        // checks and skips immediately if no ad is eligible/ready.
+        if (mounted &&
+            ModalRoute.of(context)?.isCurrent == true &&
+            readingsBefore >= 1 &&
+            source == ReadingEntitlementSource.free) {
           await widget.dependencies.adService.showInterstitial(
             onDismissed: () {},
+            placement: InterstitialPlacement.afterAnalysis,
           );
         }
       }
@@ -395,6 +401,8 @@ class _LoadingPageState extends State<LoadingPage>
           reading: reading,
           dependencies: widget.dependencies,
           analyticsAttempt: _analyticsAttempt,
+          protectFirstDailyFlow: _protectFirstDailyFlow,
+          billableResult: _quotaConsumed,
         ),
         transitionsBuilder: (_, animation, secondaryAnimation, child) {
           final curved = CurvedAnimation(

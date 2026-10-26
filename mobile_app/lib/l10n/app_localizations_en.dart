@@ -13,6 +13,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady =>
+      'Ads aren\'t ready right now. Please try again shortly.';
+
+  @override
+  String get adPrivacyOptions => 'Ad privacy choices';
+
+  @override
+  String get adRewardNotSaved =>
+      'Your reward couldn\'t be saved, so nothing was added. Please try again.';
+
+  @override
   String get analyticsConsentTitle => 'Usage analytics (optional)';
 
   @override

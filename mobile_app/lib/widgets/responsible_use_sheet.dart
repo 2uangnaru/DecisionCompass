@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../l10n/app_localizations.dart';
 import '../analytics/analytics_service.dart';
+import '../services/ad_service.dart';
 import 'analytics_consent_tile.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
@@ -13,6 +14,7 @@ Future<bool> showResponsibleUseSheet(
   BuildContext context, {
   bool isFirstTimeAcknowledgement = false,
   AnalyticsService analytics = const NoopAnalyticsService(),
+  AdService ads = const NoOpAdService(),
 }) async {
   final result = await showModalBottomSheet<bool>(
     context: context,
@@ -21,6 +23,7 @@ Future<bool> showResponsibleUseSheet(
     builder: (context) => ResponsibleUseSheet(
       isFirstTimeAcknowledgement: isFirstTimeAcknowledgement,
       analytics: analytics,
+      ads: ads,
     ),
   );
   return result ?? false;
@@ -44,10 +47,12 @@ class ResponsibleUseSheet extends StatefulWidget {
     super.key,
     this.isFirstTimeAcknowledgement = false,
     this.analytics = const NoopAnalyticsService(),
+    this.ads = const NoOpAdService(),
   });
 
   final bool isFirstTimeAcknowledgement;
   final AnalyticsService analytics;
+  final AdService ads;
 
   @override
   State<ResponsibleUseSheet> createState() => _ResponsibleUseSheetState();
@@ -352,6 +357,14 @@ class _ResponsibleUseSheetState extends State<ResponsibleUseSheet> {
                         ),
                         if (!widget.isFirstTimeAcknowledgement)
                           AnalyticsConsentTile(analytics: widget.analytics),
+                        if (!widget.isFirstTimeAcknowledgement &&
+                            widget.ads.privacyOptionsRequired)
+                          TextButton.icon(
+                            key: const Key('ad_privacy_options'),
+                            onPressed: () => widget.ads.showPrivacyOptions(),
+                            icon: const Icon(Icons.privacy_tip_outlined),
+                            label: Text(l10n.adPrivacyOptions),
+                          ),
                       ],
                     ),
                   ),

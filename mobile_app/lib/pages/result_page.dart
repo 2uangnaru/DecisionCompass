@@ -33,6 +33,8 @@ class ResultPage extends StatefulWidget {
     this.autoSave = true,
     this.closesToCurrentReading = false,
     this.analyticsAttempt,
+    this.protectFirstDailyFlow = false,
+    this.billableResult = false,
   });
 
   /// Names the route holding the reading the app just calculated.
@@ -48,6 +50,8 @@ class ResultPage extends StatefulWidget {
 
   /// False when reopening an immutable snapshot from History.
   final bool autoSave;
+  final bool protectFirstDailyFlow;
+  final bool billableResult;
   final ReadingAnalyticsAttempt? analyticsAttempt;
 
   /// Whether leaving this page should go back to the reading the app just
@@ -120,7 +124,16 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     _scheduleDayChange();
     if (widget.autoSave) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) widget.analyticsAttempt?.completed();
+        if (mounted) {
+          widget.analyticsAttempt?.completed();
+          if (widget.billableResult) {
+            unawaited(
+              widget.dependencies.adService.markReadingViewed(
+                widget.dependencies.nowLocal(),
+              ),
+            );
+          }
+        }
       });
       _saving = true;
       unawaited(_saveToHistory());
@@ -231,6 +244,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
           // This page is the current reading, so a snapshot opened from the
           // History about to be pushed has somewhere to come back to.
           openedFromCurrentReading: true,
+          protectFirstDailyFlow: widget.protectFirstDailyFlow,
         ),
       ),
     );
@@ -437,6 +451,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                 onTap: () => showResponsibleUseSheet(
                   context,
                   analytics: widget.dependencies.analytics,
+                  ads: widget.dependencies.adService,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 child: Padding(

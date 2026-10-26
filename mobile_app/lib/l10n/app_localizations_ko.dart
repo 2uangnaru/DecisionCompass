@@ -13,6 +13,15 @@ class AppLocalizationsKo extends AppLocalizations {
   String get appName => 'AstraCue';
 
   @override
+  String get adNotReady => '지금은 광고를 볼 수 없어요. 잠시 후 다시 시도해 주세요.';
+
+  @override
+  String get adPrivacyOptions => '광고 개인정보 설정';
+
+  @override
+  String get adRewardNotSaved => '보상을 저장하지 못해 아무것도 추가되지 않았어요. 다시 시도해 주세요.';
+
+  @override
   String get analyticsConsentTitle => '이용 현황 분석 (선택)';
 
   @override

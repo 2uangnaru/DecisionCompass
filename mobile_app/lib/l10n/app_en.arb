@@ -1,6 +1,9 @@
 {
   "@@locale": "en",
   "appName": "AstraCue",
+  "adNotReady": "Ads aren't ready right now. Please try again shortly.",
+  "adPrivacyOptions": "Ad privacy choices",
+  "adRewardNotSaved": "Your reward couldn't be saved, so nothing was added. Please try again.",
   "analyticsConsentTitle": "Usage analytics (optional)",
   "analyticsConsentBody": "Allow Firebase/Google Analytics to collect app usage and device information to help improve AstraCue. Your name, birth details and charts are not sent. You can turn this off in Responsible Use settings.",
   "analyticsConsentSaveFailed": "Could not save this preference. Analytics is off for this session.",
