@@ -23,6 +23,12 @@ IDs/UMP account setup, device QA and policy acceptance are NOT verified.
 The older quota/analytics notes describing direct prototype grants and the
 old eight-second interstitial show timeout are historical, not current code.
 
+UMP P2 follow-up: initial consent and privacy form callbacks now retain a typed
+completed/failed outcome. A form load failure is retryable on a later resume,
+not treated as a completed user choice. Permission still comes from UMP;
+pending native forms still hold the fullscreen guard with no duration timeout.
+See `test/ump_form_recovery_test.dart` and `mobile_app/ADS_LIFECYCLE.md`.
+
 ## Calculation Engine Handoff: 2 New Decision Modes — 2026-10-15
 
 The mobile app UI, palettes, data models, wire mapping, mock engine presets, and

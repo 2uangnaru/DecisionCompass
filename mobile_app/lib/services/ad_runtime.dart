@@ -10,6 +10,11 @@ enum AdFormat { interstitial, rewarded }
 
 enum InterstitialPlacement { afterAnalysis, history }
 
+/// A completed form operation is not permission to request ads. Permission
+/// still comes exclusively from UMP's canRequestAds(). A pending operation
+/// has no outcome: it must keep the fullscreen guard held.
+enum ConsentFormOutcome { completed, failed }
+
 /// [rewardSaveFailed]: the SDK reported the reward as earned, but saving it
 /// failed, so nothing was granted. It is never used for a voluntary close.
 enum AdOutcome { skipped, dismissed, rewarded, failed, rewardSaveFailed }
@@ -40,10 +45,10 @@ abstract interface class AdsBackend {
   /// Completes once a required consent form has been dismissed, or could not
   /// be shown. It may never complete, and that is NOT evidence that a form
   /// closed.
-  Future<void> showConsentFormIfRequired();
+  Future<ConsentFormOutcome> showConsentFormIfRequired();
 
   /// Same closure semantics as [showConsentFormIfRequired].
-  Future<void> showPrivacyOptionsForm();
+  Future<ConsentFormOutcome> showPrivacyOptionsForm();
   Future<bool> canRequestAds();
   Future<bool> privacyOptionsRequired();
   Future<void> initializeSdk();
@@ -208,12 +213,16 @@ class ManagedAdService implements AdService {
 
   /// A UMP form may be on screen until [form] completes. No timer releases
   /// the guard: a timeout says nothing about whether the form closed.
-  Future<void> _holdingFullscreen(Future<void> Function() form) async {
+  Future<ConsentFormOutcome> _holdingFullscreen(
+    Future<ConsentFormOutcome> Function() form,
+  ) async {
     _fullscreen = true;
     try {
-      await form();
+      return await form();
     } catch (_) {
-      /* A platform error means the form was not left on screen. */
+      // Preserve the existing SDK contract for a failed form operation, but
+      // do not confuse that failure with a successfully completed choice.
+      return ConsentFormOutcome.failed;
     } finally {
       _fullscreen = false;
     }
@@ -225,16 +234,23 @@ class ManagedAdService implements AdService {
     _consentStartedAt = nowUtc();
     final updated = await _bounded(backend.updateConsentInfo) ?? false;
     if (!_consentCurrent(generation)) return;
+    var collectionCompleted = false;
     if (updated) {
-      await _holdingFullscreen(backend.showConsentFormIfRequired);
+      final outcome = await _holdingFullscreen(
+        backend.showConsentFormIfRequired,
+      );
       if (!_consentCurrent(generation)) return;
+      collectionCompleted = outcome == ConsentFormOutcome.completed;
     }
-    await _settleConsent(generation, updated: updated);
+    await _settleConsent(generation, collectionCompleted: collectionCompleted);
   }
 
   /// After an update error or timeout, UMP may still hold consent from an
   /// earlier session. Ask the SDK; never assume either answer.
-  Future<void> _settleConsent(int generation, {required bool updated}) async {
+  Future<void> _settleConsent(
+    int generation, {
+    required bool collectionCompleted,
+  }) async {
     final allowed = await _bounded(backend.canRequestAds);
     final required = await _bounded(backend.privacyOptionsRequired);
     if (!_consentCurrent(generation)) return;
@@ -250,9 +266,9 @@ class ManagedAdService implements AdService {
       if (!_consentCurrent(generation)) return;
     }
     _allowed = ready;
-    // A refusal after a successful update is the reader's answer; anything
-    // else may be the network and can be tried again on a later resume.
-    _consentRetryable = !ready && !(updated && allowed == false);
+    // Only a completed collection can suppress re-prompting for this session.
+    // An update succeeding does NOT mean a form loaded or the reader answered.
+    _consentRetryable = !ready && !(collectionCompleted && allowed == false);
     preloadInterstitial();
     preloadRewarded();
   }
@@ -283,11 +299,15 @@ class ManagedAdService implements AdService {
     }
     await _exclusive(() async {
       final generation = ++_consentGeneration;
+      _consentStartedAt = nowUtc();
       _allowed = false;
       _clearSlots();
-      await _holdingFullscreen(backend.showPrivacyOptionsForm);
+      final outcome = await _holdingFullscreen(backend.showPrivacyOptionsForm);
       if (!_consentCurrent(generation)) return;
-      await _settleConsent(generation, updated: true);
+      await _settleConsent(
+        generation,
+        collectionCompleted: outcome == ConsentFormOutcome.completed,
+      );
     });
   }
 

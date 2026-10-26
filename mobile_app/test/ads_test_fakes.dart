@@ -76,7 +76,9 @@ class FakeAdsBackend implements AdsBackend {
   bool consent = true;
   bool updateSucceeds = true, privacyRequired = false, sdkFails = false;
   Completer<bool>? update;
-  Completer<void>? form, privacyForm;
+  ConsentFormOutcome formOutcome = ConsentFormOutcome.completed,
+      privacyFormOutcome = ConsentFormOutcome.completed;
+  Completer<ConsentFormOutcome>? form, privacyForm;
   int updateCount = 0, formCount = 0, privacyFormCount = 0;
   int canRequestCount = 0, initializeCount = 0;
   final loads = <FakeAdLoad>[];
@@ -88,15 +90,15 @@ class FakeAdsBackend implements AdsBackend {
   }
 
   @override
-  Future<void> showConsentFormIfRequired() {
+  Future<ConsentFormOutcome> showConsentFormIfRequired() {
     formCount++;
-    return form?.future ?? Future.value();
+    return form?.future ?? Future.value(formOutcome);
   }
 
   @override
-  Future<void> showPrivacyOptionsForm() {
+  Future<ConsentFormOutcome> showPrivacyOptionsForm() {
     privacyFormCount++;
-    return privacyForm?.future ?? Future.value();
+    return privacyForm?.future ?? Future.value(privacyFormOutcome);
   }
 
   @override

@@ -83,13 +83,29 @@ class GoogleAdsBackend implements AdsBackend {
 
   // Both plugin futures complete from the native dismissal listener, so
   // their completion is the closure signal the coordinator waits for.
+  // Their callback carries FormError separately: a resolved Future<void>
+  // alone does not distinguish a loaded/dismissed form from a failed load.
+  @visibleForTesting
+  static Future<ConsentFormOutcome> presentForm(
+    Future<void> Function(OnConsentFormDismissedListener) present,
+  ) async {
+    var outcome = ConsentFormOutcome.failed;
+    await present((error) {
+      outcome = error == null
+          ? ConsentFormOutcome.completed
+          : ConsentFormOutcome.failed;
+    });
+    return outcome;
+  }
+
   @override
-  Future<void> showConsentFormIfRequired() => _supported
-      ? ConsentForm.loadAndShowConsentFormIfRequired((_) {})
-      : Future.value();
+  Future<ConsentFormOutcome> showConsentFormIfRequired() => _supported
+      ? presentForm(ConsentForm.loadAndShowConsentFormIfRequired)
+      : Future.value(ConsentFormOutcome.completed);
   @override
-  Future<void> showPrivacyOptionsForm() =>
-      _supported ? ConsentForm.showPrivacyOptionsForm((_) {}) : Future.value();
+  Future<ConsentFormOutcome> showPrivacyOptionsForm() => _supported
+      ? presentForm(ConsentForm.showPrivacyOptionsForm)
+      : Future.value(ConsentFormOutcome.completed);
   @override
   Future<bool> canRequestAds() => _supported
       ? ConsentInformation.instance.canRequestAds()

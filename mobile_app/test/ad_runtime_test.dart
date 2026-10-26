@@ -782,7 +782,7 @@ void main() {
     adTest(
       'an unanswered consent form holds the fullscreen guard; no timer frees it',
       (tester) async {
-        backend.form = Completer<void>();
+        backend.form = Completer<ConsentFormOutcome>();
         unawaited(service.initialize());
         await tester.pump();
         expect(backend.formCount, 1);
@@ -806,7 +806,7 @@ void main() {
         expect(backend.loads, isEmpty);
         expect(grants, 0);
         // The late dismissal is the evidence; only now does anything start.
-        backend.form!.complete();
+        backend.form!.complete(ConsentFormOutcome.completed);
         await tester.pump();
         expect(backend.canRequestCount, 1);
         expect(backend.loads, hasLength(2));
@@ -817,7 +817,7 @@ void main() {
 
     adTest('an open privacy form blocks ads and a second form', (tester) async {
       await init();
-      backend.privacyForm = Completer<void>();
+      backend.privacyForm = Completer<ConsentFormOutcome>();
       final privacy = service.showPrivacyOptions();
       await tester.pump();
       await service.showPrivacyOptions();
@@ -828,7 +828,7 @@ void main() {
       );
       await advance(tester, const Duration(minutes: 30));
       expect(service.isInterstitialLoaded, false);
-      backend.privacyForm!.complete();
+      backend.privacyForm!.complete(ConsentFormOutcome.completed);
       await privacy;
       expect(backend.privacyFormCount, 1);
       expect(backend.requests(AdFormat.interstitial), hasLength(2));

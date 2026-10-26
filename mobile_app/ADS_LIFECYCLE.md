@@ -61,10 +61,17 @@ until the timestamp catches up; this is not server-backed tamper protection.
   native form closed, so the shared fullscreen guard is held until UMP's
   dismissal callback arrives: no ad, second form or privacy-options call can
   start over it, and a late dismissal resumes normally.
-- Recovery: a retryable failure (update error/timeout, unknown permission,
-  SDK start failure) is tried again on a later foreground resume, at most
-  once a minute, one attempt at a time. A refusal after a successful update
-  is final for the session. Resume never displays an ad.
+- Recovery: a retryable failure (update error/timeout, failed consent/privacy
+  form, unknown permission, SDK start failure) is tried again on a later
+  foreground resume, at most once a minute, one attempt at a time. Only a
+  successfully completed collection with SDK permission still unavailable
+  suppresses another automatic collection for that session. Resume never
+  displays an ad.
+- P2 follow-up: form methods return `ConsentFormOutcome.completed/failed`.
+  The Google adapter now preserves callback `FormError` instead of treating
+  every resolved form future as a completed choice. Both initial consent and
+  privacy-options failure can recover; `canRequestAds()` remains authoritative.
+  A privacy-options attempt also starts the existing one-minute retry spacing.
 - **Residual limitation:** if UMP never delivers the form-dismissal callback,
   ads and privacy options stay disabled until the next cold start. That is
   deliberate: no API reports that the form is gone, and inventing a
@@ -160,6 +167,22 @@ demonstrate commercial earnings. Firebase delivery remains unverified.
   failed and unearned ads unlock nothing; a duplicate earned unlocks once);
   bonus analysis is exempt; rapid taps and route disposal queue nothing.
 - Existing quota, completion, option-lock and analytics regressions remain.
+- `test/ump_form_recovery_test.dart`: production callback-to-outcome mapping,
+  startup/privacy form failure and recovery, permission checks, retry spacing,
+  thrown errors, pending/late forms and no automatic fullscreen ad display.
+
+UMP P2 recovery follow-up verification, 2026-10-26, from `mobile_app/`:
+
+- New regression file: **11 passed**, including production callback mapping,
+  failed initial/privacy form recovery, permission gating and pending forms.
+- Targeted `ump_form_recovery_test.dart`, `ad_runtime_test.dart`,
+  `ads_integration_test.dart`, `rewarded_ad_flow_test.dart`: **62 passed**.
+- `flutter test --reporter expanded`: **1,309 passed, 0 failed** (4m08s).
+- `flutter analyze`: **No issues found** (15.4s).
+- Format check on all five changed Dart files: **0 changed, exit 0**.
+- No formula, quota, UI, real ad ID, dependency or native-manifest changes.
+  This verifies the coordinator/adapter contract with SDK-boundary fakes,
+  not real UMP UI or physical-device delivery. No APK build or push performed.
 
 Review follow-up (TASK B3), 2026-10-26, from `mobile_app/`:
 
