@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import '../analytics/analytics_event.dart';
 import '../analytics/analytics_service.dart';
 import 'ad_policy.dart';
+import 'banner_ad.dart';
 
 enum AdFormat { interstitial, rewarded }
 
@@ -14,6 +15,31 @@ enum InterstitialPlacement { afterAnalysis, history }
 /// still comes exclusively from UMP's canRequestAds(). A pending operation
 /// has no outcome: it must keep the fullscreen guard held.
 enum ConsentFormOutcome { completed, failed }
+
+/// Read-only SDK permission/presentation state shared with banner slots.
+/// Foreground and fullscreen changes hide a banner, not revoke consent.
+@immutable
+class AdPresentationState {
+  const AdPresentationState({
+    this.canRequestAds = false,
+    this.foreground = true,
+    this.fullscreenBusy = false,
+  });
+  final bool canRequestAds;
+  final bool foreground;
+  final bool fullscreenBusy;
+  bool get canPresent => canRequestAds && foreground && !fullscreenBusy;
+}
+
+class _NoAdPresentation implements ValueListenable<AdPresentationState> {
+  const _NoAdPresentation();
+  @override
+  AdPresentationState get value => const AdPresentationState();
+  @override
+  void addListener(VoidCallback listener) {}
+  @override
+  void removeListener(VoidCallback listener) {}
+}
 
 /// [rewardSaveFailed]: the SDK reported the reward as earned, but saving it
 /// failed, so nothing was granted. It is never used for a voluntary close.
@@ -60,6 +86,11 @@ abstract interface class AdsBackend {
 }
 
 abstract class AdService {
+  BannerBackend? get banners;
+  ValueListenable<AdPresentationState> get presentation;
+
+  /// A native banner click can open an overlay without an Android pause.
+  void setBannerOverlayOpen(bool value);
   Future<void> initialize();
   void preloadInterstitial();
   void preloadRewarded();
@@ -82,6 +113,13 @@ abstract class AdService {
 
 class NoOpAdService implements AdService {
   const NoOpAdService();
+  @override
+  BannerBackend? get banners => null;
+  @override
+  ValueListenable<AdPresentationState> get presentation =>
+      const _NoAdPresentation();
+  @override
+  void setBannerOverlayOpen(bool value) {}
   @override
   Future<void> initialize() async {}
   @override
@@ -137,6 +175,9 @@ class ManagedAdService implements AdService {
   }) : nowUtc = nowUtc ?? _utc,
        nowLocal = nowLocal ?? DateTime.now;
   final AdsBackend backend;
+  @override
+  BannerBackend? get banners =>
+      backend is BannerBackend ? backend as BannerBackend : null;
   final AdPolicy policy;
   final AnalyticsService analytics;
   final DateTime Function() nowUtc;
@@ -162,6 +203,31 @@ class ManagedAdService implements AdService {
       _foreground = true,
       _disposed = false,
       _fullscreen = false;
+  bool _bannerOverlay = false;
+  final _presentation = ValueNotifier(const AdPresentationState());
+  @override
+  ValueListenable<AdPresentationState> get presentation => _presentation;
+  void _publishPresentation() {
+    if (_disposed) return;
+    final previous = _presentation.value;
+    final busy = _fullscreen || _bannerOverlay;
+    if (previous.canRequestAds == _allowed &&
+        previous.foreground == _foreground &&
+        previous.fullscreenBusy == busy)
+      return;
+    _presentation.value = AdPresentationState(
+      canRequestAds: _allowed,
+      foreground: _foreground,
+      fullscreenBusy: busy,
+    );
+  }
+
+  @override
+  void setBannerOverlayOpen(bool value) {
+    if (_disposed) return;
+    _bannerOverlay = value;
+    _publishPresentation();
+  }
 
   void _event(
     String action,
@@ -217,6 +283,7 @@ class ManagedAdService implements AdService {
     Future<ConsentFormOutcome> Function() form,
   ) async {
     _fullscreen = true;
+    _publishPresentation();
     try {
       return await form();
     } catch (_) {
@@ -225,6 +292,7 @@ class ManagedAdService implements AdService {
       return ConsentFormOutcome.failed;
     } finally {
       _fullscreen = false;
+      _publishPresentation();
     }
   }
 
@@ -266,6 +334,7 @@ class ManagedAdService implements AdService {
       if (!_consentCurrent(generation)) return;
     }
     _allowed = ready;
+    _publishPresentation();
     // Only a completed collection can suppress re-prompting for this session.
     // An update succeeding does NOT mean a form loaded or the reader answered.
     _consentRetryable = !ready && !(collectionCompleted && allowed == false);
@@ -278,7 +347,7 @@ class ManagedAdService implements AdService {
         _consentWork != null ||
         _allowed ||
         !_consentRetryable ||
-        _fullscreen ||
+        (_fullscreen || _bannerOverlay) ||
         _disposed) {
       return;
     }
@@ -294,13 +363,18 @@ class ManagedAdService implements AdService {
   bool get privacyOptionsRequired => _privacyRequired;
   @override
   Future<void> showPrivacyOptions() async {
-    if (_disposed || _fullscreen || !_foreground || _consentWork != null) {
+    if (_disposed ||
+        _fullscreen ||
+        _bannerOverlay ||
+        !_foreground ||
+        _consentWork != null) {
       return;
     }
     await _exclusive(() async {
       final generation = ++_consentGeneration;
       _consentStartedAt = nowUtc();
       _allowed = false;
+      _publishPresentation();
       _clearSlots();
       final outcome = await _holdingFullscreen(backend.showPrivacyOptionsForm);
       if (!_consentCurrent(generation)) return;
@@ -408,6 +482,7 @@ class ManagedAdService implements AdService {
   void setForeground(bool value) {
     if (_disposed || value == _foreground) return;
     _foreground = value;
+    _publishPresentation();
     for (final format in AdFormat.values) {
       final slot = _slots[format]!;
       if (!value) {
@@ -430,7 +505,7 @@ class ManagedAdService implements AdService {
     if (_disposed) return 'disposed';
     if (!_foreground) return 'background';
     if (!_allowed) return 'consent_or_initialization';
-    if (_fullscreen) return 'fullscreen_busy';
+    if (_fullscreen || _bannerOverlay) return 'fullscreen_busy';
     if (!_valid(_slots[format]!)) return 'not_ready';
     return null;
   }
@@ -485,6 +560,7 @@ class ManagedAdService implements AdService {
     Future<void> Function()? reward,
   ) async {
     _fullscreen = true;
+    _publishPresentation();
     final slot = _slots[format]!;
     final ad = slot.ad!;
     slot.ad = null;
@@ -506,6 +582,7 @@ class ManagedAdService implements AdService {
       if (rewardSave != null) await rewardSave;
       _discard(ad);
       _fullscreen = false;
+      _publishPresentation();
       _event(
         failed ? 'show_failed' : 'dismissed',
         format,
@@ -590,8 +667,11 @@ class ManagedAdService implements AdService {
 
   @override
   void dispose() {
-    _disposed = true;
+    if (_disposed) return;
     _allowed = false;
+    _publishPresentation();
+    _disposed = true;
+    _presentation.dispose();
     _clearSlots();
   }
 }

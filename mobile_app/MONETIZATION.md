@@ -40,7 +40,7 @@ These cover the fourth-use refusal, local-day accounting, the three-hour boundar
 - Later successful **free** readings: an interstitial candidate before Result.
 - A reading consuming bonus credit: no post-analysis interstitial.
 - History row tap: a candidate unless within the first reading's protected flow.
-- No ads on Home, app resume, or a timer. No queued/delayed catch-up.
+- No automatic fullscreen ads on Home, app resume, or a timer. No queued/delayed catch-up.
 - A shared 30-second minimum gap from interstitial dismissal, persistent across
   restart/midnight. No separate reward gap and no daily interstitial cap.
 - Missing/unavailable ad: continue immediately; a ready native fullscreen ad:
@@ -52,9 +52,11 @@ These cover the fourth-use refusal, local-day accounting, the three-hour boundar
 ## Still outside this change
 
 Only test AdMob IDs are configured. UMP is wired, but requires real account
-message configuration and device QA. Banner SDK integration and server-side
-entitlement are not implemented. The banner placeholder has no custom refresh
-timer; use SDK/AdMob automatic refresh when real banners are connected.
+message configuration and device QA. Home/Reveal banner SDK wiring is now
+implemented using ordinary anchored-adaptive Google test units; the old fake
+advertiser/CTA has been removed. Refresh is owned by SDK/AdMob, not an app
+timer. Banner placement, privacy/lifecycle and production ID configuration are
+documented in `ADS_LIFECYCLE.md`. Server-side entitlement is not implemented.
 
 This is local device enforcement, not tamper-proof server entitlement. Do not claim protection against manually changing the device clock, clearing app data or multiple app installations.
 

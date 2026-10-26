@@ -1,129 +1,113 @@
 import 'package:flutter/material.dart';
 
-import '../theme.dart';
+import '../analytics/analytics_service.dart';
+import '../services/ad_runtime.dart';
+import '../services/banner_ad.dart';
+import '../services/banner_ad_controller.dart';
 
-/// A dedicated, isolated bottom slot for AdMob banner ads.
-///
-/// Designed to satisfy Google AdMob Content Overlap policy:
-/// - Never positioned as a floating overlay above scrollable viewports.
-/// - Occupies a fixed-height layout slot (50–52dp) outside scroll views.
-/// - Guarantees zero overlap with interactive buttons or disclaimers.
-class AdBannerSlot extends StatelessWidget {
+/// An anchored layout slot, never an overlay or a fake house advertisement.
+/// Its route must be current, the app resumed and SDK consent settled to show.
+class AdBannerSlot extends StatefulWidget {
   const AdBannerSlot({
     super.key,
-    this.height = 50.0,
-    this.advertiserName,
-    this.title,
-    this.callToAction,
-    this.onTap,
+    required this.ads,
+    required this.placement,
+    this.analytics = const NoopAnalyticsService(),
   });
+  final AdService ads;
+  final BannerPlacement placement;
+  final AnalyticsService analytics;
 
-  final double height;
-  final String? advertiserName;
-  final String? title;
-  final String? callToAction;
-  final VoidCallback? onTap;
+  @override
+  State<AdBannerSlot> createState() => _AdBannerSlotState();
+}
+
+class _AdBannerSlotState extends State<AdBannerSlot> {
+  BannerAdController? _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _createController();
+  }
+
+  void _createController() {
+    final backend = widget.ads.banners;
+    if (backend == null) return;
+    _controller = BannerAdController(
+      ads: widget.ads,
+      backend: backend,
+      placement: widget.placement,
+      analytics: widget.analytics,
+    );
+  }
+
+  @override
+  void didUpdateWidget(AdBannerSlot oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.ads != widget.ads ||
+        oldWidget.placement != widget.placement ||
+        oldWidget.analytics != widget.analytics) {
+      _controller?.dispose();
+      _controller = null;
+      _createController();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final lang = Localizations.maybeLocaleOf(context)?.languageCode ?? 'vi';
-    final (resolvedTitle, resolvedCta) = switch (lang) {
-      'en' => ('Lucky feng shui crystal bracelet', 'View now'),
-      'ja' => ('幸運の天然石ブレスレット', '今すぐ見る'),
-      'ko' => ('행운의 천연 원석 팔찌', '바로보기'),
-      'zh' => ('开运风水水晶手串', '立即查看'),
-      'es' => ('Pulsera de piedra de la suerte', 'Ver ahora'),
-      'th' => ('กำไลหินมงคลนำโชค', 'ดูเลย'),
-      'hi' => ('शुभ रत्न ब्रेसलेट', 'अभी देखें'),
-      _ => ('Vòng đá phong thủy may mắn', 'Xem ngay'),
-    };
-    final displayAdvertiser = advertiserName ?? 'Astra Store';
-    final displayTitle = title ?? resolvedTitle;
-    final displayCta = callToAction ?? resolvedCta;
-
-    return Container(
-      height: height,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: const Color(0xFF091222),
-        border: Border(
-          top: BorderSide(
-            color: CompassColors.blueLight.withValues(alpha: 0.18),
-            width: 1.0,
-          ),
-        ),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 14),
-      child: Row(
-        children: [
-          // "AD" badge
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
-            decoration: BoxDecoration(
-              color: CompassColors.gold.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(4),
-              border: Border.all(
-                color: CompassColors.gold.withValues(alpha: 0.4),
-                width: 0.8,
-              ),
-            ),
-            child: const Text(
-              'AD',
-              style: TextStyle(
-                color: CompassColors.gold,
-                fontSize: 9,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.5,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Ad description
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  '$displayAdvertiser: $displayTitle',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          // Call to action button
-          InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(8),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.07),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.12),
-                  width: 0.8,
+    final controller = _controller;
+    if (controller == null) return const SizedBox.shrink();
+    // This inherited aspect rebuilds on pushes, pops and modal sheets,
+    // including while a covered Home route remains mounted.
+    final active = ModalRoute.isCurrentOf(context) ?? true;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final width = constraints.maxWidth.isFinite
+            ? constraints.maxWidth.floor()
+            : 0;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && identical(controller, _controller)) {
+            controller.configure(width: width, active: active);
+          }
+        });
+        return ListenableBuilder(
+          listenable: controller,
+          builder: (context, _) {
+            final ad = active && controller.width == width
+                ? controller.visibleAd
+                : null;
+            // Reserve a small blank slot while unavailable, not fake ad copy.
+            // The exact SDK size is established before displaying a creative;
+            // loading, failure and automatic creative refresh don't resize it.
+            final height = controller.size?.height.toDouble() ?? 50;
+            return SizedBox(
+              key: const Key('banner_layout_slot'),
+              height: height + 8,
+              width: double.infinity,
+              child: Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: ad == null
+                      ? null
+                      : SizedBox(
+                          width: ad.size.width.toDouble(),
+                          height: ad.size.height.toDouble(),
+                          child: ad.buildView(),
+                        ),
                 ),
               ),
-              child: Text(
-                displayCta,
-                style: const TextStyle(
-                  color: CompassColors.blueLight,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-            ),
-          ),
-        ],
-      ),
+            );
+          },
+        );
+      },
     );
   }
 }

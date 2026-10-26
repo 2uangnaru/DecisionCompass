@@ -15,6 +15,7 @@ import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
 import '../services/ad_service.dart';
+import '../services/banner_ad.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
@@ -801,7 +802,11 @@ class _RitualPageState extends State<RitualPage>
               },
             ),
           ),
-          const AdBannerSlot(),
+          AdBannerSlot(
+            ads: widget.dependencies.adService,
+            placement: BannerPlacement.reveal,
+            analytics: widget.dependencies.analytics,
+          ),
         ],
       ),
     );

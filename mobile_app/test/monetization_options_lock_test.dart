@@ -9,6 +9,7 @@ import 'package:decision_compass/theme.dart';
 import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'reading_test_rig.dart';
 
@@ -23,6 +24,46 @@ void main() {
   );
 
   group('Monetization Options Lock - HomePage', () {
+    for (final hasBonus in [false, true]) {
+      testWidgets('removes Ads locks when the second free reading is ready '
+          '${hasBonus ? 'with' : 'without'} a bonus credit', (tester) async {
+        useScreen(tester, size: const Size(393, 900));
+        SharedPreferences.setMockInitialValues({});
+        var now = DateTime(2026, 9, 18, 8, 30);
+        final quota = SharedPreferencesReadingQuotaController(
+          cooldownDuration: const Duration(seconds: 3),
+        );
+        await quota.ensureLoaded();
+        await quota.consumeReading(now);
+        if (hasBonus) await quota.earnBonusReading();
+        expect(quota.dailyFreeReadingsUsed(now), 1);
+
+        final rig = ReadingTestRig(
+          quotaManager: quota,
+          liveLocalClock: () => now,
+        );
+        await tester.pumpWidget(
+          localizedApp(
+            home: HomePage(profile: profile, dependencies: rig.dependencies),
+          ),
+        );
+        await tester.pump();
+        expect(find.byType(AdOptionBadge), findsWidgets);
+
+        // Nothing else changes the quota or rebuilds Home while the reader
+        // waits here. Its own timer must remove the visual locks.
+        now = now.add(const Duration(seconds: 4));
+        await tester.pump(const Duration(seconds: 4));
+        expect(quota.isFreeEnergyReady(now), isTrue);
+        expect(find.byType(AdOptionBadge), findsNothing);
+
+        await tester.ensureVisible(find.byKey(const Key('category_love')));
+        await tester.tap(find.byKey(const Key('category_love')));
+        await tester.pump();
+        expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+      });
+    }
+
     testWidgets('unlocked state when quota is available (free reading ready)', (
       tester,
     ) async {

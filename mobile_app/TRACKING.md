@@ -255,3 +255,13 @@ separate impression/paid callbacks (the impression event is
 prototype grants to SDK earned-callback grants (`grant_source=sdk`). Older
 prototype descriptions above are historical. Consent/no-op and sensitive-data
 boundaries are unchanged. Test units do not prove real revenue or native QA.
+
+Banner extension (same date): existing lifecycle events also accept
+`ad_format=banner`, with `placement=home/reveal`. Initial app requests, native
+loads/failures, impressions, clicks and paid callbacks are instrumented. An
+SDK automatic refresh is NOT an app `ad_request`; later native load/impression/
+paid callbacks remain separate events. Never deduplicate revenue once per
+banner handle: that handle can serve many refreshed impressions. SDK values
+remain `value_micros`, not dollars. No fake placeholder impressions, profile
+fields or SDK error descriptions are recorded. Opt-out/no-op still drops
+events; this does not activate Firebase or establish real earnings.

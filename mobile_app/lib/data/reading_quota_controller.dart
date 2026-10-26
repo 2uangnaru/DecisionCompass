@@ -12,6 +12,9 @@ abstract interface class ReadingQuotaController implements Listenable {
   bool isAvailable(DateTime now);
   bool isCooldown(DateTime now);
   Duration remainingCooldown(DateTime now);
+
+  /// Time until the next free reading, even when a bonus reading is available.
+  Duration remainingFreeEnergyCooldown(DateTime now);
   String remainingTimeString(DateTime now);
   int get bonusReadings;
   int dailyFreeReadingsUsed(DateTime now);
@@ -130,6 +133,11 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
   @override
   Duration remainingCooldown(DateTime now) {
     if (_bonusReadings > 0) return Duration.zero;
+    return remainingFreeEnergyCooldown(now);
+  }
+
+  @override
+  Duration remainingFreeEnergyCooldown(DateTime now) {
     if (_storedDateString != _dateKey(now.toLocal())) return Duration.zero;
     final local = now.toLocal();
     final midnight = DateTime(local.year, local.month, local.day + 1);
@@ -282,6 +290,9 @@ class NoopReadingQuotaController implements ReadingQuotaController {
       defaultCooldown ? const Duration(hours: 3) : Duration.zero;
 
   @override
+  Duration remainingFreeEnergyCooldown(DateTime now) => remainingCooldown(now);
+
+  @override
   String remainingTimeString(DateTime now) => defaultTimeString;
 
   @override
@@ -358,6 +369,10 @@ class FakeReadingQuotaController extends ChangeNotifier
   @override
   Duration remainingCooldown(DateTime now) =>
       _bonus > 0 ? Duration.zero : (_isCooldown ? _remaining : Duration.zero);
+
+  @override
+  Duration remainingFreeEnergyCooldown(DateTime now) =>
+      _isCooldown ? _remaining : Duration.zero;
 
   @override
   String remainingTimeString(DateTime now) {

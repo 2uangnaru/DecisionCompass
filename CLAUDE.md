@@ -17,8 +17,12 @@ There is no show-duration timeout or late catch-up display. Native AdMob and
 UMP are isolated in `ad_service.dart`; tests inject `AdsBackend` rather than
 pretending a fake proves native rendering. Reward buttons now require the SDK
 earned callback; NoOp never grants. Test harness rewards are explicitly fake.
-Only Google test units are configured. Banner remains a prototype. Production
-IDs/UMP account setup, device QA and policy acceptance are NOT verified.
+Only Google test units are configured. Home/Reveal now use native standard
+anchored-adaptive banners (no collapsible overlay). Each route owns its banner;
+covered/background/fullscreen slots remove their AdWidget and retain the handle.
+Consent collection/withdrawal invalidates it. SDK/AdMob owns refresh; the app
+only backs off initial failures. See the Banner section in `ADS_LIFECYCLE.md`.
+Production IDs/UMP account setup, device QA and policy acceptance are NOT verified.
 
 The older quota/analytics notes describing direct prototype grants and the
 old eight-second interstitial show timeout are historical, not current code.

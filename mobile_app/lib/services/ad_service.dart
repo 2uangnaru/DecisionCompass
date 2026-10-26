@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../analytics/analytics_service.dart';
 import 'ad_policy.dart';
 import 'ad_runtime.dart';
+import 'banner_ad.dart';
 export 'ad_runtime.dart';
 
 /// Google's TEST units. No production ad IDs are configured by this change.
@@ -18,6 +20,27 @@ class AdConstants {
   static const testAndroidRewardedUnitId =
       'ca-app-pub-3940256099942544/5224354917';
   static const testIosRewardedUnitId = 'ca-app-pub-3940256099942544/1712485313';
+  static const testAndroidBannerUnitId =
+      'ca-app-pub-3940256099942544/9214589741';
+  static const testIosBannerUnitId = 'ca-app-pub-3940256099942544/2435281174';
+  // Empty until the owner supplies production units. No live ads by default.
+  static const realAndroidBannerUnitId = String.fromEnvironment(
+    'ADMOB_ANDROID_BANNER_UNIT_ID',
+  );
+  static const realIosBannerUnitId = String.fromEnvironment(
+    'ADMOB_IOS_BANNER_UNIT_ID',
+  );
+  static String get bannerAdUnitId => kIsWeb
+      ? ''
+      : Platform.isAndroid
+      ? (realAndroidBannerUnitId.isEmpty
+            ? testAndroidBannerUnitId
+            : realAndroidBannerUnitId)
+      : Platform.isIOS
+      ? (realIosBannerUnitId.isEmpty
+            ? testIosBannerUnitId
+            : realIosBannerUnitId)
+      : '';
   static const String? realAndroidInterstitialUnitId = null;
   static const String? realIosInterstitialUnitId = null;
   static String get interstitialAdUnitId => kIsWeb
@@ -47,9 +70,10 @@ class AdMobService extends ManagedAdService {
        );
 }
 
-class GoogleAdsBackend implements AdsBackend {
-  GoogleAdsBackend({this.interstitialUnit});
+class GoogleAdsBackend implements AdsBackend, BannerBackend {
+  GoogleAdsBackend({this.interstitialUnit, this.bannerUnit});
   final String? interstitialUnit;
+  final String? bannerUnit;
   Future<void>? _sdkInitialization;
 
   Future<void> _initializeSdk() => _sdkInitialization ??= _startSdk();
@@ -119,6 +143,41 @@ class GoogleAdsBackend implements AdsBackend {
   Future<void> initializeSdk() => _initializeSdk();
 
   @override
+  Future<BannerHandle?> createBanner({
+    required int width,
+    required BannerCallbacks callbacks,
+  }) async {
+    final unit = bannerUnit ?? AdConstants.bannerAdUnitId;
+    if (unit.isEmpty) return null;
+    // v9.1 deprecates the compact anchored API in favour of LARGE anchored
+    // (up to 150dp). Retain the standard 50-90dp format agreed for this UI;
+    // adopting the taller format is a product/layout change, not a rename.
+    // ignore: deprecated_member_use
+    final size = await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(
+      width,
+    );
+    if (size == null) return null;
+    return GoogleBannerHandle(
+      BannerAd(
+        adUnitId: unit,
+        size: size,
+        // Ordinary anchored banner, deliberately not collapsible.
+        request: const AdRequest(),
+        listener: BannerAdListener(
+          onAdLoaded: (_) => callbacks.loaded(),
+          onAdFailedToLoad: (_, _) => callbacks.failed(),
+          onAdImpression: (_) => callbacks.impression(),
+          onAdClicked: (_) => callbacks.clicked(),
+          onAdOpened: (_) => callbacks.opened(),
+          onAdClosed: (_) => callbacks.closed(),
+          onPaidEvent: (_, value, precision, currency) =>
+              callbacks.paid(value, currency, precision.name),
+        ),
+      ),
+    );
+  }
+
+  @override
   Future<void> load(
     AdFormat format,
     void Function(FullscreenAd) onLoaded,
@@ -142,6 +201,27 @@ class GoogleAdsBackend implements AdsBackend {
         onAdFailedToLoad: (_) => onFailed(),
       ),
     );
+  }
+}
+
+@visibleForTesting
+class GoogleBannerHandle implements BannerHandle {
+  GoogleBannerHandle(this.ad);
+  final BannerAd ad;
+  bool _disposed = false;
+  @override
+  BannerSize get size => BannerSize(ad.size.width, ad.size.height);
+  @override
+  Future<void> load() => ad.load();
+  @override
+  Widget buildView() => AdWidget(key: ObjectKey(ad), ad: ad);
+  @override
+  Future<void> dispose() async {
+    if (_disposed) return;
+    _disposed = true;
+    // Let the slot remove AdWidget before destroying its native ad/view.
+    await WidgetsBinding.instance.endOfFrame;
+    await ad.dispose();
   }
 }
 

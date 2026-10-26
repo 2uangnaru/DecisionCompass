@@ -40,7 +40,7 @@ until the timestamp catches up; this is not server-backed tamper protection.
   per format; both share one fullscreen lock. Candidate calls skip immediately
   when uninitialized, consent-blocked, backgrounded, busy, or not ready.
 - `lib/services/ad_service.dart`: Google Mobile Ads/UMP adapter, Google test
-  interstitial/rewarded units only. No raw SDK error strings are logged.
+  interstitial/rewarded/banner units by default. No raw SDK error strings are logged.
 - `LoadingPage`: only later **free** usable completions request interstitials.
 - `HistoryPage`: one in-flight row action for the whole page; checks route and
   mounted state before/after the ad. Ten rapid taps do not queue ten opens.
@@ -122,6 +122,63 @@ If an ad is unavailable/fails, show a localized short notice; never fabricate
 a successful view or bonus. NoOp grants nothing. Tests/previews needing a
 reward must explicitly inject `TestRewardAdService` from the test harness.
 
+## Banner (2026-10-26)
+
+The `Astra Store` house-ad mock has been removed. Only Home and Reveal have
+ordinary **standard anchored-adaptive** AdMob banners, not collapsible overlays.
+Loading, Result, History, Profile, onboarding and Responsible Use have no slot;
+a modal sheet hides the underlying banner. First-daily protection is for
+interstitials only: banner eligibility does not depend on reading quota.
+
+- `banner_ad.dart` defines a separate injectable SDK boundary; banner is NOT
+  added to fullscreen `AdFormat` or its two preload caches.
+- `banner_ad_controller.dart` owns one native handle per mounted slot. Home
+  can retain its own hidden banner while Reveal owns another. Popping back
+  reuses Home's handle. No native ad is mounted in two AdWidgets.
+- `ad_banner_slot.dart` uses `ModalRoute.isCurrentOf` (including sheets), actual
+  available width and shared permission/foreground/fullscreen state. Hidden
+  slots REMOVE AdWidget, rather than making a mounted ad transparent. Native
+  disposal waits until the next frame, after AdWidget is removed.
+- UMP permission AND successful SDK startup gate initial requests. Privacy
+  collection/withdrawal invalidates visible and hidden banners. Native banner
+  click overlays hold the shared fullscreen guard until their closed callback,
+  even if their route disappears; no fabricated dismissal timer.
+- Initial sizing/load deadline is 15 seconds, with one 2/4/8/16/32/64-second
+  backoff chain. No retries while off-route, backgrounded or fullscreen-busy.
+  Sizing finishing after a slot is hidden cannot start a new native load.
+  Stale callbacks cannot resurrect old banners.
+- After initial success, SDK/AdMob owns refresh and refresh-error recovery.
+  There is **no app refresh timer**, reload on build, or retry loop alongside
+  a loaded SDK banner. Set **Google-optimized automatic refresh in AdMob**
+  when creating the real banner unit; this console setting cannot be set by
+  app code and has NOT been configured in this checkout.
+- Width changes recreate the correctly sized banner. Exact SDK height is
+  reserved before creative display, plus 8dp separation above. The initial
+  50dp reservation can adjust once when SDK sizing resolves or width changes,
+  not when the creative loads/refreshes. On no-fill a small blank reservation
+  remains to avoid shifting controls; no fake advertisement or blocking UI.
+  Existing scaffold SafeArea keeps it above system navigation. NoOp has no slot.
+- Plugin 9.1 deprecates standard sizing in favour of **large** anchored (up to
+  150dp). A documented line-local suppression retains the agreed compact
+  standard format (up to 90dp), rather than silently expanding the UI.
+  Revisit this API when upgrading the SDK.
+
+### Production configuration (owner supplies later)
+
+`AdConstants` in `ad_service.dart` contains Google's default adaptive **test**
+units. An Android production banner unit can be supplied at build time:
+
+```powershell
+flutter build apk --release --dart-define=ADMOB_ANDROID_BANNER_UNIT_ID=YOUR_REAL_BANNER_UNIT_ID
+```
+
+An empty define uses Google's test unit. `ADMOB_IOS_BANNER_UNIT_ID` is also
+available, but iOS behavior is not device-verified. The Android manifest still
+has a sample AdMob **App ID** (not an ad unit ID); replace it with the owner's
+App ID and configure UMP messages before production. Interstitial/rewarded IDs
+are unchanged and still test units. Supplying a banner unit alone is NOT
+production sign-off: account setup, native QA and store/privacy checks remain.
+
 ## Analytics
 
 The existing thirteen product events remain. Reward CTA/grant events from the
@@ -170,6 +227,33 @@ demonstrate commercial earnings. Firebase delivery remains unverified.
 - `test/ump_form_recovery_test.dart`: production callback-to-outcome mapping,
   startup/privacy form failure and recovery, permission checks, retry spacing,
   thrown errors, pending/late forms and no automatic fullscreen ad display.
+- `test/banner_ad_controller_test.dart`: real coordinator permission, initial
+  retry/watchdog, hidden/background/fullscreen behavior, late sizing/callbacks,
+  privacy invalidation, banner-overlay guard and per-refresh paid telemetry.
+- `test/banner_ad_slot_test.dart`: real Home/Reveal/Loading/Result navigation,
+  covered routes/modal sheets, reuse, resize and 360dp safe-area/CTA separation
+  across all eight app languages. Native banner rendering is explicitly faked.
+- `test/banner_ad_adapter_test.dart`: production adaptive request/callback
+  mapping and native handle view/size/deferred-disposal contract. The platform
+  channel/native ad is faked; this is not physical-device evidence.
+
+Banner follow-up verification, 2026-10-26, from `mobile_app/`:
+
+- `banner_ad_controller_test.dart`, `banner_ad_slot_test.dart`,
+  `banner_ad_adapter_test.dart`: **38 passed**. Eight locale layout checks use
+  a genuine 360dp viewport and 24dp bottom system inset.
+- Final full suite, all 84 current `*_test.dart` files passed explicitly to
+  Flutter: **1,347 passed, 0 failed** (2m27s); no tests disabled or skipped.
+  A previous discovery run passed 1,347 tests but failed loading a transient
+  `_codex_free_cooldown_probe_test.dart`, already absent on inspection. This
+  task did not create/delete that file. The final file-list run avoids a
+  moving discovery list and is the final verification result.
+- `flutter analyze`: **No issues found**. Format check on all 12 changed Dart
+  source/test files: **0 changed**. `git diff --check`: clean.
+- Engine, local formulas, quota controller, dependencies and native manifests
+  are unchanged. Existing dirty branding/icon assets are preserved.
+- No physical-device ad rendering, fill, paid delivery or UMP UI was tested.
+  No real IDs/account settings, APK build, commit or push were added by this task.
 
 UMP P2 recovery follow-up verification, 2026-10-26, from `mobile_app/`:
 
@@ -222,7 +306,7 @@ network fills, clicks or paid callbacks work on a physical device.
 
 Real AdMob app/ad unit IDs, privacy-message/account configuration, native
 Android tests (including offline, click-out/resume, long ads, no reward,
-rotation/background and repeated interactions), banner SDK wiring and Play
+rotation/background and repeated interactions), native banner QA and Play
 policy review. History-entry interstitials remain a policy/UX risk; a thirty-
 second gap does not prove compliance or guarantee store acceptance. No build,
 commit or push is implied by this document.
@@ -230,3 +314,5 @@ commit or push is implied by this document.
 SDK references used for implementation: [interstitial lifecycle](https://developers.google.com/admob/flutter/interstitial),
 [rewarded callbacks](https://developers.google.com/admob/flutter/rewarded),
 [UMP consent gating](https://developers.google.com/admob/flutter/privacy).
+Banner references: [Flutter banners](https://developers.google.com/admob/flutter/banner),
+[AdMob refresh configuration](https://support.google.com/admob/answer/3245199?hl=en).

@@ -15,6 +15,7 @@ import '../localized_rotation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../services/banner_ad.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
 import '../widgets/celestial_ui.dart';
@@ -195,6 +196,7 @@ class _HomePageState extends State<HomePage>
       setState(() {
         _resetLockedSelections();
       });
+      _scheduleFreeEnergyRefresh();
     }
   }
 
@@ -217,6 +219,7 @@ class _HomePageState extends State<HomePage>
 
   late String _briefLocalDay;
   Timer? _dayChangeTimer;
+  Timer? _freeEnergyTimer;
 
   /// The index of today's rotating description, once the saved deck has been
   /// read. Null means "not resolved yet"; the copy block holds its space
@@ -244,6 +247,7 @@ class _HomePageState extends State<HomePage>
     _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
     _loadDescription();
     _scheduleDayChange();
+    _scheduleFreeEnergyRefresh();
   }
 
   /// Deals (or re-reads) the description for the local day now showing.
@@ -267,7 +271,12 @@ class _HomePageState extends State<HomePage>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) _refreshIfNewDay();
+    if (state == AppLifecycleState.resumed) {
+      _refreshIfNewDay();
+      // Timers can be suspended while the app is away. Recheck the lock using
+      // the current clock as soon as Home becomes active again.
+      setState(() {});
+    }
   }
 
   void _refreshIfNewDay() {
@@ -283,6 +292,7 @@ class _HomePageState extends State<HomePage>
       _loadDescription();
     }
     _scheduleDayChange();
+    _scheduleFreeEnergyRefresh();
   }
 
   void _scheduleDayChange() {
@@ -298,6 +308,29 @@ class _HomePageState extends State<HomePage>
     );
   }
 
+  void _scheduleFreeEnergyRefresh() {
+    _freeEnergyTimer?.cancel();
+    final now = widget.dependencies.nowLocal();
+    final quota = widget.dependencies.quotaManager;
+    // Midnight is already handled by the day timer. The extra timer is only
+    // for the first and second free-reading cooldowns.
+    if (quota.isFreeEnergyReady(now) ||
+        quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings) {
+      return;
+    }
+    final remaining = quota.remainingFreeEnergyCooldown(now);
+    _freeEnergyTimer = Timer(
+      remaining > Duration.zero
+          ? remaining + const Duration(milliseconds: 50)
+          : const Duration(seconds: 1),
+      () {
+        if (!mounted) return;
+        setState(() {});
+        _scheduleFreeEnergyRefresh();
+      },
+    );
+  }
+
   @override
   void didUpdateWidget(HomePage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -306,11 +339,13 @@ class _HomePageState extends State<HomePage>
       oldWidget.dependencies.quotaManager.removeListener(_onQuotaChanged);
       widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     }
+    _scheduleFreeEnergyRefresh();
   }
 
   @override
   void dispose() {
     _dayChangeTimer?.cancel();
+    _freeEnergyTimer?.cancel();
     for (final notifier in _categoryTriggers.values) {
       notifier.dispose();
     }
@@ -485,7 +520,11 @@ class _HomePageState extends State<HomePage>
               ),
             ),
           ),
-          const AdBannerSlot(),
+          AdBannerSlot(
+            ads: widget.dependencies.adService,
+            placement: BannerPlacement.home,
+            analytics: widget.dependencies.analytics,
+          ),
         ],
       ),
     );

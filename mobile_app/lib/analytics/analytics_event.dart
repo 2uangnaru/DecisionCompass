@@ -50,6 +50,8 @@ class AnalyticsEvent {
       'mode',
       'category',
       'period',
+      'home',
+      'reveal',
     };
     const reasons = {
       'policy_unavailable',
@@ -65,7 +67,7 @@ class AnalyticsEvent {
       'load_exception',
     };
     if (!actions.contains(action) ||
-        !{'interstitial', 'rewarded'}.contains(format) ||
+        !{'interstitial', 'rewarded', 'banner'}.contains(format) ||
         (placement != null && !placements.contains(placement)) ||
         (reason != null && !reasons.contains(reason))) {
       throw ArgumentError('invalid_ad_event');

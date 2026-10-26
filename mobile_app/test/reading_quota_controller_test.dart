@@ -39,6 +39,20 @@ void main() {
     },
   );
 
+  test('bonus credit does not hide the free energy expiry', () async {
+    final q = SharedPreferencesReadingQuotaController(
+      cooldownDuration: const Duration(seconds: 3),
+    );
+    final now = DateTime(2026, 10, 9, 9);
+    await q.consumeReading(now);
+    await q.earnBonusReading();
+
+    expect(q.remainingCooldown(now), Duration.zero);
+    expect(q.remainingFreeEnergyCooldown(now), const Duration(seconds: 3));
+    expect(q.isFreeEnergyReady(now), isFalse);
+    expect(q.isFreeEnergyReady(now.add(const Duration(seconds: 3))), isTrue);
+  });
+
   test('a call during cooldown cannot spend another reading', () async {
     final q = SharedPreferencesReadingQuotaController();
     final now = DateTime(2026, 10, 9, 9);
