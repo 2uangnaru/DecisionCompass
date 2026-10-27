@@ -1,10 +1,9 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../app_locale.dart';
-import '../data/history_entry.dart';
-import '../data/models/models.dart' as engine;
 import '../data/reading_quota_controller.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
@@ -92,312 +91,390 @@ class ReadingEnergySnapshot {
       nowLocal.day + 1,
     );
     final untilMidnight = nextMidnight.difference(nowLocal);
+    final safeUntilMidnight =
+        untilMidnight.isNegative ? Duration.zero : untilMidnight;
 
-    Duration cooldown = Duration.zero;
-    if (!exhausted && inCooldown) {
-      cooldown = quota.remainingFreeEnergyCooldown(nowLocal);
-      if (cooldown <= Duration.zero) {
-        cooldown = quota.remainingCooldown(nowLocal);
-      }
+    Duration cooldownRem = Duration.zero;
+    if (inCooldown && remaining > 0) {
+      final rawCooldown = quota.remainingFreeEnergyCooldown(nowLocal);
+      cooldownRem = rawCooldown > Duration.zero ? rawCooldown : freeCooldown;
     }
 
     return ReadingEnergySnapshot(
       usedFreeTurns: used,
       remainingFreeTurns: remaining,
-      cooldownRemaining: cooldown > Duration.zero ? cooldown : Duration.zero,
-      timeUntilMidnight:
-          untilMidnight > Duration.zero ? untilMidnight : Duration.zero,
+      cooldownRemaining: cooldownRem,
+      timeUntilMidnight: safeUntilMidnight,
       bonusTurns: quota.bonusReadings,
     );
   }
-
-  static String _isoDate(DateTime local) =>
-      '${local.year.toString().padLeft(4, '0')}-'
-      '${local.month.toString().padLeft(2, '0')}-'
-      '${local.day.toString().padLeft(2, '0')}';
-
-  /// Resolves the current day's turn count and 3-hour cooldown from saved
-  /// [entries] and optional just-revealed [currentReading].
-  static ReadingEnergySnapshot resolve({
-    required List<HistoryEntry> entries,
-    required DateTime nowLocal,
-    engine.ReadingResponse? currentReading,
-  }) {
-    final todayIso = _isoDate(nowLocal);
-    final seenKeys = <String>{};
-    final todayReadings = <engine.ReadingResponse>[];
-
-    void addIfToday(engine.ReadingResponse reading, String fallbackId) {
-      if (reading.context.localDate != todayIso) return;
-      final key = reading.readingKey ?? fallbackId;
-      if (seenKeys.add(key)) {
-        todayReadings.add(reading);
-      }
-    }
-
-    if (currentReading != null) {
-      addIfToday(
-        currentReading,
-        '${currentReading.context.instantUtc}_'
-        '${currentReading.mode.toJson()}_'
-        '${currentReading.period.toJson()}_'
-        '${currentReading.category.toJson()}',
-      );
-    }
-
-    for (final entry in entries) {
-      addIfToday(entry.reading, entry.id);
-    }
-
-    todayReadings.sort(
-      (a, b) => b.context.instantMs.compareTo(a.context.instantMs),
-    );
-
-    final used = todayReadings.length.clamp(0, freeDailyMax);
-    final remaining = (freeDailyMax - used).clamp(0, freeDailyMax);
-
-    var cooldown = Duration.zero;
-    if (used > 0 && remaining > 0) {
-      final latest = todayReadings.first;
-      final localMs =
-          latest.context.instantMs + latest.context.offsetSeconds * 1000;
-      final utcWall = DateTime.fromMillisecondsSinceEpoch(localMs, isUtc: true);
-      final latestLocal = DateTime(
-        utcWall.year,
-        utcWall.month,
-        utcWall.day,
-        utcWall.hour,
-        utcWall.minute,
-        utcWall.second,
-      );
-      var elapsed = nowLocal.difference(latestLocal);
-      if (elapsed.isNegative) {
-        elapsed = Duration.zero;
-      }
-      if (elapsed < freeCooldown) {
-        cooldown = freeCooldown - elapsed;
-      }
-    }
-
-    final nextMidnight = DateTime(nowLocal.year, nowLocal.month, nowLocal.day + 1);
-    final untilMidnight = nextMidnight.difference(nowLocal);
-
-    return ReadingEnergySnapshot(
-      usedFreeTurns: used,
-      remainingFreeTurns: remaining,
-      cooldownRemaining: cooldown,
-      timeUntilMidnight:
-          untilMidnight > Duration.zero ? untilMidnight : Duration.zero,
-    );
-  }
-
-  /// Formats a [Duration] as `HH:MM:SS`.
-  static String formatCountdown(Duration duration) {
-    final totalSeconds = duration.inSeconds.clamp(0, 86399);
-    final hours = (totalSeconds ~/ 3600).toString().padLeft(2, '0');
-    final minutes = ((totalSeconds % 3600) ~/ 60).toString().padLeft(2, '0');
-    final seconds = (totalSeconds % 60).toString().padLeft(2, '0');
-    return '$hours:$minutes:$seconds';
-  }
 }
 
-/// Visual row of 3 cyan Free orbs + `+` + 3 golden Plus orbs.
-class AstralEnergyOrbsRow extends StatelessWidget {
-  const AstralEnergyOrbsRow({
-    super.key,
-    required this.remainingFreeTurns,
-    this.orbSize = 9.5,
-  });
-
-  final int remainingFreeTurns;
-  final double orbSize;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var i = 0; i < ReadingEnergySnapshot.freeDailyMax; i++) ...[
-          if (i > 0) const SizedBox(width: 4),
-          _FreeOrb(
-            active: i < remainingFreeTurns,
-            size: orbSize,
-          ),
-        ],
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Text(
-            '+',
-            style: TextStyle(
-              color: CompassColors.gold.withValues(alpha: 0.85),
-              fontSize: orbSize + 2,
-              fontWeight: FontWeight.w700,
-              height: 1,
-            ),
-          ),
-        ),
-        for (var i = 0; i < ReadingEnergySnapshot.plusBonusMax; i++) ...[
-          if (i > 0) const SizedBox(width: 4),
-          _PlusGoldOrb(size: orbSize),
-        ],
-      ],
-    );
+/// Formats a [Duration] as `HH:MM:SS` with localized digits when appropriate.
+String formatEnergyCountdown(BuildContext context, Duration duration) {
+  final totalSeconds = duration.inSeconds.clamp(0, 86399);
+  final hours = totalSeconds ~/ 3600;
+  final minutes = (totalSeconds % 3600) ~/ 60;
+  final seconds = totalSeconds % 60;
+  final localeName = intlLocaleOf(context);
+  String twoDigits(int n) {
+    final raw = formatWholeNumber(localeName, n);
+    return n < 10 ? '${formatWholeNumber(localeName, 0)}$raw' : raw;
   }
+
+  return '${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}';
 }
 
-class _FreeOrb extends StatelessWidget {
-  const _FreeOrb({required this.active, required this.size});
-
-  final bool active;
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 240),
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: active
-            ? CompassColors.blueLight
-            : CompassColors.deep.withValues(alpha: 0.7),
-        border: Border.all(
-          color: active
-              ? Colors.white.withValues(alpha: 0.75)
-              : CompassColors.line,
-          width: 1,
-        ),
-        boxShadow: active
-            ? [
-                BoxShadow(
-                  color: CompassColors.blueLight.withValues(alpha: 0.65),
-                  blurRadius: 6,
-                  spreadRadius: 0.5,
-                ),
-              ]
-            : null,
-      ),
-    );
-  }
-}
-
-class _PlusGoldOrb extends StatelessWidget {
-  const _PlusGoldOrb({required this.size});
-
-  final double size;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: size,
-      height: size,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Color(0xFFF5E2AD),
-            CompassColors.gold,
-            Color(0xFFA97E2E),
-          ],
-        ),
-        border: Border.all(
-          color: const Color(0xFFFFF3D1).withValues(alpha: 0.8),
-          width: 0.9,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: CompassColors.gold.withValues(alpha: 0.45),
-            blurRadius: 6,
-            spreadRadius: 0.3,
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// Spot 1 on `HomePage`: Luxury metallic gold `✦ PLUS` emblem button in the header.
-class AstraCuePlusHeaderBadge extends StatelessWidget {
-  const AstraCuePlusHeaderBadge({
-    super.key,
-    required this.onTap,
-  });
+/// Spot 1 on `HomePage`: Luxury animated **`✦ PLUS`** gem badge (`H3` Sparkling
+/// Starlight Gem combined with `H1` Orbiting Conic Starlight Border Beam and
+/// periodic metallic shimmer sweep).
+class AstraCuePlusHeaderBadge extends StatefulWidget {
+  const AstraCuePlusHeaderBadge({super.key, required this.onTap});
 
   final VoidCallback onTap;
 
   @override
+  State<AstraCuePlusHeaderBadge> createState() =>
+      _AstraCuePlusHeaderBadgeState();
+}
+
+class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2800),
+  );
+  bool? _reduceMotion;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (_reduceMotion == reduceMotion) return;
+    _reduceMotion = reduceMotion;
+    if (reduceMotion) {
+      _controller.stop();
+      _controller.value = 0.22;
+    } else {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final copy = _PlusLocalizedCopy.of(
+      Localizations.localeOf(context).languageCode,
+    );
     return Semantics(
       button: true,
-      label: 'AstraCue Plus',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          key: const Key('home_plus_button'),
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(999),
-          child: Ink(
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(999),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF3DFAA),
-                  CompassColors.gold,
-                  Color(0xFFB88E3B),
-                ],
-              ),
-              border: Border.all(
-                color: const Color(0xFFFFF3D1).withValues(alpha: 0.75),
-                width: 1,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: CompassColors.gold.withValues(alpha: 0.32),
-                  blurRadius: 12,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: const Row(
-              mainAxisSize: MainAxisSize.min,
+      label: copy.headerSemanticsLabel,
+      child: GestureDetector(
+        key: const Key('home_plus_button'),
+        onTap: widget.onTap,
+        behavior: HitTestBehavior.opaque,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            final t = _controller.value;
+            final angle = t * 2 * math.pi;
+            final breath = 0.5 + 0.5 * math.sin(angle);
+
+            // Out-of-phase twinkling stars around the gem corners (H3)
+            final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.12, 1.0);
+            final twinkle2 =
+                (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(0.12, 1.0);
+            final twinkle3 =
+                (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(0.10, 1.0);
+
+            // Shimmer sweep position (-1.4 .. 2.2) across the gem surface
+            final shimmerPos = -1.4 + (t * 3.6);
+
+            return Stack(
+              clipBehavior: Clip.none,
+              alignment: Alignment.center,
               children: [
-                Text(
-                  '✦',
-                  style: TextStyle(
-                    color: CompassColors.deep,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
-                    height: 1,
+                // Outer breathing golden aura + Orbiting Starlight Border (H1)
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(999),
+                    boxShadow: [
+                      BoxShadow(
+                        color: CompassColors.gold.withValues(
+                          alpha: 0.24 + 0.26 * breath,
+                        ),
+                        blurRadius: 10 + 8 * breath,
+                        spreadRadius: 0.4 + 0.8 * breath,
+                      ),
+                    ],
+                  ),
+                  child: CustomPaint(
+                    foregroundPainter: _OrbitingGoldBorderPainter(
+                      progress: t,
+                      radius: 999,
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(999),
+                      child: Stack(
+                        children: [
+                          // Deep amber-gold jewel core (H3)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 11.5,
+                              vertical: 6.5,
+                            ),
+                            decoration: const BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Color(0xFF281D0E),
+                                  Color(0xFF422F15),
+                                  Color(0xFF21170B),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Transform.scale(
+                                  scale: 0.90 + 0.22 * breath,
+                                  child: Transform.rotate(
+                                    angle: 0.22 * math.sin(angle),
+                                    child: Text(
+                                      '✦',
+                                      style: TextStyle(
+                                        fontSize: 11.5,
+                                        height: 1.0,
+                                        color: const Color(0xFFFFE8A3),
+                                        shadows: [
+                                          Shadow(
+                                            color: const Color(0xFFFFF2C2)
+                                                .withValues(
+                                                  alpha: 0.55 + 0.4 * breath,
+                                                ),
+                                            blurRadius: 6 + 4 * breath,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4.5),
+                                ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                        colors: [
+                                          Color(0xFFFFF9E2),
+                                          Color(0xFFF0CF82),
+                                          Color(0xFFC99A3E),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ).createShader(bounds),
+                                  blendMode: BlendMode.srcIn,
+                                  child: const Text(
+                                    'PLUS',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 1.25,
+                                      height: 1.05,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Diagonal metallic light sweep
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: FractionalTranslation(
+                                translation: Offset(shimmerPos, 0),
+                                child: Transform.rotate(
+                                  angle: -0.38,
+                                  child: Container(
+                                    width: 22,
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(
+                                        colors: [
+                                          Colors.white.withValues(alpha: 0.0),
+                                          const Color(0xFFFFF4D0)
+                                              .withValues(alpha: 0.38),
+                                          Colors.white.withValues(alpha: 0.0),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
-                SizedBox(width: 4),
-                Text(
-                  'PLUS',
-                  style: TextStyle(
-                    color: CompassColors.deep,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 0.8,
-                    height: 1,
+
+                // Top-left twinkling corner star (H3)
+                Positioned(
+                  top: -4.5,
+                  left: -2.5,
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: twinkle1,
+                      child: Transform.scale(
+                        scale: 0.65 + 0.60 * twinkle1,
+                        child: Text(
+                          '✦',
+                          style: TextStyle(
+                            fontSize: 9.5,
+                            height: 1.0,
+                            color: const Color(0xFFFFE8A3),
+                            shadows: [
+                              Shadow(
+                                color: const Color(0xFFFFE8A3)
+                                    .withValues(alpha: 0.85),
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Bottom-right twinkling corner star (H3)
+                Positioned(
+                  bottom: -4.5,
+                  right: -2.0,
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: twinkle2,
+                      child: Transform.scale(
+                        scale: 0.60 + 0.65 * twinkle2,
+                        child: Text(
+                          '✦',
+                          style: TextStyle(
+                            fontSize: 9.0,
+                            height: 1.0,
+                            color: const Color(0xFFFFE8A3),
+                            shadows: [
+                              Shadow(
+                                color: const Color(0xFFFFE8A3)
+                                    .withValues(alpha: 0.85),
+                                blurRadius: 5,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+                // Top-right micro stardust spark (H3)
+                Positioned(
+                  top: -3.0,
+                  right: 8.0,
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: twinkle3,
+                      child: Transform.scale(
+                        scale: 0.55 + 0.55 * twinkle3,
+                        child: Container(
+                          width: 3.5,
+                          height: 3.5,
+                          decoration: const BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Color(0xFFFFF4CC),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Color(0xFFFFE8A3),
+                                blurRadius: 4,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                 ),
               ],
-            ),
-          ),
+            );
+          },
         ),
       ),
     );
   }
 }
 
-/// Spot 2 on `HomePage` (Option B): Golden Energy Tray embedded flush at the
-/// bottom of the `_dailySignals` card, separated by a golden hairline divider.
+/// Paints the base golden rim and the orbiting starlight comet beam (`H1`).
+class _OrbitingGoldBorderPainter extends CustomPainter {
+  const _OrbitingGoldBorderPainter({
+    required this.progress,
+    required this.radius,
+  });
+
+  final double progress;
+  final double radius;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = Offset.zero & size;
+    final rrect = RRect.fromRectAndRadius(
+      rect.deflate(0.75),
+      Radius.circular(radius),
+    );
+
+    // Base warm gold border
+    final basePaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.35
+      ..color = CompassColors.gold.withValues(alpha: 0.42);
+    canvas.drawRRect(rrect, basePaint);
+
+    // Orbiting starlight comet sweep
+    final sweepPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.65
+      ..shader = SweepGradient(
+        colors: [
+          Colors.transparent,
+          Colors.transparent,
+          CompassColors.gold.withValues(alpha: 0.55),
+          const Color(0xFFF6DC93),
+          const Color(0xFFFFFDF2),
+          CompassColors.gold,
+        ],
+        stops: const [0.0, 0.52, 0.70, 0.86, 0.94, 1.0],
+        transform: GradientRotation(progress * 2 * math.pi),
+      ).createShader(rect);
+    canvas.drawRRect(rrect, sweepPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _OrbitingGoldBorderPainter oldDelegate) =>
+      oldDelegate.progress != progress || oldDelegate.radius != radius;
+}
+
+/// Spot 2 on `HomePage` (`T3 · 2 Ô Đôi Cân Xứng`):
+/// Embedded at the bottom of `_dailySignals`, separated by a golden hairline
+/// divider, with two symmetrical cells aligned directly beneath the two
+/// `_TodaySignalTile`s (*Màu sắc hôm nay* & *Con số hôm nay*).
+///
+/// - Left cell: Current Free turns (`3 cyan orbs`) + live turn count &
+///   cooldown countdown (`Còn 3/3 lượt` or `2/3 · ⏱ 02:59:41` — never shows
+///   "Cách nhau 3h").
+/// - Right cell: Luxury gold Plus cell (`✦ PLUS` + `3 gold orbs` +
+///   `6 lượt · Tắt Ads ›`).
 class HomeEmbeddedEnergyTray extends StatelessWidget {
   const HomeEmbeddedEnergyTray({
     super.key,
@@ -412,91 +489,264 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final copy = _PlusLocalizedCopy.of(locale);
-    final statusText = copy.homeTrayStatus(snapshot);
+    final copy = _PlusLocalizedCopy.forLocale(locale);
+    final localeName = intlLocaleOf(context);
+    final freeRemainingText = formatWholeNumber(
+      localeName,
+      snapshot.remainingFreeTurns,
+    );
+    final freeMaxText = formatWholeNumber(
+      localeName,
+      ReadingEnergySnapshot.freeDailyMax,
+    );
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        key: const Key('home_daily_energy_tray'),
-        onTap: onTapPlus,
-        borderRadius: const BorderRadius.vertical(bottom: Radius.circular(21)),
-        child: Ink(
-          padding: const EdgeInsets.fromLTRB(16, 11, 16, 12),
-          decoration: BoxDecoration(
-            borderRadius: const BorderRadius.vertical(
-              bottom: Radius.circular(21),
-            ),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                CompassColors.gold.withValues(alpha: 0.16),
-                const Color(0xFF162238),
-                CompassColors.violet.withValues(alpha: 0.12),
-              ],
-            ),
-            border: Border(
-              top: BorderSide(
-                color: CompassColors.gold.withValues(alpha: 0.48),
-                width: 1,
+    final String statusLine;
+    final Color statusColor;
+    if (snapshot.isDailyFreeExhausted) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.timeUntilMidnight,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF09898);
+    } else if (snapshot.isCoolingDown) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.cooldownRemaining,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF5D98E);
+    } else {
+      statusLine = copy.t3ReadyStatus(freeRemainingText, freeMaxText);
+      statusColor = CompassColors.blueLight;
+    }
+
+    return Semantics(
+      button: true,
+      label: '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}',
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // Golden hairline divider separating the upper tiles from T3
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Container(
+              height: 1,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    CompassColors.gold.withValues(alpha: 0.0),
+                    CompassColors.gold.withValues(alpha: 0.55),
+                    CompassColors.gold.withValues(alpha: 0.0),
+                  ],
+                ),
               ),
             ),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          Padding(
+            key: const Key('home_daily_energy_tray'),
+            padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+            child: IntrinsicHeight(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  AstralEnergyOrbsRow(
-                    remainingFreeTurns: snapshot.remainingFreeTurns,
-                  ),
-                  const SizedBox(width: 10),
+                  // LEFT CELL: Current Free Energy (aligned with Lucky Colors tile)
                   Expanded(
-                    child: Text(
-                      statusText,
-                      key: const Key('home_energy_turns_status'),
-                      style: const TextStyle(
-                        color: CompassColors.text,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        height: 1.25,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      copy.trayActionLink,
-                      key: const Key('home_energy_plus_cta'),
-                      style: TextStyle(
-                        color: const Color(0xFFF2DC9F),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline,
-                        decorationColor: CompassColors.gold.withValues(
-                          alpha: 0.7,
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: onTapPlus,
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.045),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: CompassColors.line.withValues(alpha: 0.75),
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Flexible(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        copy.t3CurrentLabel,
+                                        maxLines: 1,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: CompassColors.secondary,
+                                              fontSize: 11,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  AstralFreeOrbsRow(
+                                    remainingFreeTurns:
+                                        snapshot.remainingFreeTurns,
+                                    orbSize: 9.5,
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  statusLine,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: statusColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        height: 1.25,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // RIGHT CELL: AstraCue Plus Upgrade (aligned with Lucky Number tile)
+                  Expanded(
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: onTapPlus,
+                        borderRadius: BorderRadius.circular(14),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: const LinearGradient(
+                              colors: [
+                                Color(0xFF2B2012),
+                                Color(0xFF221A11),
+                                Color(0xFF181412),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                            borderRadius: BorderRadius.circular(14),
+                            border: Border.all(
+                              color: CompassColors.gold.withValues(alpha: 0.70),
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.12,
+                                ),
+                                blurRadius: 10,
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ShaderMask(
+                                    shaderCallback: (bounds) =>
+                                        const LinearGradient(
+                                          colors: [
+                                            Color(0xFFFFF8E0),
+                                            Color(0xFFF0CF82),
+                                            Color(0xFFC99A3E),
+                                          ],
+                                          begin: Alignment.topCenter,
+                                          end: Alignment.bottomCenter,
+                                        ).createShader(bounds),
+                                    blendMode: BlendMode.srcIn,
+                                    child: const Text(
+                                      '✦ PLUS',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w900,
+                                        letterSpacing: 0.9,
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 6),
+                                  const AstralPlusOrbsRow(orbSize: 9.5),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: FittedBox(
+                                      fit: BoxFit.scaleDown,
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                        copy.t3PlusActionLabel,
+                                        maxLines: 1,
+                                        style: const TextStyle(
+                                          color: Color(0xFFF7E3B5),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w700,
+                                          height: 1.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 3),
+                                  const Icon(
+                                    Icons.chevron_right_rounded,
+                                    size: 15,
+                                    color: CompassColors.gold,
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),
                 ],
               ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
-/// Synchronized Golden Energy & Plus card shown on `RitualPage` (below the
-/// Reveal circle) and on `ResultPage` (above `Try Another Direction`).
+/// Synchronized T3 twin-cell card displayed on `RitualPage` and `ResultPage`,
+/// keeping the exact same turn count, live cooldown timer (without "Cách nhau 3h"),
+/// and Plus upgrade trigger as `HomePage`.
 class AnalysisEnergyPlusCard extends StatelessWidget {
   const AnalysisEnergyPlusCard({
     super.key,
@@ -509,136 +759,401 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
   final ReadingEnergySnapshot snapshot;
   final AppLocale locale;
   final VoidCallback onTapPlus;
-
-  /// True on `ResultPage` right after a reading completes; false on `RitualPage`
-  /// before the Reveal tap.
   final bool isPostReadingResult;
 
   @override
   Widget build(BuildContext context) {
-    final copy = _PlusLocalizedCopy.of(locale);
-    final headline = isPostReadingResult
-        ? copy.resultStatusHeadline(snapshot)
-        : copy.ritualStatusHeadline(snapshot);
-    final subtitle = isPostReadingResult
-        ? copy.resultStatusSubtitle(snapshot)
-        : copy.ritualStatusSubtitle(snapshot);
+    final copy = _PlusLocalizedCopy.forLocale(locale);
+    final localeName = intlLocaleOf(context);
+    final freeRemainingText = formatWholeNumber(
+      localeName,
+      snapshot.remainingFreeTurns,
+    );
+    final freeMaxText = formatWholeNumber(
+      localeName,
+      ReadingEnergySnapshot.freeDailyMax,
+    );
 
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTapPlus,
-        borderRadius: BorderRadius.circular(20),
-        child: Ink(
-          padding: const EdgeInsets.fromLTRB(15, 12, 15, 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(20),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                CompassColors.gold.withValues(alpha: 0.18),
-                const Color(0xFF141F35),
-                const Color(0xFF192540),
-              ],
-            ),
-            border: Border.all(
-              color: CompassColors.gold.withValues(alpha: 0.52),
-              width: 1.1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: CompassColors.gold.withValues(alpha: 0.12),
-                blurRadius: 18,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  AstralEnergyOrbsRow(
-                    remainingFreeTurns: snapshot.remainingFreeTurns,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      headline,
-                      style: const TextStyle(
-                        color: Color(0xFFF2DC9F),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        height: 1.25,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Text(
-                subtitle,
-                style: const TextStyle(
-                  color: CompassColors.secondary,
-                  fontSize: 12,
-                  height: 1.35,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Flexible(
-                    child: Text(
-                      copy.trayActionLink,
-                      style: TextStyle(
-                        color: CompassColors.gold,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w700,
-                        decoration: TextDecoration.underline,
-                        decorationColor: CompassColors.gold.withValues(
-                          alpha: 0.65,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Container(
+    final String statusLine;
+    final Color statusColor;
+    if (snapshot.isDailyFreeExhausted) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.timeUntilMidnight,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF09898);
+    } else if (snapshot.isCoolingDown) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.cooldownRemaining,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF5D98E);
+    } else {
+      statusLine = copy.t3ReadyStatus(freeRemainingText, freeMaxText);
+      statusColor = CompassColors.blueLight;
+    }
+
+    return Semantics(
+      button: true,
+      label: '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}',
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapPlus,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 9,
-                      vertical: 4,
+                      horizontal: 11,
+                      vertical: 8.5,
                     ),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(999),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFFF3DFAA),
-                          CompassColors.gold,
-                        ],
+                      color: CompassColors.raised.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: CompassColors.line.withValues(alpha: 0.85),
                       ),
                     ),
-                    child: const Text(
-                      '✦ \$4.99',
-                      style: TextStyle(
-                        color: CompassColors.deep,
-                        fontSize: 11.5,
-                        fontWeight: FontWeight.w800,
-                        height: 1.1,
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  copy.t3CurrentLabel,
+                                  maxLines: 1,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: CompassColors.secondary,
+                                        fontSize: 11,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            AstralFreeOrbsRow(
+                              remainingFreeTurns: snapshot.remainingFreeTurns,
+                              orbSize: 9.5,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            statusLine,
+                            maxLines: 1,
+                            style: TextStyle(
+                              color: statusColor,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                              height: 1.2,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
-            ],
-          ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapPlus,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 11,
+                      vertical: 8.5,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF2B2012),
+                          Color(0xFF221A11),
+                          Color(0xFF181412),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: CompassColors.gold.withValues(alpha: 0.70),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ShaderMask(
+                              shaderCallback: (bounds) =>
+                                  const LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFF8E0),
+                                      Color(0xFFF0CF82),
+                                      Color(0xFFC99A3E),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ).createShader(bounds),
+                              blendMode: BlendMode.srcIn,
+                              child: const Text(
+                                '✦ PLUS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.9,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const AstralPlusOrbsRow(orbSize: 9.5),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  copy.t3PlusActionLabel,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: Color(0xFFF7E3B5),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 15,
+                              color: CompassColors.gold,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-/// Shows the luxury AstraCue Plus ($4.99 one-time purchase) modal sheet.
+/// Renders the 3 cyan Free energy orbs (`0..3` active).
+class AstralFreeOrbsRow extends StatelessWidget {
+  const AstralFreeOrbsRow({
+    super.key,
+    required this.remainingFreeTurns,
+    this.orbSize = 10,
+  });
+
+  final int remainingFreeTurns;
+  final double orbSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < ReadingEnergySnapshot.freeDailyMax; i++) ...[
+          if (i > 0) const SizedBox(width: 4),
+          _CyanEnergyOrb(
+            active: i < remainingFreeTurns,
+            size: orbSize,
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// Renders the 3 golden Plus energy orbs.
+class AstralPlusOrbsRow extends StatelessWidget {
+  const AstralPlusOrbsRow({super.key, this.orbSize = 10});
+
+  final double orbSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < ReadingEnergySnapshot.plusBonusMax; i++) ...[
+          if (i > 0) const SizedBox(width: 4),
+          _GoldPlusOrb(size: orbSize),
+        ],
+      ],
+    );
+  }
+}
+
+/// Renders all 6 orbs (`3 cyan Free + 3 gold Plus`) on a single row.
+class AstralEnergyOrbsRow extends StatelessWidget {
+  const AstralEnergyOrbsRow({
+    super.key,
+    required this.remainingFreeTurns,
+    this.orbSize = 10.5,
+  });
+
+  final int remainingFreeTurns;
+  final double orbSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        AstralFreeOrbsRow(
+          remainingFreeTurns: remainingFreeTurns,
+          orbSize: orbSize,
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Text(
+            '+',
+            style: TextStyle(
+              color: CompassColors.gold.withValues(alpha: 0.9),
+              fontSize: orbSize + 1,
+              fontWeight: FontWeight.w800,
+              height: 1,
+            ),
+          ),
+        ),
+        AstralPlusOrbsRow(orbSize: orbSize),
+      ],
+    );
+  }
+}
+
+class _CyanEnergyOrb extends StatelessWidget {
+  const _CyanEnergyOrb({required this.active, required this.size});
+
+  final bool active;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    if (!active) {
+      return Container(
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color(0xFF172236),
+          border: Border.all(
+            color: CompassColors.blueLight.withValues(alpha: 0.28),
+            width: 1,
+          ),
+        ),
+      );
+    }
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const RadialGradient(
+          center: Alignment(-0.3, -0.35),
+          radius: 0.85,
+          colors: [
+            Color(0xFFDFF3FF),
+            Color(0xFF67B8F7),
+            Color(0xFF286DA5),
+          ],
+        ),
+        border: Border.all(
+          color: const Color(0xFFCDEEFF),
+          width: 0.9,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: CompassColors.blueLight.withValues(alpha: 0.65),
+            blurRadius: 6,
+            spreadRadius: 0.4,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _GoldPlusOrb extends StatelessWidget {
+  const _GoldPlusOrb({required this.size});
+
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: const RadialGradient(
+          center: Alignment(-0.3, -0.35),
+          radius: 0.85,
+          colors: [
+            Color(0xFFFFF6DA),
+            Color(0xFFE6C173),
+            Color(0xFF9E7325),
+          ],
+        ),
+        border: Border.all(
+          color: const Color(0xFFFFEAB3),
+          width: 0.9,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: CompassColors.gold.withValues(alpha: 0.55),
+            blurRadius: 6,
+            spreadRadius: 0.3,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Opens the compact `P1` 4-row checklist modal bottom sheet for AstraCue Plus.
 Future<void> showAstraCuePlusSheet(
   BuildContext context, {
   required AppLocale locale,
@@ -649,7 +1164,8 @@ Future<void> showAstraCuePlusSheet(
     context: context,
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
-    builder: (context) => AstraCuePlusSheet(
+    barrierColor: Colors.black.withValues(alpha: 0.76),
+    builder: (sheetContext) => AstraCuePlusSheet(
       locale: locale,
       snapshot: snapshot,
       snapshotResolver: snapshotResolver,
@@ -657,6 +1173,8 @@ Future<void> showAstraCuePlusSheet(
   );
 }
 
+/// Compact `P1 · Checklist 4 Dòng Ngắn Gọn` Bottom Sheet for AstraCue Plus.
+/// Fits comfortably on a single screen without wordy paragraphs.
 class AstraCuePlusSheet extends StatefulWidget {
   const AstraCuePlusSheet({
     super.key,
@@ -680,34 +1198,14 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   @override
   void initState() {
     super.initState();
-    _scheduleTick();
-  }
-
-  void _scheduleTick() {
-    _tickTimer?.cancel();
-    if (!_snapshot.isCoolingDown && !_snapshot.isDailyFreeExhausted) return;
-    _tickTimer = Timer(const Duration(seconds: 1), () {
-      if (!mounted) return;
-      setState(() {
-        if (widget.snapshotResolver != null) {
+    if (widget.snapshotResolver != null) {
+      _tickTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+        if (!mounted) return;
+        setState(() {
           _snapshot = widget.snapshotResolver!();
-        } else {
-          final nextCooldown =
-              _snapshot.cooldownRemaining - const Duration(seconds: 1);
-          final nextMidnight =
-              _snapshot.timeUntilMidnight - const Duration(seconds: 1);
-          _snapshot = ReadingEnergySnapshot(
-            usedFreeTurns: _snapshot.usedFreeTurns,
-            remainingFreeTurns: _snapshot.remainingFreeTurns,
-            cooldownRemaining:
-                nextCooldown > Duration.zero ? nextCooldown : Duration.zero,
-            timeUntilMidnight:
-                nextMidnight > Duration.zero ? nextMidnight : Duration.zero,
-          );
-        }
+        });
       });
-      _scheduleTick();
-    });
+    }
   }
 
   @override
@@ -718,318 +1216,456 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final snapshot = _snapshot;
-    final copy = _PlusLocalizedCopy.of(widget.locale);
-    final mediaQuery = MediaQuery.of(context);
-    final maxHeight = mediaQuery.size.height * 0.88;
+    final copy = _PlusLocalizedCopy.forLocale(widget.locale);
+    final localeName = intlLocaleOf(context);
+    final freeRemainingText = formatWholeNumber(
+      localeName,
+      _snapshot.remainingFreeTurns,
+    );
+    final freeMaxText = formatWholeNumber(
+      localeName,
+      ReadingEnergySnapshot.freeDailyMax,
+    );
+    final plusMaxText = formatWholeNumber(
+      localeName,
+      ReadingEnergySnapshot.plusDailyMax,
+    );
 
-    return Container(
-      key: const Key('astracue_plus_sheet'),
-      constraints: BoxConstraints(maxHeight: maxHeight),
-      decoration: BoxDecoration(
-        color: CompassColors.raised,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        border: Border.all(
-          color: CompassColors.gold.withValues(alpha: 0.55),
-          width: 1.2,
-        ),
-        boxShadow: [
-          const BoxShadow(
-            color: Colors.black87,
-            blurRadius: 36,
-            spreadRadius: 4,
-          ),
-          BoxShadow(
-            color: CompassColors.gold.withValues(alpha: 0.14),
-            blurRadius: 28,
-            spreadRadius: 1,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const SizedBox(height: 12),
-          Container(
-            width: 42,
-            height: 4,
-            decoration: BoxDecoration(
-              color: CompassColors.gold.withValues(alpha: 0.35),
-              borderRadius: BorderRadius.circular(2),
+    final String liveBarText;
+    if (_snapshot.isDailyFreeExhausted) {
+      final countdown = formatEnergyCountdown(
+        context,
+        _snapshot.timeUntilMidnight,
+      );
+      liveBarText = copy.p1BarExhausted(countdown);
+    } else if (_snapshot.isCoolingDown) {
+      final countdown = formatEnergyCountdown(
+        context,
+        _snapshot.cooldownRemaining,
+      );
+      final unlockedAfterPlus = formatWholeNumber(
+        localeName,
+        _snapshot.remainingFreeTurns + ReadingEnergySnapshot.plusBonusMax,
+      );
+      liveBarText = copy.p1BarCooldown(
+        countdown,
+        unlockedAfterPlus,
+        plusMaxText,
+      );
+    } else {
+      liveBarText = copy.p1BarReady(
+        freeRemainingText,
+        freeMaxText,
+        plusMaxText,
+      );
+    }
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+        child: Container(
+          key: const Key('astracue_plus_sheet'),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [
+                Color(0xFF181F33),
+                Color(0xFF111626),
+                Color(0xFF0C101C),
+              ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
             ),
+            borderRadius: BorderRadius.circular(26),
+            border: Border.all(
+              color: CompassColors.gold.withValues(alpha: 0.65),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.7),
+                blurRadius: 32,
+                offset: const Offset(0, -6),
+              ),
+              BoxShadow(
+                color: CompassColors.gold.withValues(alpha: 0.14),
+                blurRadius: 24,
+              ),
+            ],
           ),
-          const SizedBox(height: 14),
-          Flexible(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(22, 4, 22, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // Luxury Emblem
-                  Center(
-                    child: Container(
-                      width: 60,
-                      height: 60,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Drag handle
+                Container(
+                  width: 38,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.22),
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Compact Header Row: Emblem + Title on left | $4.99 Lifetime badge on right
+                Row(
+                  children: [
+                    Container(
+                      width: 38,
+                      height: 38,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        gradient: RadialGradient(
-                          colors: [
-                            CompassColors.gold.withValues(alpha: 0.25),
-                            CompassColors.deep.withValues(alpha: 0.8),
-                          ],
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF332613), Color(0xFF1C150C)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
                         border: Border.all(
-                          color: CompassColors.gold.withValues(alpha: 0.75),
-                          width: 1.5,
+                          color: CompassColors.gold.withValues(alpha: 0.8),
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: CompassColors.gold.withValues(alpha: 0.28),
-                            blurRadius: 20,
-                            spreadRadius: 1,
+                            color: CompassColors.gold.withValues(alpha: 0.25),
+                            blurRadius: 10,
                           ),
                         ],
                       ),
-                      child: const Icon(
-                        Icons.auto_awesome_rounded,
-                        color: CompassColors.gold,
-                        size: 28,
+                      alignment: Alignment.center,
+                      child: const Text(
+                        '✦',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Color(0xFFFFE8A3),
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-                  Center(
-                    child: Container(
+                    const SizedBox(width: 11),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'AstraCue Plus',
+                            style: TextStyle(
+                              color: CompassColors.text,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            copy.p1HeaderSubtitle,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: CompassColors.secondary,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
+                        horizontal: 11,
+                        vertical: 6,
                       ),
                       decoration: BoxDecoration(
-                        color: CompassColors.gold.withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(999),
+                        color: const Color(0xFF281E11),
+                        borderRadius: BorderRadius.circular(12),
                         border: Border.all(
-                          color: CompassColors.gold.withValues(alpha: 0.45),
+                          color: CompassColors.gold.withValues(alpha: 0.7),
                         ),
                       ),
-                      child: Text(
-                        copy.sheetEyebrow,
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: const Color(0xFFF2DC9F),
-                          letterSpacing: trackingFor(context, 1.4),
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    copy.sheetTitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: CompassColors.text,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Text(
-                    copy.sheetSubtitle,
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: CompassColors.secondary,
-                      height: 1.4,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Live comparison of today's energy orbs (3 Free + 3 Plus = 6 instant)
-                  Container(
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(18),
-                      gradient: LinearGradient(
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                        colors: [
-                          CompassColors.gold.withValues(alpha: 0.16),
-                          CompassColors.deep.withValues(alpha: 0.85),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text(
+                            r'$4.99',
+                            style: TextStyle(
+                              color: Color(0xFFF7E3B5),
+                              fontSize: 14,
+                              fontWeight: FontWeight.w900,
+                              height: 1.05,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            copy.p1LifetimeTag,
+                            style: const TextStyle(
+                              color: CompassColors.gold,
+                              fontSize: 10.5,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
                         ],
                       ),
-                      border: Border.all(
-                        color: CompassColors.gold.withValues(alpha: 0.45),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+
+                // 1-Line Live Energy Comparison Bar
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 9,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF121829),
+                    borderRadius: BorderRadius.circular(13),
+                    border: Border.all(
+                      color: CompassColors.line.withValues(alpha: 0.9),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      AstralEnergyOrbsRow(
+                        remainingFreeTurns: _snapshot.remainingFreeTurns,
+                        orbSize: 9.5,
                       ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            AstralEnergyOrbsRow(
-                              remainingFreeTurns: snapshot.remainingFreeTurns,
-                              orbSize: 11,
-                            ),
-                            Text(
-                              '\$4.99',
-                              style: Theme.of(context).textTheme.headlineMedium
-                                  ?.copyWith(
-                                    color: CompassColors.gold,
-                                    fontWeight: FontWeight.w800,
-                                  ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          copy.sheetLiveStatus(snapshot),
-                          style: const TextStyle(
-                            color: CompassColors.text,
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w600,
-                            height: 1.35,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  _PlusBenefitTile(
-                    icon: Icons.bolt_rounded,
-                    accent: CompassColors.gold,
-                    title: copy.benefitTurnsTitle,
-                    detail: copy.benefitTurnsDetail,
-                  ),
-                  _PlusBenefitTile(
-                    icon: Icons.lock_open_rounded,
-                    accent: CompassColors.blueLight,
-                    title: copy.benefitUnlockTitle,
-                    detail: copy.benefitUnlockDetail,
-                  ),
-                  _PlusBenefitTile(
-                    icon: Icons.visibility_off_outlined,
-                    accent: CompassColors.teal,
-                    title: copy.benefitNoAdsTitle,
-                    detail: copy.benefitNoAdsDetail,
-                  ),
-                  _PlusBenefitTile(
-                    icon: Icons.balance_rounded,
-                    accent: CompassColors.violet,
-                    title: copy.benefitFormulaTitle,
-                    detail: copy.benefitFormulaDetail,
-                  ),
-
-                  const SizedBox(height: 8),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.04),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: Colors.white12),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.only(top: 1),
-                          child: Icon(
-                            Icons.nights_stay_outlined,
-                            size: 16,
-                            color: CompassColors.gold,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
+                      const SizedBox(width: 8),
+                      Flexible(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          alignment: Alignment.centerRight,
                           child: Text(
-                            copy.sheetHonestFootnote,
-                            style: Theme.of(context).textTheme.bodySmall
-                                ?.copyWith(
-                                  color: CompassColors.secondary,
-                                  fontSize: 12,
-                                  height: 1.4,
-                                ),
+                            liveBarText,
+                            maxLines: 1,
+                            style: const TextStyle(
+                              color: Color(0xFFF7E3B5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          ),
-          // Pinned bottom purchase bar
-          Container(
-            padding: const EdgeInsets.fromLTRB(22, 12, 22, 14),
-            decoration: const BoxDecoration(
-              color: CompassColors.raised,
-              border: Border(top: BorderSide(color: Colors.white12)),
-            ),
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Material(
+                ),
+                const SizedBox(height: 10),
+
+                // P1: 4 Concise Single-Line Checklist Rows
+                _P1ChecklistRow(
+                  icon: Icons.bolt_rounded,
+                  iconColor: CompassColors.blueLight,
+                  title: copy.p1Row1Title,
+                  badgeText: copy.p1Row1Badge,
+                  badgeColor: CompassColors.blueLight,
+                ),
+                const SizedBox(height: 7),
+                _P1ChecklistRow(
+                  icon: Icons.block_rounded,
+                  iconColor: const Color(0xFFF5D98E),
+                  title: copy.p1Row2Title,
+                  badgeText: copy.p1Row2Badge,
+                  badgeColor: const Color(0xFFF5D98E),
+                ),
+                const SizedBox(height: 7),
+                _P1ChecklistRow(
+                  icon: Icons.lock_open_rounded,
+                  iconColor: const Color(0xFFF5D98E),
+                  title: copy.p1Row3Title,
+                  badgeText: copy.p1Row3Badge,
+                  badgeColor: const Color(0xFFF5D98E),
+                ),
+                const SizedBox(height: 7),
+                _P1ChecklistRow(
+                  icon: Icons.all_inclusive_rounded,
+                  iconColor: CompassColors.secondary,
+                  title: copy.p1Row4Title,
+                  badgeText: copy.p1Row4Badge,
+                  badgeColor: CompassColors.secondary,
+                ),
+                const SizedBox(height: 11),
+
+                // 1-Line Transparent Footnote
+                Text(
+                  copy.p1ShortFootnote,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: CompassColors.secondary,
+                    fontSize: 11,
+                    height: 1.3,
+                  ),
+                ),
+                const SizedBox(height: 12),
+
+                // Primary Gold CTA Button
+                SizedBox(
+                  width: double.infinity,
+                  child: Material(
                     color: Colors.transparent,
                     child: InkWell(
-                      key: const Key('astracue_plus_purchase_button'),
-                      onTap: () => Navigator.of(context).pop(),
-                      borderRadius: BorderRadius.circular(18),
+                      key: const Key('astracue_plus_sheet_cta'),
+                      onTap: () {
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            backgroundColor: CompassColors.raised,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                              side: BorderSide(
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.6,
+                                ),
+                              ),
+                            ),
+                            content: Text(
+                              copy.previewToastMessage,
+                              style: const TextStyle(
+                                color: CompassColors.text,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(14),
                       child: Ink(
-                        height: 54,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 13,
+                        ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(18),
                           gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFF3D892),
+                              Color(0xFFD8B36A),
+                              Color(0xFFC29743),
+                            ],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
-                            colors: [
-                              Color(0xFFF4E0AC),
-                              CompassColors.gold,
-                              Color(0xFFBA8F3B),
-                            ],
                           ),
+                          borderRadius: BorderRadius.circular(14),
                           boxShadow: [
                             BoxShadow(
                               color: CompassColors.gold.withValues(alpha: 0.35),
-                              blurRadius: 16,
+                              blurRadius: 14,
                               offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Center(
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 14),
-                            child: Text(
-                              copy.purchaseButtonLabel,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: CompassColors.deep,
-                                fontSize: 14.5,
-                                fontWeight: FontWeight.w800,
-                                letterSpacing: 0.3,
-                              ),
+                          child: Text(
+                            copy.sheetPrimaryCta,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Color(0xFF17120A),
+                              fontSize: 13.5,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.3,
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 8),
-                  TextButton(
-                    key: const Key('close_astracue_plus_sheet'),
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      copy.maybeLaterLabel,
-                      style: const TextStyle(
-                        color: CompassColors.muted,
-                        fontSize: 12.5,
-                        fontWeight: FontWeight.w600,
+                ),
+                const SizedBox(height: 8),
+
+                // Secondary Actions: Restore · Maybe later
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: CompassColors.secondary,
+                        visualDensity: VisualDensity.compact,
+                        textStyle: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: Text(copy.sheetRestoreAction),
+                    ),
+                    Text(
+                      '·',
+                      style: TextStyle(
+                        color: CompassColors.muted.withValues(alpha: 0.6),
                       ),
                     ),
-                  ),
-                ],
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      style: TextButton.styleFrom(
+                        foregroundColor: CompassColors.secondary,
+                        visualDensity: VisualDensity.compact,
+                        textStyle: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                      child: Text(copy.sheetLaterAction),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _P1ChecklistRow extends StatelessWidget {
+  const _P1ChecklistRow({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.badgeText,
+    required this.badgeColor,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String badgeText;
+  final Color badgeColor;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 9.5),
+      decoration: BoxDecoration(
+        color: const Color(0xFF151C2E),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: CompassColors.line.withValues(alpha: 0.85),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, size: 17, color: iconColor),
+          const SizedBox(width: 9),
+          Expanded(
+            child: Text(
+              title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(
+                color: CompassColors.text,
+                fontSize: 12.5,
+                fontWeight: FontWeight.w700,
               ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            badgeText,
+            maxLines: 1,
+            style: TextStyle(
+              color: badgeColor,
+              fontSize: 11.5,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
@@ -1038,627 +1674,316 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   }
 }
 
-class _PlusBenefitTile extends StatelessWidget {
-  const _PlusBenefitTile({
-    required this.icon,
-    required this.accent,
-    required this.title,
-    required this.detail,
-  });
-
-  final IconData icon;
-  final Color accent;
-  final String title;
-  final String detail;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: Colors.white.withValues(alpha: 0.045),
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(color: CompassColors.line.withValues(alpha: 0.75)),
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(7),
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: accent.withValues(alpha: 0.35)),
-              ),
-              child: Icon(icon, size: 18, color: accent),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: const TextStyle(
-                      color: CompassColors.text,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      height: 1.3,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    detail,
-                    style: const TextStyle(
-                      color: CompassColors.secondary,
-                      fontSize: 12,
-                      height: 1.38,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Localized copy for AstraCue Plus UI & energy turn states across all 7 languages.
+/// Localized copy for AstraCue Plus across all 8 supported languages.
 class _PlusLocalizedCopy {
   const _PlusLocalizedCopy({
-    required this.trayActionLink,
-    required this.sheetEyebrow,
-    required this.sheetTitle,
-    required this.sheetSubtitle,
-    required this.benefitTurnsTitle,
-    required this.benefitTurnsDetail,
-    required this.benefitUnlockTitle,
-    required this.benefitUnlockDetail,
-    required this.benefitNoAdsTitle,
-    required this.benefitNoAdsDetail,
-    required this.benefitFormulaTitle,
-    required this.benefitFormulaDetail,
-    required this.sheetHonestFootnote,
-    required this.purchaseButtonLabel,
-    required this.maybeLaterLabel,
-    required this.homeTrayStatus,
-    required this.ritualStatusHeadline,
-    required this.ritualStatusSubtitle,
-    required this.resultStatusHeadline,
-    required this.resultStatusSubtitle,
-    required this.sheetLiveStatus,
+    required this.headerSemanticsLabel,
+    required this.t3CurrentLabel,
+    required this.t3ReadyStatus,
+    required this.t3TimerStatus,
+    required this.t3PlusActionLabel,
+    required this.p1HeaderSubtitle,
+    required this.p1LifetimeTag,
+    required this.p1BarReady,
+    required this.p1BarCooldown,
+    required this.p1BarExhausted,
+    required this.p1Row1Title,
+    required this.p1Row1Badge,
+    required this.p1Row2Title,
+    required this.p1Row2Badge,
+    required this.p1Row3Title,
+    required this.p1Row3Badge,
+    required this.p1Row4Title,
+    required this.p1Row4Badge,
+    required this.p1ShortFootnote,
+    required this.sheetPrimaryCta,
+    required this.sheetRestoreAction,
+    required this.sheetLaterAction,
+    required this.previewToastMessage,
   });
 
-  final String trayActionLink;
-  final String sheetEyebrow;
-  final String sheetTitle;
-  final String sheetSubtitle;
-  final String benefitTurnsTitle;
-  final String benefitTurnsDetail;
-  final String benefitUnlockTitle;
-  final String benefitUnlockDetail;
-  final String benefitNoAdsTitle;
-  final String benefitNoAdsDetail;
-  final String benefitFormulaTitle;
-  final String benefitFormulaDetail;
-  final String sheetHonestFootnote;
-  final String purchaseButtonLabel;
-  final String maybeLaterLabel;
-  final String Function(ReadingEnergySnapshot) homeTrayStatus;
-  final String Function(ReadingEnergySnapshot) ritualStatusHeadline;
-  final String Function(ReadingEnergySnapshot) ritualStatusSubtitle;
-  final String Function(ReadingEnergySnapshot) resultStatusHeadline;
-  final String Function(ReadingEnergySnapshot) resultStatusSubtitle;
-  final String Function(ReadingEnergySnapshot) sheetLiveStatus;
+  final String headerSemanticsLabel;
+  final String t3CurrentLabel;
+  final String Function(String remaining, String max) t3ReadyStatus;
+  final String Function(String remaining, String max, String countdown)
+      t3TimerStatus;
+  final String t3PlusActionLabel;
 
-  static _PlusLocalizedCopy of(AppLocale locale) {
-    return switch (locale) {
-      AppLocale.vietnamese => _vi,
-      AppLocale.english => _en,
-      AppLocale.spanish => _es,
-      AppLocale.japanese => _ja,
-      AppLocale.thai => _th,
-      AppLocale.hindi => _hi,
-      AppLocale.simplifiedChinese => _zh,
-      AppLocale.korean => _ko,
-    };
-  }
+  final String p1HeaderSubtitle;
+  final String p1LifetimeTag;
+  final String Function(String remaining, String freeMax, String plusMax)
+      p1BarReady;
+  final String Function(String countdown, String unlocked, String plusMax)
+      p1BarCooldown;
+  final String Function(String countdown) p1BarExhausted;
 
-  static final _vi = _PlusLocalizedCopy(
-    trayActionLink: 'Mở 6 lượt tức thì & Tắt Ads (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • MUA 1 LẦN DUY NHẤT',
-    sheetTitle: 'Trải nghiệm định hướng liền mạch & tĩnh lặng',
-    sheetSubtitle:
-        'Mở khóa trọn vẹn năng lượng trong ngày với một lần nâng cấp duy nhất — không gia hạn định kỳ.',
-    benefitTurnsTitle: '6 lượt phân tích tức thì mỗi ngày (Không chờ 3 giờ)',
-    benefitTurnsDetail:
-        'Tăng từ 3 lượt (cách nhau 3 giờ) lên 6 lượt tức thì mỗi ngày. Tra cứu liên tiếp bất cứ lúc nào bạn cần.',
-    benefitUnlockTitle: 'Mở sẵn toàn bộ Chế độ, Lĩnh vực & Buổi phân tích',
-    benefitUnlockDetail:
-        'Tự do chọn mọi khung giờ (Sáng, Trưa, Chiều, Tối), mọi lĩnh vực và cặp định hướng mà không cần xem video mở khóa.',
-    benefitNoAdsTitle: 'Tắt hoàn toàn Banner & Quảng cáo chuyển trang',
-    benefitNoAdsDetail:
-        'Loại bỏ hẳn quảng cáo tự động để giữ không gian chiêm nghiệm tĩnh lặng, không đứt mạch cảm xúc.',
-    benefitFormulaTitle: 'Giữ nguyên 100% công thức & chất lượng gốc',
-    benefitFormulaDetail:
-        'Thuật toán và độ chuẩn xác giống hệt bản miễn phí — bạn chỉ trả tiền cho sự tiện lợi và liền mạch.',
-    sheetHonestFootnote:
-        'Minh bạch: Gói Plus cung cấp tối đa 6 lượt phân tích tức thì mỗi ngày (tự động làm mới vào 00:00). Khi dùng hết 6 lượt, ứng dụng sẽ thông báo rõ và tuyệt đối không bắt bạn xem quảng cáo.',
-    purchaseButtonLabel: '✦ Mở khóa AstraCue Plus — \$4.99 (Mua 1 lần)',
-    maybeLaterLabel: 'Để sau',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 lượt • Làm mới sau ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 lượt • Hồi sau ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '${s.remainingFreeTurns}/3 lượt hôm nay • Cách nhau 3h';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 Đã dùng hết 3/3 lượt Free hôm nay • Làm mới sau ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ Còn ${s.remainingFreeTurns}/3 lượt hôm nay • Hồi lượt kế tiếp sau ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ Đang dùng lượt ${s.activeTurnNumber}/3 hôm nay • Lượt kế tiếp cách 3 giờ';
-    },
-    ritualStatusSubtitle: (s) =>
-        'Nâng cấp AstraCue Plus: Mở sẵn mọi Buổi, Lĩnh vực & 6 lượt tức thì/ngày không chờ hồi năng lượng.',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 Đã dùng trọn 3/3 lượt Free hôm nay • Làm mới sau ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ Còn ${s.remainingFreeTurns}/3 lượt • Hồi lượt tiếp theo sau ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ Còn ${s.remainingFreeTurns}/3 lượt Free hôm nay';
-    },
-    resultStatusSubtitle: (s) =>
-        'Muốn phân tích tiếp cho Lĩnh vực hoặc Buổi khác ngay lúc này mà không chờ 3 giờ?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return 'Hôm nay bạn đã dùng hết 3/3 lượt Free. Nâng cấp Plus để mở thêm 3 hạt vàng (tổng 6 lượt tức thì/ngày).';
-      }
-      if (s.isCoolingDown) {
-        return 'Hiện còn ${s.remainingFreeTurns}/3 lượt Free (đang chờ hồi ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}). Lên Plus để xóa chờ 3h & nhận 6 lượt tức thì/ngày.';
-      }
-      return 'Hiện có ${s.remainingFreeTurns}/3 hạt xanh (Free) + 3 hạt vàng (Plus) = 6 lượt tức thì/ngày không cần chờ hồi.';
-    },
+  final String p1Row1Title;
+  final String p1Row1Badge;
+  final String p1Row2Title;
+  final String p1Row2Badge;
+  final String p1Row3Title;
+  final String p1Row3Badge;
+  final String p1Row4Title;
+  final String p1Row4Badge;
+  final String p1ShortFootnote;
+
+  final String sheetPrimaryCta;
+  final String sheetRestoreAction;
+  final String sheetLaterAction;
+  final String previewToastMessage;
+
+  static _PlusLocalizedCopy forLocale(AppLocale locale) => switch (locale) {
+    AppLocale.vietnamese => _vi,
+    AppLocale.english => _en,
+    AppLocale.spanish => _es,
+    AppLocale.japanese => _ja,
+    AppLocale.thai => _th,
+    AppLocale.hindi => _hi,
+    AppLocale.simplifiedChinese => _zh,
+    AppLocale.korean => _ko,
+  };
+
+  static _PlusLocalizedCopy of(String languageCode) => switch (languageCode) {
+    'vi' => _vi,
+    'es' => _es,
+    'ja' => _ja,
+    'th' => _th,
+    'hi' => _hi,
+    'zh' => _zh,
+    'ko' => _ko,
+    _ => _en,
+  };
+
+  static final _PlusLocalizedCopy _vi = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus, mở 6 lượt tức thì và tắt quảng cáo',
+    t3CurrentLabel: 'Hiện tại',
+    t3ReadyStatus: (rem, max) => 'Còn $rem/$max lượt',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6 lượt · Tắt Ads',
+    p1HeaderSubtitle: 'Mở khóa trọn vẹn · Mua 1 lần',
+    p1LifetimeTag: 'Trọn đời',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '$rem/$freeMax Free → $plusMax/$plusMax lượt tức thì',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        'Đang hồi $cd → Mở $unlocked/$plusMax ngay',
+    p1BarExhausted: (cd) => 'Hết lượt ($cd) → Mở +3 lượt ngay',
+    p1Row1Title: '6 lượt phân tích / ngày',
+    p1Row1Badge: 'Xóa 3h chờ hồi',
+    p1Row2Title: 'Tắt hoàn toàn quảng cáo',
+    p1Row2Badge: '0 Banner & Video',
+    p1Row3Title: 'Mở khóa mọi chế độ & buổi',
+    p1Row3Badge: 'Chọn tự do ngay',
+    p1Row4Title: 'Mua 1 lần dùng mãi mãi',
+    p1Row4Badge: 'Không phí tháng',
+    p1ShortFootnote:
+        'Làm mới 6 lượt lúc 00:00 mỗi ngày · Không bao giờ bắt xem quảng cáo.',
+    sheetPrimaryCta: r'✦ Mở khóa AstraCue Plus — $4.99',
+    sheetRestoreAction: 'Khôi phục giao dịch',
+    sheetLaterAction: 'Để sau',
+    previewToastMessage:
+        r'Giao diện AstraCue Plus ($4.99) đã sẵn sàng kết nối cổng thanh toán.',
   );
 
-  static final _en = _PlusLocalizedCopy(
-    trayActionLink: 'Unlock 6 instant turns & No Ads (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • ONE-TIME PURCHASE',
-    sheetTitle: 'Uninterrupted, serene daily direction',
-    sheetSubtitle:
-        'Unlock the full daily rhythm with a single \$4.99 upgrade — no recurring subscription.',
-    benefitTurnsTitle: '6 instant readings per day (No 3-hour wait)',
-    benefitTurnsDetail:
-        'Double your daily allowance from 3 turns (spaced 3 hours apart) to 6 back-to-back readings whenever you need.',
-    benefitUnlockTitle: 'All Modes, Life Areas & Time Periods unlocked',
-    benefitUnlockDetail:
-        'Freely select any time window (Morning, Midday, Afternoon, Evening) and any category without watching unlock ads.',
-    benefitNoAdsTitle: 'Banner & Interstitial ads completely removed',
-    benefitNoAdsDetail:
-        'Enjoy a calm, distraction-free celestial space with zero automatic ad interruptions.',
-    benefitFormulaTitle: 'Identical core formula & reading quality',
-    benefitFormulaDetail:
-        'Every calculation uses the exact same authentic engine as the free edition — you only pay for convenience and flow.',
-    sheetHonestFootnote:
-        'Transparency note: Plus includes up to 6 instant readings per day (resetting at 00:00). Once all 6 turns are used, the app notifies you clearly and never asks you to watch rewarded ads.',
-    purchaseButtonLabel: '✦ Unlock AstraCue Plus — \$4.99 (One-time)',
-    maybeLaterLabel: 'Maybe later',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 turns • Resets in ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 turns • Ready in ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '${s.remainingFreeTurns}/3 turns today • 3h cooldown';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 0/3 Free turns left today • Resets in ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3 turns left • Next turn in ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ Using turn ${s.activeTurnNumber}/3 today • 3h cooldown between turns';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plus unlocks all Time Periods, Life Areas & 6 instant daily turns with no waiting.',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 All 3/3 Free turns used today • Resets in ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3 turns left • Next turn in ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ ${s.remainingFreeTurns}/3 Free turns remaining today';
-    },
-    resultStatusSubtitle: (s) =>
-        'Want to explore another Life Area or Time Period right now without waiting 3 hours?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return 'You have used all 3/3 Free turns today. Upgrade to Plus for +3 golden turns (6 instant turns/day).';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 Free turns left (cooling down ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}). Upgrade to skip the 3h wait.';
-      }
-      return '${s.remainingFreeTurns}/3 cyan orbs (Free) + 3 gold orbs (Plus) = 6 instant daily turns with zero cooldown.';
-    },
+  static final _PlusLocalizedCopy _en = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus, unlock 6 instant turns and remove ads',
+    t3CurrentLabel: 'Current',
+    t3ReadyStatus: (rem, max) => '$rem/$max turns left',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6 turns · No Ads',
+    p1HeaderSubtitle: 'Full access · One-time purchase',
+    p1LifetimeTag: 'Lifetime',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '$rem/$freeMax Free → $plusMax/$plusMax instant turns',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        'Cooling $cd → Unlock $unlocked/$plusMax now',
+    p1BarExhausted: (cd) => '0 left ($cd) → Unlock +3 turns now',
+    p1Row1Title: '6 readings / day',
+    p1Row1Badge: 'No 3h cooldown',
+    p1Row2Title: 'Remove all ads',
+    p1Row2Badge: '0 Banner & Video',
+    p1Row3Title: 'Unlock all modes & periods',
+    p1Row3Badge: 'Instant access',
+    p1Row4Title: 'One-time purchase',
+    p1Row4Badge: 'No subscription',
+    p1ShortFootnote:
+        '6 daily turns reset at 00:00 · Never forces rewarded ads.',
+    sheetPrimaryCta: r'✦ Unlock AstraCue Plus — $4.99',
+    sheetRestoreAction: 'Restore purchase',
+    sheetLaterAction: 'Maybe later',
+    previewToastMessage:
+        r'AstraCue Plus ($4.99) UI preview is ready for store billing.',
   );
 
-  static final _es = _PlusLocalizedCopy(
-    trayActionLink: '6 lecturas al instante y Sin Anuncios (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • PAGO ÚNICO',
-    sheetTitle: 'Orientación diaria fluida y sin interrupciones',
-    sheetSubtitle:
-        'Desbloquea todo el potencial diario con un único pago de \$4.99 — sin suscripciones.',
-    benefitTurnsTitle: '6 análisis instantáneos al día (Sin espera de 3h)',
-    benefitTurnsDetail:
-        'Pasa de 3 turnos diarios (con 3 horas de espera) a 6 lecturas inmediatas cuando lo necesites.',
-    benefitUnlockTitle: 'Todos los Modos, Áreas y Momentos abiertos',
-    benefitUnlockDetail:
-        'Elige libremente cualquier período del día y área sin ver videos publicitarios.',
-    benefitNoAdsTitle: 'Sin banners ni anuncios intersticiales',
-    benefitNoAdsDetail:
-        'Un espacio sereno y libre de interrupciones automáticas.',
-    benefitFormulaTitle: 'La misma fórmula y calidad de resultado',
-    benefitFormulaDetail:
-        'El motor simbólico es idéntico al gratuito — solo pagas por la comodidad y fluidez.',
-    sheetHonestFootnote:
-        'Transparencia: Plus incluye hasta 6 análisis instantáneos al día (se renuevan a las 00:00). Al agotarse, se te informará claramente sin pedirte ver anuncios.',
-    purchaseButtonLabel: '✦ Desbloquear AstraCue Plus — \$4.99',
-    maybeLaterLabel: 'Más tarde',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 turnos • Reinicia en ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 turnos • Listo en ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '${s.remainingFreeTurns}/3 turnos hoy • Espera de 3h';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 0/3 turnos gratis hoy • Reinicia en ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ Quedan ${s.remainingFreeTurns}/3 turnos • Siguiente en ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ Turno ${s.activeTurnNumber}/3 de hoy • 3h de espera entre turnos';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plus abre todos los períodos, áreas y 6 turnos instantáneos al día sin esperas.',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 3/3 turnos gratis usados • Reinicia en ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ Quedan ${s.remainingFreeTurns}/3 turnos • Siguiente en ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ Quedan ${s.remainingFreeTurns}/3 turnos gratis hoy';
-    },
-    resultStatusSubtitle: (s) =>
-        '¿Quieres consultar otra área o período ahora mismo sin esperar 3 horas?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return 'Has usado los 3/3 turnos gratis de hoy. Sube a Plus para +3 esferas doradas (6 lecturas instantáneas/día).';
-      }
-      if (s.isCoolingDown) {
-        return 'Quedan ${s.remainingFreeTurns}/3 turnos gratis (en espera ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}). Sube a Plus para omitir las 3h de espera.';
-      }
-      return '${s.remainingFreeTurns}/3 esferas azules (Gratis) + 3 doradas (Plus) = 6 lecturas instantáneas al día sin esperas.';
-    },
+  static final _PlusLocalizedCopy _es = _PlusLocalizedCopy(
+    headerSemanticsLabel:
+        'AstraCue Plus, desbloquea 6 lecturas al instante y sin anuncios',
+    t3CurrentLabel: 'Actual',
+    t3ReadyStatus: (rem, max) => '$rem/$max turnos',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6 turnos · Sin Ads',
+    p1HeaderSubtitle: 'Acceso total · Pago único',
+    p1LifetimeTag: 'De por vida',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '$rem/$freeMax Gratis → $plusMax/$plusMax al instante',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        'Espera $cd → Abre $unlocked/$plusMax ya',
+    p1BarExhausted: (cd) => '0 turnos ($cd) → +3 turnos ya',
+    p1Row1Title: '6 lecturas / día',
+    p1Row1Badge: 'Sin espera de 3h',
+    p1Row2Title: 'Sin anuncios',
+    p1Row2Badge: '0 Banners y Video',
+    p1Row3Title: 'Todos los modos y horarios',
+    p1Row3Badge: 'Acceso libre',
+    p1Row4Title: 'Pago único',
+    p1Row4Badge: 'Sin suscripción',
+    p1ShortFootnote:
+        '6 turnos se renuevan a las 00:00 · Nunca exige ver anuncios.',
+    sheetPrimaryCta: r'✦ Desbloquear AstraCue Plus — $4.99',
+    sheetRestoreAction: 'Restaurar compra',
+    sheetLaterAction: 'Más tarde',
+    previewToastMessage:
+        r'La vista previa de AstraCue Plus ($4.99) está lista.',
   );
 
-  static final _ja = _PlusLocalizedCopy(
-    trayActionLink: '即時6回＆広告オフを解放 (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • 買い切りプラン',
-    sheetTitle: '待ち時間のない、静謐な導きの体験',
-    sheetSubtitle: '\$4.99の1回払いで全機能を解放。定期購読ではありません。',
-    benefitTurnsTitle: '1日6回の即時リーディング（3時間の待機なし）',
-    benefitTurnsDetail: '1日3回（3時間間隔）から、待ち時間なしの1日6回へ倍増します。',
-    benefitUnlockTitle: 'すべてのモード・分野・時間帯を常時解放',
-    benefitUnlockDetail: '動画広告を見ることなく、すべての時間帯と分野を自由に選択できます。',
-    benefitNoAdsTitle: 'バナー広告・全画面広告を完全に非表示',
-    benefitNoAdsDetail: '自動表示される広告をなくし、集中できる静かな空間を保ちます。',
-    benefitFormulaTitle: 'アルゴリズムと結果の品質は無料版と同一',
-    benefitFormulaDetail: '計算式や精度は無料版と100%同じです。快適さと連続性のためのアップグレードです。',
-    sheetHonestFootnote:
-        'ご案内：Plusは1日最大6回の即時分析を提供します（毎日00:00にリセット）。6回使い切った際は明確にお知らせし、動画広告の視聴を求めることはありません。',
-    purchaseButtonLabel: '✦ AstraCue Plus を解放 — \$4.99',
-    maybeLaterLabel: 'あとで',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '残り0/3回 • リセットまで ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '残り${s.remainingFreeTurns}/3回 • 回復まで ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '本日 ${s.remainingFreeTurns}/3回 • 3時間間隔';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 本日の無料分(3/3回)終了 • リセットまで ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ 残り${s.remainingFreeTurns}/3回 • 次回まで ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 本日 ${s.activeTurnNumber}/3回目の分析 • 次回まで3時間待機';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plusなら全時間帯・全分野を常時解放し、待機なしで1日6回分析できます。',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 本日の無料分(3/3回)終了 • リセットまで ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ 残り${s.remainingFreeTurns}/3回 • 次回まで ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 本日の無料分 残り${s.remainingFreeTurns}/3回';
-    },
-    resultStatusSubtitle: (s) => '3時間待たずに、今すぐ別の分野や時間帯を占いますか？',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '本日の無料分(3/3回)を使い切りました。Plusへアップグレードすると金オーブ3個が加わり、1日6回即時分析できます。';
-      }
-      if (s.isCoolingDown) {
-        return '無料分 残り${s.remainingFreeTurns}/3回（回復まで ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}）。Plusなら3時間の待機なしで即座に分析できます。';
-      }
-      return '青オーブ ${s.remainingFreeTurns}/3個 (無料) + 金オーブ 3個 (Plus) = 待機なしで1日6回分析可能。';
-    },
+  static final _PlusLocalizedCopy _ja = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus、即時6回リーディング＆広告非表示',
+    t3CurrentLabel: '現在',
+    t3ReadyStatus: (rem, max) => '残り $rem/$max 回',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6回即時 · 広告なし',
+    p1HeaderSubtitle: 'フル解放 · 買い切り',
+    p1LifetimeTag: '永久版',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '無料 $rem/$freeMax → 即時 $plusMax/$plusMax 回',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        '回復 $cd → 今すぐ $unlocked/$plusMax 回解放',
+    p1BarExhausted: (cd) => '残り0 ($cd) → +3回即時解放',
+    p1Row1Title: '1日6回リーディング',
+    p1Row1Badge: '3時間待機なし',
+    p1Row2Title: '広告を完全オフ',
+    p1Row2Badge: 'バナー・動画ゼロ',
+    p1Row3Title: '全モード・時間帯を解放',
+    p1Row3Badge: 'いつでも選択可能',
+    p1Row4Title: '1回買い切り',
+    p1Row4Badge: '月額課金なし',
+    p1ShortFootnote: '毎日00:00に6回リセット · 動画広告の強制はありません。',
+    sheetPrimaryCta: r'✦ AstraCue Plus を解放 — $4.99',
+    sheetRestoreAction: '購入を復元',
+    sheetLaterAction: 'あとで',
+    previewToastMessage: r'AstraCue Plus ($4.99) UIプレビューが有効です。',
   );
 
-  static final _th = _PlusLocalizedCopy(
-    trayActionLink: 'ปลดล็อก 6 ครั้งทันที & ปิดโฆษณา (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • ซื้อครั้งเดียว',
-    sheetTitle: 'สัมผัสการนำทางที่ต่อเนื่องและสงบนิ่ง',
-    sheetSubtitle: 'อัปเกรดเพียงครั้งเดียว \$4.99 — ไม่มีการต่ออายุรายเดือน',
-    benefitTurnsTitle: 'วิเคราะห์ได้ทันที 6 ครั้ง/วัน (ไม่ต้องรอ 3 ชม.)',
-    benefitTurnsDetail:
-        'เพิ่มจาก 3 ครั้ง/วัน (รอคูลดาวน์ 3 ชม.) เป็น 6 ครั้งทันทีโดยไม่ต้องรอฟื้นพลังงาน',
-    benefitUnlockTitle: 'ปลดล็อกทุกโหมด ทุกด้าน และทุกช่วงเวลา',
-    benefitUnlockDetail: 'เลือกช่วงเวลาและหมวดหมู่ได้ทั้งหมดโดยไม่ต้องดูวิดีโอโฆษณา',
-    benefitNoAdsTitle: 'ปิดแบนเนอร์และโฆษณาคั่นหน้าจอทั้งหมด',
-    benefitNoAdsDetail: 'ไร้โฆษณารบกวนสมาธิระหว่างการใช้งาน',
-    benefitFormulaTitle: 'สูตรคำนวณและคุณภาพผลลัพธ์เหมือนเดิม 100%',
-    benefitFormulaDetail:
-        'ความแม่นยำเหมือนรุ่นฟรีทุกประการ คุณจ่ายเพื่อความสะดวกและต่อเนื่องเท่านั้น',
-    sheetHonestFootnote:
-        'ความโปร่งใส: แพ็กเกจ Plus ให้สิทธิ์วิเคราะห์ทันที 6 ครั้ง/วัน (รีเซ็ตเวลา 00:00 น.) เมื่อใช้ครบจะแจ้งเตือนอย่างชัดเจนและไม่บังคับดูโฆษณา',
-    purchaseButtonLabel: '✦ ปลดล็อก AstraCue Plus — \$4.99',
-    maybeLaterLabel: 'ไว้ทีหลัง',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 ครั้ง • รีเซ็ตใน ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return 'เหลือ ${s.remainingFreeTurns}/3 ครั้ง • พร้อมใน ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return 'วันนี้ ${s.remainingFreeTurns}/3 ครั้ง • ห่างกัน 3 ชม.';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 ใช้ครบ 3/3 ครั้งวันนี้ • รีเซ็ตใน ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ เหลือ ${s.remainingFreeTurns}/3 ครั้ง • ครั้งถัดไปใน ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ กำลังใช้ครั้งที่ ${s.activeTurnNumber}/3 วันนี้ • ครั้งถัดไปรอ 3 ชม.';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plus ปลดล็อกทุกช่วงเวลา ทุกหมวดหมู่ และวิเคราะห์ได้ 6 ครั้งทันทีต่อวัน',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 ใช้ครบ 3/3 ครั้งวันนี้ • รีเซ็ตใน ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)}';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ เหลือ ${s.remainingFreeTurns}/3 ครั้ง • ครั้งถัดไปใน ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ เหลือสิทธิ์ฟรี ${s.remainingFreeTurns}/3 ครั้งวันนี้';
-    },
-    resultStatusSubtitle: (s) =>
-        'ต้องการวิเคราะห์หมวดอื่นหรือช่วงเวลาอื่นต่อทันทีโดยไม่ต้องรอ 3 ชั่วโมงหรือไม่?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return 'วันนี้คุณใช้สิทธิ์ฟรีครบ 3/3 ครั้งแล้ว อัปเกรดเป็น Plus เพื่อรับเพิ่ม 3 ลูกแก้วสีทอง (รวม 6 ครั้งทันที/วัน)';
-      }
-      if (s.isCoolingDown) {
-        return 'เหลือสิทธิ์ฟรี ${s.remainingFreeTurns}/3 ครั้ง (รอคูลดาวน์ ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}) อัปเกรดเป็น Plus เพื่อไม่ต้องรอ 3 ชม.';
-      }
-      return 'ลูกแก้วสีฟ้า ${s.remainingFreeTurns}/3 (ฟรี) + สีทอง 3 (Plus) = วิเคราะห์ได้ทันที 6 ครั้ง/วัน';
-    },
+  static final _PlusLocalizedCopy _th = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus ปลดล็อก 6 ครั้งทันทีและปิดโฆษณา',
+    t3CurrentLabel: 'ปัจจุบัน',
+    t3ReadyStatus: (rem, max) => 'เหลือ $rem/$max ครั้ง',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6 ครั้ง · ปิด Ads',
+    p1HeaderSubtitle: 'ปลดล็อกครบ · จ่ายครั้งเดียว',
+    p1LifetimeTag: 'ตลอดชีพ',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        'ฟรี $rem/$freeMax → ทันที $plusMax/$plusMax ครั้ง',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        'รอ $cd → เปิด $unlocked/$plusMax ทันที',
+    p1BarExhausted: (cd) => 'หมด ($cd) → เปิด +3 ครั้งทันที',
+    p1Row1Title: 'วิเคราะห์ 6 ครั้ง / วัน',
+    p1Row1Badge: 'ไม่ต้องรอ 3 ชม.',
+    p1Row2Title: 'ปิดโฆษณาทั้งหมด',
+    p1Row2Badge: 'ไม่มีแบนเนอร์/วิดีโอ',
+    p1Row3Title: 'ปลดล็อกทุกโหมดและช่วงเวลา',
+    p1Row3Badge: 'เลือกได้ทันที',
+    p1Row4Title: 'ซื้อครั้งเดียวใช้ได้ตลอด',
+    p1Row4Badge: 'ไม่หักรายเดือน',
+    p1ShortFootnote: 'รีเซ็ต 6 ครั้งเวลา 00:00 น. ทุกวัน · ไม่บังคับดูโฆษณา',
+    sheetPrimaryCta: r'✦ ปลดล็อก AstraCue Plus — $4.99',
+    sheetRestoreAction: 'กู้คืนการซื้อ',
+    sheetLaterAction: 'ไว้ทีหลัง',
+    previewToastMessage: r'ตัวอย่าง UI ของ AstraCue Plus ($4.99) พร้อมใช้งานแล้ว',
   );
 
-  static final _hi = _PlusLocalizedCopy(
-    trayActionLink: '6 तुरंत विश्लेषण और विज्ञापन-मुक्त (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • एक बार की खरीदारी',
-    sheetTitle: 'निर्बाध और शांत दैनिक मार्गदर्शन',
-    sheetSubtitle:
-        'केवल \$4.99 के एक बार के अपग्रेड के साथ पूरा अनुभव अनलॉक करें — कोई आवर्ती शुल्क नहीं।',
-    benefitTurnsTitle: 'प्रतिदिन 6 तुरंत विश्लेषण (3 घंटे की प्रतीक्षा नहीं)',
-    benefitTurnsDetail:
-        '3 विश्लेषण/दिन (3 घंटे के अंतराल) से बढ़ाकर बिना किसी प्रतीक्षा के 6 तुरंत विश्लेषण प्राप्त करें।',
-    benefitUnlockTitle: 'सभी मोड, क्षेत्र और समय-अवधि अनलॉक',
-    benefitUnlockDetail:
-        'बिना कोई विज्ञापन वीडियो देखे किसी भी समय-अवधि और क्षेत्र का स्वतंत्र रूप से चयन करें।',
-    benefitNoAdsTitle: 'बैनर और इंटरस्टिशियल विज्ञापन पूरी तरह बंद',
-    benefitNoAdsDetail: 'बिना किसी विज्ञापन रुकावट के शांत अनुभव का आनंद लें।',
-    benefitFormulaTitle: 'समान सूत्र और परिणाम की गुणवत्ता',
-    benefitFormulaDetail:
-        'गणना और सटीकता निःशुल्क संस्करण के समान ही रहती है — आप केवल सुविधा के लिए भुगतान करते हैं।',
-    sheetHonestFootnote:
-        'पारदर्शिता: Plus प्रतिदिन 6 तुरंत विश्लेषण प्रदान करता है (00:00 बजे रीसेट)। 6 बार उपयोग होने पर स्पष्ट सूचना दी जाएगी और कोई विज्ञापन देखने को नहीं कहा जाएगा।',
-    purchaseButtonLabel: '✦ AstraCue Plus अनलॉक करें — \$4.99',
-    maybeLaterLabel: 'बाद में',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 शेष • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} में रीसेट';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 शेष • ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} में तैयार';
-      }
-      return 'आज ${s.remainingFreeTurns}/3 बार • 3 घंटे का अंतराल';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 आज के 3/3 निःशुल्क विश्लेषण समाप्त • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} में रीसेट';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3 शेष • अगला ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} में';
-      }
-      return '⚡ आज का विश्लेषण ${s.activeTurnNumber}/3 • अगले के लिए 3 घंटे प्रतीक्षा';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plus सभी समय-अवधि, क्षेत्र और बिना प्रतीक्षा के 6 दैनिक विश्लेषण अनलॉक करता है।',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 आज के 3/3 निःशुल्क विश्लेषण पूरे • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} में रीसेट';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3 शेष • अगला ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} में';
-      }
-      return '⚡ आज ${s.remainingFreeTurns}/3 निःशुल्क विश्लेषण शेष';
-    },
-    resultStatusSubtitle: (s) =>
-        'क्या आप 3 घंटे प्रतीक्षा किए बिना अभी किसी अन्य क्षेत्र या समय के लिए विश्लेषण करना चाहते हैं?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return 'आपने आज के सभी 3/3 निःशुल्क विश्लेषण उपयोग कर लिए हैं। +3 सुनहरे विश्लेषण (6 तुरंत विश्लेषण/दिन) के लिए Plus लें।';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3 निःशुल्क शेष (${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} प्रतीक्षा)। 3 घंटे की प्रतीक्षा हटाने के लिए Plus में अपग्रेड करें।';
-      }
-      return '${s.remainingFreeTurns}/3 नीले (निःशुल्क) + 3 सुनहरे (Plus) = प्रतिदिन 6 तुरंत विश्लेषण।';
-    },
+  static final _PlusLocalizedCopy _hi = _PlusLocalizedCopy(
+    headerSemanticsLabel:
+        'AstraCue Plus, 6 तुरंत रीडिंग अनलॉक करें और विज्ञापन हटाएँ',
+    t3CurrentLabel: 'वर्तमान',
+    t3ReadyStatus: (rem, max) => '$rem/$max बारी शेष',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6 बारी · बिना Ads',
+    p1HeaderSubtitle: 'पूर्ण अनलॉक · एक बार खरीदें',
+    p1LifetimeTag: 'लाइफटाइम',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '$rem/$freeMax मुफ़्त → $plusMax/$plusMax तुरंत',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        'प्रतीक्षा $cd → $unlocked/$plusMax अभी खोलें',
+    p1BarExhausted: (cd) => '0 शेष ($cd) → +3 बारी अभी खोलें',
+    p1Row1Title: '6 रीडिंग / दिन',
+    p1Row1Badge: '3 घंटे प्रतीक्षा नहीं',
+    p1Row2Title: 'सभी विज्ञापन बंद',
+    p1Row2Badge: '0 बैनर व वीडियो',
+    p1Row3Title: 'सभी मोड और समय अनलॉक',
+    p1Row3Badge: 'तुरंत उपलब्ध',
+    p1Row4Title: 'एक बार की खरीदारी',
+    p1Row4Badge: 'कोई सब्सक्रिप्शन नहीं',
+    p1ShortFootnote:
+        'हर रात 00:00 बजे 6 बारी रीसेट · कभी विज्ञापन नहीं देखना पड़ेगा।',
+    sheetPrimaryCta: r'✦ AstraCue Plus अनलॉक करें — $4.99',
+    sheetRestoreAction: 'खरीदारी रीस्टोर करें',
+    sheetLaterAction: 'बाद में',
+    previewToastMessage: r'AstraCue Plus ($4.99) UI प्रीव्यू तैयार है।',
   );
 
-  static final _zh = _PlusLocalizedCopy(
-    trayActionLink: '解锁每日6次即时分析 & 去广告 (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • 一次性买断',
-    sheetTitle: '静谧连贯的每日方向指引',
-    sheetSubtitle: '仅需 \$4.99 一次性升级，无自动续费订阅。',
-    benefitTurnsTitle: '每日 6 次即时分析（免去 3 小时冷却等待）',
-    benefitTurnsDetail: '由每日 3 次（每次间隔 3 小时）提升至每日 6 次即时连续分析，无需等待能量恢复。',
-    benefitUnlockTitle: '全部模式、领域与时段永久解锁',
-    benefitUnlockDetail: '自由选择早、中、下午、晚间等任意时段与领域，无需观看激励视频。',
-    benefitNoAdsTitle: '彻底关闭横幅与插屏广告',
-    benefitNoAdsDetail: '移除所有自动打断的广告，保留纯粹静谧的思考空间。',
-    benefitFormulaTitle: '核心算法与结果品质 100% 一致',
-    benefitFormulaDetail: '推算公式与免费版完全相同——您仅为流畅与便捷体验付费。',
-    sheetHonestFootnote:
-        '透明承诺：Plus 每日提供最多 6 次即时分析（每日 00:00 自动重置）。用完 6 次后会明确提示，绝不诱导或要求您观看广告。',
-    purchaseButtonLabel: '✦ 解锁 AstraCue Plus — \$4.99（买断）',
-    maybeLaterLabel: '稍后再说',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3 次 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 后重置';
-      }
-      if (s.isCoolingDown) {
-        return '剩余 ${s.remainingFreeTurns}/3 次 • ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} 后恢复';
-      }
-      return '今日 ${s.remainingFreeTurns}/3 次 • 间隔 3 小时';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 今日 3/3 次免费分析已用完 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 后重置';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ 剩余 ${s.remainingFreeTurns}/3 次 • 下次恢复还需 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 正在进行今日第 ${s.activeTurnNumber}/3 次分析 • 下次需等待 3 小时';
-    },
-    ritualStatusSubtitle: (s) =>
-        '升级 AstraCue Plus：免广告解锁全部时段与领域，享每日 6 次即时分析。',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 今日 3/3 次免费分析已用完 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 后重置';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ 剩余 ${s.remainingFreeTurns}/3 次 • 下次恢复还需 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 今日还剩 ${s.remainingFreeTurns}/3 次免费分析';
-    },
-    resultStatusSubtitle: (s) => '想要无需等待 3 小时，立即继续探索其他领域或时段吗？',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '今日 3/3 次免费分析已用完。升级 Plus 即可解锁 +3 颗金星（每日 6 次即时分析）。';
-      }
-      if (s.isCoolingDown) {
-        return '剩余 ${s.remainingFreeTurns}/3 次免费分析（冷却中 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}）。升级 Plus 免去 3 小时等待。';
-      }
-      return '当前 ${s.remainingFreeTurns}/3 颗蓝星（免费）+ 3 颗金星（Plus）= 每日 6 次无冷却即时分析。';
-    },
+  static final _PlusLocalizedCopy _zh = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus，立即解锁每日6次解读并去除广告',
+    t3CurrentLabel: '当前',
+    t3ReadyStatus: (rem, max) => '剩余 $rem/$max 次',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6次即刻 · 免广告',
+    p1HeaderSubtitle: '完整解锁 · 一次买断',
+    p1LifetimeTag: '永久版',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '免费 $rem/$freeMax → 即刻 $plusMax/$plusMax 次',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        '恢复中 $cd → 立即解锁 $unlocked/$plusMax 次',
+    p1BarExhausted: (cd) => '已用完 ($cd) → 立即解锁 +3 次',
+    p1Row1Title: '每日 6 次解读',
+    p1Row1Badge: '免除3小时冷却',
+    p1Row2Title: '彻底关闭所有广告',
+    p1Row2Badge: '0 横幅与视频',
+    p1Row3Title: '解锁全部模式与时段',
+    p1Row3Badge: '自由畅选',
+    p1Row4Title: '一次购买永久有效',
+    p1Row4Badge: '无月费订阅',
+    p1ShortFootnote: '每日 00:00 重置 6 次额度 · 绝不强制观看激励广告。',
+    sheetPrimaryCta: r'✦ 解锁 AstraCue Plus — $4.99',
+    sheetRestoreAction: '恢复购买',
+    sheetLaterAction: '稍后再说',
+    previewToastMessage: r'AstraCue Plus ($4.99) 界面预览已就绪。',
   );
 
-  static final _ko = _PlusLocalizedCopy(
-    trayActionLink: '즉시 6회 분석 & 광고 제거 (\$4.99) →',
-    sheetEyebrow: '✦ ASTRACUE PLUS • 1회성 평생 소장',
-    sheetTitle: '기다림 없는 고요하고 매끄러운 방향 안내',
-    sheetSubtitle: '\$4.99 단 한 번의 업그레이드로 모든 일일 에너지를 잠금 해제하세요 — 정기 결제 없음.',
-    benefitTurnsTitle: '매일 6회 즉시 분석 (3시간 대기 없음)',
-    benefitTurnsDetail:
-        '하루 3회(3시간 간격)에서 대기 시간 없는 하루 6회 연속 분석으로 두 배 확대됩니다.',
-    benefitUnlockTitle: '모든 모드, 영역 및 시간대 상시 오픈',
-    benefitUnlockDetail:
-        '보상형 광고를 시청할 필요 없이 오전, 정오, 오후, 저녁 등 모든 시간대와 영역을 자유롭게 선택하세요.',
-    benefitNoAdsTitle: '배너 및 전면 광고 완전 제거',
-    benefitNoAdsDetail: '흐름을 방해하는 자동 광고 없이 고요하고 집중된 성찰의 공간을 유지합니다.',
-    benefitFormulaTitle: '핵심 알고리즘 및 결과 품질 100% 동일',
-    benefitFormulaDetail:
-        '계산 공식과 정확도는 무료 버전과 완전히 동일합니다 — 오직 편리함과 몰입을 위한 업그레이드입니다.',
-    sheetHonestFootnote:
-        '투명성 안내: Plus는 하루 최대 6회의 즉시 분석을 제공합니다(매일 00:00 초기화). 6회를 모두 사용하면 명확히 안내하며 절대 광고 시청을 요구하지 않습니다.',
-    purchaseButtonLabel: '✦ AstraCue Plus 잠금 해제 — \$4.99 (1회 결제)',
-    maybeLaterLabel: '나중에',
-    homeTrayStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '0/3회 남음 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 후 초기화';
-      }
-      if (s.isCoolingDown) {
-        return '${s.remainingFreeTurns}/3회 남음 • ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)} 후 충전';
-      }
-      return '오늘 ${s.remainingFreeTurns}/3회 • 3시간 간격';
-    },
-    ritualStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 오늘 무료 분석(3/3회) 소진 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 후 초기화';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3회 남음 • 다음 충전까지 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 오늘 ${s.activeTurnNumber}/3번째 분석 사용 중 • 다음 분석까지 3시간 대기';
-    },
-    ritualStatusSubtitle: (s) =>
-        'AstraCue Plus는 모든 시간대와 영역을 상시 개방하고 대기 없이 하루 6회 즉시 분석을 제공합니다.',
-    resultStatusHeadline: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '🌙 오늘 무료 분석(3/3회) 모두 사용 • ${ReadingEnergySnapshot.formatCountdown(s.timeUntilMidnight)} 후 초기화';
-      }
-      if (s.isCoolingDown) {
-        return '⏳ ${s.remainingFreeTurns}/3회 남음 • 다음 충전까지 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}';
-      }
-      return '⚡ 오늘 무료 분석 ${s.remainingFreeTurns}/3회 남음';
-    },
-    resultStatusSubtitle: (s) =>
-        '3시간을 기다리지 않고 지금 바로 다른 영역이나 시간대를 분석해 보시겠어요?',
-    sheetLiveStatus: (s) {
-      if (s.isDailyFreeExhausted) {
-        return '오늘 무료 분석(3/3회)을 모두 사용했습니다. Plus로 업그레이드하여 황금 오브 +3개(하루 6회 즉시 분석)를 잠금 해제하세요.';
-      }
-      if (s.isCoolingDown) {
-        return '무료 분석 ${s.remainingFreeTurns}/3회 남음(쿨다운 ${ReadingEnergySnapshot.formatCountdown(s.cooldownRemaining)}). Plus로 3시간 대기를 건너뛰세요.';
-      }
-      return '푸른 오브 ${s.remainingFreeTurns}/3개(무료) + 황금 오브 3개(Plus) = 대기 없는 하루 6회 즉시 분석.';
-    },
+  static final _PlusLocalizedCopy _ko = _PlusLocalizedCopy(
+    headerSemanticsLabel: 'AstraCue Plus, 즉시 6회 리딩 잠금 해제 및 광고 제거',
+    t3CurrentLabel: '현재',
+    t3ReadyStatus: (rem, max) => '$rem/$max회 남음',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3PlusActionLabel: '6회 즉시 · 광고 제거',
+    p1HeaderSubtitle: '전체 잠금 해제 · 1회 구매',
+    p1LifetimeTag: '평생 소장',
+    p1BarReady: (rem, freeMax, plusMax) =>
+        '무료 $rem/$freeMax → 즉시 $plusMax/$plusMax회',
+    p1BarCooldown: (cd, unlocked, plusMax) =>
+        '대기 $cd → 지금 $unlocked/$plusMax회 해제',
+    p1BarExhausted: (cd) => '소진 ($cd) → 지금 +3회 해제',
+    p1Row1Title: '일일 6회 분석 리딩',
+    p1Row1Badge: '3시간 대기 없음',
+    p1Row2Title: '모든 광고 완전 제거',
+    p1Row2Badge: '배너·영상 0개',
+    p1Row3Title: '모든 모드 및 시간대 해제',
+    p1Row3Badge: '즉시 자유 선택',
+    p1Row4Title: '1회 구매로 평생 이용',
+    p1Row4Badge: '월 구독료 없음',
+    p1ShortFootnote: '매일 00:00에 6회 초기화 · 보상형 광고를 강제하지 않습니다.',
+    sheetPrimaryCta: r'✦ AstraCue Plus 잠금 해제 — $4.99',
+    sheetRestoreAction: '구매 복원',
+    sheetLaterAction: '나중에',
+    previewToastMessage: r'AstraCue Plus ($4.99) UI 프리뷰가 준비되었습니다.',
   );
 }
