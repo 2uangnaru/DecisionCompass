@@ -18,6 +18,7 @@ import '../reading_mapping.dart';
 import '../services/banner_ad.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
+import '../widgets/astracue_plus_ui.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/daily_energy_capsule_bar.dart';
 import '../widgets/daily_energy_info.dart';
@@ -220,6 +221,22 @@ class _HomePageState extends State<HomePage>
   late String _briefLocalDay;
   Timer? _dayChangeTimer;
   Timer? _freeEnergyTimer;
+  Timer? _cooldownTickTimer;
+
+  ReadingEnergySnapshot _currentEnergySnapshot() =>
+      ReadingEnergySnapshot.fromQuota(
+        quota: widget.dependencies.quotaManager,
+        nowLocal: widget.dependencies.nowLocal(),
+      );
+
+  void _openPlusSheet() {
+    showAstraCuePlusSheet(
+      context,
+      locale: widget.dependencies.localeController.locale,
+      snapshot: _currentEnergySnapshot(),
+      snapshotResolver: _currentEnergySnapshot,
+    );
+  }
 
   /// The index of today's rotating description, once the saved deck has been
   /// read. Null means "not resolved yet"; the copy block holds its space
@@ -310,8 +327,17 @@ class _HomePageState extends State<HomePage>
 
   void _scheduleFreeEnergyRefresh() {
     _freeEnergyTimer?.cancel();
+    _cooldownTickTimer?.cancel();
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
+    final snapshot = _currentEnergySnapshot();
+    if (snapshot.isCoolingDown || snapshot.isDailyFreeExhausted) {
+      _cooldownTickTimer = Timer(const Duration(seconds: 1), () {
+        if (!mounted) return;
+        setState(() {});
+        _scheduleFreeEnergyRefresh();
+      });
+    }
     // Midnight is already handled by the day timer. The extra timer is only
     // for the first and second free-reading cooldowns.
     if (quota.isFreeEnergyReady(now) ||
@@ -346,6 +372,7 @@ class _HomePageState extends State<HomePage>
   void dispose() {
     _dayChangeTimer?.cancel();
     _freeEnergyTimer?.cancel();
+    _cooldownTickTimer?.cancel();
     for (final notifier in _categoryTriggers.values) {
       notifier.dispose();
     }
@@ -600,6 +627,15 @@ class _HomePageState extends State<HomePage>
                 ),
               ),
             ),
+            const SizedBox(width: 6),
+            IgnorePointer(
+              ignoring: _isSettingsOpen,
+              child: AnimatedOpacity(
+                opacity: _isSettingsOpen ? 0.0 : 1.0,
+                duration: const Duration(milliseconds: 180),
+                child: AstraCuePlusHeaderBadge(onTap: _openPlusSheet),
+              ),
+            ),
             const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
           ],
         ),
@@ -748,164 +784,184 @@ class _HomePageState extends State<HomePage>
   Widget _dailySignals(AppLocalizations l10n) {
     final today = widget.dependencies.nowLocal();
     final localeName = intlLocaleOf(context);
+    final energySnapshot = _currentEnergySnapshot();
     return GlassCard(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+      padding: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  l10n.dailyEnergy.toUpperCase(),
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.gold,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: trackingFor(context, 1.6),
-                  ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        l10n.dailyEnergy.toUpperCase(),
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: CompassColors.gold,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: trackingFor(context, 1.6),
+                        ),
+                      ),
+                    ),
+                    Text(
+                      formatShortDate(localeName, today),
+                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                        color: CompassColors.muted,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-              Text(
-                formatShortDate(localeName, today),
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: CompassColors.muted,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          FutureBuilder<engine.DailyBrief?>(
-            key: const Key('daily_signals_content'),
-            future: _dailyBrief,
-            builder: (context, snapshot) {
-              // Only a *finished* future speaks for the profile on screen.
-              // `FutureBuilder` keeps the previous future's value while the
-              // next one is waiting — `AsyncSnapshot.inState` changes the
-              // connection state and carries the data across — so reading
-              // `snapshot.data` directly showed the old profile's energy,
-              // colours and lucky number under the new profile's name for as
-              // long as the recalculation took.
-              final brief = snapshot.connectionState == ConnectionState.done
-                  ? snapshot.data
-                  : null;
-              final colors = brief?.colors;
-              final energy = brief?.energy;
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Row(
+                const SizedBox(height: 10),
+                FutureBuilder<engine.DailyBrief?>(
+                  key: const Key('daily_signals_content'),
+                  future: _dailyBrief,
+                  builder: (context, snapshot) {
+                    // Only a *finished* future speaks for the profile on screen.
+                    // `FutureBuilder` keeps the previous future's value while the
+                    // next one is waiting — `AsyncSnapshot.inState` changes the
+                    // connection state and carries the data across — so reading
+                    // `snapshot.data` directly showed the old profile's energy,
+                    // colours and lucky number under the new profile's name for as
+                    // long as the recalculation took.
+                    final brief =
+                        snapshot.connectionState == ConnectionState.done
+                        ? snapshot.data
+                        : null;
+                    final colors = brief?.colors;
+                    final energy = brief?.energy;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           children: [
-                            Flexible(
-                              child: Text(
-                                energyLevelLabel(l10n, energy?.level) ?? '—',
-                                key: const Key('daily_energy_label'),
-                                overflow: TextOverflow.ellipsis,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headlineMedium
-                                    ?.copyWith(
-                                      color: CompassColors.text,
-                                      fontSize: 22,
-                                      fontWeight: FontWeight.w700,
-                                      letterSpacing: trackingFor(context, 1.2),
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Flexible(
+                                    child: Text(
+                                      energyLevelLabel(l10n, energy?.level) ??
+                                          '—',
+                                      key: const Key('daily_energy_label'),
+                                      overflow: TextOverflow.ellipsis,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .headlineMedium
+                                          ?.copyWith(
+                                            color: CompassColors.text,
+                                            fontSize: 22,
+                                            fontWeight: FontWeight.w700,
+                                            letterSpacing: trackingFor(
+                                              context,
+                                              1.2,
+                                            ),
+                                          ),
                                     ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  // Home always speaks for the current local
+                                  // day, and is where discovery lives.
+                                  DailyEnergyInfoButton(
+                                    level: energy?.level,
+                                    controller: widget
+                                        .dependencies
+                                        .dailyEnergyInsights,
+                                    day: dailyEnergyDayKey(
+                                      widget.dependencies.nowLocal(),
+                                    ),
+                                    showsDiscovery: true,
+                                  ),
+                                ],
                               ),
                             ),
-                            const SizedBox(width: 4),
-                            // Home always speaks for the current local
-                            // day, and is where discovery lives.
-                            DailyEnergyInfoButton(
-                              level: energy?.level,
-                              controller:
-                                  widget.dependencies.dailyEnergyInsights,
-                              day: dailyEnergyDayKey(
-                                widget.dependencies.nowLocal(),
-                              ),
-                              showsDiscovery: true,
+                            DailyEnergyCapsuleBar(
+                              key: const Key('daily_energy_capsule_bar'),
+                              energy: energy,
                             ),
                           ],
                         ),
-                      ),
-                      DailyEnergyCapsuleBar(
-                        key: const Key('daily_energy_capsule_bar'),
-                        energy: energy,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: _TodaySignalTile(
-                            label: l10n.yourColorsToday,
-                            // Equal-width columns keep both colours on one
-                            // baseline, even in the half-width signal tile.
-                            value: Row(
-                              children: [
-                                Expanded(
-                                  child: _Swatch(
-                                    color: colors?.lead,
-                                    role: l10n.colorRoleLead,
-                                    testKey: 'daily_color_lead',
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Expanded(
-                                  child: _Swatch(
-                                    color: colors?.supporting,
-                                    role: l10n.colorRoleSupporting,
-                                    testKey: 'daily_color_supporting',
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: _TodaySignalTile(
-                            label: l10n.luckyNumberToday,
-                            value: Text(
-                              brief == null
-                                  ? '—'
-                                  : formatWholeNumber(
-                                      localeName,
-                                      brief.luckyNumber,
-                                    ),
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: brief == null
-                                    ? CompassColors.text
-                                    : CompassColors.blueLight,
-                                fontSize: 30,
-                                fontWeight: FontWeight.w800,
-                                height: 1.05,
-                                shadows: brief == null
-                                    ? null
-                                    : [
-                                        BoxShadow(
-                                          color: CompassColors.blueLight
-                                              .withValues(alpha: 0.45),
-                                          blurRadius: 16,
+                        const SizedBox(height: 8),
+                        IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Expanded(
+                                child: _TodaySignalTile(
+                                  label: l10n.yourColorsToday,
+                                  // Equal-width columns keep both colours on one
+                                  // baseline, even in the half-width signal tile.
+                                  value: Row(
+                                    children: [
+                                      Expanded(
+                                        child: _Swatch(
+                                          color: colors?.lead,
+                                          role: l10n.colorRoleLead,
+                                          testKey: 'daily_color_lead',
                                         ),
-                                      ],
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Expanded(
+                                        child: _Swatch(
+                                          color: colors?.supporting,
+                                          role: l10n.colorRoleSupporting,
+                                          testKey: 'daily_color_supporting',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
-                            ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: _TodaySignalTile(
+                                  label: l10n.luckyNumberToday,
+                                  value: Text(
+                                    brief == null
+                                        ? '—'
+                                        : formatWholeNumber(
+                                            localeName,
+                                            brief.luckyNumber,
+                                          ),
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: brief == null
+                                          ? CompassColors.text
+                                          : CompassColors.blueLight,
+                                      fontSize: 30,
+                                      fontWeight: FontWeight.w800,
+                                      height: 1.05,
+                                      shadows: brief == null
+                                          ? null
+                                          : [
+                                              BoxShadow(
+                                                color: CompassColors.blueLight
+                                                    .withValues(alpha: 0.45),
+                                                blurRadius: 16,
+                                              ),
+                                            ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                ],
-              );
-            },
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+          HomeEmbeddedEnergyTray(
+            snapshot: energySnapshot,
+            locale: widget.dependencies.localeController.locale,
+            onTapPlus: _openPlusSheet,
           ),
         ],
       ),

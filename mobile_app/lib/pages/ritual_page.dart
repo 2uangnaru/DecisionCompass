@@ -18,6 +18,7 @@ import '../services/ad_service.dart';
 import '../services/banner_ad.dart';
 import '../theme.dart';
 import '../widgets/ad_banner_slot.dart';
+import '../widgets/astracue_plus_ui.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'loading_page.dart';
@@ -1147,6 +1148,13 @@ class _RitualPageState extends State<RitualPage>
               ),
             ],
             SizedBox(height: compact ? 10 : 14),
+            AnalysisEnergyPlusCard(
+              key: const Key('ritual_energy_plus_card'),
+              snapshot: _currentEnergySnapshot(),
+              locale: widget.dependencies.localeController.locale,
+              onTapPlus: _openPlusSheet,
+            ),
+            SizedBox(height: compact ? 8 : 10),
             Text(
               l10n.ritualSafety,
               key: const Key('ritual_responsible_use_note'),
@@ -1161,6 +1169,24 @@ class _RitualPageState extends State<RitualPage>
           ],
         ),
       ],
+    );
+  }
+
+  ReadingEnergySnapshot _currentEnergySnapshot() {
+    return ReadingEnergySnapshot.fromQuota(
+      quota: widget.dependencies.quotaManager,
+      nowLocal: widget.dependencies.nowLocal(),
+      isCooldownOverride: _isCooldown,
+      isQuotaExhaustedOverride: _isQuotaExhausted,
+    );
+  }
+
+  Future<void> _openPlusSheet() async {
+    await showAstraCuePlusSheet(
+      context,
+      locale: widget.dependencies.localeController.locale,
+      snapshot: _currentEnergySnapshot(),
+      snapshotResolver: _currentEnergySnapshot,
     );
   }
 

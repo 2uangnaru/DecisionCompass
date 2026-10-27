@@ -15,6 +15,7 @@ import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
 import '../result_palette.dart';
 import '../theme.dart';
+import '../widgets/astracue_plus_ui.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/responsible_use_sheet.dart';
 import 'history_page.dart';
@@ -74,6 +75,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   /// mark has to go with it.
   late String _today;
   Timer? _dayChangeTimer;
+  Timer? _cooldownTimer;
   bool _saving = false;
   bool _saved = false;
   bool _saveFailed = false;
@@ -119,9 +121,11 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     final local = widget.dependencies.nowLocal();
     _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
+    _scheduleCooldownTick();
     if (widget.autoSave) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -145,8 +149,16 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   @override
   void dispose() {
     _dayChangeTimer?.cancel();
+    _cooldownTimer?.cancel();
+    widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  void _onQuotaChanged() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   @override
@@ -171,6 +183,33 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       () {
         if (mounted) _refreshIfNewDay();
       },
+    );
+  }
+
+  void _scheduleCooldownTick() {
+    _cooldownTimer?.cancel();
+    _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      final snap = _currentEnergySnapshot();
+      if (snap.isCoolingDown || snap.isDailyFreeExhausted) {
+        setState(() {});
+      }
+    });
+  }
+
+  ReadingEnergySnapshot _currentEnergySnapshot() {
+    return ReadingEnergySnapshot.fromQuota(
+      quota: widget.dependencies.quotaManager,
+      nowLocal: widget.dependencies.nowLocal(),
+    );
+  }
+
+  Future<void> _openPlusSheet() async {
+    await showAstraCuePlusSheet(
+      context,
+      locale: widget.dependencies.localeController.locale,
+      snapshot: _currentEnergySnapshot(),
+      snapshotResolver: _currentEnergySnapshot,
     );
   }
 
@@ -403,7 +442,15 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   _LuckyWindows(reading: reading, period: _period),
                 ],
               ],
-              const SizedBox(height: 22),
+              const SizedBox(height: 18),
+              AnalysisEnergyPlusCard(
+                key: const Key('result_energy_plus_card'),
+                snapshot: _currentEnergySnapshot(),
+                locale: widget.dependencies.localeController.locale,
+                isPostReadingResult: true,
+                onTapPlus: _openPlusSheet,
+              ),
+              const SizedBox(height: 16),
               FilledButton.icon(
                 key: const Key('result_try_another'),
                 onPressed: _tryAnotherDirection,
