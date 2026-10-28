@@ -116,11 +116,38 @@ the still-mounted page shows the localized `adRewardNotSaved` notice (eight
 languages and the three alias files). Raw storage/SDK errors are not shown,
 logged or tracked.
 Option unlocks retain their existing screen-lifetime behavior and are NOT
-bonus credits. The existing option gates/free quota/cooldown are unchanged.
+bonus credits. Since 2026-10-28 a locked mode, category or period plays its
+rewarded ad straight from the tap (the AD badge is the disclosure); the old
+confirmation sheet was removed, so `reward_cta_tapped` fires on that tap. The existing option gates/free quota/cooldown are unchanged.
 
 If an ad is unavailable/fails, show a localized short notice; never fabricate
 a successful view or bonus. NoOp grants nothing. Tests/previews needing a
 reward must explicitly inject `TestRewardAdService` from the test harness.
+
+## Action Guidance lock (2026-10-28)
+
+The first **three** new usable readings on a device show Action Guidance
+(Should / Avoid). Every later new reading, free or bonus, renders the card
+with its tags readable and the text blurred behind the shared
+`WatchAdButton` (the Ritual pill, now in `celestial_ui.dart`). The rewarded
+ad uses placement `guidance` / `RewardPlacement.guidance`; only the SDK
+earned callback plus a successful save opens it, permanently for that
+`readingKey` (History reopens it open). It grants NO reading credit, and the
+Ritual reward opens no guidance: the button is shared, the handlers are not.
+The automatic after-analysis interstitial is unchanged, so a locked reading
+can be followed by a voluntary rewarded ad (owner decision).
+
+- `lib/data/guidance_lock_store.dart`: count plus open/locked key lists in
+  SharedPreferences. Only readings admitted past the allowance can be locked,
+  so pre-existing History stays readable; existing installs start at zero.
+  A repeat of an open key spends nothing. Storage failure shows guidance.
+- The count is mirrored to **Google Block Store** (`astracue/block_store`
+  channel in `MainActivity`, `play-services-auth-blockstore:16.4.0`,
+  `setShouldBackupToCloud(true)`); the larger of the two counts wins. Google
+  documents it surviving uninstall/reinstall only with Backup on. Whether
+  Android "Clear data" erases it is undocumented and NOT device-verified.
+  It is not tamper-proof; no server exists.
+- Tests: `test/guidance_lock_test.dart`.
 
 ## Banner (2026-10-26)
 

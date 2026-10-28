@@ -528,164 +528,70 @@ class AdLockOptionWrapper extends StatelessWidget {
   }
 }
 
-/// Shows a bottom sheet asking the user to watch an ad to unlock a specific option.
-Future<bool> showOptionAdUnlockSheet(
-  BuildContext context, {
-  required String optionLabel,
-  VoidCallback? onRewardCta,
-}) async {
-  final l10n = AppLocalizations.of(context);
-  final result = await showModalBottomSheet<bool>(
-    context: context,
-    backgroundColor: Colors.transparent,
-    builder: (sheetContext) => Container(
-      decoration: BoxDecoration(
-        color: CompassColors.raised,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(26)),
-        border: Border.all(color: CompassColors.line),
-        boxShadow: const [
-          BoxShadow(color: Colors.black54, blurRadius: 32, spreadRadius: 4),
-        ],
-      ),
-      padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-      child: SafeArea(
-        top: false,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 40,
-              height: 4,
-              decoration: BoxDecoration(
-                color: Colors.white24,
-                borderRadius: BorderRadius.circular(2),
-              ),
+/// The compact "watch an ad" pill first used on the Ritual screen. Shared so
+/// every rewarded entry point looks like the same control.
+class WatchAdButton extends StatelessWidget {
+  const WatchAdButton({super.key, required this.onTap});
+
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(22),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 9),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xD91A2943), Color(0xF2142136)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            const SizedBox(height: 16),
-            Container(
-              width: 50,
-              height: 50,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [
-                    CompassColors.gold.withValues(alpha: 0.25),
-                    CompassColors.gold.withValues(alpha: 0.08),
-                  ],
-                ),
-                border: Border.all(
-                  color: CompassColors.gold.withValues(alpha: 0.5),
-                  width: 1.2,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: CompassColors.gold.withValues(alpha: 0.2),
-                    blurRadius: 14,
-                    spreadRadius: 1,
-                  ),
-                ],
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: CompassColors.blueLight.withValues(alpha: 0.5),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: CompassColors.blue.withValues(alpha: 0.3),
+                blurRadius: 16,
+                spreadRadius: 0.5,
               ),
-              child: const Icon(
+              const BoxShadow(
+                color: Colors.black45,
+                blurRadius: 8,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
                 Icons.play_circle_filled_rounded,
-                size: 28,
-                color: CompassColors.gold,
+                size: 16,
+                color: CompassColors.blueLight,
               ),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              optionLabel,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              l10n.watchAdPrompt,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 13,
-                color: CompassColors.secondary,
-                height: 1.4,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                key: const Key('option_unlock_ad_button'),
-                onTap: () {
-                  onRewardCta?.call();
-                  Navigator.of(sheetContext).pop(true);
-                },
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      colors: [Color(0xD91A2943), Color(0xF2142136)],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: CompassColors.blueLight.withValues(alpha: 0.5),
-                      width: 1.2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: CompassColors.blue.withValues(alpha: 0.28),
-                        blurRadius: 18,
-                        spreadRadius: 0.5,
-                      ),
-                      const BoxShadow(
-                        color: Colors.black38,
-                        blurRadius: 12,
-                        offset: Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(
-                        Icons.play_circle_filled_rounded,
-                        size: 20,
-                        color: CompassColors.blueLight,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        l10n.watchAdButton,
-                        style: const TextStyle(
-                          color: CompassColors.text,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 0.3,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 8),
-            TextButton(
-              onPressed: () => Navigator.of(sheetContext).pop(false),
-              child: Text(
-                l10n.cancelAction,
+              const SizedBox(width: 7),
+              Text(
+                l10n.watchAdButton,
                 style: const TextStyle(
-                  color: CompassColors.muted,
-                  fontSize: 13,
+                  color: CompassColors.text,
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.4,
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
-    ),
-  );
-  return result ?? false;
+    );
+  }
 }

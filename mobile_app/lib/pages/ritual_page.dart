@@ -245,7 +245,9 @@ class _RitualPageState extends State<RitualPage>
     return !_unlockedPeriods.contains(period);
   }
 
+  /// Plays the rewarded ad straight from the locked chip, like Home.
   Future<void> _unlockPeriodWithAd(TimePeriod period) async {
+    if (_rewardBusy) return;
     widget.dependencies.analytics.record(
       AnalyticsEvent.optionLocked(
         mode: toEngineMode(widget.mode),
@@ -255,24 +257,16 @@ class _RitualPageState extends State<RitualPage>
         placement: RewardPlacement.period,
       ),
     );
-    RewardAnalyticsAttempt? reward;
     _periodTriggers[period]?.value++;
-    final l10n = AppLocalizations.of(context);
-    final confirmed = await showOptionAdUnlockSheet(
-      context,
-      optionLabel: periodLabel(l10n, period),
-      onRewardCta: () => reward ??= RewardAnalyticsAttempt(
-        analytics: widget.dependencies.analytics,
-        grantSource: RewardGrantSource.sdk,
-        mode: toEngineMode(widget.mode),
-        category: widget.category,
-        period: toEnginePeriod(period),
-        language: widget.dependencies.localeController.locale,
-        placement: RewardPlacement.period,
-      ),
+    final reward = RewardAnalyticsAttempt(
+      analytics: widget.dependencies.analytics,
+      grantSource: RewardGrantSource.sdk,
+      mode: toEngineMode(widget.mode),
+      category: widget.category,
+      period: toEnginePeriod(period),
+      language: widget.dependencies.localeController.locale,
+      placement: RewardPlacement.period,
     );
-    if (!confirmed || !mounted) return;
-    if (_rewardBusy) return;
     _rewardBusy = true;
     try {
       final outcome = await widget.dependencies.adService.showRewarded(
@@ -283,7 +277,7 @@ class _RitualPageState extends State<RitualPage>
             _unlockedPeriods.add(period);
             _period = period;
           });
-          reward?.granted();
+          reward.granted();
         },
       );
       if (!mounted) return;
@@ -1087,64 +1081,9 @@ class _RitualPageState extends State<RitualPage>
             ),
             if (_isCooldown || _isQuotaExhausted) ...[
               SizedBox(height: compact ? 10 : 12),
-              Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  key: const Key('ritual_watch_ad_button'),
-                  onTap: _watchAdAndUnlock,
-                  borderRadius: BorderRadius.circular(22),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
-                      vertical: 9,
-                    ),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xD91A2943), Color(0xF2142136)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(22),
-                      border: Border.all(
-                        color: CompassColors.blueLight.withValues(alpha: 0.5),
-                        width: 1.2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: CompassColors.blue.withValues(alpha: 0.3),
-                          blurRadius: 16,
-                          spreadRadius: 0.5,
-                        ),
-                        const BoxShadow(
-                          color: Colors.black45,
-                          blurRadius: 8,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Icon(
-                          Icons.play_circle_filled_rounded,
-                          size: 16,
-                          color: CompassColors.blueLight,
-                        ),
-                        const SizedBox(width: 7),
-                        Text(
-                          l10n.watchAdButton,
-                          style: const TextStyle(
-                            color: CompassColors.text,
-                            fontSize: 12.5,
-                            fontWeight: FontWeight.w700,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+              WatchAdButton(
+                key: const Key('ritual_watch_ad_button'),
+                onTap: _watchAdAndUnlock,
               ),
             ],
             SizedBox(height: compact ? 10 : 14),

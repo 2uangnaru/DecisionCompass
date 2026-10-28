@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui' show ImageFilter;
 
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
@@ -6,6 +7,7 @@ import 'package:share_plus/share_plus.dart';
 import '../data/action_guidance.dart';
 import '../analytics/analytics_event.dart';
 import '../analytics/reading_analytics_attempt.dart';
+import '../analytics/reward_analytics_attempt.dart';
 import '../data/history_entry.dart';
 import '../data/models/models.dart' as engine;
 import '../l10n/app_localizations.dart';
@@ -13,6 +15,7 @@ import '../localized_presentation.dart';
 import '../models.dart';
 import '../reading_dependencies.dart';
 import '../reading_mapping.dart';
+import '../services/ad_runtime.dart';
 import '../result_palette.dart';
 import '../theme.dart';
 import '../widgets/astracue_plus_ui.dart';
@@ -81,6 +84,10 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   bool _saveFailed = false;
   bool _sharing = false;
 
+  /// Null while the device allowance is being read: blurred, no button yet.
+  bool? _guidanceLocked;
+  bool _rewardBusy = false;
+
   DecisionMode get _mode => fromEngineMode(reading.mode);
   TimePeriod get _period => fromEnginePeriod(reading.period);
 
@@ -126,6 +133,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
     _scheduleCooldownTick();
+    _resolveGuidanceLock();
     if (widget.autoSave) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) {
@@ -197,6 +205,72 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     });
   }
 
+  /// `readingKey` leaves the mode out: every mode read in one time segment
+  /// shares it. Guidance differs per mode, so the lock must not.
+  String get _guidanceKey => '$_historyId|${reading.mode.toJson()}';
+
+  bool get _showsGuidance =>
+      reading.status == engine.ReadingStatus.ready ||
+      reading.status == engine.ReadingStatus.balanced;
+
+  /// A new billable reading spends the device allowance; a saved snapshot
+  /// only looks its state up. Storage failure leaves guidance readable.
+  Future<void> _resolveGuidanceLock() async {
+    final locks = widget.dependencies.guidanceLocks;
+    if (locks == null || !_showsGuidance) {
+      _guidanceLocked = false;
+      return;
+    }
+    bool locked;
+    try {
+      locked = widget.autoSave && widget.billableResult
+          ? await locks.admit(_guidanceKey)
+          : await locks.isLocked(_guidanceKey);
+    } catch (_) {
+      locked = false;
+    }
+    if (mounted) setState(() => _guidanceLocked = locked);
+  }
+
+  /// Opens this reading's guidance only on the SDK's earned callback, and
+  /// only once the choice is saved. Grants no reading credit.
+  Future<void> _watchAdForGuidance() async {
+    final locks = widget.dependencies.guidanceLocks;
+    if (locks == null || _rewardBusy) return;
+    _rewardBusy = true;
+    final reward = RewardAnalyticsAttempt(
+      analytics: widget.dependencies.analytics,
+      mode: reading.mode,
+      category: reading.category,
+      period: reading.period,
+      language: widget.dependencies.localeController.locale,
+      placement: RewardPlacement.guidance,
+      grantSource: RewardGrantSource.sdk,
+    );
+    AdOutcome outcome;
+    try {
+      outcome = await widget.dependencies.adService.showRewarded(
+        placement: 'guidance',
+        onEarnedReward: () async {
+          await locks.unlock(_guidanceKey);
+          reward.granted();
+        },
+      );
+    } finally {
+      _rewardBusy = false;
+    }
+    if (!mounted) return;
+    if (outcome == AdOutcome.rewarded) {
+      setState(() => _guidanceLocked = false);
+      return;
+    }
+    final notice = rewardOutcomeNotice(AppLocalizations.of(context), outcome);
+    if (notice != null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(notice)));
+    }
+  }
+
   ReadingEnergySnapshot _currentEnergySnapshot() {
     return ReadingEnergySnapshot.fromQuota(
       quota: widget.dependencies.quotaManager,
@@ -213,10 +287,11 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     );
   }
 
-  /// A reading's own `readingKey` already varies by profile, mode, period
-  /// and category (see `eb88f48`); some statuses (e.g. `period_elapsed`)
-  /// omit it, so those fall back to a key built from the same fields plus
-  /// the reveal instant.
+  /// A reading's own `readingKey` varies by profile, time segment, period
+  /// and category (see `eb88f48`) but NOT by mode, so two modes read in one
+  /// segment share it. Some statuses (e.g. `period_elapsed`) omit it, so
+  /// those fall back to a key built from the same fields plus the reveal
+  /// instant.
   String get _historyId =>
       reading.readingKey ??
       '${reading.context.instantUtc}_${reading.mode.toJson()}_'
@@ -435,6 +510,10 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                     locale: widget.dependencies.localeController.locale,
                     reading: reading,
                   ),
+                  blurred: _guidanceLocked != false,
+                  onWatchAd: _guidanceLocked == true
+                      ? _watchAdForGuidance
+                      : null,
                 ),
                 if (_period != TimePeriod.now &&
                     reading.luckyWindows.isNotEmpty) ...[
@@ -890,51 +969,79 @@ class _CosmicContextCard extends StatelessWidget {
 }
 
 class _ActionGuidanceCard extends StatelessWidget {
-  const _ActionGuidanceCard({required this.guidance});
+  const _ActionGuidanceCard({
+    required this.guidance,
+    this.blurred = false,
+    this.onWatchAd,
+  });
 
   final ActionGuidance guidance;
 
+  /// The tags stay readable; only their text is blurred.
+  final bool blurred;
+
+  /// Shown over the blurred text once the lock is known.
+  final VoidCallback? onWatchAd;
+
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      key: const Key('result_action_guidance'),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(
-                Icons.checklist_rounded,
-                color: CompassColors.teal,
-                size: 18,
-              ),
-              const SizedBox(width: 8),
-              Expanded(
-                child: Text(
-                  guidance.title,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.teal,
-                    letterSpacing: trackingFor(context, 1.2),
-                    fontWeight: FontWeight.w700,
-                  ),
+    final content = Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            const Icon(
+              Icons.checklist_rounded,
+              color: CompassColors.teal,
+              size: 18,
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                guidance.title,
+                style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                  color: CompassColors.teal,
+                  letterSpacing: trackingFor(context, 1.2),
+                  fontWeight: FontWeight.w700,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          _GuidanceItem(
-            tag: guidance.shouldDoTag,
-            tagColor: CompassColors.teal,
-            icon: Icons.check_circle_outline_rounded,
-            text: guidance.shouldDo,
-          ),
-          const SizedBox(height: 10),
-          _GuidanceItem(
-            tag: guidance.avoidTag,
-            tagColor: const Color(0xFFE27C7C),
-            icon: Icons.remove_circle_outline_rounded,
-            text: guidance.avoid,
-          ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 14),
+        _GuidanceItem(
+          tag: guidance.shouldDoTag,
+          tagColor: CompassColors.teal,
+          icon: Icons.check_circle_outline_rounded,
+          text: guidance.shouldDo,
+          blurred: blurred,
+        ),
+        const SizedBox(height: 10),
+        _GuidanceItem(
+          tag: guidance.avoidTag,
+          tagColor: const Color(0xFFE27C7C),
+          icon: Icons.remove_circle_outline_rounded,
+          text: guidance.avoid,
+          blurred: blurred,
+        ),
+      ],
+    );
+    return GlassCard(
+      key: const Key('result_action_guidance'),
+      // Centred on the whole card, title included, so it reads as the
+      // card's middle rather than sitting low between the two rows.
+      child: Stack(
+        children: [
+          content,
+          if (onWatchAd != null)
+            Positioned.fill(
+              child: Center(
+                child: WatchAdButton(
+                  key: const Key('result_guidance_watch_ad_button'),
+                  onTap: onWatchAd!,
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -947,12 +1054,14 @@ class _GuidanceItem extends StatelessWidget {
     required this.tagColor,
     required this.icon,
     required this.text,
+    this.blurred = false,
   });
 
   final String tag;
   final Color tagColor;
   final IconData icon;
   final String text;
+  final bool blurred;
 
   @override
   Widget build(BuildContext context) {
@@ -974,12 +1083,19 @@ class _GuidanceItem extends StatelessWidget {
         ),
         const SizedBox(width: 6),
         Expanded(
-          child: Text(
-            text,
-            style: const TextStyle(
-              color: CompassColors.secondary,
-              fontSize: 13.5,
-              height: 1.4,
+          child: ExcludeSemantics(
+            excluding: blurred,
+            child: ImageFiltered(
+              enabled: blurred,
+              imageFilter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+              child: Text(
+                text,
+                style: const TextStyle(
+                  color: CompassColors.secondary,
+                  fontSize: 13.5,
+                  height: 1.4,
+                ),
+              ),
             ),
           ),
         ),

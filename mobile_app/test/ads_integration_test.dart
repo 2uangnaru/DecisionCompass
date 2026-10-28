@@ -256,7 +256,6 @@ void main() {
           'category' => find.byKey(const Key('category_love')),
           _ => find.byKey(const Key('ritual_period_evening')),
         };
-        final unlock = find.byKey(const Key('option_unlock_ad_button'));
         final notReady = find.text(rig.strings.adNotReady);
         int granted() =>
             analytics.events.where((e) => e.name == 'reward_granted').length;
@@ -264,9 +263,6 @@ void main() {
           await tester.ensureVisible(target);
           await tester.tap(target);
           await tester.pump();
-          await tester.pump(const Duration(milliseconds: 400));
-          expect(unlock, findsOneWidget);
-          await tester.tap(unlock);
           await tester.pump(const Duration(milliseconds: 400));
           await tester.pump(const Duration(milliseconds: 400));
         }
@@ -315,7 +311,9 @@ void main() {
         await tester.tap(target);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
-        expect(unlock, findsNothing);
+        // Unlocked: no further ad is requested (none is ready, so a request
+        // would surface the not-ready notice).
+        expect(notReady, findsNothing);
         expect(quota.bonusReadings, 0);
       });
       analytics.dispose();

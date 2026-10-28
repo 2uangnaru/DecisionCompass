@@ -16,6 +16,7 @@ import 'analytics/firebase_analytics_sink.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
 import 'data/engine_daily_brief_provider.dart';
+import 'data/guidance_lock_store.dart';
 import 'data/home_description_deck.dart';
 import 'data/locale_controller.dart';
 import 'data/locale_store.dart';
@@ -107,6 +108,9 @@ Future<void> main() async {
         analytics: analytics,
         quotaManager: quotaManager,
         adService: adService,
+        guidanceLocks: GuidanceLockStore(
+          backup: const BlockStoreCounterBackup(),
+        ),
       ),
     ),
   );

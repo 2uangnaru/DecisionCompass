@@ -22,6 +22,7 @@ import 'package:decision_compass/data/reading_quota_controller.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/l10n/app_localizations.dart';
+import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/reading_dependencies.dart';
 import 'package:decision_compass/services/ad_service.dart';
 import 'package:decision_compass/theme.dart';
@@ -58,6 +59,7 @@ class ReadingTestRig {
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const TestRewardAdService(),
+    this.guidanceLocks,
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
@@ -122,6 +124,7 @@ class ReadingTestRig {
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
   final AdService adService;
+  final GuidanceLockStore? guidanceLocks;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -150,6 +153,7 @@ class ReadingTestRig {
     analytics: analytics,
     quotaManager: quotaManager,
     adService: adService,
+    guidanceLocks: guidanceLocks,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own
@@ -196,6 +200,20 @@ class TestRewardAdService extends NoOpAdService {
     required Future<void> Function() onEarnedReward,
     String placement = 'reading',
   }) async {
+    await onEarnedReward();
+    return AdOutcome.rewarded;
+  }
+}
+
+/// Counts rewarded requests and earns each one, like [TestRewardAdService].
+class CountingRewardAdService extends NoOpAdService {
+  int shows = 0;
+  @override
+  Future<AdOutcome> showRewarded({
+    required Future<void> Function() onEarnedReward,
+    String placement = 'reading',
+  }) async {
+    shows++;
     await onEarnedReward();
     return AdOutcome.rewarded;
   }

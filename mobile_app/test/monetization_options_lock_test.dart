@@ -38,9 +38,11 @@ void main() {
         if (hasBonus) await quota.earnBonusReading();
         expect(quota.dailyFreeReadingsUsed(now), 1);
 
+        final ads = CountingRewardAdService();
         final rig = ReadingTestRig(
           quotaManager: quota,
           liveLocalClock: () => now,
+          adService: ads,
         );
         await tester.pumpWidget(
           localizedApp(
@@ -60,7 +62,7 @@ void main() {
         await tester.ensureVisible(find.byKey(const Key('category_love')));
         await tester.tap(find.byKey(const Key('category_love')));
         await tester.pump();
-        expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+        expect(ads.shows, 0);
       });
     }
 
@@ -68,9 +70,11 @@ void main() {
       tester,
     ) async {
       useScreen(tester, size: const Size(393, 900));
+      final ads = CountingRewardAdService();
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
         quotaManager: FakeReadingQuotaController(initialCooldown: false),
+        adService: ads,
       );
       await tester.pumpWidget(rig.app);
       await completeOnboarding(tester);
@@ -78,11 +82,11 @@ void main() {
       // In available state, no AdOptionBadge is shown on Home
       expect(find.byType(AdOptionBadge), findsNothing);
 
-      // User can freely tap love category without any Ad modal
+      // User can freely tap love category without any ad
       await tester.ensureVisible(find.byKey(const Key('category_love')));
       await tester.tap(find.byKey(const Key('category_love')));
       await tester.pump();
-      expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+      expect(ads.shows, 0);
     });
 
     testWidgets(
@@ -90,10 +94,12 @@ void main() {
       (tester) async {
         useScreen(tester, size: const Size(393, 900));
         final quota = FakeReadingQuotaController(initialCooldown: true);
+        final ads = CountingRewardAdService();
         final rig = ReadingTestRig(
           response: fixtureResponse('ready_yes_no_now.json'),
           quotaManager: quota,
           locale: AppLocale.vietnamese,
+          adService: ads,
         );
         await tester.pumpWidget(
           localizedApp(
@@ -107,43 +113,42 @@ void main() {
         // There should be AdOptionBadges for locked modes and categories
         expect(find.byType(AdOptionBadge), findsWidgets);
 
-        // Tapping default category (general) does not trigger ad modal
+        // Tapping default category (general) plays no ad
         await tester.ensureVisible(find.byKey(const Key('category_general')));
         await tester.tap(find.byKey(const Key('category_general')));
         await tester.pump();
-        expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+        expect(ads.shows, 0);
 
-        // Tapping locked category (love) triggers bottom sheet
+        // Tapping locked category (love) plays the ad straight away, with
+        // no confirmation sheet in between
         await tester.ensureVisible(find.byKey(const Key('category_love')));
         await tester.tap(find.byKey(const Key('category_love')));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
-
-        expect(find.byKey(const Key('option_unlock_ad_button')), findsOneWidget);
-        expect(find.text('Tình cảm & Mối quan hệ'), findsWidgets);
-
-        // Tap watch ad button
-        await tester.tap(find.byKey(const Key('option_unlock_ad_button')));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 350));
-        await tester.pump(const Duration(milliseconds: 350));
+        expect(ads.shows, 1);
 
         // Option is unlocked for selection, but quota must NOT receive bonus readings
         expect(quota.bonusReadings, 0);
         expect(find.text(rig.strings.adUnlockedReward), findsNothing);
+        expect(
+          tester
+              .widget<GlassCard>(find.byKey(const Key('category_love')))
+              .selected,
+          isTrue,
+        );
 
-        // Individual unlock: Love is unlocked, so tapping it does not open ad modal
+        // Individual unlock: Love is unlocked, so tapping it plays no ad
         await tester.ensureVisible(find.byKey(const Key('category_love')));
         await tester.tap(find.byKey(const Key('category_love')));
         await tester.pump();
-        expect(find.byKey(const Key('option_unlock_ad_button')), findsNothing);
+        expect(ads.shows, 1);
 
         // Other categories like Career remain locked and still require ad
         await tester.ensureVisible(find.byKey(const Key('category_career')));
         await tester.tap(find.byKey(const Key('category_career')));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
-        expect(find.byKey(const Key('option_unlock_ad_button')), findsOneWidget);
+        expect(ads.shows, 2);
       },
     );
 
@@ -178,8 +183,12 @@ void main() {
 
         // Back on Home, quota is in cooldown, category must be reset to general (default)
         expect(find.byType(HomePage), findsOneWidget);
-        final generalCard = tester.widget<GlassCard>(find.byKey(const Key('category_general')));
-        final loveCard = tester.widget<GlassCard>(find.byKey(const Key('category_love')));
+        final generalCard = tester.widget<GlassCard>(
+          find.byKey(const Key('category_general')),
+        );
+        final loveCard = tester.widget<GlassCard>(
+          find.byKey(const Key('category_love')),
+        );
         expect(generalCard.selected, isTrue);
         expect(loveCard.selected, isFalse);
         expect(loveCard.locked, isTrue);
@@ -193,10 +202,12 @@ void main() {
       (tester) async {
         useScreen(tester, size: const Size(393, 873));
         final quota = FakeReadingQuotaController(initialCooldown: true);
+        final ads = CountingRewardAdService();
         final rig = ReadingTestRig(
           response: fixtureResponse('ready_yes_no_now.json'),
           quotaManager: quota,
           locale: AppLocale.vietnamese,
+          adService: ads,
         );
 
         await tester.pumpWidget(
@@ -223,7 +234,7 @@ void main() {
         final periodChips = find.byType(ChoiceChip);
         expect(periodChips, findsWidgets);
 
-        // Tap the unlock Ad button on a locked period if selectable
+        // Tapping a locked period plays the ad straight away
         for (final period in TimePeriod.values) {
           if (period == TimePeriod.now) continue;
           final chipFinder = find.byKey(Key('ritual_period_${period.name}'));
@@ -231,21 +242,16 @@ void main() {
             await tester.tap(chipFinder);
             await tester.pump();
             await tester.pump(const Duration(milliseconds: 400));
+            if (ads.shows == 0) continue; // already over today, not offered
 
-            // If selectable, bottom sheet opens
-            if (find.byKey(const Key('option_unlock_ad_button')).evaluate().isNotEmpty) {
-              await tester.tap(find.byKey(const Key('option_unlock_ad_button')));
-              await tester.pump();
-              await tester.pump(const Duration(milliseconds: 350));
-              await tester.pump(const Duration(milliseconds: 350));
-
-              // Option is unlocked for selection, but quota must NOT receive bonus readings
-              expect(quota.bonusReadings, 0);
-              expect(find.text(rig.strings.adUnlockedReward), findsNothing);
-              break;
-            }
+            // Option is unlocked for selection, but quota must NOT receive bonus readings
+            expect(ads.shows, 1);
+            expect(quota.bonusReadings, 0);
+            expect(find.text(rig.strings.adUnlockedReward), findsNothing);
+            break;
           }
         }
+        expect(ads.shows, 1);
       },
     );
 

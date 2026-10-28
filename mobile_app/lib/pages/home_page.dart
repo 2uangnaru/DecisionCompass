@@ -111,8 +111,11 @@ class _HomePageState extends State<HomePage>
   ValueNotifier<int> _modeTrigger(DecisionMode m) =>
       _modeTriggers.putIfAbsent(m, () => ValueNotifier<int>(0));
 
-  Future<void> _handleModeTap(DecisionMode mode, String label) async {
+  /// A locked option plays its rewarded ad straight from the tap: the AD
+  /// badge on the chip is the disclosure, so no second confirmation.
+  Future<void> _handleModeTap(DecisionMode mode) async {
     if (_isModeLocked(mode)) {
+      if (_rewardBusy) return;
       widget.dependencies.analytics.record(
         AnalyticsEvent.optionLocked(
           mode: toEngineMode(mode),
@@ -122,39 +125,31 @@ class _HomePageState extends State<HomePage>
           placement: RewardPlacement.mode,
         ),
       );
-      RewardAnalyticsAttempt? reward;
       _modeTriggers[mode]?.value++;
-      final confirmed = await showOptionAdUnlockSheet(
-        context,
-        optionLabel: label,
-        onRewardCta: () => reward ??= RewardAnalyticsAttempt(
-          analytics: widget.dependencies.analytics,
-          grantSource: RewardGrantSource.sdk,
-          mode: toEngineMode(mode),
-          category: _category,
-          period: engine.TimePeriod.now,
-          language: widget.dependencies.localeController.locale,
-          placement: RewardPlacement.mode,
-        ),
+      final reward = RewardAnalyticsAttempt(
+        analytics: widget.dependencies.analytics,
+        grantSource: RewardGrantSource.sdk,
+        mode: toEngineMode(mode),
+        category: _category,
+        period: engine.TimePeriod.now,
+        language: widget.dependencies.localeController.locale,
+        placement: RewardPlacement.mode,
       );
-      if (!confirmed || !mounted) return;
       await _rewardOption('mode', () {
         setState(() {
           _unlockedModes.add(mode);
           _mode = mode;
         });
-        reward?.granted();
+        reward.granted();
       });
       return;
     }
     setState(() => _mode = mode);
   }
 
-  Future<void> _handleCategoryTap(
-    engine.ReadingCategory category,
-    String label,
-  ) async {
+  Future<void> _handleCategoryTap(engine.ReadingCategory category) async {
     if (_isCategoryLocked(category)) {
+      if (_rewardBusy) return;
       widget.dependencies.analytics.record(
         AnalyticsEvent.optionLocked(
           mode: toEngineMode(_mode),
@@ -164,28 +159,22 @@ class _HomePageState extends State<HomePage>
           placement: RewardPlacement.category,
         ),
       );
-      RewardAnalyticsAttempt? reward;
       _categoryTriggers[category]?.value++;
-      final confirmed = await showOptionAdUnlockSheet(
-        context,
-        optionLabel: label,
-        onRewardCta: () => reward ??= RewardAnalyticsAttempt(
-          analytics: widget.dependencies.analytics,
-          grantSource: RewardGrantSource.sdk,
-          mode: toEngineMode(_mode),
-          category: category,
-          period: engine.TimePeriod.now,
-          language: widget.dependencies.localeController.locale,
-          placement: RewardPlacement.category,
-        ),
+      final reward = RewardAnalyticsAttempt(
+        analytics: widget.dependencies.analytics,
+        grantSource: RewardGrantSource.sdk,
+        mode: toEngineMode(_mode),
+        category: category,
+        period: engine.TimePeriod.now,
+        language: widget.dependencies.localeController.locale,
+        placement: RewardPlacement.category,
       );
-      if (!confirmed || !mounted) return;
       await _rewardOption('category', () {
         setState(() {
           _unlockedCategories.add(category);
           _category = category;
         });
-        reward?.granted();
+        reward.granted();
       });
       return;
     }
@@ -767,7 +756,7 @@ class _HomePageState extends State<HomePage>
                 key: Key(choice.testKey),
                 selected: selected,
                 locked: locked,
-                onTap: () => _handleCategoryTap(choice.category, label),
+                onTap: () => _handleCategoryTap(choice.category),
                 padding: const EdgeInsets.symmetric(
                   horizontal: 12,
                   vertical: 11,
@@ -868,9 +857,8 @@ class _HomePageState extends State<HomePage>
                                   // day, and is where discovery lives.
                                   DailyEnergyInfoButton(
                                     level: energy?.level,
-                                    controller: widget
-                                        .dependencies
-                                        .dailyEnergyInsights,
+                                    controller:
+                                        widget.dependencies.dailyEnergyInsights,
                                     day: dailyEnergyDayKey(
                                       widget.dependencies.nowLocal(),
                                     ),
@@ -978,7 +966,7 @@ class _HomePageState extends State<HomePage>
         selected: _mode == mode,
         isLocked: _isModeLocked(mode),
         trigger: _modeTrigger(mode),
-        onTap: () => _handleModeTap(mode, '$first / $second'),
+        onTap: () => _handleModeTap(mode),
       );
     }
 

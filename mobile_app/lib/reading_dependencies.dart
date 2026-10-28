@@ -2,6 +2,7 @@ import 'analytics/analytics_service.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_brief_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
+import 'data/guidance_lock_store.dart';
 import 'data/home_description_deck.dart';
 import 'data/history_repository.dart';
 import 'data/locale_controller.dart';
@@ -26,6 +27,7 @@ class ReadingDependencies {
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const NoOpAdService(),
+    this.guidanceLocks,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -51,6 +53,9 @@ class ReadingDependencies {
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
   final AdService adService;
+
+  /// Null (tests, previews) never locks Action Guidance.
+  final GuidanceLockStore? guidanceLocks;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

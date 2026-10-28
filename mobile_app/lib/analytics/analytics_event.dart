@@ -7,7 +7,7 @@ enum ReadingLockReason { cooldown, exhausted }
 
 enum ReadingLockStage { ritual, loading, commit }
 
-enum RewardPlacement { reading, mode, category, period }
+enum RewardPlacement { reading, mode, category, period, guidance }
 
 enum RewardGrantSource { prototype, sdk }
 
@@ -50,6 +50,7 @@ class AnalyticsEvent {
       'mode',
       'category',
       'period',
+      'guidance',
       'home',
       'reveal',
     };

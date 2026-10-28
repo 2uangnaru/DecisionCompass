@@ -116,7 +116,7 @@ void main() {
 
   for (final option in ['mode', 'category']) {
     testWidgets(
-      '$option unlock does not give a reading credit; cancel emits no reward',
+      '$option unlock plays the ad from the tap and gives no reading credit',
       (tester) async {
         useScreen(tester, size: const Size(393, 900));
         final quota = FakeReadingQuotaController(initialCooldown: true);
@@ -134,21 +134,9 @@ void main() {
         await tester.tap(target);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
+        await tester.pump(const Duration(milliseconds: 400));
         expect(events('option_locked'), hasLength(1));
-        expect(events('reward_cta_tapped'), isEmpty);
-        final sheetContext = tester.element(
-          find.byKey(const Key('option_unlock_ad_button')),
-        );
-        Navigator.of(sheetContext).pop(false);
-        await tester.pump(const Duration(milliseconds: 400));
-        await tester.pump(const Duration(milliseconds: 400));
-        expect(events('reward_granted'), isEmpty);
-        await tester.tap(target);
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 400));
-        await tester.tap(find.byKey(const Key('option_unlock_ad_button')));
-        await tester.pump(const Duration(milliseconds: 400));
-        await tester.pump(const Duration(milliseconds: 400));
+        expect(events('reward_cta_tapped'), hasLength(1));
         expect(events('reward_granted'), hasLength(1));
         expect(events('reward_granted').single.parameters['placement'], option);
         expect(quota.bonusReadings, 0);
@@ -168,10 +156,8 @@ void main() {
     await tester.tap(find.byKey(const Key('ritual_period_evening')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+    await tester.pump(const Duration(milliseconds: 400));
     expect(events('option_locked'), hasLength(1));
-    await tester.tap(find.byKey(const Key('option_unlock_ad_button')));
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pump(const Duration(milliseconds: 400));
     expect(events('reward_granted').single.parameters['placement'], 'period');
     expect(
       events('reward_granted').single.parameters['time_period'],

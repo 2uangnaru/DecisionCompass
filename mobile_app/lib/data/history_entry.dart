@@ -12,7 +12,9 @@ class HistoryEntry {
     required this.savedAtUtc,
   });
 
-  /// Unique per save. Prefer the engine's `readingKey`; some statuses (e.g.
+  /// NOT unique: the engine's `readingKey` omits the mode, so two modes read
+  /// in one time segment share it. Nothing looks entries up by id today;
+  /// add the mode before anything does. Some statuses (e.g.
   /// `period_elapsed`) omit it, so callers fall back to a value derived from
   /// the reading itself.
   final String id;

@@ -64,3 +64,9 @@ kotlin {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Device-wide Action Guidance count that survives reinstall (see
+    // lib/data/guidance_lock_store.dart).
+    implementation("com.google.android.gms:play-services-auth-blockstore:16.4.0")
+}
