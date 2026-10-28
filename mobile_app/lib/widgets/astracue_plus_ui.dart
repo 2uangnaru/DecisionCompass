@@ -1759,11 +1759,11 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                 ),
                 const SizedBox(height: 14),
 
-                // Option 3 Primary Gold CTA Button ($11.99 -> $4.99 + Floating -60% OFF Badge)
+                // Option 3 Primary Gold CTA Button with localized currency & -60% OFF badge
                 _Option3SaleCtaButton(
-                  ctaPrefix: copy.sheetPrimaryCta
-                      .replaceAll(r'$4.99', '')
-                      .trimRight(),
+                  ctaPrefix: copy.sheetPrimaryCtaPrefix,
+                  originalPrice: copy.originalPriceFormatted,
+                  salePrice: copy.salePriceFormatted,
                   saleBadgeLabel: copy.p1SaleOffBadge,
                   semanticsLabel: copy.sheetPrimaryCta,
                   onTap: () {
@@ -2096,18 +2096,22 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
 }
 
 /// Option 3 Primary Gold CTA Button inside `AstraCuePlusSheet`:
-/// - Displays localized prefix + diagonally crossed-out `$11.99` + bold `$4.99`
+/// - Displays localized prefix + diagonally crossed-out original price + bold sale price
 /// - Continuous metallic shimmer sweep across the button
 /// - Floating pulsing `-60% OFF` ruby-gold pill badge at top-right edge
 class _Option3SaleCtaButton extends StatefulWidget {
   const _Option3SaleCtaButton({
     required this.ctaPrefix,
+    required this.originalPrice,
+    required this.salePrice,
     required this.saleBadgeLabel,
     required this.semanticsLabel,
     required this.onTap,
   });
 
   final String ctaPrefix;
+  final String originalPrice;
+  final String salePrice;
   final String saleBadgeLabel;
   final String semanticsLabel;
   final VoidCallback onTap;
@@ -2212,13 +2216,13 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      const _DiagonalStrikePrice(
-                                        priceText: r'$11.99',
+                                      _DiagonalStrikePrice(
+                                        priceText: widget.originalPrice,
                                       ),
                                       const SizedBox(width: 6),
-                                      const Text(
-                                        r'$4.99',
-                                        style: TextStyle(
+                                      Text(
+                                        widget.salePrice,
+                                        style: const TextStyle(
                                           color: Color(0xFF17120A),
                                           fontSize: 14.5,
                                           fontWeight: FontWeight.w900,
@@ -2458,6 +2462,9 @@ class _PlusLocalizedCopy {
     required this.p1Row4Title,
     required this.p1Row4Badge,
     required this.p1ShortFootnote,
+    required this.originalPriceFormatted,
+    required this.salePriceFormatted,
+    required this.sheetPrimaryCtaPrefix,
     required this.sheetPrimaryCta,
     required this.sheetRestoreAction,
     required this.sheetLaterAction,
@@ -2491,6 +2498,9 @@ class _PlusLocalizedCopy {
   final String p1Row4Badge;
   final String p1ShortFootnote;
 
+  final String originalPriceFormatted;
+  final String salePriceFormatted;
+  final String sheetPrimaryCtaPrefix;
   final String sheetPrimaryCta;
   final String sheetRestoreAction;
   final String sheetLaterAction;
@@ -2543,11 +2553,14 @@ class _PlusLocalizedCopy {
     p1Row4Badge: 'Không phí tháng',
     p1ShortFootnote:
         'Làm mới 6 lượt lúc 00:00 mỗi ngày · Không bao giờ bắt xem quảng cáo.',
-    sheetPrimaryCta: r'✦ Mở khóa AstraCue Plus — $4.99',
+    originalPriceFormatted: '289.000 ₫',
+    salePriceFormatted: '119.000 ₫',
+    sheetPrimaryCtaPrefix: '✦ Mở khóa AstraCue Plus',
+    sheetPrimaryCta: '✦ Mở khóa AstraCue Plus — 119.000 ₫',
     sheetRestoreAction: 'Khôi phục giao dịch',
     sheetLaterAction: 'Để sau',
     previewToastMessage:
-        r'Giao diện AstraCue Plus ($4.99) đã sẵn sàng kết nối cổng thanh toán.',
+        'Giao diện AstraCue Plus (119.000 ₫) đã sẵn sàng kết nối cổng thanh toán.',
   );
 
   static final _PlusLocalizedCopy _en = _PlusLocalizedCopy(
@@ -2575,6 +2588,9 @@ class _PlusLocalizedCopy {
     p1Row4Badge: 'No subscription',
     p1ShortFootnote:
         '6 daily turns reset at 00:00 · Never forces rewarded ads.',
+    originalPriceFormatted: r'$11.99',
+    salePriceFormatted: r'$4.99',
+    sheetPrimaryCtaPrefix: '✦ Unlock AstraCue Plus',
     sheetPrimaryCta: r'✦ Unlock AstraCue Plus — $4.99',
     sheetRestoreAction: 'Restore purchase',
     sheetLaterAction: 'Maybe later',
@@ -2608,11 +2624,14 @@ class _PlusLocalizedCopy {
     p1Row4Badge: 'Sin suscripción',
     p1ShortFootnote:
         '6 turnos se renuevan a las 00:00 · Nunca exige ver anuncios.',
-    sheetPrimaryCta: r'✦ Desbloquear AstraCue Plus — $4.99',
+    originalPriceFormatted: '11,99 €',
+    salePriceFormatted: '4,99 €',
+    sheetPrimaryCtaPrefix: '✦ Desbloquear AstraCue Plus',
+    sheetPrimaryCta: '✦ Desbloquear AstraCue Plus — 4,99 €',
     sheetRestoreAction: 'Restaurar compra',
     sheetLaterAction: 'Más tarde',
     previewToastMessage:
-        r'La vista previa de AstraCue Plus ($4.99) está lista.',
+        'La vista previa de AstraCue Plus (4,99 €) está lista.',
   );
 
   static final _PlusLocalizedCopy _ja = _PlusLocalizedCopy(
@@ -2639,10 +2658,13 @@ class _PlusLocalizedCopy {
     p1Row4Title: '1回買い切り',
     p1Row4Badge: '月額課金なし',
     p1ShortFootnote: '毎日00:00に6回リセット · 動画広告の強制はありません。',
-    sheetPrimaryCta: r'✦ AstraCue Plus を解放 — $4.99',
+    originalPriceFormatted: '¥1,800',
+    salePriceFormatted: '¥700',
+    sheetPrimaryCtaPrefix: '✦ AstraCue Plus を解放',
+    sheetPrimaryCta: '✦ AstraCue Plus を解放 — ¥700',
     sheetRestoreAction: '購入を復元',
     sheetLaterAction: 'あとで',
-    previewToastMessage: r'AstraCue Plus ($4.99) UIプレビューが有効です。',
+    previewToastMessage: 'AstraCue Plus (¥700) UIプレビューが有効です。',
   );
 
   static final _PlusLocalizedCopy _th = _PlusLocalizedCopy(
@@ -2669,10 +2691,13 @@ class _PlusLocalizedCopy {
     p1Row4Title: 'ซื้อครั้งเดียวใช้ได้ตลอด',
     p1Row4Badge: 'ไม่หักรายเดือน',
     p1ShortFootnote: 'รีเซ็ต 6 ครั้งเวลา 00:00 น. ทุกวัน · ไม่บังคับดูโฆษณา',
-    sheetPrimaryCta: r'✦ ปลดล็อก AstraCue Plus — $4.99',
+    originalPriceFormatted: '฿429',
+    salePriceFormatted: '฿179',
+    sheetPrimaryCtaPrefix: '✦ ปลดล็อก AstraCue Plus',
+    sheetPrimaryCta: '✦ ปลดล็อก AstraCue Plus — ฿179',
     sheetRestoreAction: 'กู้คืนการซื้อ',
     sheetLaterAction: 'ไว้ทีหลัง',
-    previewToastMessage: r'ตัวอย่าง UI ของ AstraCue Plus ($4.99) พร้อมใช้งานแล้ว',
+    previewToastMessage: 'ตัวอย่าง UI ของ AstraCue Plus (฿179) พร้อมใช้งานแล้ว',
   );
 
   static final _PlusLocalizedCopy _hi = _PlusLocalizedCopy(
@@ -2701,10 +2726,13 @@ class _PlusLocalizedCopy {
     p1Row4Badge: 'कोई सब्सक्रिप्शन नहीं',
     p1ShortFootnote:
         'हर रात 00:00 बजे 6 बारी रीसेट · कभी विज्ञापन नहीं देखना पड़ेगा।',
-    sheetPrimaryCta: r'✦ AstraCue Plus अनलॉक करें — $4.99',
+    originalPriceFormatted: '₹999',
+    salePriceFormatted: '₹399',
+    sheetPrimaryCtaPrefix: '✦ AstraCue Plus अनलॉक करें',
+    sheetPrimaryCta: '✦ AstraCue Plus अनलॉक करें — ₹399',
     sheetRestoreAction: 'खरीदारी रीस्टोर करें',
     sheetLaterAction: 'बाद में',
-    previewToastMessage: r'AstraCue Plus ($4.99) UI प्रीव्यू तैयार है।',
+    previewToastMessage: 'AstraCue Plus (₹399) UI प्रीव्यू तैयार है।',
   );
 
   static final _PlusLocalizedCopy _zh = _PlusLocalizedCopy(
@@ -2731,10 +2759,13 @@ class _PlusLocalizedCopy {
     p1Row4Title: '一次购买永久有效',
     p1Row4Badge: '无月费订阅',
     p1ShortFootnote: '每日 00:00 重置 6 次额度 · 绝不强制观看激励广告。',
-    sheetPrimaryCta: r'✦ 解锁 AstraCue Plus — $4.99',
+    originalPriceFormatted: '¥88',
+    salePriceFormatted: '¥35',
+    sheetPrimaryCtaPrefix: '✦ 解锁 AstraCue Plus',
+    sheetPrimaryCta: '✦ 解锁 AstraCue Plus — ¥35',
     sheetRestoreAction: '恢复购买',
     sheetLaterAction: '稍后再说',
-    previewToastMessage: r'AstraCue Plus ($4.99) 界面预览已就绪。',
+    previewToastMessage: 'AstraCue Plus (¥35) 界面预览已就绪。',
   );
 
   static final _PlusLocalizedCopy _ko = _PlusLocalizedCopy(
@@ -2761,10 +2792,13 @@ class _PlusLocalizedCopy {
     p1Row4Title: '1회 구매로 평생 이용',
     p1Row4Badge: '월 구독료 없음',
     p1ShortFootnote: '매일 00:00에 6회 초기화 · 보상형 광고를 강제하지 않습니다.',
-    sheetPrimaryCta: r'✦ AstraCue Plus 잠금 해제 — $4.99',
+    originalPriceFormatted: '₩16,000',
+    salePriceFormatted: '₩6,600',
+    sheetPrimaryCtaPrefix: '✦ AstraCue Plus 잠금 해제',
+    sheetPrimaryCta: '✦ AstraCue Plus 잠금 해제 — ₩6,600',
     sheetRestoreAction: '구매 복원',
     sheetLaterAction: '나중에',
-    previewToastMessage: r'AstraCue Plus ($4.99) UI 프리뷰가 준비되었습니다.',
+    previewToastMessage: 'AstraCue Plus (₩6,600) UI 프리뷰가 준비되었습니다.',
   );
 }
 
