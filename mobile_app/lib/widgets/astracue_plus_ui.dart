@@ -441,6 +441,34 @@ class _OrbitingGoldBorderPainter extends CustomPainter {
       ..color = CompassColors.gold.withValues(alpha: 0.42);
     canvas.drawRRect(rrect, basePaint);
 
+    final w = size.width;
+    final h = size.height;
+    final double targetAngle;
+    if (w > 0 && h > 0) {
+      // Map progress uniformly along the perimeter so the starlight beam travels
+      // at a constant, calm linear speed instead of warping/accelerating across long edges.
+      final perimeter = 2 * (w + h);
+      final d = (progress % 1.0) * perimeter;
+      final double px;
+      final double py;
+      if (d < w) {
+        px = d;
+        py = 0;
+      } else if (d < w + h) {
+        px = w;
+        py = d - w;
+      } else if (d < 2 * w + h) {
+        px = w - (d - (w + h));
+        py = h;
+      } else {
+        px = 0;
+        py = h - (d - (2 * w + h));
+      }
+      targetAngle = math.atan2(py - h / 2, px - w / 2);
+    } else {
+      targetAngle = progress * 2 * math.pi;
+    }
+
     // Orbiting starlight comet sweep
     final sweepPaint = Paint()
       ..style = PaintingStyle.stroke
@@ -455,7 +483,7 @@ class _OrbitingGoldBorderPainter extends CustomPainter {
           CompassColors.gold,
         ],
         stops: const [0.0, 0.52, 0.70, 0.86, 0.94, 1.0],
-        transform: GradientRotation(progress * 2 * math.pi),
+        transform: GradientRotation(targetAngle),
       ).createShader(rect);
     canvas.drawRRect(rrect, sweepPaint);
   }
@@ -841,9 +869,21 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller = AnimationController(
     vsync: this,
-    duration: const Duration(milliseconds: 2800),
+    duration: Duration(milliseconds: widget.singleRow ? 5200 : 2800),
   );
   bool? _reduceMotion;
+
+  @override
+  void didUpdateWidget(covariant _AnimatedPlusGemBox oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.singleRow != widget.singleRow) {
+      _controller.duration =
+          Duration(milliseconds: widget.singleRow ? 5200 : 2800);
+      if (_controller.isAnimating) {
+        _controller.repeat();
+      }
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -976,7 +1016,8 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
         animation: _controller,
         builder: (context, _) {
           final t = _controller.value;
-          final angle = t * 2 * math.pi;
+          final cycleMultiplier = widget.singleRow ? 2.0 : 1.0;
+          final angle = t * 2 * math.pi * cycleMultiplier;
           final breath = 0.5 + 0.5 * math.sin(angle);
 
           final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.12, 1.0);
