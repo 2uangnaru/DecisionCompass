@@ -744,8 +744,9 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
   }
 }
 
-/// Compact golden Plus upgrade capsule displayed on `RitualPage` and `ResultPage`
-/// (does not repeat the remaining Free turns already shown on the analysis orb).
+/// Displayed on `RitualPage` (`isPostReadingResult: false`, Plus-only capsule
+/// without repeating remaining turns) and `ResultPage` (`isPostReadingResult: true`,
+/// full 2-cell T3 layout showing remaining turns & countdown alongside Plus).
 class AnalysisEnergyPlusCard extends StatelessWidget {
   const AnalysisEnergyPlusCard({
     super.key,
@@ -763,104 +764,323 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final copy = _PlusLocalizedCopy.forLocale(locale);
-    return Semantics(
-      button: true,
-      label: copy.headerSemanticsLabel,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTapPlus,
-          borderRadius: BorderRadius.circular(14),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 13,
-              vertical: 9.5,
-            ),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF2B2012),
-                  Color(0xFF221A11),
-                  Color(0xFF181412),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+
+    // On RitualPage (màn phân tích), omit the remaining-turns box and show only
+    // the compact golden Plus bar.
+    if (!isPostReadingResult) {
+      return Semantics(
+        button: true,
+        label: copy.headerSemanticsLabel,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: onTapPlus,
+            borderRadius: BorderRadius.circular(14),
+            child: Container(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 13,
+                vertical: 9.5,
               ),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(
-                color: CompassColors.gold.withValues(alpha: 0.70),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: CompassColors.gold.withValues(alpha: 0.12),
-                  blurRadius: 10,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    ShaderMask(
-                      shaderCallback: (bounds) => const LinearGradient(
-                        colors: [
-                          Color(0xFFFFF8E0),
-                          Color(0xFFF0CF82),
-                          Color(0xFFC99A3E),
-                        ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                      ).createShader(bounds),
-                      blendMode: BlendMode.srcIn,
-                      child: const Text(
-                        '✦ PLUS',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 11.5,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.9,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    const AstralPlusOrbsRow(orbSize: 9.5),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF2B2012),
+                    Color(0xFF221A11),
+                    Color(0xFF181412),
                   ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const SizedBox(width: 10),
-                Flexible(
-                  child: Row(
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(
+                  color: CompassColors.gold.withValues(alpha: 0.70),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: CompassColors.gold.withValues(alpha: 0.12),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Flexible(
-                        child: FittedBox(
+                      ShaderMask(
+                        shaderCallback: (bounds) => const LinearGradient(
+                          colors: [
+                            Color(0xFFFFF8E0),
+                            Color(0xFFF0CF82),
+                            Color(0xFFC99A3E),
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ).createShader(bounds),
+                        blendMode: BlendMode.srcIn,
+                        child: const Text(
+                          '✦ PLUS',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.9,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const AstralPlusOrbsRow(orbSize: 9.5),
+                    ],
+                  ),
+                  const SizedBox(width: 10),
+                  Flexible(
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              copy.t3PlusActionLabel,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Color(0xFFF7E3B5),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 3),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 16,
+                          color: CompassColors.gold,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    // On ResultPage (màn kết quả), keep the 2-cell T3 layout with remaining
+    // turns & live cooldown countdown on the left and Plus upgrade on the right.
+    final localeName = intlLocaleOf(context);
+    final freeRemainingText = formatWholeNumber(
+      localeName,
+      snapshot.remainingFreeTurns,
+    );
+    final freeMaxText = formatWholeNumber(
+      localeName,
+      ReadingEnergySnapshot.freeDailyMax,
+    );
+
+    final String statusLine;
+    final Color statusColor;
+    if (snapshot.isDailyFreeExhausted) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.timeUntilMidnight,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF09898);
+    } else if (snapshot.isCoolingDown) {
+      final countdown = formatEnergyCountdown(
+        context,
+        snapshot.cooldownRemaining,
+      );
+      statusLine = copy.t3TimerStatus(
+        freeRemainingText,
+        freeMaxText,
+        countdown,
+      );
+      statusColor = const Color(0xFFF5D98E);
+    } else {
+      statusLine = copy.t3ReadyStatus(freeRemainingText, freeMaxText);
+      statusColor = CompassColors.blueLight;
+    }
+
+    return Semantics(
+      button: true,
+      label: '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}',
+      child: IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapPlus,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 11,
+                      vertical: 8.5,
+                    ),
+                    decoration: BoxDecoration(
+                      color: CompassColors.raised.withValues(alpha: 0.9),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: CompassColors.line.withValues(alpha: 0.85),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  copy.t3CurrentLabel,
+                                  maxLines: 1,
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        color: CompassColors.secondary,
+                                        fontSize: 11,
+                                      ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            AstralFreeOrbsRow(
+                              remainingFreeTurns: snapshot.remainingFreeTurns,
+                              orbSize: 9.5,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        FittedBox(
                           fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
+                          alignment: Alignment.centerLeft,
                           child: Text(
-                            copy.t3PlusActionLabel,
+                            statusLine,
                             maxLines: 1,
-                            style: const TextStyle(
-                              color: Color(0xFFF7E3B5),
+                            style: TextStyle(
+                              color: statusColor,
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               height: 1.2,
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 3),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 16,
-                        color: CompassColors.gold,
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onTapPlus,
+                  borderRadius: BorderRadius.circular(14),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 11,
+                      vertical: 8.5,
+                    ),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        colors: [
+                          Color(0xFF2B2012),
+                          Color(0xFF221A11),
+                          Color(0xFF181412),
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(
+                        color: CompassColors.gold.withValues(alpha: 0.70),
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            ShaderMask(
+                              shaderCallback: (bounds) =>
+                                  const LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFF8E0),
+                                      Color(0xFFF0CF82),
+                                      Color(0xFFC99A3E),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ).createShader(bounds),
+                              blendMode: BlendMode.srcIn,
+                              child: const Text(
+                                '✦ PLUS',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: 0.9,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            const AstralPlusOrbsRow(orbSize: 9.5),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  copy.t3PlusActionLabel,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    color: Color(0xFFF7E3B5),
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w700,
+                                    height: 1.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 3),
+                            const Icon(
+                              Icons.chevron_right_rounded,
+                              size: 15,
+                              color: CompassColors.gold,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
