@@ -632,106 +632,12 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 8),
-                  // RIGHT CELL: AstraCue Plus Upgrade (aligned with Lucky Number tile)
+                  // RIGHT CELL: AstraCue Plus Upgrade with Option 1 (100% H3+H1 animation)
                   Expanded(
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        onTap: onTapPlus,
-                        borderRadius: BorderRadius.circular(14),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 8,
-                          ),
-                          decoration: BoxDecoration(
-                            gradient: const LinearGradient(
-                              colors: [
-                                Color(0xFF2B2012),
-                                Color(0xFF221A11),
-                                Color(0xFF181412),
-                              ],
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                            borderRadius: BorderRadius.circular(14),
-                            border: Border.all(
-                              color: CompassColors.gold.withValues(alpha: 0.70),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: CompassColors.gold.withValues(
-                                  alpha: 0.12,
-                                ),
-                                blurRadius: 10,
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  ShaderMask(
-                                    shaderCallback: (bounds) =>
-                                        const LinearGradient(
-                                          colors: [
-                                            Color(0xFFFFF8E0),
-                                            Color(0xFFF0CF82),
-                                            Color(0xFFC99A3E),
-                                          ],
-                                          begin: Alignment.topCenter,
-                                          end: Alignment.bottomCenter,
-                                        ).createShader(bounds),
-                                    blendMode: BlendMode.srcIn,
-                                    child: const Text(
-                                      '✦ PLUS',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 11,
-                                        fontWeight: FontWeight.w900,
-                                        letterSpacing: 0.9,
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 6),
-                                  const AstralPlusOrbsRow(orbSize: 9.5),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: FittedBox(
-                                      fit: BoxFit.scaleDown,
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        copy.t3PlusActionLabel,
-                                        maxLines: 1,
-                                        style: const TextStyle(
-                                          color: Color(0xFFF7E3B5),
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w700,
-                                          height: 1.2,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 3),
-                                  const Icon(
-                                    Icons.chevron_right_rounded,
-                                    size: 15,
-                                    color: CompassColors.gold,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
+                    child: _AnimatedPlusGemBox(
+                      actionLabel: copy.t3PlusActionLabel,
+                      onTap: onTapPlus,
+                      singleRow: false,
                     ),
                   ),
                 ],
@@ -766,113 +672,21 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
     final copy = _PlusLocalizedCopy.forLocale(locale);
 
     // On RitualPage (màn phân tích), omit the remaining-turns box and show only
-    // the compact golden Plus bar.
+    // the animated H3+H1 golden Plus bar.
     if (!isPostReadingResult) {
       return Semantics(
         button: true,
         label: copy.headerSemanticsLabel,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTapPlus,
-            borderRadius: BorderRadius.circular(14),
-            child: Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 13,
-                vertical: 9.5,
-              ),
-              decoration: BoxDecoration(
-                gradient: const LinearGradient(
-                  colors: [
-                    Color(0xFF2B2012),
-                    Color(0xFF221A11),
-                    Color(0xFF181412),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: CompassColors.gold.withValues(alpha: 0.70),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: CompassColors.gold.withValues(alpha: 0.12),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      ShaderMask(
-                        shaderCallback: (bounds) => const LinearGradient(
-                          colors: [
-                            Color(0xFFFFF8E0),
-                            Color(0xFFF0CF82),
-                            Color(0xFFC99A3E),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ).createShader(bounds),
-                        blendMode: BlendMode.srcIn,
-                        child: const Text(
-                          '✦ PLUS',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 11.5,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 0.9,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const AstralPlusOrbsRow(orbSize: 9.5),
-                    ],
-                  ),
-                  const SizedBox(width: 10),
-                  Flexible(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Flexible(
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            alignment: Alignment.centerRight,
-                            child: Text(
-                              copy.t3PlusActionLabel,
-                              maxLines: 1,
-                              style: const TextStyle(
-                                color: Color(0xFFF7E3B5),
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                height: 1.2,
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 3),
-                        const Icon(
-                          Icons.chevron_right_rounded,
-                          size: 16,
-                          color: CompassColors.gold,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+        child: _AnimatedPlusGemBox(
+          actionLabel: copy.t3PlusActionLabel,
+          onTap: onTapPlus,
+          singleRow: true,
         ),
       );
     }
 
     // On ResultPage (màn kết quả), keep the 2-cell T3 layout with remaining
-    // turns & live cooldown countdown on the left and Plus upgrade on the right.
+    // turns & live cooldown countdown on the left and animated Plus upgrade on the right.
     final localeName = intlLocaleOf(context);
     final freeRemainingText = formatWholeNumber(
       localeName,
@@ -989,99 +803,436 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
             ),
             const SizedBox(width: 8),
             Expanded(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onTapPlus,
-                  borderRadius: BorderRadius.circular(14),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 11,
-                      vertical: 8.5,
+              child: _AnimatedPlusGemBox(
+                actionLabel: copy.t3PlusActionLabel,
+                onTap: onTapPlus,
+                singleRow: false,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Option 1 (`H3 + H1` 100% synchronized animation) for the bottom `✦ PLUS`
+/// 6-turns box across `HomePage`, `RitualPage`, and `ResultPage`:
+/// - Orbiting conic starlight border (`_OrbitingGoldBorderPainter`, 2.8s)
+/// - 3 out-of-phase twinkling corner stars (`✦`)
+/// - Deep amber-gold jewel gradient + diagonal metallic light sweep
+/// - Breathing/rotating `✦` star + 3 pulsing golden orbs
+class _AnimatedPlusGemBox extends StatefulWidget {
+  const _AnimatedPlusGemBox({
+    required this.actionLabel,
+    required this.onTap,
+    required this.singleRow,
+  });
+
+  final String actionLabel;
+  final VoidCallback onTap;
+  final bool singleRow;
+
+  @override
+  State<_AnimatedPlusGemBox> createState() => _AnimatedPlusGemBoxState();
+}
+
+class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2800),
+  );
+  bool? _reduceMotion;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (_reduceMotion == reduceMotion) return;
+    _reduceMotion = reduceMotion;
+    if (reduceMotion) {
+      _controller.stop();
+      _controller.value = 0.22;
+    } else {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Widget _buildStarAndPlusLabel(double angle, double breath) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Transform.scale(
+          scale: 0.90 + 0.22 * breath,
+          child: Transform.rotate(
+            angle: 0.22 * math.sin(angle),
+            child: Text(
+              '✦',
+              style: TextStyle(
+                fontSize: 11.5,
+                height: 1.0,
+                color: const Color(0xFFFFE8A3),
+                shadows: [
+                  Shadow(
+                    color: const Color(0xFFFFF2C2).withValues(
+                      alpha: 0.55 + 0.4 * breath,
                     ),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF2B2012),
-                          Color(0xFF221A11),
-                          Color(0xFF181412),
-                        ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                      borderRadius: BorderRadius.circular(14),
-                      border: Border.all(
-                        color: CompassColors.gold.withValues(alpha: 0.70),
-                      ),
+                    blurRadius: 6 + 4 * breath,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 4),
+        ShaderMask(
+          shaderCallback: (bounds) => const LinearGradient(
+            colors: [
+              Color(0xFFFFF9E2),
+              Color(0xFFF0CF82),
+              Color(0xFFC99A3E),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ).createShader(bounds),
+          blendMode: BlendMode.srcIn,
+          child: const Text(
+            'PLUS',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1.0,
+              height: 1.05,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPulsingPlusOrbs(double angle) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var i = 0; i < ReadingEnergySnapshot.plusBonusMax; i++) ...[
+          if (i > 0) const SizedBox(width: 4),
+          Builder(
+            builder: (context) {
+              final orbBreath =
+                  0.5 + 0.5 * math.sin(angle - i * 0.85);
+              return Transform.scale(
+                scale: 0.93 + 0.14 * orbBreath,
+                child: Container(
+                  width: 9.5,
+                  height: 9.5,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: const RadialGradient(
+                      center: Alignment(-0.3, -0.35),
+                      radius: 0.85,
+                      colors: [
+                        Color(0xFFFFF6DA),
+                        Color(0xFFE6C173),
+                        Color(0xFF9E7325),
+                      ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    border: Border.all(
+                      color: const Color(0xFFFFEAB3),
+                      width: 0.9,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: CompassColors.gold.withValues(
+                          alpha: 0.45 + 0.45 * orbBreath,
+                        ),
+                        blurRadius: 4 + 5 * orbBreath,
+                        spreadRadius: 0.2 + 0.5 * orbBreath,
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: widget.onTap,
+      behavior: HitTestBehavior.opaque,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final t = _controller.value;
+          final angle = t * 2 * math.pi;
+          final breath = 0.5 + 0.5 * math.sin(angle);
+
+          final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.12, 1.0);
+          final twinkle2 =
+              (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(0.12, 1.0);
+          final twinkle3 =
+              (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(0.10, 1.0);
+          final shimmerPos = -1.4 + (t * 3.6);
+
+          final Widget innerContent = widget.singleRow
+              ? Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            ShaderMask(
-                              shaderCallback: (bounds) =>
-                                  const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFF8E0),
-                                      Color(0xFFF0CF82),
-                                      Color(0xFFC99A3E),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ).createShader(bounds),
-                              blendMode: BlendMode.srcIn,
-                              child: const Text(
-                                '✦ PLUS',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 11,
-                                  fontWeight: FontWeight.w900,
-                                  letterSpacing: 0.9,
+                        _buildStarAndPlusLabel(angle, breath),
+                        const SizedBox(width: 8),
+                        _buildPulsingPlusOrbs(angle),
+                      ],
+                    ),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Flexible(
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                widget.actionLabel,
+                                maxLines: 1,
+                                style: const TextStyle(
+                                  color: Color(0xFFFFF3C8),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w700,
+                                  height: 1.2,
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 6),
-                            const AstralPlusOrbsRow(orbSize: 9.5),
-                          ],
+                          ),
+                          const SizedBox(width: 3),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            size: 16,
+                            color: Color(0xFFFFE8A3),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                )
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        _buildStarAndPlusLabel(angle, breath),
+                        const SizedBox(width: 6),
+                        _buildPulsingPlusOrbs(angle),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              widget.actionLabel,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Color(0xFFFFF3C8),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                height: 1.2,
+                              ),
+                            ),
+                          ),
                         ),
-                        const SizedBox(height: 6),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  copy.t3PlusActionLabel,
-                                  maxLines: 1,
-                                  style: const TextStyle(
-                                    color: Color(0xFFF7E3B5),
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.2,
+                        const SizedBox(width: 3),
+                        const Icon(
+                          Icons.chevron_right_rounded,
+                          size: 15,
+                          color: Color(0xFFFFE8A3),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: CompassColors.gold.withValues(
+                        alpha: 0.18 + 0.22 * breath,
+                      ),
+                      blurRadius: 8 + 8 * breath,
+                      spreadRadius: 0.2 + 0.6 * breath,
+                    ),
+                  ],
+                ),
+                child: CustomPaint(
+                  foregroundPainter: _OrbitingGoldBorderPainter(
+                    progress: t,
+                    radius: 14,
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(14),
+                    child: Stack(
+                      children: [
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: widget.singleRow ? 13 : 10,
+                            vertical: widget.singleRow ? 9.5 : 8,
+                          ),
+                          decoration: const BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                Color(0xFF281D0E),
+                                Color(0xFF422F15),
+                                Color(0xFF21170B),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            ),
+                          ),
+                          child: innerContent,
+                        ),
+                        // Diagonal metallic light sweep
+                        Positioned.fill(
+                          child: IgnorePointer(
+                            child: FractionalTranslation(
+                              translation: Offset(shimmerPos, 0),
+                              child: Transform.rotate(
+                                angle: -0.38,
+                                child: Container(
+                                  width: 34,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [
+                                        Colors.white.withValues(alpha: 0.0),
+                                        const Color(0xFFFFF4D0)
+                                            .withValues(alpha: 0.34),
+                                        Colors.white.withValues(alpha: 0.0),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 3),
-                            const Icon(
-                              Icons.chevron_right_rounded,
-                              size: 15,
-                              color: CompassColors.gold,
-                            ),
-                          ],
+                          ),
                         ),
                       ],
                     ),
                   ),
                 ),
               ),
-            ),
-          ],
-        ),
+
+              // Top-left twinkling corner star (H3)
+              Positioned(
+                top: -4.5,
+                left: -2.5,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: twinkle1,
+                    child: Transform.scale(
+                      scale: 0.65 + 0.60 * twinkle1,
+                      child: Text(
+                        '✦',
+                        style: TextStyle(
+                          fontSize: 9.5,
+                          height: 1.0,
+                          color: const Color(0xFFFFE8A3),
+                          shadows: [
+                            Shadow(
+                              color: const Color(0xFFFFE8A3)
+                                  .withValues(alpha: 0.85),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Bottom-right twinkling corner star (H3)
+              Positioned(
+                bottom: -4.5,
+                right: -2.0,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: twinkle2,
+                    child: Transform.scale(
+                      scale: 0.60 + 0.65 * twinkle2,
+                      child: Text(
+                        '✦',
+                        style: TextStyle(
+                          fontSize: 9.0,
+                          height: 1.0,
+                          color: const Color(0xFFFFE8A3),
+                          shadows: [
+                            Shadow(
+                              color: const Color(0xFFFFE8A3)
+                                  .withValues(alpha: 0.85),
+                              blurRadius: 5,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Top-right micro stardust spark (H3)
+              Positioned(
+                top: -3.0,
+                right: 12.0,
+                child: IgnorePointer(
+                  child: Opacity(
+                    opacity: twinkle3,
+                    child: Transform.scale(
+                      scale: 0.55 + 0.55 * twinkle3,
+                      child: Container(
+                        width: 3.5,
+                        height: 3.5,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFFFF4CC),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Color(0xFFFFE8A3),
+                              blurRadius: 4,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }
