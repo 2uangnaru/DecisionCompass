@@ -1631,6 +1631,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                     const SizedBox(width: 8),
                     _B1LifetimeVipCrest(
                       lifetimeLabel: copy.p1LifetimeTag.toUpperCase(),
+                      vipPassLabel: copy.p1VipPassSubtag,
                     ),
                   ],
                 ),
@@ -1722,6 +1723,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                   ctaPrefix: copy.sheetPrimaryCta
                       .replaceAll(r'$4.99', '')
                       .trimRight(),
+                  saleBadgeLabel: copy.p1SaleOffBadge,
                   semanticsLabel: copy.sheetPrimaryCta,
                   onTap: () {
                     Navigator.of(context).pop();
@@ -1800,9 +1802,13 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
 /// Synchronized `H3 + H1` starlight border + twinkling corner stars + metallic sweep
 /// without repeating the numeric price shown on the bottom CTA button.
 class _B1LifetimeVipCrest extends StatefulWidget {
-  const _B1LifetimeVipCrest({required this.lifetimeLabel});
+  const _B1LifetimeVipCrest({
+    required this.lifetimeLabel,
+    required this.vipPassLabel,
+  });
 
   final String lifetimeLabel;
+  final String vipPassLabel;
 
   @override
   State<_B1LifetimeVipCrest> createState() => _B1LifetimeVipCrestState();
@@ -1945,9 +1951,9 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
                               ],
                             ),
                             const SizedBox(height: 2),
-                            const Text(
-                              'VIP PASS',
-                              style: TextStyle(
+                            Text(
+                              widget.vipPassLabel,
+                              style: const TextStyle(
                                 color: CompassColors.gold,
                                 fontSize: 9.5,
                                 fontWeight: FontWeight.w800,
@@ -2055,11 +2061,13 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
 class _Option3SaleCtaButton extends StatefulWidget {
   const _Option3SaleCtaButton({
     required this.ctaPrefix,
+    required this.saleBadgeLabel,
     required this.semanticsLabel,
     required this.onTap,
   });
 
   final String ctaPrefix;
+  final String saleBadgeLabel;
   final String semanticsLabel;
   final VoidCallback onTap;
 
@@ -2099,12 +2107,11 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
   Widget build(BuildContext context) {
     return Semantics(
       button: true,
-      label: '${widget.semanticsLabel}, -60% OFF',
+      label: '${widget.semanticsLabel}, ${widget.saleBadgeLabel}',
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
           final t = _controller.value;
-          // Pulse 1.5x per 2.8s cycle (~1.85s period) for the -60% OFF badge
           final badgePulse = 0.5 + 0.5 * math.sin(t * 2 * math.pi);
           final shimmerPos = -1.5 + (t * 4.0);
 
@@ -2257,9 +2264,9 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
                           ),
                         ],
                       ),
-                      child: const Text(
-                        '-60% OFF',
-                        style: TextStyle(
+                      child: Text(
+                        widget.saleBadgeLabel,
+                        style: const TextStyle(
                           color: Color(0xFFFFFDF7),
                           fontSize: 10.5,
                           fontWeight: FontWeight.w900,
@@ -2396,6 +2403,8 @@ class _PlusLocalizedCopy {
     required this.t3PlusActionLabel,
     required this.p1HeaderSubtitle,
     required this.p1LifetimeTag,
+    required this.p1VipPassSubtag,
+    required this.p1SaleOffBadge,
     required this.p1BarReady,
     required this.p1BarCooldown,
     required this.p1BarExhausted,
@@ -2423,6 +2432,8 @@ class _PlusLocalizedCopy {
 
   final String p1HeaderSubtitle;
   final String p1LifetimeTag;
+  final String p1VipPassSubtag;
+  final String p1SaleOffBadge;
   final String Function(String remaining, String freeMax, String plusMax)
       p1BarReady;
   final String Function(String countdown, String unlocked, String plusMax)
@@ -2474,6 +2485,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6 lượt · Tắt Ads',
     p1HeaderSubtitle: 'Mở khóa trọn vẹn · Mua 1 lần',
     p1LifetimeTag: 'Trọn đời',
+    p1VipPassSubtag: 'VIP PASS',
+    p1SaleOffBadge: '-60% OFF',
     p1BarReady: (rem, freeMax, plusMax) =>
         '$rem/$freeMax Free → $plusMax/$plusMax lượt tức thì',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2504,6 +2517,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6 turns · No Ads',
     p1HeaderSubtitle: 'Full access · One-time purchase',
     p1LifetimeTag: 'Lifetime',
+    p1VipPassSubtag: 'VIP PASS',
+    p1SaleOffBadge: '-60% OFF',
     p1BarReady: (rem, freeMax, plusMax) =>
         '$rem/$freeMax Free → $plusMax/$plusMax instant turns',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2535,6 +2550,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6 turnos · Sin Ads',
     p1HeaderSubtitle: 'Acceso total · Pago único',
     p1LifetimeTag: 'De por vida',
+    p1VipPassSubtag: 'PASE VIP',
+    p1SaleOffBadge: '-60% OFF',
     p1BarReady: (rem, freeMax, plusMax) =>
         '$rem/$freeMax Gratis → $plusMax/$plusMax al instante',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2565,6 +2582,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6回即時 · 広告なし',
     p1HeaderSubtitle: 'フル解放 · 買い切り',
     p1LifetimeTag: '永久版',
+    p1VipPassSubtag: 'VIPパス',
+    p1SaleOffBadge: '60% OFF',
     p1BarReady: (rem, freeMax, plusMax) =>
         '無料 $rem/$freeMax → 即時 $plusMax/$plusMax 回',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2593,6 +2612,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6 ครั้ง · ปิด Ads',
     p1HeaderSubtitle: 'ปลดล็อกครบ · จ่ายครั้งเดียว',
     p1LifetimeTag: 'ตลอดชีพ',
+    p1VipPassSubtag: 'VIP PASS',
+    p1SaleOffBadge: 'ลด 60%',
     p1BarReady: (rem, freeMax, plusMax) =>
         'ฟรี $rem/$freeMax → ทันที $plusMax/$plusMax ครั้ง',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2622,6 +2643,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6 बारी · बिना Ads',
     p1HeaderSubtitle: 'पूर्ण अनलॉक · एक बार खरीदें',
     p1LifetimeTag: 'लाइफटाइम',
+    p1VipPassSubtag: 'VIP पास',
+    p1SaleOffBadge: '60% छूट',
     p1BarReady: (rem, freeMax, plusMax) =>
         '$rem/$freeMax मुफ़्त → $plusMax/$plusMax तुरंत',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2651,6 +2674,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6次即刻 · 免广告',
     p1HeaderSubtitle: '完整解锁 · 一次买断',
     p1LifetimeTag: '永久版',
+    p1VipPassSubtag: '尊享通行证',
+    p1SaleOffBadge: '立省 60%',
     p1BarReady: (rem, freeMax, plusMax) =>
         '免费 $rem/$freeMax → 即刻 $plusMax/$plusMax 次',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2679,6 +2704,8 @@ class _PlusLocalizedCopy {
     t3PlusActionLabel: '6회 즉시 · 광고 제거',
     p1HeaderSubtitle: '전체 잠금 해제 · 1회 구매',
     p1LifetimeTag: '평생 소장',
+    p1VipPassSubtag: 'VIP 패스',
+    p1SaleOffBadge: '60% 할인',
     p1BarReady: (rem, freeMax, plusMax) =>
         '무료 $rem/$freeMax → 즉시 $plusMax/$plusMax회',
     p1BarCooldown: (cd, unlocked, plusMax) =>
@@ -2699,3 +2726,4 @@ class _PlusLocalizedCopy {
     previewToastMessage: r'AstraCue Plus ($4.99) UI 프리뷰가 준비되었습니다.',
   );
 }
+
