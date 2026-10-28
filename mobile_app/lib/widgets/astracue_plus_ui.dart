@@ -72,7 +72,8 @@ class ReadingEnergySnapshot {
     bool? isQuotaExhaustedOverride,
   }) {
     final maxFree = quota.maxDailyFreeReadings;
-    final exhausted = isQuotaExhaustedOverride ??
+    final exhausted =
+        isQuotaExhaustedOverride ??
         (quota.bonusReadings == 0 &&
             quota.dailyFreeReadingsUsed(nowLocal) >= maxFree);
     var used = exhausted
@@ -91,8 +92,9 @@ class ReadingEnergySnapshot {
       nowLocal.day + 1,
     );
     final untilMidnight = nextMidnight.difference(nowLocal);
-    final safeUntilMidnight =
-        untilMidnight.isNegative ? Duration.zero : untilMidnight;
+    final safeUntilMidnight = untilMidnight.isNegative
+        ? Duration.zero
+        : untilMidnight;
 
     Duration cooldownRem = Duration.zero;
     if (inCooldown && remaining > 0) {
@@ -187,10 +189,14 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
 
             // Out-of-phase twinkling stars around the gem corners (H3)
             final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.12, 1.0);
-            final twinkle2 =
-                (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(0.12, 1.0);
-            final twinkle3 =
-                (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(0.10, 1.0);
+            final twinkle2 = (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(
+              0.12,
+              1.0,
+            );
+            final twinkle3 = (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(
+              0.10,
+              1.0,
+            );
 
             // Shimmer sweep position (-1.4 .. 2.2) across the gem surface
             final shimmerPos = -1.4 + (t * 3.6);
@@ -396,10 +402,7 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
                             height: 1.0,
                             color: Color(0xFFFFE8A3),
                             shadows: [
-                              Shadow(
-                                color: Color(0xFFFFE8A3),
-                                blurRadius: 4,
-                              ),
+                              Shadow(color: Color(0xFFFFE8A3), blurRadius: 4),
                             ],
                           ),
                         ),
@@ -877,8 +880,9 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
   void didUpdateWidget(covariant _AnimatedPlusGemBox oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.singleRow != widget.singleRow) {
-      _controller.duration =
-          Duration(milliseconds: widget.singleRow ? 5200 : 2800);
+      _controller.duration = Duration(
+        milliseconds: widget.singleRow ? 5200 : 2800,
+      );
       if (_controller.isAnimating) {
         _controller.repeat();
       }
@@ -921,9 +925,8 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
                 color: const Color(0xFFFFE8A3),
                 shadows: [
                   Shadow(
-                    color: const Color(0xFFFFF2C2).withValues(
-                      alpha: 0.55 + 0.4 * breath,
-                    ),
+                    color: const Color(0xFFFFF2C2)
+                        .withValues(alpha: 0.55 + 0.4 * breath),
                     blurRadius: 6 + 4 * breath,
                   ),
                 ],
@@ -934,11 +937,7 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
         const SizedBox(width: 4),
         ShaderMask(
           shaderCallback: (bounds) => const LinearGradient(
-            colors: [
-              Color(0xFFFFF9E2),
-              Color(0xFFF0CF82),
-              Color(0xFFC99A3E),
-            ],
+            colors: [Color(0xFFFFF9E2), Color(0xFFF0CF82), Color(0xFFC99A3E)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ).createShader(bounds),
@@ -966,8 +965,7 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
           if (i > 0) const SizedBox(width: 4),
           Builder(
             builder: (context) {
-              final orbBreath =
-                  0.5 + 0.5 * math.sin(angle - i * 0.85);
+              final orbBreath = 0.5 + 0.5 * math.sin(angle - i * 0.85);
               return Transform.scale(
                 scale: 0.93 + 0.14 * orbBreath,
                 child: Container(
@@ -1021,10 +1019,8 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
           final breath = 0.5 + 0.5 * math.sin(angle);
 
           final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.12, 1.0);
-          final twinkle2 =
-              (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(0.12, 1.0);
-          final twinkle3 =
-              (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(0.10, 1.0);
+          final twinkle2 = (0.5 + 0.5 * math.sin(angle + 2.2)).clamp(0.12, 1.0);
+          final twinkle3 = (0.5 + 0.5 * math.sin(angle + 4.3)).clamp(0.10, 1.0);
           final shimmerPos = -1.4 + (t * 3.6);
 
           final Widget innerContent = widget.singleRow
@@ -1260,10 +1256,7 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
                           height: 1.0,
                           color: Color(0xFFFFE8A3),
                           shadows: [
-                            Shadow(
-                              color: Color(0xFFFFE8A3),
-                              blurRadius: 4,
-                            ),
+                            Shadow(color: Color(0xFFFFE8A3), blurRadius: 4),
                           ],
                         ),
                       ),
@@ -1297,10 +1290,7 @@ class AstralFreeOrbsRow extends StatelessWidget {
       children: [
         for (var i = 0; i < ReadingEnergySnapshot.freeDailyMax; i++) ...[
           if (i > 0) const SizedBox(width: 4),
-          _CyanEnergyOrb(
-            active: i < remainingFreeTurns,
-            size: orbSize,
-          ),
+          _CyanEnergyOrb(active: i < remainingFreeTurns, size: orbSize),
         ],
       ],
     );
@@ -1395,16 +1385,9 @@ class _CyanEnergyOrb extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.3, -0.35),
           radius: 0.85,
-          colors: [
-            Color(0xFFDFF3FF),
-            Color(0xFF67B8F7),
-            Color(0xFF286DA5),
-          ],
+          colors: [Color(0xFFDFF3FF), Color(0xFF67B8F7), Color(0xFF286DA5)],
         ),
-        border: Border.all(
-          color: const Color(0xFFCDEEFF),
-          width: 0.9,
-        ),
+        border: Border.all(color: const Color(0xFFCDEEFF), width: 0.9),
         boxShadow: [
           BoxShadow(
             color: CompassColors.blueLight.withValues(alpha: 0.65),
@@ -1432,16 +1415,9 @@ class _GoldPlusOrb extends StatelessWidget {
         gradient: const RadialGradient(
           center: Alignment(-0.3, -0.35),
           radius: 0.85,
-          colors: [
-            Color(0xFFFFF6DA),
-            Color(0xFFE6C173),
-            Color(0xFF9E7325),
-          ],
+          colors: [Color(0xFFFFF6DA), Color(0xFFE6C173), Color(0xFF9E7325)],
         ),
-        border: Border.all(
-          color: const Color(0xFFFFEAB3),
-          width: 0.9,
-        ),
+        border: Border.all(color: const Color(0xFFFFEAB3), width: 0.9),
         boxShadow: [
           BoxShadow(
             color: CompassColors.gold.withValues(alpha: 0.55),
@@ -1569,11 +1545,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
           key: const Key('astracue_plus_sheet'),
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [
-                Color(0xFF181F33),
-                Color(0xFF111626),
-                Color(0xFF0C101C),
-              ],
+              colors: [Color(0xFF181F33), Color(0xFF111626), Color(0xFF0C101C)],
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
             ),
@@ -1596,241 +1568,259 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
           ),
           child: Padding(
             padding: const EdgeInsets.fromLTRB(18, 12, 18, 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Drag handle
-                Container(
-                  width: 38,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.22),
-                    borderRadius: BorderRadius.circular(99),
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Drag handle
+                  Container(
+                    width: 38,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.22),
+                      borderRadius: BorderRadius.circular(99),
+                    ),
                   ),
-                ),
-                const SizedBox(height: 14),
+                  const SizedBox(height: 14),
 
-                // Compact Header Row: Emblem + Title on left | $4.99 Lifetime badge on right
-                Row(
-                  children: [
-                    Container(
-                      width: 38,
-                      height: 38,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: const LinearGradient(
-                          colors: [Color(0xFF332613), Color(0xFF1C150C)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        border: Border.all(
-                          color: CompassColors.gold.withValues(alpha: 0.8),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: CompassColors.gold.withValues(alpha: 0.25),
-                            blurRadius: 10,
-                          ),
-                        ],
-                      ),
-                      alignment: Alignment.center,
-                      child: const Text(
-                        '✦',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Color(0xFFFFE8A3),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 11),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'AstraCue Plus',
-                            style: TextStyle(
-                              color: CompassColors.text,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w800,
-                              letterSpacing: 0.3,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            copy.p1HeaderSubtitle,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              color: CompassColors.secondary,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _B1LifetimeVipCrest(
-                      lifetimeLabel: copy.p1LifetimeTag.toUpperCase(),
-                      vipPassLabel: copy.p1VipPassSubtag,
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 12),
-
-                // 1-Line Live Energy Comparison Bar
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF121829),
-                    borderRadius: BorderRadius.circular(13),
-                    border: Border.all(
-                      color: CompassColors.line.withValues(alpha: 0.9),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  // Compact Header Row: Emblem + Title on left | $4.99 Lifetime badge on right
+                  Row(
                     children: [
-                      AstralEnergyOrbsRow(
-                        remainingFreeTurns: _snapshot.remainingFreeTurns,
-                        orbSize: 9.5,
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          gradient: const LinearGradient(
+                            colors: [Color(0xFF332613), Color(0xFF1C150C)],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          border: Border.all(
+                            color: CompassColors.gold.withValues(alpha: 0.8),
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: CompassColors.gold.withValues(alpha: 0.25),
+                              blurRadius: 10,
+                            ),
+                          ],
+                        ),
+                        alignment: Alignment.center,
+                        child: const Text(
+                          '✦',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Color(0xFFFFE8A3),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 11),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'AstraCue Plus',
+                              style: TextStyle(
+                                color: CompassColors.text,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.3,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              copy.p1HeaderSubtitle,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                color: CompassColors.secondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       const SizedBox(width: 8),
-                      Flexible(
-                        child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerRight,
-                          child: Text(
-                            liveBarText,
-                            maxLines: 1,
-                            style: const TextStyle(
-                              color: Color(0xFFF7E3B5),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ),
+                      _B1LifetimeVipCrest(
+                        lifetimeLabel: copy.p1LifetimeTag.toUpperCase(),
+                        vipPassLabel: copy.p1VipPassSubtag,
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 10),
+                  const SizedBox(height: 12),
 
-                // P1: 4 Concise Single-Line Checklist Rows (only Row 1 has right badge)
-                _P1ChecklistRow(
-                  icon: Icons.bolt_rounded,
-                  iconColor: CompassColors.blueLight,
-                  title: copy.p1Row1Title,
-                  badgeText: copy.p1Row1Badge,
-                  badgeColor: CompassColors.blueLight,
-                ),
-                const SizedBox(height: 7),
-                _P1ChecklistRow(
-                  icon: Icons.block_rounded,
-                  iconColor: const Color(0xFFF5D98E),
-                  title: copy.p1Row2Title,
-                ),
-                const SizedBox(height: 7),
-                _P1ChecklistRow(
-                  icon: Icons.lock_open_rounded,
-                  iconColor: const Color(0xFFF5D98E),
-                  title: copy.p1Row3Title,
-                ),
-                const SizedBox(height: 7),
-                _P1ChecklistRow(
-                  icon: Icons.all_inclusive_rounded,
-                  iconColor: CompassColors.secondary,
-                  title: copy.p1Row4Title,
-                ),
-                const SizedBox(height: 11),
-
-                // 1-Line Transparent Footnote
-                Text(
-                  copy.p1ShortFootnote,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: CompassColors.secondary,
-                    fontSize: 11,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 14),
-
-                // Option 3 Primary Gold CTA Button with localized currency & -60% OFF badge
-                _Option3SaleCtaButton(
-                  ctaPrefix: copy.sheetPrimaryCtaPrefix,
-                  originalPrice: copy.originalPriceFormatted,
-                  salePrice: copy.salePriceFormatted,
-                  saleBadgeLabel: copy.p1SaleOffBadge,
-                  semanticsLabel: copy.sheetPrimaryCta,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: CompassColors.raised,
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                          side: BorderSide(
-                            color: CompassColors.gold.withValues(
-                              alpha: 0.6,
+                  // 1-Line Live Energy Comparison Bar
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 9,
+                    ),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF121829),
+                      borderRadius: BorderRadius.circular(13),
+                      border: Border.all(
+                        color: CompassColors.line.withValues(alpha: 0.9),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        AstralEnergyOrbsRow(
+                          remainingFreeTurns: _snapshot.remainingFreeTurns,
+                          orbSize: 9.5,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              liveBarText,
+                              maxLines: 1,
+                              style: const TextStyle(
+                                color: Color(0xFFF7E3B5),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ),
                         ),
-                        content: Text(
-                          copy.previewToastMessage,
-                          style: const TextStyle(
-                            color: CompassColors.text,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+
+                  // P1: 4 Concise Single-Line Checklist Rows (only Row 1 has right badge)
+                  _P1ChecklistRow(
+                    icon: Icons.bolt_rounded,
+                    iconColor: CompassColors.blueLight,
+                    title: copy.p1Row1Title,
+                    badgeText: copy.p1Row1Badge,
+                    badgeColor: CompassColors.blueLight,
+                  ),
+                  const SizedBox(height: 7),
+                  _P1ChecklistRow(
+                    icon: Icons.block_rounded,
+                    iconColor: const Color(0xFFF5D98E),
+                    title: copy.p1Row2Title,
+                  ),
+                  const SizedBox(height: 7),
+                  _P1ChecklistRow(
+                    icon: Icons.lock_open_rounded,
+                    iconColor: const Color(0xFFF5D98E),
+                    title: copy.p1Row3Title,
+                  ),
+                  const SizedBox(height: 7),
+                  _P1ChecklistRow(
+                    icon: Icons.all_inclusive_rounded,
+                    iconColor: CompassColors.secondary,
+                    title: copy.p1Row4Title,
+                  ),
+                  const SizedBox(height: 11),
+
+                  // 1-Line Transparent Footnote
+                  Text(
+                    copy.p1ShortFootnote,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: CompassColors.secondary,
+                      fontSize: 11,
+                      height: 1.3,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Option 3 Primary Gold CTA Button with localized currency & -60% OFF badge
+                  _Option3SaleCtaButton(
+                    ctaPrefix: copy.sheetPrimaryCtaPrefix,
+                    originalPrice: copy.originalPriceFormatted,
+                    salePrice: copy.salePriceFormatted,
+                    saleBadgeLabel: copy.p1SaleOffBadge,
+                    semanticsLabel: copy.sheetPrimaryCta,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          backgroundColor: CompassColors.raised,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                            side: BorderSide(
+                              color: CompassColors.gold.withValues(alpha: 0.6),
+                            ),
+                          ),
+                          content: Text(
+                            copy.previewToastMessage,
+                            style: const TextStyle(
+                              color: CompassColors.text,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(height: 8),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 8),
 
-                // Secondary Actions: Restore · Maybe later
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: TextButton.styleFrom(
-                        foregroundColor: CompassColors.secondary,
-                        visualDensity: VisualDensity.compact,
-                        textStyle: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                  // Secondary Actions: Restore · Maybe later
+                  FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            foregroundColor: CompassColors.secondary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(copy.sheetRestoreAction),
                         ),
-                      ),
-                      child: Text(copy.sheetRestoreAction),
-                    ),
-                    Text(
-                      '·',
-                      style: TextStyle(
-                        color: CompassColors.muted.withValues(alpha: 0.6),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      style: TextButton.styleFrom(
-                        foregroundColor: CompassColors.secondary,
-                        visualDensity: VisualDensity.compact,
-                        textStyle: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 4),
+                          child: Text(
+                            '·',
+                            style: TextStyle(
+                              color: CompassColors.muted.withValues(alpha: 0.6),
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(copy.sheetLaterAction),
+                        TextButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          style: TextButton.styleFrom(
+                            foregroundColor: CompassColors.secondary,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            visualDensity: VisualDensity.compact,
+                            textStyle: const TextStyle(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          child: Text(copy.sheetLaterAction),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -1956,8 +1946,8 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
                                           Shadow(
                                             color: const Color(0xFFFFF2C2)
                                                 .withValues(
-                                              alpha: 0.55 + 0.4 * breath,
-                                            ),
+                                                  alpha: 0.55 + 0.4 * breath,
+                                                ),
                                             blurRadius: 6 + 4 * breath,
                                           ),
                                         ],
@@ -1969,14 +1959,14 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
                                 ShaderMask(
                                   shaderCallback: (bounds) =>
                                       const LinearGradient(
-                                    colors: [
-                                      Color(0xFFFFF9E2),
-                                      Color(0xFFF0CF82),
-                                      Color(0xFFC99A3E),
-                                    ],
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                  ).createShader(bounds),
+                                        colors: [
+                                          Color(0xFFFFF9E2),
+                                          Color(0xFFF0CF82),
+                                          Color(0xFFC99A3E),
+                                        ],
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                      ).createShader(bounds),
                                   blendMode: BlendMode.srcIn,
                                   child: Text(
                                     widget.lifetimeLabel,
@@ -2050,10 +2040,7 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
                         height: 1.0,
                         color: Color(0xFFFFE8A3),
                         shadows: [
-                          Shadow(
-                            color: Color(0xFFFFE8A3),
-                            blurRadius: 5,
-                          ),
+                          Shadow(color: Color(0xFFFFE8A3), blurRadius: 5),
                         ],
                       ),
                     ),
@@ -2077,10 +2064,7 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
                         height: 1.0,
                         color: Color(0xFFFFE8A3),
                         shadows: [
-                          Shadow(
-                            color: Color(0xFFFFE8A3),
-                            blurRadius: 5,
-                          ),
+                          Shadow(color: Color(0xFFFFE8A3), blurRadius: 5),
                         ],
                       ),
                     ),
@@ -2247,8 +2231,9 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
                                         gradient: LinearGradient(
                                           colors: [
                                             Colors.white.withValues(alpha: 0.0),
-                                            Colors.white
-                                                .withValues(alpha: 0.56),
+                                            Colors.white.withValues(
+                                              alpha: 0.56,
+                                            ),
                                             Colors.white.withValues(alpha: 0.0),
                                           ],
                                         ),
@@ -2295,16 +2280,14 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFFFF3B30).withValues(
-                              alpha: 0.50 + 0.35 * badgePulse,
-                            ),
+                            color: const Color(0xFFFF3B30)
+                                .withValues(alpha: 0.50 + 0.35 * badgePulse),
                             blurRadius: 9 + 7 * badgePulse,
                             offset: const Offset(0, 2),
                           ),
                           BoxShadow(
-                            color: const Color(0xFFFFD26E).withValues(
-                              alpha: 0.35 + 0.35 * badgePulse,
-                            ),
+                            color: const Color(0xFFFFD26E)
+                                .withValues(alpha: 0.35 + 0.35 * badgePulse),
                             blurRadius: 8 + 6 * badgePulse,
                           ),
                         ],
@@ -2377,7 +2360,6 @@ class _DiagonalStrikePainter extends CustomPainter {
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-
 class _P1ChecklistRow extends StatelessWidget {
   const _P1ChecklistRow({
     required this.icon,
@@ -2400,9 +2382,7 @@ class _P1ChecklistRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF151C2E),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: CompassColors.line.withValues(alpha: 0.85),
-        ),
+        border: Border.all(color: CompassColors.line.withValues(alpha: 0.85)),
       ),
       child: Row(
         children: [
@@ -2475,7 +2455,7 @@ class _PlusLocalizedCopy {
   final String t3CurrentLabel;
   final String Function(String remaining, String max) t3ReadyStatus;
   final String Function(String remaining, String max, String countdown)
-      t3TimerStatus;
+  t3TimerStatus;
   final String t3PlusActionLabel;
 
   final String p1HeaderSubtitle;
@@ -2483,9 +2463,9 @@ class _PlusLocalizedCopy {
   final String p1VipPassSubtag;
   final String p1SaleOffBadge;
   final String Function(String remaining, String freeMax, String plusMax)
-      p1BarReady;
+  p1BarReady;
   final String Function(String countdown, String unlocked, String plusMax)
-      p1BarCooldown;
+  p1BarCooldown;
   final String Function(String countdown) p1BarExhausted;
 
   final String p1Row1Title;
@@ -2559,12 +2539,12 @@ class _PlusLocalizedCopy {
     sheetPrimaryCta: '✦ Mở khóa AstraCue Plus — 119.000 ₫',
     sheetRestoreAction: 'Khôi phục giao dịch',
     sheetLaterAction: 'Để sau',
-    previewToastMessage:
-        'Giao diện AstraCue Plus (119.000 ₫) đã sẵn sàng kết nối cổng thanh toán.',
+    previewToastMessage: 'Giao diện AstraCue Plus (119.000 ₫) đã sẵn sàng kết nối cổng thanh toán.',
   );
 
   static final _PlusLocalizedCopy _en = _PlusLocalizedCopy(
-    headerSemanticsLabel: 'AstraCue Plus, unlock 6 instant turns and remove ads',
+    headerSemanticsLabel:
+        'AstraCue Plus, unlock 6 instant turns and remove ads',
     t3CurrentLabel: 'Current',
     t3ReadyStatus: (rem, max) => '$rem/$max turns left',
     t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
@@ -2801,4 +2781,3 @@ class _PlusLocalizedCopy {
     previewToastMessage: 'AstraCue Plus (₩6,600) UI 프리뷰가 준비되었습니다.',
   );
 }
-
