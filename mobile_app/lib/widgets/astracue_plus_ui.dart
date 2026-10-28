@@ -389,14 +389,14 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
                       opacity: twinkle3,
                       child: Transform.scale(
                         scale: 0.55 + 0.55 * twinkle3,
-                        child: Container(
-                          width: 3.5,
-                          height: 3.5,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFFFF4CC),
-                            boxShadow: [
-                              BoxShadow(
+                        child: const Text(
+                          '✦',
+                          style: TextStyle(
+                            fontSize: 8.5,
+                            height: 1.0,
+                            color: Color(0xFFFFE8A3),
+                            shadows: [
+                              Shadow(
                                 color: Color(0xFFFFE8A3),
                                 blurRadius: 4,
                               ),
@@ -1244,23 +1244,23 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
                 ),
               ),
 
-              // Top-right micro stardust spark (H3)
+              // Top-right micro stardust star (H3)
               Positioned(
-                top: -3.0,
-                right: 12.0,
+                top: -4.5,
+                right: widget.singleRow ? 42.0 : 14.0,
                 child: IgnorePointer(
                   child: Opacity(
                     opacity: twinkle3,
                     child: Transform.scale(
-                      scale: 0.55 + 0.55 * twinkle3,
-                      child: Container(
-                        width: 3.5,
-                        height: 3.5,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Color(0xFFFFF4CC),
-                          boxShadow: [
-                            BoxShadow(
+                      scale: 0.60 + 0.55 * twinkle3,
+                      child: const Text(
+                        '✦',
+                        style: TextStyle(
+                          fontSize: 8.5,
+                          height: 1.0,
+                          color: Color(0xFFFFE8A3),
+                          shadows: [
+                            Shadow(
                               color: Color(0xFFFFE8A3),
                               blurRadius: 4,
                             ),
