@@ -1629,41 +1629,8 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 11,
-                        vertical: 6,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFF281E11),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(
-                          color: CompassColors.gold.withValues(alpha: 0.7),
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          const Text(
-                            r'$4.99',
-                            style: TextStyle(
-                              color: Color(0xFFF7E3B5),
-                              fontSize: 14,
-                              fontWeight: FontWeight.w900,
-                              height: 1.05,
-                            ),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            copy.p1LifetimeTag,
-                            style: const TextStyle(
-                              color: CompassColors.gold,
-                              fontSize: 10.5,
-                              fontWeight: FontWeight.w700,
-                            ),
-                          ),
-                        ],
-                      ),
+                    _B1LifetimeVipCrest(
+                      lifetimeLabel: copy.p1LifetimeTag.toUpperCase(),
                     ),
                   ],
                 ),
@@ -1748,80 +1715,39 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                     height: 1.3,
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
 
-                // Primary Gold CTA Button
-                SizedBox(
-                  width: double.infinity,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      key: const Key('astracue_plus_sheet_cta'),
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            backgroundColor: CompassColors.raised,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(14),
-                              side: BorderSide(
-                                color: CompassColors.gold.withValues(
-                                  alpha: 0.6,
-                                ),
-                              ),
-                            ),
-                            content: Text(
-                              copy.previewToastMessage,
-                              style: const TextStyle(
-                                color: CompassColors.text,
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        );
-                      },
-                      borderRadius: BorderRadius.circular(14),
-                      child: Ink(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 13,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFFF3D892),
-                              Color(0xFFD8B36A),
-                              Color(0xFFC29743),
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
+                // Option 3 Primary Gold CTA Button ($11.99 -> $4.99 + Floating -60% OFF Badge)
+                _Option3SaleCtaButton(
+                  ctaPrefix: copy.sheetPrimaryCta
+                      .replaceAll(r'$4.99', '')
+                      .trimRight(),
+                  semanticsLabel: copy.sheetPrimaryCta,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        backgroundColor: CompassColors.raised,
+                        behavior: SnackBarBehavior.floating,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(14),
-                          boxShadow: [
-                            BoxShadow(
-                              color: CompassColors.gold.withValues(alpha: 0.35),
-                              blurRadius: 14,
-                              offset: const Offset(0, 4),
+                          side: BorderSide(
+                            color: CompassColors.gold.withValues(
+                              alpha: 0.6,
                             ),
-                          ],
+                          ),
                         ),
-                        child: Center(
-                          child: Text(
-                            copy.sheetPrimaryCta,
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: Color(0xFF17120A),
-                              fontSize: 13.5,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.3,
-                            ),
+                        content: Text(
+                          copy.previewToastMessage,
+                          style: const TextStyle(
+                            color: CompassColors.text,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 ),
                 const SizedBox(height: 8),
 
@@ -1869,6 +1795,536 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
     );
   }
 }
+
+/// Option `B1` (`✦ TRỌN ĐỜI / VIP PASS`) top-right crest inside `AstraCuePlusSheet`:
+/// Synchronized `H3 + H1` starlight border + twinkling corner stars + metallic sweep
+/// without repeating the numeric price shown on the bottom CTA button.
+class _B1LifetimeVipCrest extends StatefulWidget {
+  const _B1LifetimeVipCrest({required this.lifetimeLabel});
+
+  final String lifetimeLabel;
+
+  @override
+  State<_B1LifetimeVipCrest> createState() => _B1LifetimeVipCrestState();
+}
+
+class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2800),
+  );
+  bool? _reduceMotion;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (_reduceMotion == reduceMotion) return;
+    _reduceMotion = reduceMotion;
+    if (reduceMotion) {
+      _controller.stop();
+      _controller.value = 0.22;
+    } else {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = _controller.value;
+        final angle = t * 2 * math.pi;
+        final breath = 0.5 + 0.5 * math.sin(angle);
+        final twinkle1 = (0.5 + 0.5 * math.sin(angle)).clamp(0.15, 1.0);
+        final twinkle2 = (0.5 + 0.5 * math.sin(angle + 2.3)).clamp(0.15, 1.0);
+        final shimmerPos = -1.4 + (t * 3.6);
+
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(13),
+                boxShadow: [
+                  BoxShadow(
+                    color: CompassColors.gold.withValues(
+                      alpha: 0.18 + 0.20 * breath,
+                    ),
+                    blurRadius: 8 + 6 * breath,
+                    spreadRadius: 0.2 + 0.4 * breath,
+                  ),
+                ],
+              ),
+              child: CustomPaint(
+                foregroundPainter: _OrbitingGoldBorderPainter(
+                  progress: t,
+                  radius: 13,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(13),
+                  child: Stack(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 11,
+                          vertical: 6.5,
+                        ),
+                        decoration: const BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Color(0xFF281D0E),
+                              Color(0xFF422F15),
+                              Color(0xFF21170B),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Transform.scale(
+                                  scale: 0.90 + 0.22 * breath,
+                                  child: Transform.rotate(
+                                    angle: 0.20 * math.sin(angle),
+                                    child: Text(
+                                      '✦',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        height: 1.0,
+                                        color: const Color(0xFFFFE8A3),
+                                        shadows: [
+                                          Shadow(
+                                            color: const Color(0xFFFFF2C2)
+                                                .withValues(
+                                              alpha: 0.55 + 0.4 * breath,
+                                            ),
+                                            blurRadius: 6 + 4 * breath,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 4),
+                                ShaderMask(
+                                  shaderCallback: (bounds) =>
+                                      const LinearGradient(
+                                    colors: [
+                                      Color(0xFFFFF9E2),
+                                      Color(0xFFF0CF82),
+                                      Color(0xFFC99A3E),
+                                    ],
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                  ).createShader(bounds),
+                                  blendMode: BlendMode.srcIn,
+                                  child: Text(
+                                    widget.lifetimeLabel,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 11.5,
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: 0.5,
+                                      height: 1.05,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'VIP PASS',
+                              style: TextStyle(
+                                color: CompassColors.gold,
+                                fontSize: 9.5,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 0.5,
+                                height: 1.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      // Diagonal metallic light sweep
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: FractionalTranslation(
+                            translation: Offset(shimmerPos, 0),
+                            child: Transform.rotate(
+                              angle: -0.38,
+                              child: Container(
+                                width: 28,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.white.withValues(alpha: 0.0),
+                                      const Color(0xFFFFF4D0)
+                                          .withValues(alpha: 0.35),
+                                      Colors.white.withValues(alpha: 0.0),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            // Top-left twinkling corner star
+            Positioned(
+              top: -4.5,
+              left: -2.5,
+              child: IgnorePointer(
+                child: Opacity(
+                  opacity: twinkle1,
+                  child: Transform.scale(
+                    scale: 0.65 + 0.55 * twinkle1,
+                    child: const Text(
+                      '✦',
+                      style: TextStyle(
+                        fontSize: 9,
+                        height: 1.0,
+                        color: Color(0xFFFFE8A3),
+                        shadows: [
+                          Shadow(
+                            color: Color(0xFFFFE8A3),
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Bottom-right twinkling corner star
+            Positioned(
+              bottom: -4.5,
+              right: -2.0,
+              child: IgnorePointer(
+                child: Opacity(
+                  opacity: twinkle2,
+                  child: Transform.scale(
+                    scale: 0.60 + 0.60 * twinkle2,
+                    child: const Text(
+                      '✦',
+                      style: TextStyle(
+                        fontSize: 8.5,
+                        height: 1.0,
+                        color: Color(0xFFFFE8A3),
+                        shadows: [
+                          Shadow(
+                            color: Color(0xFFFFE8A3),
+                            blurRadius: 5,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+}
+
+/// Option 3 Primary Gold CTA Button inside `AstraCuePlusSheet`:
+/// - Displays localized prefix + diagonally crossed-out `$11.99` + bold `$4.99`
+/// - Continuous metallic shimmer sweep across the button
+/// - Floating pulsing `-60% OFF` ruby-gold pill badge at top-right edge
+class _Option3SaleCtaButton extends StatefulWidget {
+  const _Option3SaleCtaButton({
+    required this.ctaPrefix,
+    required this.semanticsLabel,
+    required this.onTap,
+  });
+
+  final String ctaPrefix;
+  final String semanticsLabel;
+  final VoidCallback onTap;
+
+  @override
+  State<_Option3SaleCtaButton> createState() => _Option3SaleCtaButtonState();
+}
+
+class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2800),
+  );
+  bool? _reduceMotion;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    if (_reduceMotion == reduceMotion) return;
+    _reduceMotion = reduceMotion;
+    if (reduceMotion) {
+      _controller.stop();
+      _controller.value = 0.25;
+    } else {
+      _controller.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: '${widget.semanticsLabel}, -60% OFF',
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          final t = _controller.value;
+          // Pulse 1.5x per 2.8s cycle (~1.85s period) for the -60% OFF badge
+          final badgePulse = 0.5 + 0.5 * math.sin(t * 2 * math.pi);
+          final shimmerPos = -1.5 + (t * 4.0);
+
+          return Stack(
+            clipBehavior: Clip.none,
+            children: [
+              SizedBox(
+                width: double.infinity,
+                child: Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    key: const Key('astracue_plus_sheet_cta'),
+                    onTap: widget.onTap,
+                    borderRadius: BorderRadius.circular(14),
+                    child: Ink(
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFF3D892),
+                            Color(0xFFD8B36A),
+                            Color(0xFFC29743),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: [
+                          BoxShadow(
+                            color: CompassColors.gold.withValues(alpha: 0.38),
+                            blurRadius: 16,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(14),
+                        child: Stack(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 13.5,
+                              ),
+                              child: Center(
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        widget.ctaPrefix,
+                                        style: const TextStyle(
+                                          color: Color(0xFF17120A),
+                                          fontSize: 13.5,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 0.25,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      const _DiagonalStrikePrice(
+                                        priceText: r'$11.99',
+                                      ),
+                                      const SizedBox(width: 6),
+                                      const Text(
+                                        r'$4.99',
+                                        style: TextStyle(
+                                          color: Color(0xFF17120A),
+                                          fontSize: 14.5,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 0.2,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            // Diagonal metallic light sweep across CTA button
+                            Positioned.fill(
+                              child: IgnorePointer(
+                                child: FractionalTranslation(
+                                  translation: Offset(shimmerPos, 0),
+                                  child: Transform.rotate(
+                                    angle: -0.38,
+                                    child: Container(
+                                      width: 52,
+                                      decoration: BoxDecoration(
+                                        gradient: LinearGradient(
+                                          colors: [
+                                            Colors.white.withValues(alpha: 0.0),
+                                            Colors.white
+                                                .withValues(alpha: 0.56),
+                                            Colors.white.withValues(alpha: 0.0),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+
+              // Floating pulsing -60% OFF badge at top-right of CTA button
+              Positioned(
+                top: -10,
+                right: 12,
+                child: IgnorePointer(
+                  child: Transform.scale(
+                    scale: 1.0 + 0.08 * badgePulse,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 2.5,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(0xFFFF3B30),
+                            Color(0xFFD91B42),
+                            Color(0xFFB8142C),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(99),
+                        border: Border.all(
+                          color: const Color(0xFFFFE49E),
+                          width: 1.2,
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: const Color(0xFFFF3B30).withValues(
+                              alpha: 0.50 + 0.35 * badgePulse,
+                            ),
+                            blurRadius: 9 + 7 * badgePulse,
+                            offset: const Offset(0, 2),
+                          ),
+                          BoxShadow(
+                            color: const Color(0xFFFFD26E).withValues(
+                              alpha: 0.35 + 0.35 * badgePulse,
+                            ),
+                            blurRadius: 8 + 6 * badgePulse,
+                          ),
+                        ],
+                      ),
+                      child: const Text(
+                        '-60% OFF',
+                        style: TextStyle(
+                          color: Color(0xFFFFFDF7),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 0.4,
+                          height: 1.1,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Renders an old price (e.g. `$11.99`) with an angled crimson strikethrough line.
+class _DiagonalStrikePrice extends StatelessWidget {
+  const _DiagonalStrikePrice({required this.priceText});
+
+  final String priceText;
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      foregroundPainter: const _DiagonalStrikePainter(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 1.5),
+        child: Text(
+          priceText,
+          style: TextStyle(
+            color: const Color(0xFF17120A).withValues(alpha: 0.52),
+            fontSize: 12.5,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0.1,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DiagonalStrikePainter extends CustomPainter {
+  const _DiagonalStrikePainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = const Color(0xFFA61B1B)
+      ..strokeWidth = 1.8
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final start = Offset(0, size.height * 0.66);
+    final end = Offset(size.width, size.height * 0.38);
+    canvas.drawLine(start, end, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
 
 class _P1ChecklistRow extends StatelessWidget {
   const _P1ChecklistRow({
