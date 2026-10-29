@@ -77,7 +77,7 @@ class DemoPlusStore implements PlusStore {
   }
 
   @override
-  Future<void> complete(PlusPurchaseUpdate update) async {}
+  Future<bool> complete(PlusPurchaseUpdate update) async => true;
 }
 
 /// Accepts demo proofs only; a real store receipt is never "valid" here.

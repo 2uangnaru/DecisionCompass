@@ -37,14 +37,51 @@ here is production sign-off.
   verification and any UI action grant nothing.
 - `invalid` / `unavailable` purchases are NOT acknowledged, so Play
   redelivers them (and refunds unacknowledged ones after its window).
-- Valid purchases are acknowledged via `completePurchase`; duplicates and
-  late callbacks verify and grant once.
-- Restart recovery: on start, without an active entitlement, the app runs a
-  silent owned-purchases query (no restore result is reported).
+- Valid purchases are acknowledged. On Android the adapter reads the
+  `BillingResult` that `InAppPurchaseAndroidPlatform.completePurchase`
+  returns (the app-facing API drops it); anything but `ok`, a throw or a
+  timeout marks the acknowledgement pending.
+- Delivery is idempotent; revalidation is not. Repeated `purchased`
+  callbacks deliver and verify once. Every `restored` purchase (explicit
+  Restore, startup or resume reconciliation) is verified again, even one
+  already granted, so a confirmed `revoked` removes access.
 - Offline / cache: a previously VERIFIED entitlement stays active across
-  offline starts and failed or incomplete queries. Only a verifier answer of
-  `revoked` removes it. The record is local SharedPreferences and is not
-  tamper-proof; a server-side entitlement would be needed for that.
+  offline starts, verifier throws/timeouts and failed, empty or incomplete
+  queries. Only `revoked` for the matching token removes it, restoring the
+  free gates and ads without touching usage. The record is local
+  SharedPreferences and is not tamper-proof.
+
+### Recovery behaviour (2026-10-29 lifecycle fixes)
+
+- Bounded calls: verification `verifyTimeout` (20 s), each store call
+  `storeTimeout` (20 s). A throw or timeout is `unavailable`/failed; a late
+  answer is never applied. Updates run on one ordered queue whose jobs
+  cannot throw, so a failure never strands checkout in `verifying` or blocks
+  later updates; Buy and Restore work again at once.
+- Android checkout results: Play errors arrive as `IAPError(code:
+  'purchase_error', message: 'BillingResponse.<name>')`, and an empty
+  purchase list as `PurchaseDetails(productID: '')`. The adapter normalizes
+  them to `PlusStoreError` (no raw text leaves it). An anonymous cancel/error
+  settles only the checkout this controller launched; anything else
+  anonymous is ignored and never grants. `alreadyOwned` triggers an
+  owned-purchases query whose result is verified normally.
+- Startup always reconciles owned purchases, even with cached Plus: it
+  rechecks the cached proof, picks up purchases completed while the app was
+  killed and retries unacknowledged ones (Play lists them with their real
+  acknowledgement state). A failed acknowledgement is retried by the next
+  start or by a resume at most once per `resumeRetryInterval` (1 min); no
+  timer loop. The product is never consumed.
+- Store discovery is separate from the one-time subscription: an
+  unavailable store or failed/missing product is retried by a resume (same
+  spacing), by a Buy tap and by Restore; a failed query keeps the last
+  genuine product. Recovery never skips the verifier or sale-claim checks.
+- Overlapping startup, resume and Restore share one owned-purchases query
+  and one discovery attempt. Nothing mutates entitlement, persistence or ads
+  after `dispose`.
+- Limitation: an owned purchase Play stops listing (refund) is only revoked
+  through the verifier's answer for the cached proof; with no verifier it
+  stays active. Pending purchases rely on Play redelivering their final
+  state.
 - No fake success exists in `lib/`. Tests inject fake stores/verifiers.
 
 ### Verifier contract (owner must provide)
@@ -124,7 +161,11 @@ Exposed on `PlusEntitlementController` (`checkout`, `lastOutcome`,
 
 ## Verification (2026-10-29, fakes only)
 
-- `test/plus_billing_test.dart` (30): checkout gates, verified-only grant,
+- `test/plus_billing_test.dart` (50): lifecycle fixes 1-14 (verifier
+  throw/timeout, stale results, realistic Android already-owned / cancel /
+  error payloads mapped by the real adapter, BillingResult acknowledgement,
+  ack failure + restart / spaced resume recovery, Restore revalidation and
+  revocation, store/product recovery, coalescing, disposal), checkout gates, verified-only grant,
   pending/cancel/error/invalid/unavailable/revoked, duplicates, already
   owned, restart recovery, offline survival, revocation, corrupt record,
   3 vs 6 credits, upgrade/revocation usage, midnight + bonus-first, ad-free
@@ -137,8 +178,14 @@ Exposed on `PlusEntitlementController` (`checkout`, `lastOutcome`,
   motion, which the continuously animated Plus widgets already honour, so
   `pumpAndSettle` can settle. Production animation is unchanged.
 
-These fakes do NOT prove native billing, Play acknowledgement, refunds or
-store readiness.
+Each lifecycle fix was mutation-checked: breaking it (no exception handling,
+no timeout, anonymous updates dropped, wrong error field, no reconcile when
+cached, ack result ignored, restored treated as duplicate, one-shot
+discovery, no coalescing, no dispose guards) fails a named test.
+
+These fakes and adapter mappings do NOT prove native billing, Play
+acknowledgement, refunds or store readiness; that needs a configured Play
+test track.
 
 ## Required before real purchases
 

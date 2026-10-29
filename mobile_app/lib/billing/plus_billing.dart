@@ -2,6 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/foundation.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
+import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart'
+    show InAppPurchasePlatform;
 
 /// Build-time Plus configuration. Nothing here is a credential.
 class PlusBillingConfig {
@@ -51,6 +55,15 @@ class PlusProduct {
 
 enum PlusPurchaseStatus { pending, purchased, restored, canceled, error }
 
+/// A store error normalized at the adapter, so no raw platform text reaches
+/// the controller, logs or analytics.
+enum PlusStoreError {
+  /// Android `BillingResponse.itemAlreadyOwned`: owned but not (yet) granted
+  /// here. Recovered through an owned-purchases query + verification.
+  alreadyOwned,
+  other,
+}
+
 /// What a verifier needs to judge a purchase; persisted after verification so
 /// a later reconciliation can recheck it.
 @immutable
@@ -98,7 +111,7 @@ class PlusPurchaseUpdate {
     required this.productId,
     required this.status,
     this.proof,
-    this.errorCode,
+    this.error,
     this.needsCompletion = false,
     this.native,
   });
@@ -106,7 +119,7 @@ class PlusPurchaseUpdate {
   final String productId;
   final PlusPurchaseStatus status;
   final PlusPurchaseProof? proof;
-  final String? errorCode;
+  final PlusStoreError? error;
 
   /// The store still waits for acknowledgement (Android) / finish (iOS).
   final bool needsCompletion;
@@ -130,8 +143,10 @@ abstract interface class PlusStore {
   Future<bool> buy(PlusProduct product);
   Future<void> restore();
 
-  /// Acknowledges a non-consumable. Never consumes it.
-  Future<void> complete(PlusPurchaseUpdate update);
+  /// Acknowledges a non-consumable. Never consumes it. True only when the
+  /// store accepted the acknowledgement; false (or a throw) leaves it for a
+  /// later reconciliation to retry.
+  Future<bool> complete(PlusPurchaseUpdate update);
 }
 
 class InAppPurchasePlusStore implements PlusStore {
@@ -141,10 +156,30 @@ class InAppPurchasePlusStore implements PlusStore {
 
   @override
   Stream<List<PlusPurchaseUpdate>> get updates => _iap.purchaseStream.map(
-    (list) => [for (final details in list) _map(details)],
+    (list) => [for (final details in list) map(details)],
   );
 
-  static PlusPurchaseUpdate _map(PurchaseDetails d) => PlusPurchaseUpdate(
+  /// Android reports a failed launch as `IAPError(code: 'purchase_error',
+  /// message: BillingResponse.<name>)`, and when Play returns no purchase
+  /// list it emits a `PurchaseDetails` whose `productID` is empty.
+  @visibleForTesting
+  static PlusStoreError? normalizeError(IAPError? error) {
+    if (error == null) return null;
+    if (error.message == BillingResponse.itemAlreadyOwned.toString()) {
+      return PlusStoreError.alreadyOwned;
+    }
+    return PlusStoreError.other;
+  }
+
+  /// `completePurchase` on Android answers with a [BillingResultWrapper]
+  /// instead of throwing; anything but `ok` is a failed acknowledgement.
+  @visibleForTesting
+  static bool acknowledged(Object? result) =>
+      result is! BillingResultWrapper ||
+      result.responseCode == BillingResponse.ok;
+
+  @visibleForTesting
+  static PlusPurchaseUpdate map(PurchaseDetails d) => PlusPurchaseUpdate(
     productId: d.productID,
     status: switch (d.status) {
       PurchaseStatus.pending => PlusPurchaseStatus.pending,
@@ -161,7 +196,7 @@ class InAppPurchasePlusStore implements PlusStore {
             serverVerificationData: d.verificationData.serverVerificationData,
             source: d.verificationData.source,
           ),
-    errorCode: d.error?.code,
+    error: normalizeError(d.error),
     needsCompletion: d.pendingCompletePurchase,
     native: d,
   );
@@ -199,8 +234,16 @@ class InAppPurchasePlusStore implements PlusStore {
   Future<void> restore() => _iap.restorePurchases();
 
   @override
-  Future<void> complete(PlusPurchaseUpdate update) =>
-      _iap.completePurchase(update.native! as PurchaseDetails);
+  Future<bool> complete(PlusPurchaseUpdate update) async {
+    final details = update.native! as PurchaseDetails;
+    final platform = InAppPurchasePlatform.instance;
+    // The app-facing API drops Android's BillingResult; ask the platform.
+    if (platform is InAppPurchaseAndroidPlatform) {
+      return acknowledged(await platform.completePurchase(details));
+    }
+    await _iap.completePurchase(details);
+    return true;
+  }
 }
 
 /// [valid]: grant. [invalid]: never grant. [revoked]: an authoritative

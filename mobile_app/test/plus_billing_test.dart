@@ -9,6 +9,8 @@ import 'package:decision_compass/services/ad_policy.dart';
 import 'package:decision_compass/services/ad_runtime.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:in_app_purchase/in_app_purchase.dart';
+import 'package:in_app_purchase_android/billing_client_wrappers.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ads_test_fakes.dart';
@@ -26,7 +28,7 @@ PlusPurchaseUpdate update(
   PlusPurchaseStatus status, {
   String token = 'tok',
   bool needsCompletion = true,
-  String? errorCode,
+  PlusStoreError? error,
 }) => PlusPurchaseUpdate(
   productId: _id,
   status: status,
@@ -36,13 +38,18 @@ PlusPurchaseUpdate update(
       ? proof(token)
       : null,
   needsCompletion: needsCompletion,
-  errorCode: errorCode,
+  error: error,
 );
 
+/// Behaves like the real adapter: Restore always emits the (possibly empty)
+/// owned list, a failed query throws, and acknowledgement reports success.
 class FakePlusStore implements PlusStore {
   final controller = StreamController<List<PlusPurchaseUpdate>>.broadcast();
   bool available = true;
   bool launches = true;
+  bool queryThrows = false, restoreThrows = false;
+  bool ackOk = true;
+  int availabilityChecks = 0, productQueries = 0;
   PlusProduct? product = const PlusProduct(
     id: _id,
     price: '119.000 ₫',
@@ -60,9 +67,18 @@ class FakePlusStore implements PlusStore {
   @override
   Stream<List<PlusPurchaseUpdate>> get updates => controller.stream;
   @override
-  Future<bool> isAvailable() async => available;
+  Future<bool> isAvailable() async {
+    availabilityChecks++;
+    return available;
+  }
+
   @override
-  Future<PlusProduct?> queryProduct(String productId) async => product;
+  Future<PlusProduct?> queryProduct(String productId) async {
+    productQueries++;
+    if (queryThrows) throw StateError('query');
+    return product;
+  }
+
   @override
   Future<bool> buy(PlusProduct product) async {
     buys++;
@@ -72,12 +88,15 @@ class FakePlusStore implements PlusStore {
   @override
   Future<void> restore() async {
     restores++;
-    if (owned.isNotEmpty) controller.add(List.of(owned));
+    if (restoreThrows) throw StateError('query');
+    controller.add(List.of(owned));
   }
 
   @override
-  Future<void> complete(PlusPurchaseUpdate update) async =>
-      completed.add(update);
+  Future<bool> complete(PlusPurchaseUpdate update) async {
+    completed.add(update);
+    return ackOk;
+  }
 }
 
 class FakeVerifier implements PlusPurchaseVerifier {
@@ -85,12 +104,17 @@ class FakeVerifier implements PlusPurchaseVerifier {
   PlusVerdict verdict;
   int calls = 0;
   bool configured = true;
+
+  /// Replaces [verdict] to throw or hang.
+  Future<PlusVerdict> Function()? next;
   @override
   bool get isConfigured => configured;
   @override
   Future<PlusVerdict> verify(PlusPurchaseProof proof) async {
     calls++;
-    return configured ? verdict : PlusVerdict.unavailable;
+    if (!configured) return PlusVerdict.unavailable;
+    final custom = next;
+    return custom != null ? custom() : verdict;
   }
 }
 
@@ -132,17 +156,23 @@ void main() {
   late FakeVerifier verifier;
   late RecordingAds ads;
 
-  PlusEntitlementController make({bool requireClaims = false}) =>
-      PlusEntitlementController(
-        store: store,
-        verifier: verifier,
-        productId: _id,
-        ads: ads,
-        requireSupportedSaleClaims: requireClaims,
-      );
+  late DateTime clock;
+  PlusEntitlementController make({
+    bool requireClaims = false,
+    Duration verifyTimeout = const Duration(seconds: 20),
+  }) => PlusEntitlementController(
+    store: store,
+    verifier: verifier,
+    productId: _id,
+    ads: ads,
+    requireSupportedSaleClaims: requireClaims,
+    verifyTimeout: verifyTimeout,
+    nowUtc: () => clock,
+  );
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    clock = DateTime.utc(2026, 10, 29, 9);
     store = FakePlusStore();
     verifier = FakeVerifier();
     ads = RecordingAds();
@@ -225,23 +255,21 @@ void main() {
       },
     );
 
-    test('duplicate callbacks verify and grant once', () async {
-      var notifications = 0;
+    test('ordinary duplicate callbacks deliver once and verify once', () async {
       final plus = make()..start();
       await settle();
-      plus.addListener(() => notifications++);
       store.emit(update(PlusPurchaseStatus.purchased));
       store.emit(update(PlusPurchaseStatus.purchased));
-      store.emit(update(PlusPurchaseStatus.restored));
+      store.emit(update(PlusPurchaseStatus.purchased));
       await settle();
       expect(verifier.calls, 1);
       expect(ads.adFree, [true]);
       expect(plus.isActive, isTrue);
-      final activations = notifications;
-      store.emit(update(PlusPurchaseStatus.purchased));
+      // A restored copy is revalidated, but delivers nothing again.
+      store.emit(update(PlusPurchaseStatus.restored));
       await settle();
-      expect(verifier.calls, 1);
-      expect(notifications - activations, lessThanOrEqualTo(1));
+      expect(verifier.calls, 2);
+      expect(ads.adFree, [true]);
     });
 
     for (final verdict in [
@@ -285,20 +313,6 @@ void main() {
       await settle();
       expect(plus.isActive, isFalse);
       expect(plus.lastOutcome, PlusPurchaseOutcome.failed);
-    });
-
-    test('already owned re-queries ownership and verifies it', () async {
-      final plus = make()..start();
-      await settle();
-      store.owned = [update(PlusPurchaseStatus.restored)];
-      store.emit(
-        update(
-          PlusPurchaseStatus.error,
-          errorCode: 'BillingResponse.itemAlreadyOwned',
-        ),
-      );
-      await settle();
-      expect(plus.isActive, isTrue);
     });
 
     testWidgets('a checkout that never reports frees the guard on resume', (
@@ -611,5 +625,363 @@ void main() {
       await storeBuild.loadCached();
       expect(storeBuild.isActive, isFalse);
     });
+  });
+
+  group('lifecycle fixes', () {
+    // The real Android adapter output for a launch Play answered without a
+    // purchase list (in_app_purchase_android 0.5.5).
+    PlusPurchaseUpdate androidAnonymous(PurchaseStatus status, String code) =>
+        InAppPurchasePlusStore.map(
+          PurchaseDetails(
+              purchaseID: '',
+              productID: '',
+              status: status,
+              transactionDate: null,
+              verificationData: PurchaseVerificationData(
+                localVerificationData: '',
+                serverVerificationData: '',
+                source: 'google_play',
+              ),
+            )
+            ..error = IAPError(
+              source: 'google_play',
+              code: 'purchase_error',
+              message: code,
+              details: 'debug text that must not leak',
+            ),
+        );
+
+    Future<PlusEntitlementController> purchasing() async {
+      final plus = make()..start();
+      await settle();
+      expect(await plus.buy(), isTrue);
+      expect(plus.checkout, PlusCheckoutState.purchasing);
+      return plus;
+    }
+
+    test('1: a throwing verifier frees checkout and grants nothing', () async {
+      final plus = await purchasing();
+      verifier.next = () => throw StateError('verifier down');
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.verificationUnavailable);
+      expect(plus.isActive, isFalse);
+      expect(store.completed, isEmpty, reason: 'nothing acknowledged');
+      expect(ads.releases, 1);
+      expect(plus.checkoutBlockReason, isNull, reason: 'Buy works again');
+      // 3: a later redelivery succeeds once the verifier is back.
+      verifier.next = null;
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(plus.isActive, isTrue);
+      expect(store.completed, hasLength(1));
+    });
+
+    testWidgets('2: a hung verifier times out; its late answer is dropped', (
+      tester,
+    ) async {
+      final hung = Completer<PlusVerdict>();
+      verifier.next = () => hung.future;
+      final plus = make(verifyTimeout: const Duration(seconds: 5));
+      unawaited(plus.start());
+      await tester.pump();
+      await tester.pump();
+      await plus.buy();
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await tester.pump();
+      expect(plus.checkout, PlusCheckoutState.verifying);
+      await tester.pump(const Duration(seconds: 6));
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.verificationUnavailable);
+      hung.complete(PlusVerdict.valid);
+      await tester.pump();
+      expect(plus.isActive, isFalse, reason: 'stale result never applied');
+      // The queue is not blocked: a later update is processed.
+      verifier.next = null;
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await tester.pump();
+      await tester.pump();
+      expect(plus.isActive, isTrue);
+      plus.dispose();
+    });
+
+    Future<void> grant() async {
+      final plus = make()..start();
+      await settle();
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(plus.isActive, isTrue);
+      plus.dispose();
+    }
+
+    test('4: cached access survives a failing verifier at startup', () async {
+      await grant();
+      verifier.next = () => throw StateError('down');
+      store.owned = [
+        update(PlusPurchaseStatus.restored, needsCompletion: false),
+      ];
+      final again = make();
+      await again.start();
+      await settle();
+      expect(again.isActive, isTrue);
+    });
+
+    test('5: Android already-owned with an empty productID recovers through '
+        'the owned query', () async {
+      final mapped = androidAnonymous(
+        PurchaseStatus.error,
+        'BillingResponse.itemAlreadyOwned',
+      );
+      expect(mapped.productId, isEmpty);
+      expect(mapped.error, PlusStoreError.alreadyOwned);
+      expect(mapped.proof, isNull);
+      final plus = await purchasing();
+      final queries = store.restores;
+      store.owned = [update(PlusPurchaseStatus.restored)];
+      store.emit(mapped);
+      await settle();
+      expect(store.restores, queries + 1);
+      expect(plus.isActive, isTrue);
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(ads.releases, 1);
+    });
+
+    test(
+      '5b: an anonymous callback with no checkout of ours is ignored',
+      () async {
+        final plus = make()..start();
+        await settle();
+        final queries = store.restores;
+        store.owned = [update(PlusPurchaseStatus.restored)];
+        store.emit(
+          androidAnonymous(
+            PurchaseStatus.error,
+            'BillingResponse.itemAlreadyOwned',
+          ),
+        );
+        store.emit(androidAnonymous(PurchaseStatus.purchased, 'x'));
+        await settle();
+        expect(store.restores, queries);
+        expect(plus.isActive, isFalse);
+      },
+    );
+
+    test('6: a realistic cancellation settles checkout at once', () async {
+      final mapped = androidAnonymous(
+        PurchaseStatus.canceled,
+        'BillingResponse.userCanceled',
+      );
+      expect(mapped.status, PlusPurchaseStatus.canceled);
+      expect(mapped.error, PlusStoreError.other);
+      final plus = await purchasing();
+      store.emit(mapped);
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.canceled);
+      expect(plus.isActive, isFalse);
+      expect(ads.releases, 1);
+      final error = androidAnonymous(
+        PurchaseStatus.error,
+        'BillingResponse.serviceUnavailable',
+      );
+      await plus.buy();
+      store.emit(error);
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.failed);
+      expect(plus.isActive, isFalse);
+    });
+
+    test('Android acknowledgement result is read, not assumed', () {
+      expect(
+        InAppPurchasePlusStore.acknowledged(
+          const BillingResultWrapper(responseCode: BillingResponse.ok),
+        ),
+        isTrue,
+      );
+      expect(
+        InAppPurchasePlusStore.acknowledged(
+          const BillingResultWrapper(responseCode: BillingResponse.error),
+        ),
+        isFalse,
+      );
+      expect(
+        InAppPurchasePlusStore.acknowledged(
+          const BillingResultWrapper(
+            responseCode: BillingResponse.serviceDisconnected,
+          ),
+        ),
+        isFalse,
+      );
+    });
+
+    test('7: a failed acknowledgement is retried by the next start', () async {
+      store.ackOk = false;
+      final first = make()..start();
+      await settle();
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(first.isActive, isTrue);
+      expect(first.acknowledgementPending, isTrue);
+      first.dispose();
+      store.ackOk = true;
+      // Play lists it again as unacknowledged.
+      store.owned = [update(PlusPurchaseStatus.restored)];
+      ads.adFree.clear();
+      final second = make();
+      await second.start();
+      await settle();
+      expect(second.isActive, isTrue);
+      expect(second.acknowledgementPending, isFalse);
+      expect(store.completed, hasLength(2));
+      expect(ads.adFree, [true], reason: 'the cached grant only');
+    });
+
+    test(
+      '8: repeated failures retry on resume, spaced, without regrants',
+      () async {
+        store.ackOk = false;
+        final plus = make()..start();
+        await settle();
+        store.emit(update(PlusPurchaseStatus.purchased));
+        await settle();
+        store.owned = [update(PlusPurchaseStatus.restored)];
+        final queries = store.restores;
+        plus.appResumed();
+        await settle();
+        expect(store.restores, queries, reason: 'inside the retry interval');
+        clock = clock.add(const Duration(minutes: 2));
+        plus.appResumed();
+        await settle();
+        expect(store.restores, queries + 1);
+        expect(plus.acknowledgementPending, isTrue);
+        store.ackOk = true;
+        plus.appResumed();
+        await settle();
+        expect(store.restores, queries + 1, reason: 'no retry storm');
+        clock = clock.add(const Duration(minutes: 2));
+        plus.appResumed();
+        await settle();
+        expect(plus.acknowledgementPending, isFalse);
+        expect(ads.adFree, [true]);
+        expect(plus.isActive, isTrue);
+      },
+    );
+
+    test('9: explicit Restore revalidates a granted token and applies a '
+        'confirmed revocation', () async {
+      final plus = make()..start();
+      await settle();
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(plus.isActive, isTrue);
+      verifier.verdict = PlusVerdict.revoked;
+      store.owned = [
+        update(PlusPurchaseStatus.restored, needsCompletion: false),
+      ];
+      expect(await plus.restore(), PlusRestoreResult.nothingToRestore);
+      expect(plus.isActive, isFalse);
+      expect(ads.adFree, [true, false]);
+    });
+
+    test(
+      '9b: Restore with the verifier down or an empty list keeps access',
+      () async {
+        final plus = make()..start();
+        await settle();
+        store.emit(update(PlusPurchaseStatus.purchased));
+        await settle();
+        verifier.verdict = PlusVerdict.unavailable;
+        store.owned = [
+          update(PlusPurchaseStatus.restored, needsCompletion: false),
+        ];
+        expect(await plus.restore(), PlusRestoreResult.restored);
+        expect(plus.isActive, isTrue);
+        store.owned = [];
+        expect(await plus.restore(), PlusRestoreResult.restored);
+        store.restoreThrows = true;
+        expect(await plus.restore(), PlusRestoreResult.failed);
+        expect(plus.isActive, isTrue);
+      },
+    );
+
+    test('11: an unavailable store recovers in the same session', () async {
+      store.available = false;
+      final plus = make()..start();
+      await settle();
+      expect(plus.checkoutBlockReason, PlusBlockReason.storeUnavailable);
+      store.available = true;
+      // Resume inside the interval does not hammer the store.
+      final checks = store.availabilityChecks;
+      plus.appResumed();
+      await settle();
+      expect(store.availabilityChecks, checks);
+      clock = clock.add(const Duration(minutes: 2));
+      plus.appResumed();
+      await settle();
+      expect(plus.checkoutBlockReason, isNull);
+      expect(plus.product?.price, '119.000 ₫');
+    });
+
+    test('12: a failed product query recovers on the next Buy tap', () async {
+      store.queryThrows = true;
+      final plus = make()..start();
+      await settle();
+      expect(plus.checkoutBlockReason, PlusBlockReason.productUnavailable);
+      store.queryThrows = false;
+      expect(await plus.buy(), isTrue);
+      expect(store.buys, 1);
+      expect(plus.isActive, isFalse, reason: 'launching is not a purchase');
+    });
+
+    test(
+      '12b: recovery never bypasses the verifier or sale-claim gates',
+      () async {
+        store.available = false;
+        final plus = make(requireClaims: true)..start();
+        await settle();
+        store.available = true;
+        expect(await plus.buy(), isFalse);
+        expect(plus.lastBlock, PlusBlockReason.unsupportedSaleClaims);
+        verifier.configured = false;
+        final other = make()..start();
+        await settle();
+        expect(await other.buy(), isFalse);
+        expect(other.lastBlock, PlusBlockReason.verifierNotConfigured);
+        expect(store.buys, 0);
+      },
+    );
+
+    test('13: overlapping start, Restore and resume share one query', () async {
+      final plus = make();
+      final starting = plus.start();
+      final restoring = plus.restore();
+      plus.appResumed();
+      await starting;
+      await restoring;
+      await settle();
+      expect(store.availabilityChecks, 1);
+      expect(store.restores, 1);
+    });
+
+    test(
+      '14: late work after dispose mutates neither entitlement nor ads',
+      () async {
+        final hung = Completer<PlusVerdict>();
+        verifier.next = () => hung.future;
+        final plus = make()..start();
+        await settle();
+        store.emit(update(PlusPurchaseStatus.purchased));
+        await settle();
+        plus.dispose();
+        hung.complete(PlusVerdict.valid);
+        await settle();
+        expect(ads.adFree, isEmpty);
+        final prefs = await SharedPreferences.getInstance();
+        expect(prefs.getString(PlusEntitlementController.storageKey), isNull);
+        expect(store.completed, isEmpty);
+      },
+    );
   });
 }
