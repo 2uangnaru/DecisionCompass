@@ -219,6 +219,15 @@ class _RitualPageState extends State<RitualPage>
 
   void _onQuotaChanged() {
     if (mounted) {
+      if (widget.dependencies.plusActive && widget.isCooldown == null) {
+        // Plus removes the energy cooldown at once; the ritual must not keep
+        // showing a wait (or an ad) captured before the purchase.
+        final now = widget.dependencies.nowLocal();
+        _isQuotaExhaustedOverride = widget.isQuotaExhausted;
+        _isCooldown =
+            _isQuotaExhausted ||
+            widget.dependencies.quotaManager.isCooldown(now);
+      }
       if (_isPeriodLocked(_period)) {
         _period = TimePeriod.now;
       }
@@ -235,7 +244,10 @@ class _RitualPageState extends State<RitualPage>
       _periodTriggers.putIfAbsent(p, () => ValueNotifier<int>(0));
 
   bool _isPeriodLocked(TimePeriod period) {
-    if (period == TimePeriod.now) return false;
+    // Plus unlocks still-available periods; elapsed ones stay muted elsewhere.
+    if (period == TimePeriod.now || widget.dependencies.plusActive) {
+      return false;
+    }
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
     final inCooldown = widget.isCooldown ?? _isCooldown;
@@ -405,6 +417,7 @@ class _RitualPageState extends State<RitualPage>
     )..repeat(reverse: true);
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    widget.dependencies.plus?.addListener(_onQuotaChanged);
     _resolveTimezone();
   }
 
@@ -423,6 +436,7 @@ class _RitualPageState extends State<RitualPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+    widget.dependencies.plus?.removeListener(_onQuotaChanged);
     _periodRefreshTimer?.cancel();
     _countdownTimer?.cancel();
     _noticeTimer?.cancel();
@@ -797,11 +811,13 @@ class _RitualPageState extends State<RitualPage>
               },
             ),
           ),
-          AdBannerSlot(
-            ads: widget.dependencies.adService,
-            placement: BannerPlacement.reveal,
-            analytics: widget.dependencies.analytics,
-          ),
+          // Plus is ad-free: no banner and no reserved blank slot.
+          if (!widget.dependencies.plusActive)
+            AdBannerSlot(
+              ads: widget.dependencies.adService,
+              placement: BannerPlacement.reveal,
+              analytics: widget.dependencies.analytics,
+            ),
         ],
       ),
     );
@@ -1055,7 +1071,8 @@ class _RitualPageState extends State<RitualPage>
                   ? l10n.ritualLocked
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
-                  : (!energySnapshot.isPlusActive && _isQuotaExhausted)
+                  // Plus has no cooldown, but its six daily credits are real.
+                  : _isQuotaExhausted
                   ? l10n.dailyQuotaExhaustedTitle
                   : (!energySnapshot.isPlusActive && _isCooldown)
                   ? l10n.energyCooldownTitle(_countdownString)
@@ -1063,8 +1080,12 @@ class _RitualPageState extends State<RitualPage>
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: (!energySnapshot.isPlusActive && (_isCooldown || _isQuotaExhausted)) ? 15.5 : null,
-                color: (!energySnapshot.isPlusActive && _isQuotaExhausted)
+                fontSize:
+                    (_isQuotaExhausted ||
+                        (!energySnapshot.isPlusActive && _isCooldown))
+                    ? 15.5
+                    : null,
+                color: _isQuotaExhausted
                     ? const Color(0xFFE27C7C)
                     : (!energySnapshot.isPlusActive && _isCooldown)
                     ? const Color(0xFFF3E0A2)
@@ -1120,6 +1141,7 @@ class _RitualPageState extends State<RitualPage>
       nowLocal: widget.dependencies.nowLocal(),
       isCooldownOverride: _isCooldown,
       isQuotaExhaustedOverride: _isQuotaExhausted,
+      isPlusActiveOverride: widget.dependencies.plusActive,
     );
   }
 
@@ -1137,6 +1159,7 @@ class _RitualPageState extends State<RitualPage>
         locale: widget.dependencies.localeController.locale,
         snapshot: snapshot,
         snapshotResolver: _currentEnergySnapshot,
+        plus: widget.dependencies.plus,
       );
     }
   }

@@ -6,6 +6,7 @@ import '../app_profile.dart';
 import '../analytics/analytics_event.dart';
 import '../analytics/reward_analytics_attempt.dart';
 import '../category_presentation.dart';
+import '../data/auspicious_hour.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../data/profile_edit_policy.dart';
@@ -87,7 +88,9 @@ class _HomePageState extends State<HomePage>
       <engine.ReadingCategory>{};
 
   bool _isModeLocked(DecisionMode mode) {
-    if (mode == DecisionMode.yesNo) return false;
+    if (mode == DecisionMode.yesNo || widget.dependencies.plusActive) {
+      return false;
+    }
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
     if (quota.isFreeEnergyReady(now)) return false;
@@ -95,7 +98,10 @@ class _HomePageState extends State<HomePage>
   }
 
   bool _isCategoryLocked(engine.ReadingCategory category) {
-    if (category == engine.ReadingCategory.general) return false;
+    if (category == engine.ReadingCategory.general ||
+        widget.dependencies.plusActive) {
+      return false;
+    }
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
     if (quota.isFreeEnergyReady(now)) return false;
@@ -214,17 +220,32 @@ class _HomePageState extends State<HomePage>
 
   ReadingEnergySnapshot _currentEnergySnapshot() {
     final now = widget.dependencies.nowLocal();
-    final auspicious = resolvePersonalizedAuspiciousWindow(
-      profile: _profile,
-      nowLocal: now,
-      locale: widget.dependencies.localeController.locale,
-    );
+    final plus = widget.dependencies.plusActive;
     return ReadingEnergySnapshot.fromQuota(
       quota: widget.dependencies.quotaManager,
       nowLocal: now,
-      auspiciousHourWindowOverride: auspicious.windowText,
-      auspiciousHourNoteOverride: auspicious.noteText,
+      isPlusActiveOverride: plus,
+      auspiciousHourWindowOverride: plus ? _auspiciousHour(now) : null,
     );
+  }
+
+  ({String key, String text})? _auspiciousCache;
+
+  /// Recomputed only when the hour, the birth date or the language changes;
+  /// the snapshot itself is rebuilt every second while a countdown runs.
+  String _auspiciousHour(DateTime now) {
+    final locale = widget.dependencies.localeController.locale;
+    final key =
+        '${now.year}-${now.month}-${now.day}T${now.hour}|'
+        '${_profile.birthDate.toIso8601String()}|${locale.tag}';
+    final cached = _auspiciousCache;
+    if (cached != null && cached.key == key) return cached.text;
+    final text = formatAuspiciousHour(
+      bestAuspiciousHourBranch(nowLocal: now, birthDate: _profile.birthDate),
+      locale,
+    );
+    _auspiciousCache = (key: key, text: text);
+    return text;
   }
 
   void _openPlusSheet() {
@@ -241,6 +262,7 @@ class _HomePageState extends State<HomePage>
         locale: widget.dependencies.localeController.locale,
         snapshot: snapshot,
         snapshotResolver: _currentEnergySnapshot,
+        plus: widget.dependencies.plus,
       );
     }
   }
@@ -267,6 +289,7 @@ class _HomePageState extends State<HomePage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    widget.dependencies.plus?.addListener(_onQuotaChanged);
     _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
     _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
     _loadDescription();
@@ -387,6 +410,7 @@ class _HomePageState extends State<HomePage>
       notifier.dispose();
     }
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+    widget.dependencies.plus?.removeListener(_onQuotaChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -554,11 +578,13 @@ class _HomePageState extends State<HomePage>
               ),
             ),
           ),
-          AdBannerSlot(
-            ads: widget.dependencies.adService,
-            placement: BannerPlacement.home,
-            analytics: widget.dependencies.analytics,
-          ),
+          // Plus is ad-free: no banner and no reserved blank slot.
+          if (!widget.dependencies.plusActive)
+            AdBannerSlot(
+              ads: widget.dependencies.adService,
+              placement: BannerPlacement.home,
+              analytics: widget.dependencies.analytics,
+            ),
         ],
       ),
     );

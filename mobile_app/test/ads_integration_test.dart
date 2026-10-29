@@ -294,6 +294,7 @@ void main() {
         await ask();
         ad.fail();
         await tester.pump();
+        await tester.pump(const Duration(milliseconds: 100));
         expect(granted(), 0);
         expect(notReady, findsOneWidget);
         await clearNotice();

@@ -79,6 +79,7 @@ void main() {
   testWidgets('the circle is not marooned behind a large empty gap', (
     tester,
   ) async {
+    tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     // The tall screen the gap was worst on.
     const size = Size(505, 897);

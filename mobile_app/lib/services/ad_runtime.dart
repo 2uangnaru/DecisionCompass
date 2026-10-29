@@ -108,6 +108,15 @@ abstract class AdService {
     String placement = 'reading',
   });
   void setForeground(bool value);
+
+  /// A verified Plus entitlement: no banner, no fullscreen ad, no loads.
+  /// Turning it off restores the ordinary free policy; it never shows an ad.
+  void setAdFree(bool value);
+
+  /// Claims the shared fullscreen guard for a non-ad overlay (store
+  /// checkout). False while an ad, UMP form or banner overlay holds it.
+  bool claimFullscreen();
+  void releaseFullscreen();
   void dispose();
 }
 
@@ -148,6 +157,12 @@ class NoOpAdService implements AdService {
   }) async => AdOutcome.skipped;
   @override
   void setForeground(bool value) {}
+  @override
+  void setAdFree(bool value) {}
+  @override
+  bool claimFullscreen() => true;
+  @override
+  void releaseFullscreen() {}
   @override
   void dispose() {}
 }
@@ -204,6 +219,7 @@ class ManagedAdService implements AdService {
       _disposed = false,
       _fullscreen = false;
   bool _bannerOverlay = false;
+  bool _adFree = false;
   final _presentation = ValueNotifier(const AdPresentationState());
   @override
   ValueListenable<AdPresentationState> get presentation => _presentation;
@@ -211,15 +227,48 @@ class ManagedAdService implements AdService {
     if (_disposed) return;
     final previous = _presentation.value;
     final busy = _fullscreen || _bannerOverlay;
-    if (previous.canRequestAds == _allowed &&
+    // Ad-free reads as "no permission" so banner slots drop their ad.
+    final canRequest = _allowed && !_adFree;
+    if (previous.canRequestAds == canRequest &&
         previous.foreground == _foreground &&
         previous.fullscreenBusy == busy)
       return;
     _presentation.value = AdPresentationState(
-      canRequestAds: _allowed,
+      canRequestAds: canRequest,
       foreground: _foreground,
       fullscreenBusy: busy,
     );
+  }
+
+  @override
+  void setAdFree(bool value) {
+    if (_disposed || value == _adFree) return;
+    _adFree = value;
+    // Invalidates cached ads and in-flight loads: a late success is
+    // discarded by its stale generation.
+    if (value) _clearSlots();
+    _publishPresentation();
+    if (!value) {
+      preloadInterstitial();
+      preloadRewarded();
+    }
+  }
+
+  @override
+  bool claimFullscreen() {
+    if (_disposed || _fullscreen || _bannerOverlay || _consentWork != null) {
+      return false;
+    }
+    _fullscreen = true;
+    _publishPresentation();
+    return true;
+  }
+
+  @override
+  void releaseFullscreen() {
+    if (_disposed || !_fullscreen) return;
+    _fullscreen = false;
+    _publishPresentation();
   }
 
   @override
@@ -406,7 +455,7 @@ class ManagedAdService implements AdService {
   }
 
   void _load(AdFormat format) {
-    if (_disposed || !_allowed || !_foreground) return;
+    if (_disposed || !_allowed || !_foreground || _adFree) return;
     final slot = _slots[format]!;
     if (slot.loading || slot.retry != null || _valid(slot)) return;
     final expired = slot.ad;
@@ -419,7 +468,11 @@ class ManagedAdService implements AdService {
     FullscreenAd? acceptedAd;
     _event('request', format);
     bool current() =>
-        !_disposed && _allowed && slot.loading && slot.generation == generation;
+        !_disposed &&
+        _allowed &&
+        !_adFree &&
+        slot.loading &&
+        slot.generation == generation;
     void failed(String reason) {
       if (!current()) return;
       slot.timeout?.cancel();
@@ -503,6 +556,7 @@ class ManagedAdService implements AdService {
 
   String? _commonSkip(AdFormat format) {
     if (_disposed) return 'disposed';
+    if (_adFree) return 'ad_free';
     if (!_foreground) return 'background';
     if (!_allowed) return 'consent_or_initialization';
     if (_fullscreen || _bannerOverlay) return 'fullscreen_busy';

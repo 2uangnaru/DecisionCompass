@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../app_locale.dart';
 import '../app_profile.dart';
+import '../billing/plus_entitlement.dart';
 import '../data/reading_quota_controller.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
@@ -134,6 +135,7 @@ class ReadingEnergySnapshot {
     required this.cooldownRemaining,
     required this.timeUntilMidnight,
     this.bonusTurns = 0,
+    this.dailyMax = freeDailyMax,
     this.isPlusActive = false,
     this.plusRemainingTurns = 6,
     this.auspiciousHourWindow,
@@ -162,6 +164,8 @@ class ReadingEnergySnapshot {
   /// Extra bonus turns earned via rewarded ads.
   final int bonusTurns;
 
+  /// Today's real daily limit from the quota: 3, or 6 with verified Plus.
+  final int dailyMax;
   /// Whether the reader has unlocked AstraCue Plus (VIP Pass) lifetime or active entitlement.
   final bool isPlusActive;
 
@@ -184,7 +188,7 @@ class ReadingEnergySnapshot {
 
   /// The 1-indexed turn number the reader is about to use on `RitualPage`
   /// (`1`, `2`, or `3`), or `3` when all Free turns are spent.
-  int get activeTurnNumber => (usedFreeTurns + 1).clamp(1, freeDailyMax);
+  int get activeTurnNumber => (usedFreeTurns + 1).clamp(1, dailyMax);
 
   static const ReadingEnergySnapshot initial = ReadingEnergySnapshot(
     usedFreeTurns: 0,
@@ -247,9 +251,17 @@ class ReadingEnergySnapshot {
       cooldownRemaining: cooldownRem,
       timeUntilMidnight: safeUntilMidnight,
       bonusTurns: quota.bonusReadings,
+      dailyMax: maxFree,
       isPlusActive: isPlus,
+      // The real Plus quota, so every screen shows the same 0..6 orbs.
       plusRemainingTurns:
-          plusRemainingTurnsOverride ?? (isPlus ? remaining : plusDailyMax),
+          plusRemainingTurnsOverride ??
+          (isPlus
+              ? (maxFree - quota.dailyFreeReadingsUsed(nowLocal)).clamp(
+                  0,
+                  plusDailyMax,
+                )
+              : plusDailyMax),
       auspiciousHourWindow: auspiciousHourWindowOverride,
       auspiciousHourNote: auspiciousHourNoteOverride,
     );
@@ -998,10 +1010,7 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
       localeName,
       snapshot.remainingFreeTurns,
     );
-    final freeMaxText = formatWholeNumber(
-      localeName,
-      ReadingEnergySnapshot.freeDailyMax,
-    );
+    final freeMaxText = formatWholeNumber(localeName, snapshot.dailyMax);
 
     final String statusLine;
     final Color statusColor;
@@ -1200,10 +1209,7 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
       localeName,
       snapshot.remainingFreeTurns,
     );
-    final freeMaxText = formatWholeNumber(
-      localeName,
-      ReadingEnergySnapshot.freeDailyMax,
-    );
+    final freeMaxText = formatWholeNumber(localeName, snapshot.dailyMax);
 
     final String statusLine;
     final Color statusColor;
@@ -2190,6 +2196,7 @@ Future<void> showAstraCuePlusSheet(
   required AppLocale locale,
   required ReadingEnergySnapshot snapshot,
   ReadingEnergySnapshot Function()? snapshotResolver,
+  PlusEntitlementController? plus,
 }) {
   return showModalBottomSheet<void>(
     context: context,
@@ -2200,6 +2207,7 @@ Future<void> showAstraCuePlusSheet(
       locale: locale,
       snapshot: snapshot,
       snapshotResolver: snapshotResolver,
+      plus: plus,
     ),
   );
 }
@@ -2212,11 +2220,16 @@ class AstraCuePlusSheet extends StatefulWidget {
     required this.locale,
     required this.snapshot,
     this.snapshotResolver,
+    this.plus,
   });
 
   final AppLocale locale;
   final ReadingEnergySnapshot snapshot;
   final ReadingEnergySnapshot Function()? snapshotResolver;
+
+  /// Billing and entitlement live outside this widget; it only binds the
+  /// existing CTA, Restore control and price text to them.
+  final PlusEntitlementController? plus;
 
   @override
   State<AstraCuePlusSheet> createState() => _AstraCuePlusSheetState();
@@ -2229,6 +2242,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   @override
   void initState() {
     super.initState();
+    widget.plus?.addListener(_onPlusChanged);
     if (widget.snapshotResolver != null) {
       _tickTimer = Timer.periodic(const Duration(seconds: 1), (_) {
         if (!mounted) return;
@@ -2239,8 +2253,29 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
     }
   }
 
+  void _onPlusChanged() {
+    if (mounted) setState(() {});
+  }
+
+  /// Pops only once the store sheet actually opened; a blocked checkout
+  /// (see [PlusEntitlementController.checkoutBlockReason]) leaves the sheet
+  /// as it is, since no blocked-state presentation is approved yet.
+  Future<void> _buy() async {
+    final plus = widget.plus;
+    if (plus == null) return;
+    final launched = await plus.buy();
+    if (launched && mounted) Navigator.of(context).pop();
+  }
+
+  void _restore() {
+    final plus = widget.plus;
+    if (plus != null) unawaited(plus.restore());
+    Navigator.of(context).pop();
+  }
+
   @override
   void dispose() {
+    widget.plus?.removeListener(_onPlusChanged);
     _tickTimer?.cancel();
     super.dispose();
   }
@@ -2248,15 +2283,17 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   @override
   Widget build(BuildContext context) {
     final copy = _PlusLocalizedCopy.forLocale(widget.locale);
+    // Store prices replace the preview text only when the store answered.
+    // No reference price is ever derived: without a store one, checkout
+    // stays blocked (unsupportedSaleClaims).
+    final product = widget.plus?.product;
+    final storePrice = product == null || product.isPreview ? null : product;
     final localeName = intlLocaleOf(context);
     final freeRemainingText = formatWholeNumber(
       localeName,
       _snapshot.remainingFreeTurns,
     );
-    final freeMaxText = formatWholeNumber(
-      localeName,
-      ReadingEnergySnapshot.freeDailyMax,
-    );
+    final freeMaxText = formatWholeNumber(localeName, _snapshot.dailyMax);
     final plusMaxText = formatWholeNumber(
       localeName,
       ReadingEnergySnapshot.plusDailyMax,
@@ -2489,33 +2526,13 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                   // Option 3 Primary Gold CTA Button with localized currency & -60% OFF badge
                   _Option3SaleCtaButton(
                     ctaPrefix: copy.sheetPrimaryCtaPrefix,
-                    originalPrice: copy.originalPriceFormatted,
-                    salePrice: copy.salePriceFormatted,
+                    originalPrice:
+                        storePrice?.referencePrice ??
+                        copy.originalPriceFormatted,
+                    salePrice: storePrice?.price ?? copy.salePriceFormatted,
                     saleBadgeLabel: copy.p1SaleOffBadge,
                     semanticsLabel: copy.sheetPrimaryCta,
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          backgroundColor: CompassColors.raised,
-                          behavior: SnackBarBehavior.floating,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(14),
-                            side: BorderSide(
-                              color: CompassColors.gold.withValues(alpha: 0.6),
-                            ),
-                          ),
-                          content: Text(
-                            copy.previewToastMessage,
-                            style: const TextStyle(
-                              color: CompassColors.text,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      );
-                    },
+                    onTap: _buy,
                   ),
                   const SizedBox(height: 8),
 
@@ -2526,7 +2543,8 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         TextButton(
-                          onPressed: () => Navigator.of(context).pop(),
+                          key: const Key('astracue_plus_restore'),
+                          onPressed: _restore,
                           style: TextButton.styleFrom(
                             foregroundColor: CompassColors.secondary,
                             padding: const EdgeInsets.symmetric(

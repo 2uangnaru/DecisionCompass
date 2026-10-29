@@ -129,6 +129,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    widget.dependencies.plus?.addListener(_onPlusChanged);
     final local = widget.dependencies.nowLocal();
     _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
@@ -159,6 +160,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     _dayChangeTimer?.cancel();
     _cooldownTimer?.cancel();
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+    widget.dependencies.plus?.removeListener(_onPlusChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -196,12 +198,22 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   void _scheduleCooldownTick() {
     _cooldownTimer?.cancel();
+    var previous = _currentEnergySnapshot();
     _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       final snap = _currentEnergySnapshot();
-      if (snap.isCoolingDown || snap.isDailyFreeExhausted) {
+      // Repaint the final transition too: the fresh snapshot is already
+      // ready, but the screen can still be displaying the previous countdown.
+      // Counts also cover a quota change followed by expiry before this tick.
+      if (snap.isCoolingDown ||
+          snap.isDailyFreeExhausted ||
+          previous.isCoolingDown ||
+          previous.isDailyFreeExhausted ||
+          snap.remainingFreeTurns != previous.remainingFreeTurns ||
+          snap.bonusTurns != previous.bonusTurns) {
         setState(() {});
       }
+      previous = snap;
     });
   }
 
@@ -226,10 +238,23 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       locked = widget.autoSave && widget.billableResult
           ? await locks.admit(_guidanceKey)
           : await locks.isLocked(_guidanceKey);
+      // Plus bypasses the gate; the reading stays open after a revocation.
+      if (locked && widget.dependencies.plusActive) {
+        await locks.unlock(_guidanceKey);
+        locked = false;
+      }
     } catch (_) {
       locked = false;
     }
     if (mounted) setState(() => _guidanceLocked = locked);
+  }
+
+  void _onPlusChanged() {
+    if (!mounted) return;
+    if (widget.dependencies.plusActive && _guidanceLocked == true) {
+      unawaited(_resolveGuidanceLock());
+    }
+    setState(() {});
   }
 
   /// Opens this reading's guidance only on the SDK's earned callback, and
@@ -275,6 +300,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     return ReadingEnergySnapshot.fromQuota(
       quota: widget.dependencies.quotaManager,
       nowLocal: widget.dependencies.nowLocal(),
+      isPlusActiveOverride: widget.dependencies.plusActive,
     );
   }
 
@@ -292,6 +318,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
         locale: widget.dependencies.localeController.locale,
         snapshot: snapshot,
         snapshotResolver: _currentEnergySnapshot,
+        plus: widget.dependencies.plus,
       );
     }
   }

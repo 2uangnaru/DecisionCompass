@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../billing/plus_entitlement.dart';
+
 /// The credit actually spent by a successful serialized quota commit.
 enum ReadingEntitlementSource { free, bonus }
 
@@ -18,6 +20,8 @@ abstract interface class ReadingQuotaController implements Listenable {
   String remainingTimeString(DateTime now);
   int get bonusReadings;
   int dailyFreeReadingsUsed(DateTime now);
+
+  /// Today's daily credit limit: 3 free, 6 with a verified Plus.
   int get maxDailyFreeReadings;
 
   /// Whether natural daily free energy is currently ready (not in cooldown and not exhausted).
@@ -41,16 +45,43 @@ class ReadingQuotaUnavailableException implements Exception {
 }
 
 /// Persistent implementation backed by [SharedPreferences].
+///
+/// Plus changes only the limit (6 instead of 3) and removes the energy
+/// cooldown. Usage is never rewritten on upgrade, restore or revocation, so
+/// two credits used before upgrading leave four, and a revocation after five
+/// leaves none rather than refilling.
 class SharedPreferencesReadingQuotaController extends ChangeNotifier
     implements ReadingQuotaController {
   SharedPreferencesReadingQuotaController({
-    this.maxDailyFreeReadings = 3,
+    int maxDailyFreeReadings = 3,
+    this.plusDailyReadings = 6,
     this.cooldownDuration = const Duration(hours: 3),
-  });
+    this.plus,
+  }) : _freeDailyReadings = maxDailyFreeReadings {
+    plus?.addListener(notifyListeners);
+  }
+
+  final int _freeDailyReadings;
+  final int plusDailyReadings;
+  final PlusAccess? plus;
+  bool get _plusActive => plus?.isActive ?? false;
 
   @override
-  final int maxDailyFreeReadings;
+  int get maxDailyFreeReadings =>
+      _plusActive ? plusDailyReadings : _freeDailyReadings;
   final Duration cooldownDuration;
+
+  /// The reading-energy recharge only; profile edits and periods keep theirs.
+  bool _coolingDown(DateTime now) {
+    if (_plusActive || _lastReadingTime == null) return false;
+    return now.difference(_lastReadingTime!) < cooldownDuration;
+  }
+
+  @override
+  void dispose() {
+    plus?.removeListener(notifyListeners);
+    super.dispose();
+  }
 
   static const _keyLastReadingEpochMs = 'reading_quota_last_epoch_ms';
   static const _keyDateString = 'reading_quota_date_string';
@@ -109,22 +140,14 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
     if (_bonusReadings > 0) return true;
     if (_storedDateString != _dateKey(now.toLocal())) return true;
     if (_usedToday >= maxDailyFreeReadings) return false;
-    if (_lastReadingTime != null) {
-      final elapsed = now.difference(_lastReadingTime!);
-      if (elapsed < cooldownDuration) return false;
-    }
-    return true;
+    return !_coolingDown(now);
   }
 
   @override
   bool isFreeEnergyReady(DateTime now) {
     if (_storedDateString != _dateKey(now.toLocal())) return true;
     if (_usedToday >= maxDailyFreeReadings) return false;
-    if (_lastReadingTime != null) {
-      final elapsed = now.difference(_lastReadingTime!);
-      if (elapsed < cooldownDuration) return false;
-    }
-    return true;
+    return !_coolingDown(now);
   }
 
   @override
@@ -143,12 +166,9 @@ class SharedPreferencesReadingQuotaController extends ChangeNotifier
     final midnight = DateTime(local.year, local.month, local.day + 1);
     final untilMidnight = midnight.difference(local);
     if (_usedToday >= maxDailyFreeReadings) return untilMidnight;
-    if (_lastReadingTime != null) {
-      final elapsed = now.difference(_lastReadingTime!);
-      if (elapsed < cooldownDuration) {
-        final wait = cooldownDuration - elapsed;
-        return wait < untilMidnight ? wait : untilMidnight;
-      }
+    if (_coolingDown(now)) {
+      final wait = cooldownDuration - now.difference(_lastReadingTime!);
+      return wait < untilMidnight ? wait : untilMidnight;
     }
     return Duration.zero;
   }

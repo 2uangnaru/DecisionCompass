@@ -1920,6 +1920,7 @@ void main() {
 
     testWidgets('it slides in from the left as it fades up, and fades out '
         'where it is', (tester) async {
+      tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
       final rig = makeRig();
       await openProfile(
         tester,

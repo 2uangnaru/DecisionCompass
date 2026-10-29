@@ -108,9 +108,11 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   void initState() {
     super.initState();
     _lifecycle = AppLifecycleListener(
-      onStateChange: (state) => widget.dependencies.adService.setForeground(
-        state == AppLifecycleState.resumed,
-      ),
+      onStateChange: (state) {
+        final resumed = state == AppLifecycleState.resumed;
+        widget.dependencies.adService.setForeground(resumed);
+        if (resumed) widget.dependencies.plus?.appResumed();
+      },
       onDetach: widget.onDetached,
     );
     // Held before the first frame in `main`, but a test may hand over a
