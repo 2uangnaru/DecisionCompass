@@ -279,12 +279,21 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   Future<void> _openPlusSheet() async {
-    await showAstraCuePlusSheet(
-      context,
-      locale: widget.dependencies.localeController.locale,
-      snapshot: _currentEnergySnapshot(),
-      snapshotResolver: _currentEnergySnapshot,
-    );
+    final snapshot = _currentEnergySnapshot();
+    if (snapshot.isPlusActive) {
+      await showAstraCueVipStatusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+      );
+    } else {
+      await showAstraCuePlusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+        snapshotResolver: _currentEnergySnapshot,
+      );
+    }
   }
 
   /// A reading's own `readingKey` varies by profile, time segment, period
@@ -510,10 +519,10 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                     locale: widget.dependencies.localeController.locale,
                     reading: reading,
                   ),
-                  blurred: _guidanceLocked != false,
-                  onWatchAd: _guidanceLocked == true
-                      ? _watchAdForGuidance
-                      : null,
+                  blurred: _currentEnergySnapshot().isPlusActive ? false : (_guidanceLocked != false),
+                  onWatchAd: _currentEnergySnapshot().isPlusActive
+                      ? null
+                      : (_guidanceLocked == true ? _watchAdForGuidance : null),
                 ),
                 if (_period != TimePeriod.now &&
                     reading.luckyWindows.isNotEmpty) ...[
@@ -521,14 +530,16 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   _LuckyWindows(reading: reading, period: _period),
                 ],
               ],
-              const SizedBox(height: 18),
-              AnalysisEnergyPlusCard(
-                key: const Key('result_energy_plus_card'),
-                snapshot: _currentEnergySnapshot(),
-                locale: widget.dependencies.localeController.locale,
-                isPostReadingResult: true,
-                onTapPlus: _openPlusSheet,
-              ),
+              if (!_currentEnergySnapshot().isPlusActive) ...[
+                const SizedBox(height: 18),
+                AnalysisEnergyPlusCard(
+                  key: const Key('result_energy_plus_card'),
+                  snapshot: _currentEnergySnapshot(),
+                  locale: widget.dependencies.localeController.locale,
+                  isPostReadingResult: true,
+                  onTapPlus: _openPlusSheet,
+                ),
+              ],
               const SizedBox(height: 16),
               FilledButton.icon(
                 key: const Key('result_try_another'),

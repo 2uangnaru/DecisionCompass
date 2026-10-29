@@ -219,12 +219,21 @@ class _HomePageState extends State<HomePage>
       );
 
   void _openPlusSheet() {
-    showAstraCuePlusSheet(
-      context,
-      locale: widget.dependencies.localeController.locale,
-      snapshot: _currentEnergySnapshot(),
-      snapshotResolver: _currentEnergySnapshot,
-    );
+    final snapshot = _currentEnergySnapshot();
+    if (snapshot.isPlusActive) {
+      showAstraCueVipStatusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+      );
+    } else {
+      showAstraCuePlusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+        snapshotResolver: _currentEnergySnapshot,
+      );
+    }
   }
 
   /// The index of today's rotating description, once the saved deck has been
@@ -622,7 +631,10 @@ class _HomePageState extends State<HomePage>
               child: AnimatedOpacity(
                 opacity: _isSettingsOpen ? 0.0 : 1.0,
                 duration: const Duration(milliseconds: 180),
-                child: AstraCuePlusHeaderBadge(onTap: _openPlusSheet),
+                child: AstraCuePlusHeaderBadge(
+                  onTap: _openPlusSheet,
+                  isVip: _currentEnergySnapshot().isPlusActive,
+                ),
               ),
             ),
             const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
