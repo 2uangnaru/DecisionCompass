@@ -18,6 +18,7 @@ void main() {
   testWidgets('orbit phase continues through the old 14-second loop seam', (
     tester,
   ) async {
+    tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(body: OrbitVisual(labels: ['BaZi', 'ZiWei'])),

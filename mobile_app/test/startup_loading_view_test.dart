@@ -10,6 +10,7 @@ import 'reading_test_rig.dart';
 
 void main() {
   testWidgets('the three dots orbit below the app name', (tester) async {
+    tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
     await tester.pumpWidget(const MaterialApp(home: StartupLoadingView()));
 
     expect(find.text('AstraCue'), findsOneWidget);
@@ -85,6 +86,7 @@ void main() {
   testWidgets('startup prepares data behind the animated screen', (
     tester,
   ) async {
+    tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
     final preparation = Completer<void>();
     final rig = ReadingTestRig();
     await tester.pumpWidget(

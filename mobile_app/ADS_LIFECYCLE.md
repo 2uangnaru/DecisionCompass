@@ -124,6 +124,18 @@ If an ad is unavailable/fails, show a localized short notice; never fabricate
 a successful view or bonus. NoOp grants nothing. Tests/previews needing a
 reward must explicitly inject `TestRewardAdService` from the test harness.
 
+## Plus ad-free (2026-10-29)
+
+`AdService.setAdFree(true)` follows the verified Plus entitlement: cached
+ads are disposed, in-flight loads are discarded by generation, no request
+is made, every fullscreen candidate skips with reason `ad_free`, and banner
+slots lose permission (their AdWidget is removed). Revocation preloads as a
+free user would; nothing is shown on resume. Store checkout claims the shared
+fullscreen guard (`claimFullscreen`), so no ad or UMP form can overlap it;
+pending, update, failure or app resume releases it. Plus also bypasses the
+mode/category/period and Action Guidance rewarded gates. See
+`PLUS_BILLING.md`.
+
 ## Action Guidance lock (2026-10-28)
 
 The first **three** new usable readings on a device show Action Guidance

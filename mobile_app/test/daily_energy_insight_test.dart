@@ -485,6 +485,7 @@ void main() {
 
   group('the discovery orbit', () {
     testWidgets('plays once, then not again on the same date', (tester) async {
+      tester.platformDispatcher.clearAccessibilityFeaturesTestValue();
       final store = InMemoryDailyEnergyInsightStore.ordered();
       final rig = ReadingTestRig(
         response: fixtureResponse('ready_yes_no_now.json'),
@@ -499,7 +500,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(orbit, findsOneWidget, reason: 'the ring should run once');
-      await tester.pumpAndSettle();
+      // Bounded, not pumpAndSettle: the Plus artwork on Home never settles
+      // with motion on. The ring itself lasts 1.3 s.
+      await tester.pump(const Duration(milliseconds: 1500));
       expect(orbit, findsNothing, reason: 'and then stop');
 
       // A remount on the same date does not replay it.
@@ -515,7 +518,7 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
       expect(orbit, findsNothing);
-      await tester.pumpAndSettle();
+      await tester.pump(const Duration(milliseconds: 1500));
     });
 
     testWidgets('a level change on the same date does not replay it', (

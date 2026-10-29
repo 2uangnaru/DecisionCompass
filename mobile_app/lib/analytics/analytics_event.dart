@@ -55,6 +55,7 @@ class AnalyticsEvent {
       'reveal',
     };
     const reasons = {
+      'ad_free',
       'policy_unavailable',
       'first_daily_flow',
       'interstitial_gap',

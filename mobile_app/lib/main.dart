@@ -13,6 +13,9 @@ import 'package:flutter/services.dart' show MethodChannel, rootBundle;
 import 'app.dart';
 import 'analytics/analytics_service.dart';
 import 'analytics/firebase_analytics_sink.dart';
+import 'billing/plus_billing.dart';
+import 'billing/plus_demo.dart';
+import 'billing/plus_entitlement.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
 import 'data/engine_daily_brief_provider.dart';
@@ -61,12 +64,25 @@ Future<void> main() async {
   // Optional telemetry must not extend the startup ritual or hold Home back.
   // The consent control is disabled until this background load settles.
   unawaited(analytics.ensureLoaded());
-  final quotaManager = SharedPreferencesReadingQuotaController();
+  final adService = AdMobService(analytics: analytics);
+  final plusConfig = PlusBillingConfig.fromEnvironment();
+  // Debug + PLUS_DEMO_BILLING only; a release build always uses the store.
+  final plusDemo = plusDemoBillingEnabled();
+  final plus = PlusEntitlementController(
+    store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),
+    verifier: plusDemo ? const DemoPlusVerifier() : plusVerifierFor(plusConfig),
+    productId: plusConfig.productId,
+    ads: adService,
+    // The approved CTA's reference price and discount are preview copy; the
+    // store build stays blocked on them until real offer data exists.
+    requireSupportedSaleClaims: !plusDemo,
+    acceptDemoProofs: plusDemo,
+  );
+  final quotaManager = SharedPreferencesReadingQuotaController(plus: plus);
   final localeController = LocaleController(
     store: const SharedPreferencesLocaleStore(),
     analytics: analytics,
   );
-  final adService = AdMobService(analytics: analytics);
   // Load while the first Flutter frame animates. The app keeps the language-
   // neutral startup view until both tasks finish, so saved languages never
   // flash through English content.
@@ -74,6 +90,8 @@ Future<void> main() async {
     initializeDateFormatting(),
     localeController.ensureLoaded(),
     quotaManager.ensureLoaded(),
+    // Local only: a Plus owner's first frame is already ad-free and at 6.
+    plus.loadCached(),
   ]);
 
   runApp(
@@ -83,6 +101,7 @@ Future<void> main() async {
       onContentReady: () {
         // UMP may show a native form; only start after the first content frame.
         unawaited(adService.initialize());
+        unawaited(plus.start());
         if (defaultTargetPlatform == TargetPlatform.android) {
           unawaited(
             const MethodChannel('astracue/startup')
@@ -111,6 +130,7 @@ Future<void> main() async {
         guidanceLocks: GuidanceLockStore(
           backup: const BlockStoreCounterBackup(),
         ),
+        plus: plus,
       ),
     ),
   );

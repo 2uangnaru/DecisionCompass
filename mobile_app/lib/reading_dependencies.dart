@@ -1,4 +1,5 @@
 import 'analytics/analytics_service.dart';
+import 'billing/plus_entitlement.dart';
 import 'data/current_context_provider.dart';
 import 'data/daily_brief_provider.dart';
 import 'data/daily_energy_insight_deck.dart';
@@ -28,6 +29,7 @@ class ReadingDependencies {
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const NoOpAdService(),
     this.guidanceLocks,
+    this.plus,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -56,6 +58,11 @@ class ReadingDependencies {
 
   /// Null (tests, previews) never locks Action Guidance.
   final GuidanceLockStore? guidanceLocks;
+
+  /// The single Plus entitlement source. Null (tests, previews) is never
+  /// active and cannot check out.
+  final PlusEntitlementController? plus;
+  bool get plusActive => plus?.isActive ?? false;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

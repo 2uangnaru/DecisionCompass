@@ -129,6 +129,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    widget.dependencies.plus?.addListener(_onPlusChanged);
     final local = widget.dependencies.nowLocal();
     _today = '${local.year}-${local.month}-${local.day}';
     _scheduleDayChange();
@@ -159,6 +160,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     _dayChangeTimer?.cancel();
     _cooldownTimer?.cancel();
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+    widget.dependencies.plus?.removeListener(_onPlusChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -226,10 +228,23 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       locked = widget.autoSave && widget.billableResult
           ? await locks.admit(_guidanceKey)
           : await locks.isLocked(_guidanceKey);
+      // Plus bypasses the gate; the reading stays open after a revocation.
+      if (locked && widget.dependencies.plusActive) {
+        await locks.unlock(_guidanceKey);
+        locked = false;
+      }
     } catch (_) {
       locked = false;
     }
     if (mounted) setState(() => _guidanceLocked = locked);
+  }
+
+  void _onPlusChanged() {
+    if (!mounted) return;
+    if (widget.dependencies.plusActive && _guidanceLocked == true) {
+      unawaited(_resolveGuidanceLock());
+    }
+    setState(() {});
   }
 
   /// Opens this reading's guidance only on the SDK's earned callback, and
@@ -284,6 +299,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
       locale: widget.dependencies.localeController.locale,
       snapshot: _currentEnergySnapshot(),
       snapshotResolver: _currentEnergySnapshot,
+      plus: widget.dependencies.plus,
     );
   }
 

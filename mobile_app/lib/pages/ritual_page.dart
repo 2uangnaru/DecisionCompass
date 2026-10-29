@@ -219,6 +219,15 @@ class _RitualPageState extends State<RitualPage>
 
   void _onQuotaChanged() {
     if (mounted) {
+      if (widget.dependencies.plusActive && widget.isCooldown == null) {
+        // Plus removes the energy cooldown at once; the ritual must not keep
+        // showing a wait (or an ad) captured before the purchase.
+        final now = widget.dependencies.nowLocal();
+        _isQuotaExhaustedOverride = widget.isQuotaExhausted;
+        _isCooldown =
+            _isQuotaExhausted ||
+            widget.dependencies.quotaManager.isCooldown(now);
+      }
       if (_isPeriodLocked(_period)) {
         _period = TimePeriod.now;
       }
@@ -235,7 +244,10 @@ class _RitualPageState extends State<RitualPage>
       _periodTriggers.putIfAbsent(p, () => ValueNotifier<int>(0));
 
   bool _isPeriodLocked(TimePeriod period) {
-    if (period == TimePeriod.now) return false;
+    // Plus unlocks still-available periods; elapsed ones stay muted elsewhere.
+    if (period == TimePeriod.now || widget.dependencies.plusActive) {
+      return false;
+    }
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
     final inCooldown = widget.isCooldown ?? _isCooldown;
@@ -405,6 +417,7 @@ class _RitualPageState extends State<RitualPage>
     )..repeat(reverse: true);
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
+    widget.dependencies.plus?.addListener(_onQuotaChanged);
     _resolveTimezone();
   }
 
@@ -423,6 +436,7 @@ class _RitualPageState extends State<RitualPage>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     widget.dependencies.quotaManager.removeListener(_onQuotaChanged);
+    widget.dependencies.plus?.removeListener(_onQuotaChanged);
     _periodRefreshTimer?.cancel();
     _countdownTimer?.cancel();
     _noticeTimer?.cancel();
@@ -1072,14 +1086,18 @@ class _RitualPageState extends State<RitualPage>
             ),
             const SizedBox(height: 5),
             Text(
-              (_isCooldown || _isQuotaExhausted)
+              // A Plus owner is never asked to watch an ad; with every
+              // credit spent, the existing exhausted title stands alone.
+              (_isCooldown || _isQuotaExhausted) &&
+                      !widget.dependencies.plusActive
                   ? l10n.watchAdPrompt
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(fontSize: 12.5),
             ),
-            if (_isCooldown || _isQuotaExhausted) ...[
+            if ((_isCooldown || _isQuotaExhausted) &&
+                !widget.dependencies.plusActive) ...[
               SizedBox(height: compact ? 10 : 12),
               WatchAdButton(
                 key: const Key('ritual_watch_ad_button'),
@@ -1126,6 +1144,7 @@ class _RitualPageState extends State<RitualPage>
       locale: widget.dependencies.localeController.locale,
       snapshot: _currentEnergySnapshot(),
       snapshotResolver: _currentEnergySnapshot,
+      plus: widget.dependencies.plus,
     );
   }
 

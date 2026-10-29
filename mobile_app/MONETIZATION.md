@@ -49,6 +49,14 @@ These cover the fourth-use refusal, local-day accounting, the three-hour boundar
   credit persists immediately; dismissing an unearned ad grants nothing.
 - Preload/retry/expiry/UMP details and verification: `ADS_LIFECYCLE.md`.
 
+## AstraCue Plus (2026-10-29)
+
+A verified Plus entitlement raises the daily limit from 3 to 6 and removes
+the energy cooldown inside this controller, so Loading and the serialized
+commit enforce it without any UI. Usage is never rewritten on upgrade,
+restore or revocation; bonus credits are unchanged and still spent first.
+Billing, verification and the currently blocked checkout: `PLUS_BILLING.md`.
+
 ## Still outside this change
 
 Only test AdMob IDs are configured. UMP is wired, but requires real account
