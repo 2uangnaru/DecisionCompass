@@ -96,6 +96,37 @@ void main() {
     expect(differs, isTrue);
   });
 
+  test('the day master separates readers who share a natal day branch', () {
+    // Twelve days apart: the same day branch, a different day stem.
+    final a = DateTime(2001, 2, 12);
+    final b = a.add(const Duration(days: 12));
+    expect(natalBranch(a), natalBranch(b));
+    var differs = false;
+    for (var day = 0; day < 60 && !differs; day++) {
+      final at = DateTime(2026, 10, 1 + day, 6);
+      differs =
+          bestAuspiciousHourBranch(nowLocal: at, birthDate: a) !=
+          bestAuspiciousHourBranch(nowLocal: at, birthDate: b);
+    }
+    expect(differs, isTrue);
+  });
+
+  test('the window no longer repeats every six days', () {
+    for (final birth in births) {
+      final seq = [
+        for (var day = 0; day < 60; day++)
+          bestAuspiciousHourBranch(
+            nowLocal: DateTime(2026, 10, 1 + day, 6),
+            birthDate: birth,
+          ),
+      ];
+      final repeatsEverySix = [
+        for (var i = 6; i < 60; i++) seq[i] == seq[i - 6],
+      ].every((same) => same);
+      expect(repeatsEverySix, isFalse, reason: '$birth');
+    }
+  });
+
   test('formats the window with the hour name where the locale has one', () {
     expect(
       formatAuspiciousHour(7, AppLocale.vietnamese),

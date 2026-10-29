@@ -176,8 +176,12 @@ and discount (or one backed by a real store offer), then set
 - Home's Hoàng Đạo tile: `lib/data/auspicious_hour.dart`. The almanac's own
   hour-god rule marks six double-hours a day as Hoàng Đạo; among the waking
   ones (05:00–21:00) a clash (六冲) with the natal day branch is dropped, a
-  window still ahead today beats a past one, then 六合 > 三合 > neutral, then
-  earlier. Never tomorrow's. Shown as `13:00 — 15:00 (Mùi)` with the hour
+  window still ahead today beats a past one, then the highest affinity with
+  the natal day pillar, then earlier. Affinity = branch (六合 2, 三合 1) +
+  hour stem element against the day master (印 generates it 2, 比 same 1,
+  官杀 controls it -1). The hour stem follows the day stem, so a reader's
+  window repeats every 30 days instead of 6; between readers a day still
+  has only about four waking Hoàng Đạo windows to share. Never tomorrow's. Shown as `13:00 — 15:00 (Mùi)` with the hour
   name in vi/zh/ja/ko; the note keeps the locale's default copy. A symbolic
   convention, not a prediction. The locale's hard-coded default window is
   now only reached if no window is passed (not on Home while Plus is active).
