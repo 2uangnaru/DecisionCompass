@@ -135,6 +135,129 @@ void main() {
           expectNoLayoutTrouble(tester, 'AnalysisEnergyPlusCard $at');
         },
       );
+
+      testWidgets(
+        'HomeEmbeddedEnergyTray VIP Option 2 (VIP Pass + Auspicious Hour) renders cleanly, $at',
+        (tester) async {
+          useScreen(tester, size: narrow, textScale: scale);
+
+          await tester.pumpWidget(
+            localizedApp(
+              locale: locale,
+              home: Scaffold(
+                body: HomeEmbeddedEnergyTray(
+                  locale: locale,
+                  snapshot: const ReadingEnergySnapshot(
+                    usedFreeTurns: 0,
+                    remainingFreeTurns: 3,
+                    cooldownRemaining: Duration.zero,
+                    timeUntilMidnight: Duration(hours: 8),
+                    isPlusActive: true,
+                    plusRemainingTurns: 6,
+                    auspiciousHourWindow: '13:00 — 15:00',
+                  ),
+                  onTapPlus: () {},
+                ),
+              ),
+            ),
+          );
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 300));
+          expectNoLayoutTrouble(tester, 'HomeEmbeddedEnergyTray VIP $at');
+
+          expect(find.byKey(const Key('home_vip_energy_cell')), findsOneWidget);
+          expect(find.byKey(const Key('home_auspicious_hour_cell')), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'AstraCueVipStatusSheet renders cleanly without overflow, $at',
+        (tester) async {
+          useScreen(tester, size: narrow, textScale: scale);
+
+          await tester.pumpWidget(
+            localizedApp(
+              locale: locale,
+              home: Scaffold(
+                body: Center(
+                  child: AstraCueVipStatusSheet(
+                    locale: locale,
+                    snapshot: const ReadingEnergySnapshot(
+                      usedFreeTurns: 0,
+                      remainingFreeTurns: 3,
+                      cooldownRemaining: Duration.zero,
+                      timeUntilMidnight: Duration(hours: 8),
+                      isPlusActive: true,
+                      plusRemainingTurns: 6,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 300));
+          expectNoLayoutTrouble(tester, 'AstraCueVipStatusSheet $at');
+
+          expect(find.byKey(const Key('astracue_vip_status_sheet')), findsOneWidget);
+          expect(find.byKey(const Key('astracue_vip_status_cta')), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'AstraCuePlusHeaderBadge in VIP mode renders cleanly, $at',
+        (tester) async {
+          useScreen(tester, size: narrow, textScale: scale);
+
+          await tester.pumpWidget(
+            localizedApp(
+              locale: locale,
+              home: Scaffold(
+                body: Center(
+                  child: AstraCuePlusHeaderBadge(
+                    isVip: true,
+                    onTap: () {},
+                  ),
+                ),
+              ),
+            ),
+          );
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 300));
+          expectNoLayoutTrouble(tester, 'AstraCuePlusHeaderBadge VIP $at');
+          expect(find.byKey(const Key('home_plus_button')), findsOneWidget);
+        },
+      );
+
+      testWidgets(
+        'AnalysisEnergyPlusCard is hidden when VIP is active, $at',
+        (tester) async {
+          useScreen(tester, size: narrow, textScale: scale);
+
+          await tester.pumpWidget(
+            localizedApp(
+              locale: locale,
+              home: Scaffold(
+                body: AnalysisEnergyPlusCard(
+                  locale: locale,
+                  snapshot: const ReadingEnergySnapshot(
+                    usedFreeTurns: 0,
+                    remainingFreeTurns: 3,
+                    cooldownRemaining: Duration.zero,
+                    timeUntilMidnight: Duration(hours: 8),
+                    isPlusActive: true,
+                    plusRemainingTurns: 6,
+                  ),
+                  onTapPlus: () {},
+                ),
+              ),
+            ),
+          );
+          await tester.pump();
+          expectNoLayoutTrouble(tester, 'AnalysisEnergyPlusCard VIP $at');
+          expect(find.byType(SizedBox), findsWidgets);
+        },
+      );
     }
   }
 }

@@ -8,20 +8,26 @@ import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/billing/plus_billing.dart';
 import 'package:decision_compass/billing/plus_entitlement.dart';
+import 'package:decision_compass/data/auspicious_hour.dart';
 import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/reading_quota_controller.dart';
+import 'package:decision_compass/l10n/app_localizations.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/home_page.dart';
 import 'package:decision_compass/pages/loading_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
+import 'package:decision_compass/services/ad_policy.dart';
+import 'package:decision_compass/services/ad_runtime.dart';
 import 'package:decision_compass/widgets/astracue_plus_ui.dart';
 import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'ads_test_fakes.dart' show MemoryAdPolicyStore;
+import 'banner_test_fakes.dart' show FakeBannerBackend;
 import 'plus_billing_test.dart'
     show FakePlusStore, FakeVerifier, RecordingAds, update;
 import 'reading_test_rig.dart';
@@ -141,6 +147,7 @@ void main() {
     await settle(tester);
     expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
     expect(find.byType(AdOptionBadge), findsNothing);
+    expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -202,6 +209,10 @@ void main() {
     await settle(tester);
     expect(
       find.byKey(const Key('result_guidance_watch_ad_button')),
+      findsNothing,
+    );
+    expect(
+      find.byKey(const Key('result_energy_plus_card'), skipOffstage: false),
       findsNothing,
     );
     final key = '${reading.readingKey!}|${reading.mode.toJson()}';
@@ -280,4 +291,101 @@ void main() {
     expect(plus.isActive, isFalse);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('Banner: Plus leaves no banner or blank slot on Home and '
+      'Ritual, including after a purchase mid-screen', (tester) async {
+    useScreen(tester, size: const Size(393, 900));
+    final ads = ManagedAdService(
+      backend: FakeBannerBackend(),
+      policy: AdPolicy(store: MemoryAdPolicyStore()),
+    );
+    final plus = controller(requireClaims: false);
+    unawaited(plus.start());
+    await tester.pump();
+    await tester.pump();
+    final rig = ReadingTestRig(
+      quotaManager: FakeReadingQuotaController(),
+      adService: ads,
+      plus: plus,
+    );
+    final slot = find.byKey(const Key('banner_layout_slot'));
+    await tester.pumpWidget(
+      localizedApp(
+        home: HomePage(profile: _profile, dependencies: rig.dependencies),
+      ),
+    );
+    await settle(tester);
+    expect(slot, findsOneWidget, reason: 'free users keep the banner slot');
+    store.emit(update(PlusPurchaseStatus.purchased));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump();
+    }
+    await settle(tester);
+    expect(plus.isActive, isTrue);
+    expect(slot, findsNothing);
+    await tester.pumpWidget(ritual(rig));
+    await settle(tester);
+    expect(slot, findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+    ads.dispose();
+    await tester.pump();
+  });
+
+  testWidgets('VIP: Home shows the VIP badge, the real remaining credits '
+      'and a computed Hoàng Đạo hour', (tester) async {
+    useScreen(tester, size: const Size(393, 900));
+    final rig = ReadingTestRig(
+      quotaManager: _PlusQuota(initialUsed: 2),
+      plus: await activePlus(tester),
+    );
+    await tester.pumpWidget(
+      localizedApp(
+        home: HomePage(profile: _profile, dependencies: rig.dependencies),
+      ),
+    );
+    await settle(tester);
+    expect(
+      tester
+          .widget<AstraCuePlusHeaderBadge>(find.byType(AstraCuePlusHeaderBadge))
+          .isVip,
+      isTrue,
+    );
+    final orbs = find.byType(AstralVipGoldOrbsRow, skipOffstage: false);
+    expect(orbs, findsOneWidget);
+    expect(tester.widget<AstralVipGoldOrbsRow>(orbs).remainingTurns, 4);
+    final hour = formatAuspiciousHour(
+      bestAuspiciousHourBranch(
+        nowLocal: rig.dependencies.nowLocal(),
+        birthDate: _profile.birthDate,
+      ),
+      rig.dependencies.localeController.locale,
+    );
+    expect(find.text(hour, skipOffstage: false), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('VIP: six of six spent reads as exhausted, with no ad', (
+    tester,
+  ) async {
+    useScreen(tester, size: const Size(393, 900));
+    final rig = ReadingTestRig(
+      quotaManager: _PlusQuota(initialUsed: 6),
+      plus: await activePlus(tester),
+    );
+    await tester.pumpWidget(ritual(rig));
+    await settle(tester);
+    final title = find.byKey(const Key('ritual_ready_title'));
+    final l10n = AppLocalizations.of(tester.element(title));
+    expect(tester.widget<Text>(title).data, l10n.dailyQuotaExhaustedTitle);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
+    expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+}
+
+/// The Plus quota's six daily credits, without the 3-hour cooldown.
+class _PlusQuota extends FakeReadingQuotaController {
+  _PlusQuota({super.initialUsed});
+  @override
+  int get maxDailyFreeReadings => 6;
 }

@@ -811,11 +811,13 @@ class _RitualPageState extends State<RitualPage>
               },
             ),
           ),
-          AdBannerSlot(
-            ads: widget.dependencies.adService,
-            placement: BannerPlacement.reveal,
-            analytics: widget.dependencies.analytics,
-          ),
+          // Plus is ad-free: no banner and no reserved blank slot.
+          if (!widget.dependencies.plusActive)
+            AdBannerSlot(
+              ads: widget.dependencies.adService,
+              placement: BannerPlacement.reveal,
+              analytics: widget.dependencies.analytics,
+            ),
         ],
       ),
     );
@@ -828,6 +830,7 @@ class _RitualPageState extends State<RitualPage>
     bool reduceMotion,
   ) {
     final l10n = AppLocalizations.of(context);
+    final energySnapshot = _currentEnergySnapshot();
     final selectedPeriodElapsed = !_availability(_period).selectable;
     return Column(
       children: [
@@ -1068,49 +1071,52 @@ class _RitualPageState extends State<RitualPage>
                   ? l10n.ritualLocked
                   : selectedPeriodElapsed
                   ? l10n.periodHasPassed(periodLabel(l10n, _period))
+                  // Plus has no cooldown, but its six daily credits are real.
                   : _isQuotaExhausted
                   ? l10n.dailyQuotaExhaustedTitle
-                  : _isCooldown
+                  : (!energySnapshot.isPlusActive && _isCooldown)
                   ? l10n.energyCooldownTitle(_countdownString)
                   : l10n.tapWhenReady,
               key: const Key('ritual_ready_title'),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                fontSize: (_isCooldown || _isQuotaExhausted) ? 15.5 : null,
+                fontSize:
+                    (_isQuotaExhausted ||
+                        (!energySnapshot.isPlusActive && _isCooldown))
+                    ? 15.5
+                    : null,
                 color: _isQuotaExhausted
                     ? const Color(0xFFE27C7C)
-                    : _isCooldown
+                    : (!energySnapshot.isPlusActive && _isCooldown)
                     ? const Color(0xFFF3E0A2)
                     : null,
               ),
             ),
             const SizedBox(height: 5),
             Text(
-              // A Plus owner is never asked to watch an ad; with every
-              // credit spent, the existing exhausted title stands alone.
-              (_isCooldown || _isQuotaExhausted) &&
-                      !widget.dependencies.plusActive
+              (!energySnapshot.isPlusActive && (_isCooldown || _isQuotaExhausted))
                   ? l10n.watchAdPrompt
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(fontSize: 12.5),
             ),
-            if ((_isCooldown || _isQuotaExhausted) &&
-                !widget.dependencies.plusActive) ...[
+            if (!energySnapshot.isPlusActive && (_isCooldown || _isQuotaExhausted)) ...[
               SizedBox(height: compact ? 10 : 12),
               WatchAdButton(
                 key: const Key('ritual_watch_ad_button'),
                 onTap: _watchAdAndUnlock,
               ),
             ],
-            SizedBox(height: compact ? 10 : 14),
-            AnalysisEnergyPlusCard(
-              key: const Key('ritual_energy_plus_card'),
-              snapshot: _currentEnergySnapshot(),
-              locale: widget.dependencies.localeController.locale,
-              onTapPlus: _openPlusSheet,
-            ),
+            if (!energySnapshot.isPlusActive) ...[
+              SizedBox(height: compact ? 10 : 14),
+              AnalysisEnergyPlusCard(
+                key: const Key('ritual_energy_plus_card'),
+                snapshot: energySnapshot,
+                locale: widget.dependencies.localeController.locale,
+                onTapPlus: _openPlusSheet,
+              ),
+            ],
             SizedBox(height: compact ? 8 : 10),
             Text(
               l10n.ritualSafety,
@@ -1135,17 +1141,27 @@ class _RitualPageState extends State<RitualPage>
       nowLocal: widget.dependencies.nowLocal(),
       isCooldownOverride: _isCooldown,
       isQuotaExhaustedOverride: _isQuotaExhausted,
+      isPlusActiveOverride: widget.dependencies.plusActive,
     );
   }
 
   Future<void> _openPlusSheet() async {
-    await showAstraCuePlusSheet(
-      context,
-      locale: widget.dependencies.localeController.locale,
-      snapshot: _currentEnergySnapshot(),
-      snapshotResolver: _currentEnergySnapshot,
-      plus: widget.dependencies.plus,
-    );
+    final snapshot = _currentEnergySnapshot();
+    if (snapshot.isPlusActive) {
+      await showAstraCueVipStatusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+      );
+    } else {
+      await showAstraCuePlusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+        snapshotResolver: _currentEnergySnapshot,
+        plus: widget.dependencies.plus,
+      );
+    }
   }
 
   /// Compact chips, wrapped and centred so all five fit a 360dp phone without

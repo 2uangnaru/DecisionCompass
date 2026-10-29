@@ -163,6 +163,26 @@ Owner decision needed: approve a CTA presentation without a reference price
 and discount (or one backed by a real store offer), then set
 `requireSupportedSaleClaims: false` in `main.dart`.
 
+## VIP Pass UI binding (merged from `audit_app_improvements`)
+
+- `ReadingEnergySnapshot.fromQuota(isPlusActiveOverride:
+  dependencies.plusActive)` on Home, Ritual and Result; the VIP tray, header
+  badge, VIP status sheet and hidden energy cards read only that flag, so a
+  UI mock can never grant Plus. The purchase sheet still receives `plus:`.
+- `plusRemainingTurns` defaults to the real quota (`maxDailyFreeReadings -
+  dailyFreeReadingsUsed`, 0..6), the same on every screen.
+- Ritual: a VIP never sees the cooldown or an ad, but six of six spent shows
+  the existing exhausted title, since the credits are real.
+- Home's Hoàng Đạo tile: `lib/data/auspicious_hour.dart`. The almanac's own
+  hour-god rule marks six double-hours a day as Hoàng Đạo; among the waking
+  ones (05:00–21:00) a clash (六冲) with the natal day branch is dropped, a
+  window still ahead today beats a past one, then 六合 > 三合 > neutral, then
+  earlier. Never tomorrow's. Shown as `13:00 — 15:00 (Mùi)` with the hour
+  name in vi/zh/ja/ko; the note keeps the locale's default copy. A symbolic
+  convention, not a prediction. The locale's hard-coded default window is
+  now only reached if no window is passed (not on Home while Plus is active).
+- Home and Ritual drop the banner slot entirely while Plus is active.
+
 ## States without an approved presentation (logic done, UI pending approval)
 
 Exposed on `PlusEntitlementController` (`checkout`, `lastOutcome`,

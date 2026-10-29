@@ -23,6 +23,10 @@ class ReadingEnergySnapshot {
     required this.timeUntilMidnight,
     this.bonusTurns = 0,
     this.dailyMax = freeDailyMax,
+    this.isPlusActive = false,
+    this.plusRemainingTurns = 6,
+    this.auspiciousHourWindow,
+    this.auspiciousHourNote,
   });
 
   static const int freeDailyMax = 3;
@@ -49,6 +53,18 @@ class ReadingEnergySnapshot {
 
   /// Today's real daily limit from the quota: 3, or 6 with verified Plus.
   final int dailyMax;
+  /// Whether the reader has unlocked AstraCue Plus (VIP Pass) lifetime or active entitlement.
+  final bool isPlusActive;
+
+  /// Remaining VIP reading turns for today (`0..6`). Defaults to 6 when active.
+  final int plusRemainingTurns;
+
+  /// Calculated 2-hour auspicious window for today (e.g. `13:00 — 15:00`).
+  /// If null, localized default from [_PlusLocalizedCopy] is displayed.
+  final String? auspiciousHourWindow;
+
+  /// Optional astrological note for the auspicious hour (e.g. `Khung giờ cát khí đỉnh cao`).
+  final String? auspiciousHourNote;
 
   /// Whether the reader is currently in the 3-hour cooldown between Free turns.
   bool get isCoolingDown =>
@@ -66,6 +82,8 @@ class ReadingEnergySnapshot {
     remainingFreeTurns: freeDailyMax,
     cooldownRemaining: Duration.zero,
     timeUntilMidnight: Duration(hours: 6),
+    isPlusActive: false,
+    plusRemainingTurns: plusDailyMax,
   );
 
   /// Resolves the live energy snapshot directly from [ReadingQuotaController],
@@ -75,6 +93,10 @@ class ReadingEnergySnapshot {
     required DateTime nowLocal,
     bool? isCooldownOverride,
     bool? isQuotaExhaustedOverride,
+    bool? isPlusActiveOverride,
+    int? plusRemainingTurnsOverride,
+    String? auspiciousHourWindowOverride,
+    String? auspiciousHourNoteOverride,
   }) {
     final maxFree = quota.maxDailyFreeReadings;
     final exhausted =
@@ -107,6 +129,8 @@ class ReadingEnergySnapshot {
       cooldownRem = rawCooldown > Duration.zero ? rawCooldown : freeCooldown;
     }
 
+    final isPlus = isPlusActiveOverride ?? false;
+
     return ReadingEnergySnapshot(
       usedFreeTurns: used,
       remainingFreeTurns: remaining,
@@ -114,6 +138,59 @@ class ReadingEnergySnapshot {
       timeUntilMidnight: safeUntilMidnight,
       bonusTurns: quota.bonusReadings,
       dailyMax: maxFree,
+      isPlusActive: isPlus,
+      // The real Plus quota, so every screen shows the same 0..6 orbs.
+      plusRemainingTurns:
+          plusRemainingTurnsOverride ??
+          (isPlus
+              ? (maxFree - quota.dailyFreeReadingsUsed(nowLocal)).clamp(
+                  0,
+                  plusDailyMax,
+                )
+              : plusDailyMax),
+      auspiciousHourWindow: auspiciousHourWindowOverride,
+      auspiciousHourNote: auspiciousHourNoteOverride,
+    );
+  }
+}
+
+/// Renders 6 glowing golden orbs for VIP Pass holders with active vs spent styling.
+class AstralVipGoldOrbsRow extends StatelessWidget {
+  const AstralVipGoldOrbsRow({
+    super.key,
+    required this.remainingTurns,
+    this.totalTurns = ReadingEnergySnapshot.plusDailyMax,
+    this.orbSize = 8.5,
+  });
+
+  final int remainingTurns;
+  final int totalTurns;
+  final double orbSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(totalTurns, (index) {
+        final isActive = index < remainingTurns;
+        return Padding(
+          padding: EdgeInsets.only(right: index == totalTurns - 1 ? 0 : 3.0),
+          child: isActive
+              ? _GoldPlusOrb(size: orbSize)
+              : Container(
+                  width: orbSize,
+                  height: orbSize,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF1E1710),
+                    border: Border.all(
+                      color: const Color(0xFF6B5322).withValues(alpha: 0.65),
+                      width: 0.75,
+                    ),
+                  ),
+                ),
+        );
+      }),
     );
   }
 }
@@ -137,9 +214,14 @@ String formatEnergyCountdown(BuildContext context, Duration duration) {
 /// Starlight Gem combined with `H1` Orbiting Conic Starlight Border Beam and
 /// periodic metallic shimmer sweep).
 class AstraCuePlusHeaderBadge extends StatefulWidget {
-  const AstraCuePlusHeaderBadge({super.key, required this.onTap});
+  const AstraCuePlusHeaderBadge({
+    super.key,
+    required this.onTap,
+    this.isVip = false,
+  });
 
   final VoidCallback onTap;
+  final bool isVip;
 
   @override
   State<AstraCuePlusHeaderBadge> createState() =>
@@ -179,9 +261,13 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
     final copy = _PlusLocalizedCopy.of(
       Localizations.localeOf(context).languageCode,
     );
+    final badgeLabel = widget.isVip ? copy.vipHeaderBadge : 'PLUS';
+    final semanticsLabel =
+        widget.isVip ? copy.vipSemanticsLabel : copy.headerSemanticsLabel;
+
     return Semantics(
       button: true,
-      label: copy.headerSemanticsLabel,
+      label: semanticsLabel,
       child: GestureDetector(
         key: const Key('home_plus_button'),
         onTap: widget.onTap,
@@ -259,9 +345,9 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
                                   child: Transform.rotate(
                                     angle: 0.22 * math.sin(angle),
                                     child: Text(
-                                      '✦',
+                                      widget.isVip ? '👑' : '✦',
                                       style: TextStyle(
-                                        fontSize: 11.5,
+                                        fontSize: widget.isVip ? 11.0 : 11.5,
                                         height: 1.0,
                                         color: const Color(0xFFFFE8A3),
                                         shadows: [
@@ -290,9 +376,9 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
                                         end: Alignment.bottomCenter,
                                       ).createShader(bounds),
                                   blendMode: BlendMode.srcIn,
-                                  child: const Text(
-                                    'PLUS',
-                                    style: TextStyle(
+                                  child: Text(
+                                    badgeLabel,
+                                    style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 11,
                                       fontWeight: FontWeight.w900,
@@ -528,6 +614,284 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
   Widget build(BuildContext context) {
     final copy = _PlusLocalizedCopy.forLocale(locale);
     final localeName = intlLocaleOf(context);
+
+    // Option 2 for VIP Pass holders: Left Cell = 6 VIP Turns; Right Cell = 2-Hour Auspicious Window
+    if (snapshot.isPlusActive) {
+      final remainingVipText = formatWholeNumber(
+        localeName,
+        snapshot.plusRemainingTurns,
+      );
+      final maxVipText = formatWholeNumber(
+        localeName,
+        ReadingEnergySnapshot.plusDailyMax,
+      );
+      final vipStatusLine = copy.vipEnergyStatus(
+        remainingVipText,
+        maxVipText,
+      );
+      final auspiciousHour =
+          snapshot.auspiciousHourWindow ?? copy.vipAuspiciousDefaultWindow;
+      final auspiciousNote =
+          snapshot.auspiciousHourNote ?? copy.vipAuspiciousNote;
+
+      return Semantics(
+        button: true,
+        label:
+            '${copy.vipEnergyLabel}: $vipStatusLine. ${copy.vipAuspiciousTag}: $auspiciousHour, $auspiciousNote',
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Golden hairline divider separating upper tiles from Tray
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      CompassColors.gold.withValues(alpha: 0.0),
+                      CompassColors.gold.withValues(alpha: 0.55),
+                      CompassColors.gold.withValues(alpha: 0.0),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              key: const Key('home_daily_energy_tray'),
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+              child: IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // LEFT CELL: VIP Energy 6 Turns (Option 2)
+                    Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          key: const Key('home_vip_energy_cell'),
+                          onTap: onTapPlus,
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF221A11),
+                                  Color(0xFF19130D),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: CompassColors.gold.withValues(alpha: 0.55),
+                                width: 1.0,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: CompassColors.gold.withValues(alpha: 0.10),
+                                  blurRadius: 10,
+                                  spreadRadius: 0.2,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: FittedBox(
+                                        fit: BoxFit.scaleDown,
+                                        alignment: Alignment.centerLeft,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const Text(
+                                              '👑 ',
+                                              style: TextStyle(fontSize: 10.5),
+                                            ),
+                                            Text(
+                                              copy.vipEnergyLabel,
+                                              maxLines: 1,
+                                              style: const TextStyle(
+                                                color: Color(0xFFFFDF99),
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w700,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    AstralVipGoldOrbsRow(
+                                      remainingTurns: snapshot.plusRemainingTurns,
+                                      totalTurns:
+                                          ReadingEnergySnapshot.plusDailyMax,
+                                      orbSize: 8.0,
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 6),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    vipStatusLine,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Color(0xFFF7D58C),
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w700,
+                                      height: 1.2,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // RIGHT CELL: 2-Hour Auspicious Window (Option 2)
+                    Expanded(
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          key: const Key('home_auspicious_hour_cell'),
+                          onTap: onTapPlus,
+                          borderRadius: BorderRadius.circular(14),
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 8,
+                            ),
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF0F1B2E),
+                                  Color(0xFF14243B),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: const Color(0xFF67B8F7).withValues(alpha: 0.45),
+                                width: 1.0,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: const Color(0xFF4A90E2).withValues(alpha: 0.12),
+                                  blurRadius: 10,
+                                  spreadRadius: 0.2,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Flexible(
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5.5,
+                                          vertical: 1.5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF67B8F7).withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(
+                                            color: const Color(0xFF67B8F7).withValues(alpha: 0.35),
+                                            width: 0.6,
+                                          ),
+                                        ),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            copy.vipAuspiciousTag,
+                                            maxLines: 1,
+                                            style: const TextStyle(
+                                              color: Color(0xFFBDE1FF),
+                                              fontSize: 9.5,
+                                              fontWeight: FontWeight.w800,
+                                              letterSpacing: 0.3,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    const Text(
+                                      '✦',
+                                      style: TextStyle(
+                                        color: Color(0xFFFFDF99),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 5),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    auspiciousHour,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Color(0xFFE8F4FF),
+                                      fontSize: 12.5,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 0.2,
+                                      height: 1.15,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    auspiciousNote,
+                                    maxLines: 1,
+                                    style: const TextStyle(
+                                      color: Color(0xFF90B4D8),
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.w500,
+                                      height: 1.15,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
     final freeRemainingText = formatWholeNumber(
       localeName,
       snapshot.remainingFreeTurns,
@@ -703,6 +1067,11 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Option 1 for VIP: hide completely on RitualPage & ResultPage
+    if (snapshot.isPlusActive) {
+      return const SizedBox.shrink();
+    }
+
     final copy = _PlusLocalizedCopy.forLocale(locale);
 
     // On RitualPage (màn phân tích), omit the remaining-turns box and show only
@@ -1423,6 +1792,283 @@ class _GoldPlusOrb extends StatelessWidget {
             color: CompassColors.gold.withValues(alpha: 0.55),
             blurRadius: 6,
             spreadRadius: 0.3,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Opens the modal bottom sheet confirming active VIP Pass perks.
+Future<void> showAstraCueVipStatusSheet(
+  BuildContext context, {
+  required AppLocale locale,
+  required ReadingEnergySnapshot snapshot,
+}) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: Colors.transparent,
+    barrierColor: Colors.black.withValues(alpha: 0.76),
+    builder: (sheetContext) => AstraCueVipStatusSheet(
+      locale: locale,
+      snapshot: snapshot,
+    ),
+  );
+}
+
+/// Modal bottom sheet presenting confirmed lifetime VIP privileges.
+class AstraCueVipStatusSheet extends StatelessWidget {
+  const AstraCueVipStatusSheet({
+    super.key,
+    required this.locale,
+    required this.snapshot,
+  });
+
+  final AppLocale locale;
+  final ReadingEnergySnapshot snapshot;
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = _PlusLocalizedCopy.forLocale(locale);
+
+    return SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+        child: Container(
+          key: const Key('astracue_vip_status_sheet'),
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Color(0xFF1C1712), Color(0xFF14100D), Color(0xFF0C0A08)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: CompassColors.gold.withValues(alpha: 0.65),
+              width: 1.2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: CompassColors.gold.withValues(alpha: 0.18),
+                blurRadius: 26,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 18),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Top drag handle
+                Center(
+                  child: Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.25),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+
+                // Crown Badge + Title
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: CompassColors.gold.withValues(alpha: 0.16),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: CompassColors.gold.withValues(alpha: 0.5),
+                      width: 0.8,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('👑', style: TextStyle(fontSize: 13)),
+                      const SizedBox(width: 5),
+                      Text(
+                        copy.vipSheetActiveBadge,
+                        style: const TextStyle(
+                          color: Color(0xFFFFDF99),
+                          fontSize: 10.5,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+
+                Text(
+                  copy.vipSheetTitle,
+                  style: const TextStyle(
+                    color: Color(0xFFFFF4D4),
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 1.0,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  copy.vipSheetSubtitle,
+                  style: const TextStyle(
+                    color: CompassColors.secondary,
+                    fontSize: 12.5,
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // 4 Perks Rows
+                _VipPerkTile(
+                  icon: Icons.bolt_rounded,
+                  iconColor: CompassColors.blueLight,
+                  title: copy.vipPerk1Title,
+                  description: copy.vipPerk1Desc,
+                ),
+                const SizedBox(height: 10),
+                _VipPerkTile(
+                  icon: Icons.wb_sunny_rounded,
+                  iconColor: const Color(0xFFF5D98E),
+                  title: copy.vipPerk2Title,
+                  description: copy.vipPerk2Desc,
+                ),
+                const SizedBox(height: 10),
+                _VipPerkTile(
+                  icon: Icons.explore_rounded,
+                  iconColor: const Color(0xFFF5D98E),
+                  title: copy.vipPerk3Title,
+                  description: copy.vipPerk3Desc,
+                ),
+                const SizedBox(height: 10),
+                _VipPerkTile(
+                  icon: Icons.shield_rounded,
+                  iconColor: CompassColors.blueLight,
+                  title: copy.vipPerk4Title,
+                  description: copy.vipPerk4Desc,
+                ),
+                const SizedBox(height: 20),
+
+                // Dismiss CTA Button
+                SizedBox(
+                  width: double.infinity,
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      key: const Key('astracue_vip_status_cta'),
+                      onTap: () => Navigator.of(context).pop(),
+                      borderRadius: BorderRadius.circular(16),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(vertical: 13),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFE8BD65),
+                              Color(0xFFC79532),
+                              Color(0xFF9E701C),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: CompassColors.gold.withValues(alpha: 0.35),
+                              blurRadius: 14,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                        child: Center(
+                          child: Text(
+                            copy.vipCloseCta,
+                            style: const TextStyle(
+                              color: Color(0xFF1A1208),
+                              fontSize: 14.5,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _VipPerkTile extends StatelessWidget {
+  const _VipPerkTile({
+    required this.icon,
+    required this.iconColor,
+    required this.title,
+    required this.description,
+  });
+
+  final IconData icon;
+  final Color iconColor;
+  final String title;
+  final String description;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white.withValues(alpha: 0.04),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: CompassColors.line.withValues(alpha: 0.65),
+          width: 0.8,
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: iconColor.withValues(alpha: 0.15),
+            ),
+            child: Icon(icon, color: iconColor, size: 16),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Color(0xFFFFF2D0),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  description,
+                  style: const TextStyle(
+                    color: CompassColors.secondary,
+                    fontSize: 11.5,
+                    height: 1.3,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -2461,6 +3107,25 @@ class _PlusLocalizedCopy {
     required this.sheetRestoreAction,
     required this.sheetLaterAction,
     required this.previewToastMessage,
+    required this.vipHeaderBadge,
+    required this.vipSemanticsLabel,
+    required this.vipEnergyLabel,
+    required this.vipEnergyStatus,
+    required this.vipAuspiciousTag,
+    required this.vipAuspiciousDefaultWindow,
+    required this.vipAuspiciousNote,
+    required this.vipSheetTitle,
+    required this.vipSheetSubtitle,
+    required this.vipSheetActiveBadge,
+    required this.vipPerk1Title,
+    required this.vipPerk1Desc,
+    required this.vipPerk2Title,
+    required this.vipPerk2Desc,
+    required this.vipPerk3Title,
+    required this.vipPerk3Desc,
+    required this.vipPerk4Title,
+    required this.vipPerk4Desc,
+    required this.vipCloseCta,
   });
 
   final String headerSemanticsLabel;
@@ -2497,6 +3162,27 @@ class _PlusLocalizedCopy {
   final String sheetRestoreAction;
   final String sheetLaterAction;
   final String previewToastMessage;
+
+  // VIP localization fields
+  final String vipHeaderBadge;
+  final String vipSemanticsLabel;
+  final String vipEnergyLabel;
+  final String Function(String remaining, String max) vipEnergyStatus;
+  final String vipAuspiciousTag;
+  final String vipAuspiciousDefaultWindow;
+  final String vipAuspiciousNote;
+  final String vipSheetTitle;
+  final String vipSheetSubtitle;
+  final String vipSheetActiveBadge;
+  final String vipPerk1Title;
+  final String vipPerk1Desc;
+  final String vipPerk2Title;
+  final String vipPerk2Desc;
+  final String vipPerk3Title;
+  final String vipPerk3Desc;
+  final String vipPerk4Title;
+  final String vipPerk4Desc;
+  final String vipCloseCta;
 
   static _PlusLocalizedCopy forLocale(AppLocale locale) => switch (locale) {
     AppLocale.vietnamese => _vi,
@@ -2552,6 +3238,25 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: 'Khôi phục giao dịch',
     sheetLaterAction: 'Để sau',
     previewToastMessage: 'Giao diện AstraCue Plus (119.000 ₫) đã sẵn sàng kết nối cổng thanh toán.',
+    vipHeaderBadge: 'VIP PASS',
+    vipSemanticsLabel: 'AstraCue VIP Pass, đặc quyền trọn đời đã kích hoạt',
+    vipEnergyLabel: 'Năng lượng VIP',
+    vipEnergyStatus: (rem, max) => 'Còn $rem/$max lượt · 0s chờ',
+    vipAuspiciousTag: 'GIỜ HOÀNG ĐẠO',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: 'Khung giờ cát khí đỉnh cao',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: 'Đặc quyền trọn đời đang hoạt động',
+    vipSheetActiveBadge: 'ĐÃ KÍCH HOẠT',
+    vipPerk1Title: '6 lượt phân tích mỗi ngày',
+    vipPerk1Desc: 'Gấp đôi năng lượng, không cần chờ 3 tiếng giữa các lượt',
+    vipPerk2Title: 'Khung giờ hoàng đạo 2 tiếng',
+    vipPerk2Desc: 'Tính toán giờ cát khí vượng nhất mỗi ngày cho lá số',
+    vipPerk3Title: 'Mở khóa toàn bộ chỉ dẫn',
+    vipPerk3Desc: 'Xem sắc nét hướng dẫn Nên & Tránh không cần mở khóa',
+    vipPerk4Title: 'Trải nghiệm thuần khiết',
+    vipPerk4Desc: 'Loại bỏ 100% quảng cáo trọn đời',
+    vipCloseCta: 'Đã hiểu · Tiếp tục',
   );
 
   static final _PlusLocalizedCopy _en = _PlusLocalizedCopy(
@@ -2588,6 +3293,25 @@ class _PlusLocalizedCopy {
     sheetLaterAction: 'Maybe later',
     previewToastMessage:
         r'AstraCue Plus ($4.99) UI preview is ready for store billing.',
+    vipHeaderBadge: 'VIP PASS',
+    vipSemanticsLabel: 'AstraCue VIP Pass, lifetime privileges active',
+    vipEnergyLabel: 'VIP Energy',
+    vipEnergyStatus: (rem, max) => '$rem/$max turns · Instant',
+    vipAuspiciousTag: 'AUSPICIOUS HOUR',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: 'Peak cosmic alignment',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: 'Lifetime privileges active',
+    vipSheetActiveBadge: 'ACTIVE',
+    vipPerk1Title: '6 daily cosmic readings',
+    vipPerk1Desc: 'Double daily capacity with zero cooldown delays',
+    vipPerk2Title: '2-hour auspicious window',
+    vipPerk2Desc: 'Calculated optimal energy window for your natal chart',
+    vipPerk3Title: 'Action guidance unlocked',
+    vipPerk3Desc: 'Full deep actionable insights without ad unlocks',
+    vipPerk4Title: 'Pure sanctuary',
+    vipPerk4Desc: '100% ad-free lifetime experience',
+    vipCloseCta: 'Got it · Continue',
   );
 
   static final _PlusLocalizedCopy _es = _PlusLocalizedCopy(
@@ -2624,6 +3348,25 @@ class _PlusLocalizedCopy {
     sheetLaterAction: 'Más tarde',
     previewToastMessage:
         'La vista previa de AstraCue Plus (4,99 €) está lista.',
+    vipHeaderBadge: 'PASE VIP',
+    vipSemanticsLabel: 'AstraCue Pase VIP, privilegios vitalicios activos',
+    vipEnergyLabel: 'Energía VIP',
+    vipEnergyStatus: (rem, max) => '$rem/$max lecturas · Sin espera',
+    vipAuspiciousTag: 'HORA AUSPICIOSA',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: 'Alineación cósmica cumbre',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: 'Privilegios vitalicios activos',
+    vipSheetActiveBadge: 'ACTIVO',
+    vipPerk1Title: '6 lecturas diarias',
+    vipPerk1Desc: 'Doble de energía sin tiempos de espera entre lecturas',
+    vipPerk2Title: 'Ventana auspiciosa de 2 horas',
+    vipPerk2Desc: 'Ventana de máxima resonancia según tu carta natal',
+    vipPerk3Title: 'Orientación de acción desbloqueada',
+    vipPerk3Desc: 'Indicaciones completas sin necesidad de ver anuncios',
+    vipPerk4Title: 'Santuario puro',
+    vipPerk4Desc: '100% sin publicidad para siempre',
+    vipCloseCta: 'Entendido · Continuar',
   );
 
   static final _PlusLocalizedCopy _ja = _PlusLocalizedCopy(
@@ -2657,6 +3400,25 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: '購入を復元',
     sheetLaterAction: 'あとで',
     previewToastMessage: 'AstraCue Plus (¥700) UIプレビューが有効です。',
+    vipHeaderBadge: 'VIP PASS',
+    vipSemanticsLabel: 'AstraCue VIPパス、無期限特典が有効です',
+    vipEnergyLabel: 'VIPエネルギー',
+    vipEnergyStatus: (rem, max) => '残り $rem/$max 回 · 待機なし',
+    vipAuspiciousTag: '吉時・最適刻',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: '命式に最も調和する極上刻',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: '無期限の特別権限が適用中',
+    vipSheetActiveBadge: '有効',
+    vipPerk1Title: '毎日6回の鑑定枠',
+    vipPerk1Desc: '枠数2倍・3時間の待機時間なしで即座に鑑定',
+    vipPerk2Title: '2時間の吉時ウィンドウ',
+    vipPerk2Desc: 'あなたの命式に最も適した1日最良の吉刻を提示',
+    vipPerk3Title: '行動指針の完全開放',
+    vipPerk3Desc: '広告解除なしで推奨行動と注意点を常時閲覧',
+    vipPerk4Title: '純粋な静謐空間',
+    vipPerk4Desc: '生涯100%広告非表示の体験',
+    vipCloseCta: '確認 · 続ける',
   );
 
   static final _PlusLocalizedCopy _th = _PlusLocalizedCopy(
@@ -2690,6 +3452,25 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: 'กู้คืนการซื้อ',
     sheetLaterAction: 'ไว้ทีหลัง',
     previewToastMessage: 'ตัวอย่าง UI ของ AstraCue Plus (฿179) พร้อมใช้งานแล้ว',
+    vipHeaderBadge: 'VIP PASS',
+    vipSemanticsLabel: 'AstraCue VIP Pass สิทธิพิเศษตลอดชีพเปิดใช้งานแล้ว',
+    vipEnergyLabel: 'พลังงาน VIP',
+    vipEnergyStatus: (rem, max) => 'เหลือ $rem/$max ครั้ง · ไม่ต้องรอ',
+    vipAuspiciousTag: 'ฤกษ์มงคล',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: 'ช่วงเวลาพลังงานสูงสุดของดวงชะตา',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: 'สิทธิพิเศษตลอดชีพเปิดใช้งานแล้ว',
+    vipSheetActiveBadge: 'เปิดใช้งาน',
+    vipPerk1Title: 'วิเคราะห์ 6 ครั้งต่อวัน',
+    vipPerk1Desc: 'พลังงานเพิ่ม 2 เท่า ไม่มีเวลารอ 3 ชั่วโมง',
+    vipPerk2Title: 'ช่วงเวลาฤกษ์มงคล 2 ชั่วโมง',
+    vipPerk2Desc: 'คำนวณช่วงเวลาที่ดีที่สุดในแต่ละวันสำหรับดวงคุณ',
+    vipPerk3Title: 'ปลดล็อกคำแนะนำการกระทำ',
+    vipPerk3Desc: 'ดูสิ่งที่ควรทำและหลีกเลี่ยงได้ทันทีโดยไม่ต้องดูโฆษณา',
+    vipPerk4Title: 'พื้นที่แห่งความสงบ',
+    vipPerk4Desc: 'ปราศจากโฆษณา 100% ตลอดชีพ',
+    vipCloseCta: 'เข้าใจแล้ว · ใช้งานต่อ',
   );
 
   static final _PlusLocalizedCopy _hi = _PlusLocalizedCopy(
@@ -2725,6 +3506,25 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: 'खरीदारी रीस्टोर करें',
     sheetLaterAction: 'बाद में',
     previewToastMessage: 'AstraCue Plus (₹399) UI प्रीव्यू तैयार है।',
+    vipHeaderBadge: 'VIP PASS',
+    vipSemanticsLabel: 'AstraCue VIP पास, आजीवन विशेषाधिकार सक्रिय हैं।',
+    vipEnergyLabel: 'वीआईपी ऊर्जा',
+    vipEnergyStatus: (rem, max) => 'शेष $rem/$max चक्र · कोई प्रतीक्षा नहीं',
+    vipAuspiciousTag: 'शुभ मुहूर्त',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: 'कुंडली के लिए सर्वोत्तम समय',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: 'आजीवन विशेषाधिकार सक्रिय हैं।',
+    vipSheetActiveBadge: 'सक्रिय',
+    vipPerk1Title: 'प्रतिदिन 6 विश्लेषण',
+    vipPerk1Desc: 'दोगुनी क्षमता और बिना किसी 3 घंटे के अंतराल के',
+    vipPerk2Title: '2 घंटे का शुभ मुहूर्त',
+    vipPerk2Desc: 'आपकी कुंडली के अनुसार दिन का सर्वोत्तम काल',
+    vipPerk3Title: 'कार्य मार्गदर्शन अनलॉक',
+    vipPerk3Desc: 'बिना विज्ञापन देखे पूर्ण मार्गदर्शन उपलब्ध',
+    vipPerk4Title: 'विशुद्ध अनुभव',
+    vipPerk4Desc: 'आजीवन 100% विज्ञापन-मुक्त अनुभव',
+    vipCloseCta: 'समझ गया · आगे बढ़ें',
   );
 
   static final _PlusLocalizedCopy _zh = _PlusLocalizedCopy(
@@ -2758,6 +3558,25 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: '恢复购买',
     sheetLaterAction: '稍后再说',
     previewToastMessage: 'AstraCue Plus (¥35) 界面预览已就绪。',
+    vipHeaderBadge: '尊享通行证',
+    vipSemanticsLabel: 'AstraCue VIP 通行证，终身特权已激活',
+    vipEnergyLabel: 'VIP 能量',
+    vipEnergyStatus: (rem, max) => '剩余 $rem/$max 次 · 零等待',
+    vipAuspiciousTag: '吉时良辰',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: '命盘能量巅峰时段',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: '终身特权生效中',
+    vipSheetActiveBadge: '已激活',
+    vipPerk1Title: '每日 6 次星象解读',
+    vipPerk1Desc: '翻倍解读次数，无需等待 3 小时冷却',
+    vipPerk2Title: '2 小时专属吉时',
+    vipPerk2Desc: '基于生辰命盘精算每日最佳能量时段',
+    vipPerk3Title: '行动指南全量解锁',
+    vipPerk3Desc: '无需观看广告，即刻查看宜忌指导',
+    vipPerk4Title: '纯净专注体验',
+    vipPerk4Desc: '终身 100% 免除一切广告干扰',
+    vipCloseCta: '已知晓 · 继续使用',
   );
 
   static final _PlusLocalizedCopy _ko = _PlusLocalizedCopy(
@@ -2791,5 +3610,24 @@ class _PlusLocalizedCopy {
     sheetRestoreAction: '구매 복원',
     sheetLaterAction: '나중에',
     previewToastMessage: 'AstraCue Plus (₩6,600) UI 프리뷰가 준비되었습니다.',
+    vipHeaderBadge: 'VIP 패스',
+    vipSemanticsLabel: 'AstraCue VIP 패스, 평생 특권이 활성화되었습니다',
+    vipEnergyLabel: 'VIP 에너지',
+    vipEnergyStatus: (rem, max) => '남은 횟수 $rem/$max회 · 대기 없음',
+    vipAuspiciousTag: '길시 (황도길시)',
+    vipAuspiciousDefaultWindow: '13:00 — 15:00',
+    vipAuspiciousNote: '사주 명식 최적의 대길 시간대',
+    vipSheetTitle: 'ASTRACUE VIP',
+    vipSheetSubtitle: '평생 특권 활성화 중',
+    vipSheetActiveBadge: '활성화됨',
+    vipPerk1Title: '매일 6회 심층 분석',
+    vipPerk1Desc: '2배 혜택 및 3시간 대기 시간 전면 해제',
+    vipPerk2Title: '2시간 맞춤 황도길시',
+    vipPerk2Desc: '사주 명식 기반 하루 중 가장 상서로운 시간 안내',
+    vipPerk3Title: '행동 가이드 전면 개방',
+    vipPerk3Desc: '광고 시청 없이 권장 및 주의 사항 즉시 확인',
+    vipPerk4Title: '순수한 몰입 환경',
+    vipPerk4Desc: '평생 100% 광고 없는 청정 환경',
+    vipCloseCta: '확인 · 바로 시작',
   );
 }

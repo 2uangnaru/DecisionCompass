@@ -1,6 +1,45 @@
 # AstraCue: Cosmic Decisions — Project Handoff
 
-Updated: 2026-10-26
+Updated: 2026-10-29
+
+## Cosmic Context & Action Guidance System Handoff — 2026-10-29
+
+Full architecture, formatting rules, copy standards, and engine integration for the reading result cards:
+
+### 1. Two-Paragraph Cosmic Context Card (`_CosmicContextCard`)
+* **Paragraph 1 (Spiritual & Transit Anchor):**
+  * Synthesizes real astronomical/calendar transit with the user's natal element/zodiac:
+    * East Asian locales (`vi`, `zh`, `ja`, `ko`): Time of day (`Vào buổi sáng...`) + Can Chi day & 12 Day Officers (`ngày Quý Hợi (Trực Trừ)...`) + category focus (`xét trong công việc...`) + Natal Five Elements (`bản mệnh Kim / Thổ / Mộc / Hỏa / Thủy`) + cosmic resonance state (`thời vận tương sinh nâng đỡ... / cần sự lắng lại`).
+    * Western & South Asian locales (`en`, `es`, `th`, `hi`): Time of day + Lunar phase / astrological transit (`under the waxing moon...`) + Natal Zodiac sign (`your Taurus / Scorpio clarity...`) + energetic alignment state.
+* **Paragraph 2 (Cosmic Mechanism / Headline):**
+  * Reflects the philosophical principle of the decision reading (`ACT`, `WAIT`, `ADVANCE`, `RETREAT`, `BALANCED`, etc.).
+  * Multi-variant: 3 distinct variants (`v0`, `v1`, `v2`) dynamically rotated by hashing `readingKey` so the text never sounds repetitive.
+  * Clean two-paragraph separation (`\n\n`) via `Cách 1` (no double linebreaks, no dangling bullet artifacts).
+  * Strict ethical copy: 0 fatalistic future-telling claims, 0 raw numbers/percentages in headlines, 0 forbidden absolute words.
+
+### 2. Time-Aware Action Guidance Card (`_ActionGuidanceCard`)
+* Dedicated dictionary of 315 curated key pairs across 8 supported languages (`vi`, `en`, `es`, `ja`, `ko`, `th`, `hi`, `zh`).
+* **Consider / Should Do (`Nên`):** Prefixed with localized time-of-day anchors (`Đầu ngày: `, `Giữa ngày: `, `Buổi chiều: `, `Cuối ngày: `) and category-specific positive actions (career milestone locks, emotional openness, study focus, resource allocation).
+* **Watch for / Avoid (`Tránh`):** Highlights behavioral pitfalls and ends with time-of-day cadence reminders in parentheses:
+  * Morning: `... (tránh để sự chậm trễ đầu ngày kéo theo cả ngày).`
+  * Midday: `... (tránh phản ứng vội vã dưới áp lực giữa ngày).`
+  * Afternoon: `... (tránh dồn việc chưa xong sang tối muộn).`
+  * Evening: `... (tránh quyết định bốc đồng khi tâm trí đã mệt).`
+* Hindi typography rule: Hindi copy uses native danda `।` exclusively and never appends western periods `.` (avoiding `।.` artifacts).
+
+### 3. Date Parsing & Engine Integration Rules
+* **Crucial parsing fix in `cosmic_time_anchor.dart`:** `civilCalendar(birthDateStr)` requires pure `YYYY-MM-DD` (10 chars). Always strip ISO-8601 timestamps (`birthDateStr.split('T').first`) before passing to `civilCalendar` to prevent `FormatException` that silently strips natal elements.
+* **Multi-profile & Multi-time differentiation:**
+  * Two distinct profiles receive distinct quẻ, distinct percentages, distinct reading keys, distinct natal anchors (e.g. Kim vs Thổ), and distinct action variants.
+  * The same profile evaluated across different categories (`career`, `money`, `love`, `study`, `friends`, `general`) or time slots (`morning`, `afternoon`, `evening`, `now`) receives non-colliding, tailored guidance.
+
+### 4. Regression & Verification Test Suites
+* `test/paragraph_integrity_test.dart`: Verifies 11,200 permutations across all 8 locales, modes, and categories format clean 2-paragraph headlines without artifacts.
+* `test/action_guidance_test.dart`: Validates dictionary lookup, fallback safety, and time prefixing.
+* `test/two_profiles_comparison_test.dart`: Verifies side-by-side differentiation between distinct profiles.
+* `test/time_and_category_variation_test.dart`: Verifies differentiation across categories and times of day.
+* All suites must pass 100% and `flutter analyze` must report 0 issues.
+
 
 ## Ads lifecycle handoff — 2026-10-26 (supersedes older ads notes below)
 

@@ -6,6 +6,7 @@ import '../app_profile.dart';
 import '../analytics/analytics_event.dart';
 import '../analytics/reward_analytics_attempt.dart';
 import '../category_presentation.dart';
+import '../data/auspicious_hour.dart';
 import '../data/daily_energy_insight_deck.dart';
 import '../data/models/models.dart' as engine;
 import '../data/profile_edit_policy.dart';
@@ -217,20 +218,53 @@ class _HomePageState extends State<HomePage>
   Timer? _freeEnergyTimer;
   Timer? _cooldownTickTimer;
 
-  ReadingEnergySnapshot _currentEnergySnapshot() =>
-      ReadingEnergySnapshot.fromQuota(
-        quota: widget.dependencies.quotaManager,
-        nowLocal: widget.dependencies.nowLocal(),
-      );
+  ReadingEnergySnapshot _currentEnergySnapshot() {
+    final now = widget.dependencies.nowLocal();
+    final plus = widget.dependencies.plusActive;
+    return ReadingEnergySnapshot.fromQuota(
+      quota: widget.dependencies.quotaManager,
+      nowLocal: now,
+      isPlusActiveOverride: plus,
+      auspiciousHourWindowOverride: plus ? _auspiciousHour(now) : null,
+    );
+  }
+
+  ({String key, String text})? _auspiciousCache;
+
+  /// Recomputed only when the hour, the birth date or the language changes;
+  /// the snapshot itself is rebuilt every second while a countdown runs.
+  String _auspiciousHour(DateTime now) {
+    final locale = widget.dependencies.localeController.locale;
+    final key =
+        '${now.year}-${now.month}-${now.day}T${now.hour}|'
+        '${_profile.birthDate.toIso8601String()}|${locale.tag}';
+    final cached = _auspiciousCache;
+    if (cached != null && cached.key == key) return cached.text;
+    final text = formatAuspiciousHour(
+      bestAuspiciousHourBranch(nowLocal: now, birthDate: _profile.birthDate),
+      locale,
+    );
+    _auspiciousCache = (key: key, text: text);
+    return text;
+  }
 
   void _openPlusSheet() {
-    showAstraCuePlusSheet(
-      context,
-      locale: widget.dependencies.localeController.locale,
-      snapshot: _currentEnergySnapshot(),
-      snapshotResolver: _currentEnergySnapshot,
-      plus: widget.dependencies.plus,
-    );
+    final snapshot = _currentEnergySnapshot();
+    if (snapshot.isPlusActive) {
+      showAstraCueVipStatusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+      );
+    } else {
+      showAstraCuePlusSheet(
+        context,
+        locale: widget.dependencies.localeController.locale,
+        snapshot: snapshot,
+        snapshotResolver: _currentEnergySnapshot,
+        plus: widget.dependencies.plus,
+      );
+    }
   }
 
   /// The index of today's rotating description, once the saved deck has been
@@ -544,11 +578,13 @@ class _HomePageState extends State<HomePage>
               ),
             ),
           ),
-          AdBannerSlot(
-            ads: widget.dependencies.adService,
-            placement: BannerPlacement.home,
-            analytics: widget.dependencies.analytics,
-          ),
+          // Plus is ad-free: no banner and no reserved blank slot.
+          if (!widget.dependencies.plusActive)
+            AdBannerSlot(
+              ads: widget.dependencies.adService,
+              placement: BannerPlacement.home,
+              analytics: widget.dependencies.analytics,
+            ),
         ],
       ),
     );
@@ -630,7 +666,10 @@ class _HomePageState extends State<HomePage>
               child: AnimatedOpacity(
                 opacity: _isSettingsOpen ? 0.0 : 1.0,
                 duration: const Duration(milliseconds: 180),
-                child: AstraCuePlusHeaderBadge(onTap: _openPlusSheet),
+                child: AstraCuePlusHeaderBadge(
+                  onTap: _openPlusSheet,
+                  isVip: _currentEnergySnapshot().isPlusActive,
+                ),
               ),
             ),
             const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
