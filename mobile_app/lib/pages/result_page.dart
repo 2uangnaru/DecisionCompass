@@ -198,12 +198,22 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
 
   void _scheduleCooldownTick() {
     _cooldownTimer?.cancel();
+    var previous = _currentEnergySnapshot();
     _cooldownTimer = Timer.periodic(const Duration(seconds: 1), (_) {
       if (!mounted) return;
       final snap = _currentEnergySnapshot();
-      if (snap.isCoolingDown || snap.isDailyFreeExhausted) {
+      // Repaint the final transition too: the fresh snapshot is already
+      // ready, but the screen can still be displaying the previous countdown.
+      // Counts also cover a quota change followed by expiry before this tick.
+      if (snap.isCoolingDown ||
+          snap.isDailyFreeExhausted ||
+          previous.isCoolingDown ||
+          previous.isDailyFreeExhausted ||
+          snap.remainingFreeTurns != previous.remainingFreeTurns ||
+          snap.bonusTurns != previous.bonusTurns) {
         setState(() {});
       }
+      previous = snap;
     });
   }
 
