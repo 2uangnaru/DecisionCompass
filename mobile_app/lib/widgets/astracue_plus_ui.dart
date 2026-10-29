@@ -125,7 +125,8 @@ class ReadingEnergySnapshot {
       cooldownRem = rawCooldown > Duration.zero ? rawCooldown : freeCooldown;
     }
 
-    final isPlus = isPlusActiveOverride ?? false;
+    final isPlus =
+        isPlusActiveOverride ?? (quota.maxDailyFreeReadings > freeDailyMax);
 
     return ReadingEnergySnapshot(
       usedFreeTurns: used,
@@ -134,7 +135,8 @@ class ReadingEnergySnapshot {
       timeUntilMidnight: safeUntilMidnight,
       bonusTurns: quota.bonusReadings,
       isPlusActive: isPlus,
-      plusRemainingTurns: plusRemainingTurnsOverride ?? plusDailyMax,
+      plusRemainingTurns:
+          plusRemainingTurnsOverride ?? (isPlus ? remaining : plusDailyMax),
       auspiciousHourWindow: auspiciousHourWindowOverride,
       auspiciousHourNote: auspiciousHourNoteOverride,
     );
