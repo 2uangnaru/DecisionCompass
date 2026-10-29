@@ -11,6 +11,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:in_app_purchase/in_app_purchase.dart';
 import 'package:in_app_purchase_android/billing_client_wrappers.dart';
+import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ads_test_fakes.dart';
@@ -983,5 +984,314 @@ void main() {
         expect(store.completed, isEmpty);
       },
     );
+  });
+  group('recovery after restart and pending payments', () {
+    // What Android's restore really emits: every listed purchase relabelled
+    // "restored", whatever its purchase state (in_app_purchase_android 0.5.5).
+    PlusPurchaseUpdate androidListed(PurchaseStateWrapper state) =>
+        InAppPurchasePlusStore.map(
+          GooglePlayPurchaseDetails.fromPurchase(
+            PurchaseWrapper(
+              orderId: 'order-tok',
+              packageName: 'app',
+              purchaseTime: 0,
+              purchaseToken: 'tok',
+              signature: 'sig',
+              products: const [_id],
+              isAutoRenewing: false,
+              originalJson: '{}',
+              isAcknowledged: false,
+              purchaseState: state,
+            ),
+          ).single..status = PurchaseStatus.restored,
+        );
+
+    void later() => clock = clock.add(const Duration(minutes: 2));
+
+    /// Cached, verified Plus whose acknowledgement never reached the store.
+    Future<void> unacknowledgedOwner() async {
+      store.ackOk = false;
+      final first = make()..start();
+      await settle();
+      store.emit(update(PlusPurchaseStatus.purchased));
+      await settle();
+      expect(first.isActive, isTrue);
+      expect(first.acknowledgementPending, isTrue);
+      first.dispose();
+      store.ackOk = true;
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      ads.adFree.clear();
+    }
+
+    Future<PlusEntitlementController> pendingCheckout() async {
+      final plus = make()..start();
+      await settle();
+      expect(await plus.buy(), isTrue);
+      store.emit(update(PlusPurchaseStatus.pending));
+      await settle();
+      plus.appResumed(); // the store sheet closes
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.pending);
+      expect(plus.isActive, isFalse);
+      return plus;
+    }
+
+    test('R1: failed ack, restart, failed startup query, then an eligible '
+        'resume acknowledges', () async {
+      await unacknowledgedOwner();
+      store.restoreThrows = true;
+      final plus = make();
+      await plus.start();
+      await settle();
+      expect(plus.isActive, isTrue, reason: 'cached access is kept');
+      expect(store.completed, hasLength(1), reason: 'only the failed attempt');
+      store.restoreThrows = false;
+      final queries = store.restores;
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries, reason: 'inside the retry interval');
+      later();
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries + 1);
+      expect(store.completed, hasLength(2));
+      expect(plus.acknowledgementPending, isFalse);
+      expect(plus.isActive, isTrue);
+      expect(ads.adFree, [true], reason: 'the cached grant only');
+    });
+
+    test('R2: cached Plus with the store down at start reconciles once '
+        'discovery succeeds', () async {
+      await unacknowledgedOwner();
+      store.available = false;
+      final plus = make();
+      await plus.start();
+      await settle();
+      expect(plus.isActive, isTrue);
+      final queries = store.restores;
+      expect(store.completed, hasLength(1));
+      store.available = true;
+      later();
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries + 1);
+      expect(store.completed, hasLength(2));
+      expect(plus.acknowledgementPending, isFalse);
+      expect(ads.adFree, [true]);
+    });
+
+    test(
+      'R3: repeated query failures retry spaced, never regranting',
+      () async {
+        await unacknowledgedOwner();
+        store.restoreThrows = true;
+        final plus = make();
+        await plus.start();
+        await settle();
+        final queries = store.restores;
+        for (var i = 1; i <= 3; i++) {
+          plus.appResumed();
+          plus.appResumed();
+          await settle();
+          expect(store.restores, queries + i - 1, reason: 'not yet due');
+          later();
+          plus.appResumed();
+          await settle();
+          expect(store.restores, queries + i);
+        }
+        expect(plus.isActive, isTrue);
+        expect(ads.adFree, [true]);
+        store.restoreThrows = false;
+        later();
+        plus.appResumed();
+        await settle();
+        expect(store.completed, hasLength(2));
+        expect(plus.acknowledgementPending, isFalse);
+        expect(ads.adFree, [true], reason: 'no duplicate grant');
+      },
+    );
+
+    test('R4: a successful recovery leaves no retry work behind', () async {
+      await unacknowledgedOwner();
+      store.restoreThrows = true;
+      final plus = make();
+      await plus.start();
+      await settle();
+      store.restoreThrows = false;
+      later();
+      plus.appResumed();
+      await settle();
+      final queries = store.restores;
+      for (var i = 0; i < 3; i++) {
+        later();
+        plus.appResumed();
+        await settle();
+      }
+      expect(store.restores, queries, reason: 'nothing left to recover');
+      expect(store.completed, hasLength(2));
+    });
+
+    test('R5: a pending payment completed while away is granted, '
+        'acknowledged and settles checkout on resume', () async {
+      final plus = await pendingCheckout();
+      final queries = store.restores;
+      // Completed in the store; no stream callback reaches this controller.
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      later();
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries + 1);
+      expect(plus.isActive, isTrue);
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.verified);
+      expect(store.completed, hasLength(1));
+      expect(ads.adFree, [true]);
+      expect(store.buys, 1, reason: 'no purchase is launched again');
+      expect(ads.claims, ads.releases, reason: 'no guard left held');
+      later();
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries + 1, reason: 'settled; no more queries');
+    });
+
+    test(
+      'R6: a payment still pending grants and acknowledges nothing',
+      () async {
+        expect(
+          androidListed(PurchaseStateWrapper.pending).status,
+          PlusPurchaseStatus.pending,
+        );
+        final plus = await pendingCheckout();
+        store.owned = [androidListed(PurchaseStateWrapper.pending)];
+        later();
+        plus.appResumed();
+        await settle();
+        expect(plus.isActive, isFalse);
+        expect(plus.checkout, PlusCheckoutState.pending);
+        expect(store.completed, isEmpty);
+        expect(verifier.calls, 0);
+        // Still recoverable on the next eligible resume.
+        final queries = store.restores;
+        store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+        later();
+        plus.appResumed();
+        await settle();
+        expect(store.restores, queries + 1);
+        expect(plus.isActive, isTrue);
+        expect(plus.checkout, PlusCheckoutState.idle);
+      },
+    );
+
+    test(
+      'R6b: a pending payment found at start is retried on resume',
+      () async {
+        store.owned = [androidListed(PurchaseStateWrapper.pending)];
+        final plus = make();
+        await plus.start();
+        await settle();
+        expect(plus.isActive, isFalse);
+        expect(store.completed, isEmpty);
+        store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+        later();
+        plus.appResumed();
+        await settle();
+        expect(plus.isActive, isTrue);
+        expect(store.completed, hasLength(1));
+      },
+    );
+
+    test('R7: an empty or failed query while pending neither cancels nor '
+        'grants', () async {
+      final plus = await pendingCheckout();
+      store.owned = [];
+      later();
+      plus.appResumed();
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.pending);
+      expect(plus.lastOutcome, PlusPurchaseOutcome.pending);
+      store.restoreThrows = true;
+      later();
+      plus.appResumed();
+      await settle();
+      expect(plus.checkout, PlusCheckoutState.pending);
+      expect(plus.isActive, isFalse);
+      expect(store.completed, isEmpty);
+      expect(ads.adFree, isEmpty);
+    });
+
+    test('R8: verifier down during pending recovery, then a later retry '
+        'succeeds', () async {
+      final plus = await pendingCheckout();
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      verifier.verdict = PlusVerdict.unavailable;
+      later();
+      plus.appResumed();
+      await settle();
+      expect(plus.isActive, isFalse);
+      expect(plus.checkout, PlusCheckoutState.pending);
+      expect(store.completed, isEmpty, reason: 'unverified: not acknowledged');
+      verifier.verdict = PlusVerdict.valid;
+      later();
+      plus.appResumed();
+      await settle();
+      expect(plus.isActive, isTrue);
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(store.completed, hasLength(1));
+    });
+
+    test('R8b: an unverified owned purchase found at start is retried on '
+        'resume, not only by Restore', () async {
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      verifier.verdict = PlusVerdict.unavailable;
+      final plus = make();
+      await plus.start();
+      await settle();
+      expect(plus.isActive, isFalse);
+      verifier.verdict = PlusVerdict.valid;
+      later();
+      plus.appResumed();
+      await settle();
+      expect(plus.isActive, isTrue);
+      expect(store.completed, hasLength(1));
+    });
+
+    test('R9: overlapping resumes share one recovery query', () async {
+      final plus = await pendingCheckout();
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      final gate = Completer<PlusVerdict>();
+      verifier.next = () => gate.future;
+      final queries = store.restores;
+      later();
+      plus.appResumed();
+      await settle();
+      later();
+      plus.appResumed();
+      plus.appResumed();
+      await settle();
+      expect(store.restores, queries + 1);
+      gate.complete(PlusVerdict.valid);
+      await settle();
+      expect(verifier.calls, 1);
+      expect(plus.isActive, isTrue);
+      expect(ads.adFree, [true]);
+    });
+
+    test('R10: recovery finishing after dispose changes nothing', () async {
+      final plus = await pendingCheckout();
+      store.owned = [androidListed(PurchaseStateWrapper.purchased)];
+      final gate = Completer<PlusVerdict>();
+      verifier.next = () => gate.future;
+      later();
+      plus.appResumed();
+      await settle();
+      plus.dispose();
+      gate.complete(PlusVerdict.valid);
+      await settle();
+      expect(plus.isActive, isFalse);
+      expect(ads.adFree, isEmpty);
+      expect(store.completed, isEmpty);
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getString(PlusEntitlementController.storageKey), isNull);
+    });
   });
 }

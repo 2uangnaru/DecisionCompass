@@ -181,13 +181,20 @@ class InAppPurchasePlusStore implements PlusStore {
   @visibleForTesting
   static PlusPurchaseUpdate map(PurchaseDetails d) => PlusPurchaseUpdate(
     productId: d.productID,
-    status: switch (d.status) {
-      PurchaseStatus.pending => PlusPurchaseStatus.pending,
-      PurchaseStatus.purchased => PlusPurchaseStatus.purchased,
-      PurchaseStatus.restored => PlusPurchaseStatus.restored,
-      PurchaseStatus.canceled => PlusPurchaseStatus.canceled,
-      PurchaseStatus.error => PlusPurchaseStatus.error,
-    },
+    // Android's restore relabels every listed purchase "restored", including
+    // payments still pending; those must never be verified or acknowledged.
+    status:
+        d is GooglePlayPurchaseDetails &&
+            d.billingClientPurchase.purchaseState ==
+                PurchaseStateWrapper.pending
+        ? PlusPurchaseStatus.pending
+        : switch (d.status) {
+            PurchaseStatus.pending => PlusPurchaseStatus.pending,
+            PurchaseStatus.purchased => PlusPurchaseStatus.purchased,
+            PurchaseStatus.restored => PlusPurchaseStatus.restored,
+            PurchaseStatus.canceled => PlusPurchaseStatus.canceled,
+            PurchaseStatus.error => PlusPurchaseStatus.error,
+          },
     proof: d.verificationData.serverVerificationData.isEmpty
         ? null
         : PlusPurchaseProof(

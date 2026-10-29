@@ -52,6 +52,12 @@ enum PlusRestoreResult {
 class _Reconcile {
   final verdicts = <PlusVerdict>[];
   bool failed = false;
+
+  /// The store listed a payment that is still pending.
+  bool sawPending = false;
+
+  /// An acknowledgement attempted during this run failed.
+  bool ackFailed = false;
 }
 
 /// Owns the Plus purchase lifecycle and the persisted, verified entitlement.
@@ -121,6 +127,12 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
 
   /// An acknowledgement failed and waits for a reconciliation retry.
   bool _ackPending = false;
+
+  /// The last ownership reconciliation did not settle: the query failed or
+  /// could not run, a listed payment was still pending, or the verifier could
+  /// not answer for a purchase not yet granted. Not persisted: every start
+  /// reconciles anyway and re-derives it.
+  bool _reconcileIncomplete = false;
   DateTime? _lastCatalogAttempt;
   DateTime? _lastReconcileAttempt;
   Future<void>? _catalogRefresh;
@@ -320,8 +332,9 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
   }
 
   /// The store sheet closing resumes the app: free the ad guard, and retry
-  /// what an earlier failure left (discovery, acknowledgement) at most once
-  /// per [resumeRetryInterval]. Never shows anything.
+  /// what an earlier failure left (discovery, reconciliation, acknowledgement,
+  /// a pending payment) at most once per [resumeRetryInterval]. Never shows
+  /// anything and never launches a purchase.
   void appResumed() {
     if (_disposed) return;
     if (_checkout == PlusCheckoutState.purchasing) {
@@ -339,13 +352,22 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
   bool _due(DateTime? last) =>
       last == null || _nowUtc().difference(last) >= resumeRetryInterval;
 
+  /// Something only an ownership query can settle: a failed reconciliation,
+  /// a failed acknowledgement, or a pending payment that may have completed
+  /// while the app was away (Play sends no callback for that).
+  bool get _recoveryNeeded =>
+      _reconcileIncomplete ||
+      _ackPending ||
+      _checkout == PlusCheckoutState.pending;
+
   Future<void> _resumeRecovery() async {
     if ((!_storeAvailable || _product == null) && _due(_lastCatalogAttempt)) {
       await refreshStore();
     }
     if (_disposed) return;
-    if (_ackPending &&
-        _checkout == PlusCheckoutState.idle &&
+    if (_recoveryNeeded &&
+        (_checkout == PlusCheckoutState.idle ||
+            _checkout == PlusCheckoutState.pending) &&
         _due(_lastReconcileAttempt)) {
       await _reconcileOwned();
     }
@@ -357,8 +379,13 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
 
   Future<_Reconcile> _runReconcile() async {
     final run = _Reconcile();
-    if (_disposed || !_storeAvailable) {
+    if (_disposed) {
       run.failed = true;
+      return run;
+    }
+    if (!_storeAvailable) {
+      run.failed = true;
+      _reconcileIncomplete = true;
       return run;
     }
     _lastReconcileAttempt = _nowUtc();
@@ -372,6 +399,15 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
     } finally {
       if (identical(_currentReconcile, run)) _currentReconcile = null;
     }
+    if (_disposed) return run;
+    if (!run.failed) {
+      // The store listed every purchase with its real acknowledgement state.
+      _ackPending = run.ackFailed;
+    }
+    _reconcileIncomplete =
+        run.failed ||
+        run.sawPending ||
+        (!_active && run.verdicts.contains(PlusVerdict.unavailable));
     return run;
   }
 
@@ -447,6 +483,8 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
     }
     switch (update.status) {
       case PlusPurchaseStatus.pending:
+        // Never verified, granted or acknowledged until it completes.
+        _currentReconcile?.sawPending = true;
         if (!_active && checkoutResult) {
           _checkout = PlusCheckoutState.pending;
           _lastOutcome = PlusPurchaseOutcome.pending;
@@ -531,7 +569,11 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
           if (_disposed) return;
         }
         await _acknowledge(update);
-        if (!revalidate) _endCheckout(PlusPurchaseOutcome.verified);
+        // A pending payment that completed while the app was away arrives
+        // only through the ownership query; it settles that checkout too.
+        if (!revalidate || _checkout == PlusCheckoutState.pending) {
+          _endCheckout(PlusPurchaseOutcome.verified);
+        }
       case PlusVerdict.revoked:
         if (_active &&
             _proof?.serverVerificationData == proof.serverVerificationData) {
@@ -573,6 +615,7 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
     // A failure is retried by the next startup or resume reconciliation,
     // which lists the purchase again with its real acknowledgement state.
     _ackPending = !ok;
+    if (!ok) _currentReconcile?.ackFailed = true;
   }
 
   Future<void> _revoke() async {

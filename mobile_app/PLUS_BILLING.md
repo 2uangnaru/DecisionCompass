@@ -78,10 +78,36 @@ here is production sign-off.
 - Overlapping startup, resume and Restore share one owned-purchases query
   and one discovery attempt. Nothing mutates entitlement, persistence or ads
   after `dispose`.
-- Limitation: an owned purchase Play stops listing (refund) is only revoked
-  through the verifier's answer for the cached proof; with no verifier it
-  stays active. Pending purchases rely on Play redelivering their final
-  state.
+- Resume recovery (2026-10-29, after 599f7f4). A resume runs the
+  owned-purchases query, at most once per `resumeRetryInterval` and only
+  while checkout is idle or pending, when any of these holds:
+  - the last reconciliation did not settle: the query threw or timed out,
+    the store was unavailable so it could not run (it runs once discovery
+    succeeds), the store listed a payment still pending, or the verifier
+    could not answer for a purchase not yet granted;
+  - an acknowledgement failed (`acknowledgementPending`);
+  - a checkout is `pending`. Play sends no callback for a payment that
+    completes while the app is away, so the query is how it is found.
+
+  The condition is in memory only. Every start reconciles anyway and
+  re-derives it, so an acknowledgement that failed before a restart is
+  recovered even when the startup query fails too. Nothing native is
+  persisted. A clean query recomputes `acknowledgementPending` from that
+  run and clears the condition, after which resumes query nothing.
+- A verified purchase found by that query settles a pending checkout
+  (`verified`, idle) and is acknowledged once. A payment still pending, an
+  empty list or a failed query leaves the checkout pending and grants
+  nothing. The verifier being down keeps it ungranted, unacknowledged and
+  retryable. Recovery never launches a purchase.
+- Android's `restorePurchases` relabels every listed purchase `restored`,
+  pending ones included. The adapter maps a `PurchaseStateWrapper.pending`
+  purchase back to pending, so it is never verified, granted or
+  acknowledged.
+- Limitations: an owned purchase Play stops listing (refund) is only
+  revoked through the verifier's answer for the cached proof; with no
+  verifier it stays active. A pending payment that is canceled leaves the
+  checkout `pending` for the rest of the session, because an empty list is
+  not proof of cancellation; a restart clears it.
 - No fake success exists in `lib/`. Tests inject fake stores/verifiers.
 
 ### Verifier contract (owner must provide)
@@ -161,7 +187,12 @@ Exposed on `PlusEntitlementController` (`checkout`, `lastOutcome`,
 
 ## Verification (2026-10-29, fakes only)
 
-- `test/plus_billing_test.dart` (50): lifecycle fixes 1-14 (verifier
+- `test/plus_billing_test.dart` (62): recovery R1-R10 (failed ack +
+  restart + failed startup query, store down at start, spaced repeated
+  failures, cleared retry work, pending payment completed while away,
+  still-pending and Android pending-as-restored, empty/failed query while
+  pending, verifier down then retry, shared query, disposal), lifecycle
+  fixes 1-14 (verifier
   throw/timeout, stale results, realistic Android already-owned / cancel /
   error payloads mapped by the real adapter, BillingResult acknowledgement,
   ack failure + restart / spaced resume recovery, Restore revalidation and
@@ -181,7 +212,13 @@ Exposed on `PlusEntitlementController` (`checkout`, `lastOutcome`,
 Each lifecycle fix was mutation-checked: breaking it (no exception handling,
 no timeout, anonymous updates dropped, wrong error field, no reconcile when
 cached, ack result ignored, restored treated as duplicate, one-shot
-discovery, no coalescing, no dispose guards) fails a named test.
+discovery, no coalescing, no dispose guards) fails a named test. The
+recovery tests fail on the 599f7f4 controller (10 of 12) and catch each
+recovery change removed on its own: failed query, store unavailable,
+listed pending and unverified purchase not recorded; pending checkout not
+eligible or blocked; pending checkout not settled; adapter trusting the
+`restored` label; and no retry spacing. R7 and R10 are guards. They pass on
+599f7f4, which never ran the query.
 
 These fakes and adapter mappings do NOT prove native billing, Play
 acknowledgement, refunds or store readiness; that needs a configured Play
