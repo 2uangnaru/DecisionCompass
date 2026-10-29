@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../app_locale.dart';
+import '../app_profile.dart';
 import '../data/reading_quota_controller.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
@@ -14,6 +15,118 @@ import '../theme.dart';
 /// Computed from [ReadingQuotaController] and [nowLocal] so `HomePage`,
 /// `RitualPage`, and `ResultPage` always render the exact same orb count and
 /// cooldown countdown.
+/// Represents a personalized 2-hour celestial window for a profile on a given day.
+class AuspiciousWindowResult {
+  const AuspiciousWindowResult({
+    required this.windowText,
+    required this.noteText,
+  });
+
+  final String windowText;
+  final String noteText;
+}
+
+/// Resolves the optimal 2-hour auspicious window (Giờ hoàng đạo / Cosmic window)
+/// tailored to [profile]'s natal anchor and [nowLocal] date across all 8 locales.
+AuspiciousWindowResult resolvePersonalizedAuspiciousWindow({
+  required AppProfile profile,
+  required DateTime nowLocal,
+  required AppLocale locale,
+}) {
+  int birthHour = 12;
+  final rawTime = profile.birthTime;
+  if (rawTime != null) {
+    final parts = rawTime.split(':');
+    if (parts.isNotEmpty) {
+      birthHour = int.tryParse(parts[0]) ?? 12;
+    }
+  }
+  final int birthHash = profile.birthDate.year * 10000 +
+      profile.birthDate.month * 100 +
+      profile.birthDate.day +
+      birthHour;
+  final int dayHash = nowLocal.year * 365 + nowLocal.month * 31 + nowLocal.day;
+  final int slot = ((birthHash ^ dayHash).abs()) % 6;
+
+  final windowText = switch (slot) {
+    0 => '07:00 — 09:00',
+    1 => '09:00 — 11:00',
+    2 => '11:00 — 13:00',
+    3 => '13:00 — 15:00',
+    4 => '15:00 — 17:00',
+    _ => '17:00 — 19:00',
+  };
+
+  final noteText = switch (locale) {
+    AppLocale.vietnamese => switch (slot) {
+        0 => 'Giờ Thìn · Thiên thời đắc lợi',
+        1 => 'Giờ Tỵ · Cát khí hanh thông',
+        2 => 'Giờ Ngọ · Dương khí cực thịnh',
+        3 => 'Giờ Mùi · Cát khí đỉnh cao',
+        4 => 'Giờ Thân · Thời vận tương sinh',
+        _ => 'Giờ Dậu · Vượng khí bản mệnh',
+      },
+    AppLocale.english => switch (slot) {
+        0 => 'Optimal cosmic focus',
+        1 => 'Peak transit alignment',
+        2 => 'Harmonic solar resonance',
+        3 => 'Peak natal alignment',
+        4 => 'High celestial clarity',
+        _ => 'Favorable astral flow',
+      },
+    AppLocale.spanish => switch (slot) {
+        0 => 'Enfoque cósmico óptimo',
+        1 => 'Alineación de tránsito cumbre',
+        2 => 'Resonancia solar armónica',
+        3 => 'Máxima resonancia natal',
+        4 => 'Alta claridad celeste',
+        _ => 'Flujo astral favorable',
+      },
+    AppLocale.simplifiedChinese => switch (slot) {
+        0 => '辰时 · 龙德显曜',
+        1 => '巳时 · 吉星高照',
+        2 => '午时 · 阳和启泰',
+        3 => '未时 · 气运通达',
+        4 => '申时 · 金水相生',
+        _ => '酉时 · 旺气聚临',
+      },
+    AppLocale.japanese => switch (slot) {
+        0 => '辰の刻 · 貴人相助の刻',
+        1 => '巳の刻 · 万事吉祥の刻',
+        2 => '午の刻 · 陽気極盛の刻',
+        3 => '未の刻 · 命盤調和の刻',
+        4 => '申の刻 · 生気充溢の刻',
+        _ => '酉の刻 · 金気聚積の刻',
+      },
+    AppLocale.korean => switch (slot) {
+        0 => '진시(辰時) · 귀인 상조 시간대',
+        1 => '사시(巳時) · 매사 길상 시간대',
+        2 => '오시(午時) · 양기 극성 시간대',
+        3 => '미시(未時) · 명식 조화 시간대',
+        4 => '신시(申時) · 생기 충일 시간대',
+        _ => '유시(酉時) · 왕기 집중 시간대',
+      },
+    AppLocale.thai => switch (slot) {
+        0 => 'ช่วงเวลาราชาโชค',
+        1 => 'ช่วงเวลาพลังมงคลสูงสุด',
+        2 => 'ช่วงเวลาธาตุเสริมเกื้อหนุน',
+        3 => 'ช่วงเวลาพลังงานดวงชะตาสูงสุด',
+        4 => 'ช่วงเวลาฤกษ์มังกรทอง',
+        _ => 'ช่วงเวลาเปิดรับโชคลาภ',
+      },
+    AppLocale.hindi => switch (slot) {
+        0 => 'शुभ मुहूर्त व उत्तम काल',
+        1 => 'सर्वोत्तम ग्रह संरेखण काल',
+        2 => 'शुभ योग व अनुकूल ऊर्जा',
+        3 => 'कुंडली के लिए सर्वोत्तम समय',
+        4 => 'दिव्य चेतना व समृद्धि काल',
+        _ => 'सकारात्मक ऊर्जा का शिखर काल',
+      },
+  };
+
+  return AuspiciousWindowResult(windowText: windowText, noteText: noteText);
+}
+
 class ReadingEnergySnapshot {
   const ReadingEnergySnapshot({
     required this.usedFreeTurns,

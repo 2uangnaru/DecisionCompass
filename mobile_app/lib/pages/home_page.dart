@@ -212,11 +212,20 @@ class _HomePageState extends State<HomePage>
   Timer? _freeEnergyTimer;
   Timer? _cooldownTickTimer;
 
-  ReadingEnergySnapshot _currentEnergySnapshot() =>
-      ReadingEnergySnapshot.fromQuota(
-        quota: widget.dependencies.quotaManager,
-        nowLocal: widget.dependencies.nowLocal(),
-      );
+  ReadingEnergySnapshot _currentEnergySnapshot() {
+    final now = widget.dependencies.nowLocal();
+    final auspicious = resolvePersonalizedAuspiciousWindow(
+      profile: _profile,
+      nowLocal: now,
+      locale: widget.dependencies.localeController.locale,
+    );
+    return ReadingEnergySnapshot.fromQuota(
+      quota: widget.dependencies.quotaManager,
+      nowLocal: now,
+      auspiciousHourWindowOverride: auspicious.windowText,
+      auspiciousHourNoteOverride: auspicious.noteText,
+    );
+  }
 
   void _openPlusSheet() {
     final snapshot = _currentEnergySnapshot();

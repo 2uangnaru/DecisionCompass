@@ -1,4 +1,6 @@
 import 'package:decision_compass/app_locale.dart';
+import 'package:decision_compass/app_profile.dart';
+import 'package:decision_compass/models.dart';
 import 'package:decision_compass/widgets/astracue_plus_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -260,4 +262,67 @@ void main() {
       );
     }
   }
+
+  group('resolvePersonalizedAuspiciousWindow calculation tests', () {
+    final p1 = AppProfile(
+      birthDate: DateTime(1995, 6, 15),
+      birthCountryCode: 'VN',
+      zodiacSign: ZodiacSign.gemini,
+      useCurrentLocation: true,
+    );
+    final p2 = AppProfile(
+      birthDate: DateTime(1988, 11, 23),
+      birthCountryCode: 'US',
+      zodiacSign: ZodiacSign.sagittarius,
+      useCurrentLocation: true,
+    );
+    final day1 = DateTime(2026, 10, 29);
+    final day2 = DateTime(2026, 10, 30);
+
+    test('All 8 locales produce non-empty windowText and noteText', () {
+      for (final locale in AppLocale.values) {
+        final result = resolvePersonalizedAuspiciousWindow(
+          profile: p1,
+          nowLocal: day1,
+          locale: locale,
+        );
+        expect(result.windowText, matches(r'^\d{2}:\d{2} — \d{2}:\d{2}$'));
+        expect(result.noteText.isNotEmpty, isTrue);
+        if (locale == AppLocale.hindi) {
+          expect(result.noteText.endsWith('.'), isFalse,
+              reason: 'Hindi note must not end with Western dot');
+        }
+      }
+    });
+
+    test('Two distinct profiles produce consistent custom windows', () {
+      final r1 = resolvePersonalizedAuspiciousWindow(
+        profile: p1,
+        nowLocal: day1,
+        locale: AppLocale.vietnamese,
+      );
+      final r2 = resolvePersonalizedAuspiciousWindow(
+        profile: p2,
+        nowLocal: day1,
+        locale: AppLocale.vietnamese,
+      );
+      expect(r1.windowText.isNotEmpty, isTrue);
+      expect(r2.windowText.isNotEmpty, isTrue);
+    });
+
+    test('Two distinct dates evaluate for the same profile', () {
+      final rDay1 = resolvePersonalizedAuspiciousWindow(
+        profile: p1,
+        nowLocal: day1,
+        locale: AppLocale.vietnamese,
+      );
+      final rDay2 = resolvePersonalizedAuspiciousWindow(
+        profile: p1,
+        nowLocal: day2,
+        locale: AppLocale.vietnamese,
+      );
+      expect(rDay1.windowText.isNotEmpty, isTrue);
+      expect(rDay2.windowText.isNotEmpty, isTrue);
+    });
+  });
 }
