@@ -381,6 +381,153 @@ void main() {
     expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  group('buying from any entry point runs the same flow', () {
+    /// A started, purchasable controller (no sale-claim block in tests).
+    Future<PlusEntitlementController> purchasable(WidgetTester tester) async {
+      final plus = controller(requireClaims: false);
+      unawaited(plus.start());
+      await tester.pump();
+      await tester.pump();
+      return plus;
+    }
+
+    /// Opens the sheet through [entry], taps the real CTA, then lets the
+    /// store report a completed purchase.
+    Future<void> buyThrough(
+      WidgetTester tester,
+      PlusEntitlementController plus,
+      Finder entry,
+    ) async {
+      await tester.ensureVisible(entry);
+      await tester.tap(entry);
+      await settle(tester);
+      expect(find.byKey(const Key('astracue_plus_sheet')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('astracue_plus_sheet_cta')));
+      await settle(tester);
+      expect(store.buys, 1);
+      expect(find.byKey(const Key('astracue_plus_sheet')), findsNothing);
+      expect(plus.isActive, isFalse, reason: 'launching is not a purchase');
+      store.emit(update(PlusPurchaseStatus.purchased));
+      for (var i = 0; i < 5; i++) {
+        await tester.pump();
+      }
+      await settle(tester);
+      expect(plus.isActive, isTrue);
+      expect(plus.checkout, PlusCheckoutState.idle);
+      expect(store.completed, hasLength(1));
+      expect(plusAds.adFree, [true]);
+    }
+
+    testWidgets('Home header badge', (tester) async {
+      useScreen(tester, size: const Size(393, 900));
+      final plus = await purchasable(tester);
+      final rig = ReadingTestRig(
+        quotaManager: FakeReadingQuotaController(),
+        plus: plus,
+      );
+      await tester.pumpWidget(
+        localizedApp(
+          home: HomePage(profile: _profile, dependencies: rig.dependencies),
+        ),
+      );
+      await settle(tester);
+      await buyThrough(tester, plus, find.byKey(const Key('home_plus_button')));
+      expect(
+        tester
+            .widget<AstraCuePlusHeaderBadge>(
+              find.byType(AstraCuePlusHeaderBadge),
+            )
+            .isVip,
+        isTrue,
+      );
+      expect(
+        find.byType(AstralVipGoldOrbsRow, skipOffstage: false),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('Ritual energy card', (tester) async {
+      useScreen(tester, size: const Size(393, 900));
+      final plus = await purchasable(tester);
+      final rig = ReadingTestRig(
+        quotaManager: FakeReadingQuotaController(initialCooldown: true),
+        plus: plus,
+      );
+      await tester.pumpWidget(ritual(rig));
+      await settle(tester);
+      expect(find.byKey(const Key('ritual_watch_ad_button')), findsOneWidget);
+      await buyThrough(
+        tester,
+        plus,
+        find.byKey(const Key('ritual_energy_plus_card')),
+      );
+      expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
+      expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
+      expect(find.byType(LoadingPage), findsNothing);
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+
+    testWidgets('Result energy card, unlocking that reading\'s guidance', (
+      tester,
+    ) async {
+      useScreen(tester, size: const Size(412, 2400));
+      final plus = await purchasable(tester);
+      final reading = fixtureResponse('ready_yes_no_now.json');
+      final locks = GuidanceLockStore();
+      await tester.runAsync(() async {
+        for (var i = 0; i < 3; i++) {
+          await locks.admit('earlier_$i');
+        }
+      });
+      final rig = ReadingTestRig(guidanceLocks: locks, plus: plus);
+      await tester.pumpWidget(
+        localizedApp(
+          home: ResultPage(
+            reading: reading,
+            dependencies: rig.dependencies,
+            billableResult: true,
+          ),
+        ),
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 80)),
+      );
+      await settle(tester);
+      expect(
+        find.byKey(const Key('result_guidance_watch_ad_button')),
+        findsOneWidget,
+      );
+      // Two tappable cells with a gap between them; tap the first.
+      await buyThrough(
+        tester,
+        plus,
+        find
+            .descendant(
+              of: find.byKey(const Key('result_energy_plus_card')),
+              matching: find.byType(InkWell),
+            )
+            .first,
+      );
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 80)),
+      );
+      await settle(tester);
+      expect(
+        find.byKey(const Key('result_energy_plus_card'), skipOffstage: false),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const Key('result_guidance_watch_ad_button')),
+        findsNothing,
+      );
+      final key = '${reading.readingKey!}|${reading.mode.toJson()}';
+      final prefs = await SharedPreferences.getInstance();
+      expect(prefs.getStringList(GuidanceLockStore.openKey), contains(key));
+      await tester.pumpWidget(const SizedBox.shrink());
+    });
+  });
 }
 
 /// The Plus quota's six daily credits, without the 3-hour cooldown.
