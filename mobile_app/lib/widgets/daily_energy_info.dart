@@ -318,9 +318,10 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     }
 
     const margin = 12.0, gap = 8.0, maxWidth = 270.0;
-    // Narrower than this and the sentence turns into a ragged column, so the
-    // tab is better off below the icon at full width.
-    const minSideBand = 150.0;
+    // Prefer placing the tab horizontally in the band to the right of the
+    // icon so it grows upward beside the heading and never covers the signal
+    // tiles (lucky colours & lucky numbers) underneath.
+    const minSideBand = 72.0;
 
     final screen = overlay.size;
     final origin = anchor.localToGlobal(Offset.zero, ancestor: overlay);
@@ -366,27 +367,31 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     final left = (origin.dx + anchor.size.width / 2 - width / 2)
         .clamp(margin, math.max(margin, screen.width - margin - width))
         .toDouble();
-    final below = origin.dy + anchor.size.height + gap;
-    final fitsBelow = screen.height - below >= 96;
+    final fitsAbove = origin.dy - gap >= 80;
     // Where the icon sits along the tab, so the pointer lands under it even
     // once the tab itself has been clamped sideways.
     final pointerDx = (origin.dx + anchor.size.width / 2 - left)
         .clamp(16.0, math.max(16.0, width - 16))
         .toDouble();
     final tab = build(
-      fitsBelow ? _TabPlacement.below : _TabPlacement.above,
+      fitsAbove ? _TabPlacement.above : _TabPlacement.below,
       pointerDx,
     );
 
     return Stack(
       children: [
         ...barriers,
-        if (fitsBelow)
-          Positioned(left: left, top: below, width: width, child: tab)
-        else
+        if (fitsAbove)
           Positioned(
             left: left,
             bottom: screen.height - origin.dy + gap,
+            width: width,
+            child: tab,
+          )
+        else
+          Positioned(
+            left: left,
+            top: origin.dy + anchor.size.height + gap,
             width: width,
             child: tab,
           ),
