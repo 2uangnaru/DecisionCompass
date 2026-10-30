@@ -206,8 +206,8 @@ class ZodiacAvatar extends StatelessWidget {
               children: [
                 avatarBody,
                 Positioned(
-                  top: -crownSize * 0.46,
-                  right: -crownSize * 0.14,
+                  top: -crownSize * 0.42,
+                  right: -crownSize * 0.10,
                   child: IgnorePointer(
                     child: Transform.rotate(
                       angle: 0.26,
