@@ -162,11 +162,13 @@ class AstralVipGoldOrbsRow extends StatelessWidget {
     required this.remainingTurns,
     this.totalTurns = ReadingEnergySnapshot.plusDailyMax,
     this.orbSize = 8.5,
+    this.spacing = 3.0,
   });
 
   final int remainingTurns;
   final int totalTurns;
   final double orbSize;
+  final double spacing;
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +177,7 @@ class AstralVipGoldOrbsRow extends StatelessWidget {
       children: List.generate(totalTurns, (index) {
         final isActive = index < remainingTurns;
         return Padding(
-          padding: EdgeInsets.only(right: index == totalTurns - 1 ? 0 : 3.0),
+          padding: EdgeInsets.only(right: index == totalTurns - 1 ? 0 : spacing),
           child: isActive
               ? _GoldPlusOrb(size: orbSize)
               : Container(
@@ -709,39 +711,68 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     Flexible(
-                                      child: FittedBox(
-                                        fit: BoxFit.scaleDown,
-                                        alignment: Alignment.centerLeft,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const Text(
-                                              '👑 ',
-                                              style: TextStyle(fontSize: 10.5),
-                                            ),
-                                            Text(
-                                              copy.vipEnergyLabel,
-                                              maxLines: 1,
-                                              style: const TextStyle(
-                                                color: Color(0xFFFFDF99),
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w700,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 5.5,
+                                          vertical: 1.5,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: CompassColors.gold.withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(6),
+                                          border: Border.all(
+                                            color: CompassColors.gold.withValues(alpha: 0.40),
+                                            width: 0.6,
+                                          ),
+                                        ),
+                                        child: FittedBox(
+                                          fit: BoxFit.scaleDown,
+                                          alignment: Alignment.centerLeft,
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Text(
+                                                '👑 ',
+                                                style: TextStyle(fontSize: 9.0),
                                               ),
-                                            ),
-                                          ],
+                                              Text(
+                                                copy.vipEnergyLabel.toUpperCase(),
+                                                maxLines: 1,
+                                                style: const TextStyle(
+                                                  color: Color(0xFFFFDF99),
+                                                  fontSize: 9.5,
+                                                  fontWeight: FontWeight.w800,
+                                                  letterSpacing: 0.3,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                     const SizedBox(width: 4),
-                                    AstralVipGoldOrbsRow(
-                                      remainingTurns: snapshot.plusRemainingTurns,
-                                      totalTurns:
-                                          ReadingEnergySnapshot.plusDailyMax,
-                                      orbSize: 8.0,
+                                    const Text(
+                                      '✦',
+                                      style: TextStyle(
+                                        color: Color(0xFFFFDF99),
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.w900,
+                                      ),
                                     ),
                                   ],
                                 ),
-                                const SizedBox(height: 6),
+                                const SizedBox(height: 5),
+                                FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  alignment: Alignment.centerLeft,
+                                  child: AstralVipGoldOrbsRow(
+                                    remainingTurns: snapshot.plusRemainingTurns,
+                                    totalTurns:
+                                        ReadingEnergySnapshot.plusDailyMax,
+                                    orbSize: 9.5,
+                                    spacing: 4.5,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
                                 FittedBox(
                                   fit: BoxFit.scaleDown,
                                   alignment: Alignment.centerLeft,
@@ -750,9 +781,9 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                     maxLines: 1,
                                     style: const TextStyle(
                                       color: Color(0xFFF7D58C),
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w700,
-                                      height: 1.2,
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.w600,
+                                      height: 1.15,
                                     ),
                                   ),
                                 ),
