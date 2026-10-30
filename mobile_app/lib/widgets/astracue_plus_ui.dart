@@ -2401,7 +2401,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                   ),
                   const SizedBox(height: 10),
 
-                  // P1: 5 Concise Single-Line Checklist Rows
+                  // P1: 5 Concise Single-Line Checklist Rows (only Row 1 has right badge to avoid title truncation)
                   _P1ChecklistRow(
                     icon: Icons.bolt_rounded,
                     iconColor: CompassColors.blueLight,
@@ -2414,32 +2414,24 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                     icon: Icons.wb_sunny_rounded,
                     iconColor: const Color(0xFFF5D98E),
                     title: copy.p1Row2Title,
-                    badgeText: copy.p1Row2Badge,
-                    badgeColor: const Color(0xFFF7D58C),
                   ),
                   const SizedBox(height: 6),
                   _P1ChecklistRow(
                     icon: Icons.explore_rounded,
                     iconColor: const Color(0xFFF5D98E),
                     title: copy.p1Row3Title,
-                    badgeText: copy.p1Row3Badge,
-                    badgeColor: const Color(0xFFF7D58C),
                   ),
                   const SizedBox(height: 6),
                   _P1ChecklistRow(
                     icon: Icons.block_rounded,
                     iconColor: CompassColors.blueLight,
                     title: copy.p1Row4Title,
-                    badgeText: copy.p1Row4Badge,
-                    badgeColor: CompassColors.blueLight,
                   ),
                   const SizedBox(height: 6),
                   _P1ChecklistRow(
                     icon: Icons.all_inclusive_rounded,
                     iconColor: CompassColors.secondary,
                     title: copy.p1Row5Title,
-                    badgeText: copy.p1Row5Badge,
-                    badgeColor: const Color(0xFFF7D58C),
                   ),
                   const SizedBox(height: 10),
 
@@ -3277,7 +3269,7 @@ class _PlusLocalizedCopy {
     p1Row2Badge: 'Cá nhân hóa lá số',
     p1Row3Title: 'Mở khóa trọn bộ chỉ dẫn',
     p1Row3Badge: 'Xem sắc nét',
-    p1Row4Title: 'Tắt hoàn toàn 100% quảng cáo',
+    p1Row4Title: 'Tắt hoàn toàn quảng cáo',
     p1Row4Badge: '0 Ads trọn đời',
     p1Row5Title: 'Mua 1 lần dùng mãi mãi',
     p1Row5Badge: 'Không phí tháng',
