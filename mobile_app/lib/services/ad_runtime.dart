@@ -228,6 +228,7 @@ class ManagedAdService implements AdService {
     final previous = _presentation.value;
     final busy = _fullscreen || _bannerOverlay;
     // Ad-free reads as "no permission" so banner slots drop their ad.
+    // Rewarded ads do not read this: a Plus owner may still opt in to one.
     final canRequest = _allowed && !_adFree;
     if (previous.canRequestAds == canRequest &&
         previous.foreground == _foreground &&
@@ -244,9 +245,11 @@ class ManagedAdService implements AdService {
   void setAdFree(bool value) {
     if (_disposed || value == _adFree) return;
     _adFree = value;
-    // Invalidates cached ads and in-flight loads: a late success is
-    // discarded by its stale generation.
-    if (value) _clearSlots();
+    // Plus drops banners and interstitials. An opt-in rewarded ad stays
+    // available: a Plus owner who spent all six credits may watch one for a
+    // bonus credit. A late interstitial success is discarded by its stale
+    // generation.
+    if (value) _clearSlot(_slots[AdFormat.interstitial]!);
     _publishPresentation();
     if (!value) {
       preloadInterstitial();
@@ -455,7 +458,9 @@ class ManagedAdService implements AdService {
   }
 
   void _load(AdFormat format) {
-    if (_disposed || !_allowed || !_foreground || _adFree) return;
+    if (_disposed || !_allowed || !_foreground || _blockedByPlus(format)) {
+      return;
+    }
     final slot = _slots[format]!;
     if (slot.loading || slot.retry != null || _valid(slot)) return;
     final expired = slot.ad;
@@ -470,7 +475,7 @@ class ManagedAdService implements AdService {
     bool current() =>
         !_disposed &&
         _allowed &&
-        !_adFree &&
+        !_blockedByPlus(format) &&
         slot.loading &&
         slot.generation == generation;
     void failed(String reason) {
@@ -556,7 +561,7 @@ class ManagedAdService implements AdService {
 
   String? _commonSkip(AdFormat format) {
     if (_disposed) return 'disposed';
-    if (_adFree) return 'ad_free';
+    if (_blockedByPlus(format)) return 'ad_free';
     if (!_foreground) return 'background';
     if (!_allowed) return 'consent_or_initialization';
     if (_fullscreen || _bannerOverlay) return 'fullscreen_busy';
@@ -705,18 +710,23 @@ class ManagedAdService implements AdService {
     return done.future;
   }
 
-  void _clearSlots() {
-    for (final slot in _slots.values) {
-      slot.generation++;
-      slot.loading = false;
-      slot.timeout?.cancel();
-      slot.retry?.cancel();
-      slot.expiry?.cancel();
-      slot.retry = null;
-      if (slot.ad != null) _discard(slot.ad!);
-      slot.ad = null;
-      slot.loadedAt = null;
-    }
+  /// Plus never loads or shows an interstitial; banners follow
+  /// [presentation]. Only an opt-in rewarded ad remains.
+  bool _blockedByPlus(AdFormat format) =>
+      _adFree && format != AdFormat.rewarded;
+
+  void _clearSlots() => _slots.values.forEach(_clearSlot);
+
+  void _clearSlot(_Slot slot) {
+    slot.generation++;
+    slot.loading = false;
+    slot.timeout?.cancel();
+    slot.retry?.cancel();
+    slot.expiry?.cancel();
+    slot.retry = null;
+    if (slot.ad != null) _discard(slot.ad!);
+    slot.ad = null;
+    slot.loadedAt = null;
   }
 
   @override

@@ -126,11 +126,15 @@ reward must explicitly inject `TestRewardAdService` from the test harness.
 
 ## Plus ad-free (2026-10-29)
 
-`AdService.setAdFree(true)` follows the verified Plus entitlement: cached
-ads are disposed, in-flight loads are discarded by generation, no request
-is made, every fullscreen candidate skips with reason `ad_free`, and banner
-slots lose permission (their AdWidget is removed). Revocation preloads as a
-free user would; nothing is shown on resume. Store checkout claims the shared
+`AdService.setAdFree(true)` follows the verified Plus entitlement: the
+cached interstitial is disposed, in-flight interstitial loads are discarded
+by generation, no interstitial is requested, every interstitial candidate
+skips with reason `ad_free`, and banner slots lose permission (their
+AdWidget is removed). Rewarded is exempt (2026-10-30 owner decision): a Plus
+owner who has spent all six credits may tap Ritual's Watch-ad button for one
+bonus credit, so the rewarded cache, loads and shows work as for free
+readers. Nothing is shown without that tap. Revocation preloads as a free
+user would; nothing is shown on resume. Store checkout claims the shared
 fullscreen guard (`claimFullscreen`), so no ad or UMP form can overlap it;
 pending, update, failure or app resume releases it. Plus also bypasses the
 mode/category/period and Action Guidance rewarded gates. See

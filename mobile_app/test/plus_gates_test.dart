@@ -136,10 +136,8 @@ void main() {
     useScreen(tester, size: const Size(393, 900));
     final ads = CountingRewardAdService();
     final rig = ReadingTestRig(
-      quotaManager: FakeReadingQuotaController(
-        initialCooldown: true,
-        initialUsed: 3,
-      ),
+      // Three of six spent, with a free-tier cooldown Plus must ignore.
+      quotaManager: _PlusQuota(initialCooldown: true, initialUsed: 3),
       adService: ads,
       plus: await activePlus(tester),
     );
@@ -364,12 +362,14 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
-  testWidgets('VIP: six of six spent reads as exhausted, with no ad', (
-    tester,
-  ) async {
+  testWidgets('VIP: six of six spent offers an opt-in ad for one more '
+      'credit', (tester) async {
     useScreen(tester, size: const Size(393, 900));
+    final ads = CountingRewardAdService();
+    final quota = _PlusQuota(initialUsed: 6);
     final rig = ReadingTestRig(
-      quotaManager: _PlusQuota(initialUsed: 6),
+      quotaManager: quota,
+      adService: ads,
       plus: await activePlus(tester),
     );
     await tester.pumpWidget(ritual(rig));
@@ -377,8 +377,17 @@ void main() {
     final title = find.byKey(const Key('ritual_ready_title'));
     final l10n = AppLocalizations.of(tester.element(title));
     expect(tester.widget<Text>(title).data, l10n.dailyQuotaExhaustedTitle);
-    expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
     expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
+    expect(ads.shows, 0, reason: 'never shown unless the reader taps');
+    final button = find.byKey(const Key('ritual_watch_ad_button'));
+    expect(button, findsOneWidget);
+    await tester.ensureVisible(button);
+    await tester.tap(button);
+    await settle(tester);
+    expect(ads.shows, 1);
+    expect(quota.bonusReadings, 1);
+    expect(tester.widget<Text>(title).data, l10n.tapWhenReady);
+    expect(find.byKey(const Key('ritual_watch_ad_button')), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
 
@@ -532,7 +541,7 @@ void main() {
 
 /// The Plus quota's six daily credits, without the 3-hour cooldown.
 class _PlusQuota extends FakeReadingQuotaController {
-  _PlusQuota({super.initialUsed});
+  _PlusQuota({super.initialCooldown, super.initialUsed});
   @override
   int get maxDailyFreeReadings => 6;
 }

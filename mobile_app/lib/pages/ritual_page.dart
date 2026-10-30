@@ -1095,14 +1095,14 @@ class _RitualPageState extends State<RitualPage>
             ),
             const SizedBox(height: 5),
             Text(
-              (!energySnapshot.isPlusActive && (_isCooldown || _isQuotaExhausted))
+              _offersRewardedCredit(energySnapshot)
                   ? l10n.watchAdPrompt
                   : l10n.keepChoiceInMind,
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.bodyMedium
                   ?.copyWith(fontSize: 12.5),
             ),
-            if (!energySnapshot.isPlusActive && (_isCooldown || _isQuotaExhausted)) ...[
+            if (_offersRewardedCredit(energySnapshot)) ...[
               SizedBox(height: compact ? 10 : 12),
               WatchAdButton(
                 key: const Key('ritual_watch_ad_button'),
@@ -1135,6 +1135,12 @@ class _RitualPageState extends State<RitualPage>
       ],
     );
   }
+
+  /// Free readers in cooldown or out of credits, and Plus owners who spent
+  /// all six, may opt in to a rewarded ad for a bonus credit. Plus never
+  /// waits on a cooldown, so it is never offered one for that.
+  bool _offersRewardedCredit(ReadingEnergySnapshot snapshot) =>
+      _isQuotaExhausted || (!snapshot.isPlusActive && _isCooldown);
 
   ReadingEnergySnapshot _currentEnergySnapshot() {
     return ReadingEnergySnapshot.fromQuota(

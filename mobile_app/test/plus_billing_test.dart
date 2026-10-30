@@ -508,42 +508,60 @@ void main() {
     });
     tearDown(() => service.dispose());
 
-    test(
-      'drops cached ads, ignores late loads, requests and shows none',
-      () async {
-        await service.initialize();
-        final cached = backend.ready(AdFormat.rewarded);
-        final pending = backend.requests(AdFormat.interstitial).last;
-        expect(service.presentation.value.canRequestAds, isTrue);
-        service.setAdFree(true);
-        expect(cached.disposeCount, 1);
-        expect(service.presentation.value.canRequestAds, isFalse);
-        final late = FakeFullscreenAd();
-        pending.loaded(late);
-        expect(late.disposeCount, 1, reason: 'late success is discarded');
-        final before = backend.loads.length;
-        service.preloadInterstitial();
-        service.preloadRewarded();
-        service.setForeground(false);
-        service.setForeground(true);
-        expect(backend.loads.length, before);
-        expect(
-          await service.showRewarded(onEarnedReward: () async {}),
-          AdOutcome.skipped,
-        );
-        var dismissed = false;
-        await service.showInterstitial(onDismissed: () => dismissed = true);
-        expect(dismissed, isTrue);
-        expect(late.showCount, 0);
-      },
-    );
+    test('drops banners and interstitials, ignores late interstitial loads, '
+        'requests and shows none', () async {
+      await service.initialize();
+      final pending = backend.requests(AdFormat.interstitial).last;
+      expect(service.presentation.value.canRequestAds, isTrue);
+      service.setAdFree(true);
+      expect(
+        service.presentation.value.canRequestAds,
+        isFalse,
+        reason: 'banner slots drop their ad',
+      );
+      final late = FakeFullscreenAd();
+      pending.loaded(late);
+      expect(late.disposeCount, 1, reason: 'late success is discarded');
+      final before = backend.requests(AdFormat.interstitial).length;
+      service.preloadInterstitial();
+      service.setForeground(false);
+      service.setForeground(true);
+      expect(backend.requests(AdFormat.interstitial).length, before);
+      var dismissed = false;
+      await service.showInterstitial(onDismissed: () => dismissed = true);
+      expect(dismissed, isTrue);
+      expect(late.showCount, 0);
+    });
+
+    test('keeps an opt-in rewarded ad, which still pays its bonus', () async {
+      await service.initialize();
+      final cached = backend.ready(AdFormat.rewarded);
+      service.setAdFree(true);
+      expect(cached.disposeCount, 0, reason: 'the rewarded cache survives');
+      final requests = backend.requests(AdFormat.rewarded).length;
+      var earned = 0;
+      final shown = service.showRewarded(onEarnedReward: () async => earned++);
+      await Future<void>.delayed(Duration.zero);
+      expect(cached.showCount, 1);
+      cached.reward();
+      cached.close();
+      expect(await shown, AdOutcome.rewarded);
+      expect(earned, 1);
+      service.preloadRewarded();
+      expect(
+        backend.requests(AdFormat.rewarded).length,
+        greaterThan(requests),
+        reason: 'a Plus owner can still load the next one',
+      );
+    });
 
     test('revocation resumes ordinary preloading but shows nothing', () async {
       await service.initialize();
       service.setAdFree(true);
       final before = backend.loads.length;
       service.setAdFree(false);
-      expect(backend.loads.length, before + 2);
+      // Only the interstitial was dropped; the rewarded cache never was.
+      expect(backend.loads.length, before + 1);
       expect(service.presentation.value.canRequestAds, isTrue);
     });
 

@@ -9,7 +9,11 @@ here is production sign-off.
 - Plus is ONE non-consumable, one-time product. It is never consumed.
 - Active Plus: 6 daily credits instead of 3 (shared, not 3 + 6), no
   reading-energy cooldown, every mode / category / still-available period
-  unlocked, Action Guidance unlocked, no banner / interstitial / rewarded.
+  unlocked, Action Guidance unlocked, no banner / interstitial, and no
+  rewarded ad unless the owner opts in: with all six credits spent (and no
+  bonus left), Ritual offers the same Watch-ad button as for free readers,
+  for one bonus credit per completed ad (owner decision 2026-10-30; the
+  Plus copy still says "remove all ads").
 - Usage is never rewritten: 2 used then upgrade leaves 4; restore, restart
   or refresh never refill; revocation keeps usage (5 used leaves 0 free).
 - Midnight resets daily usage; bonus credits survive and are still spent
