@@ -104,46 +104,67 @@ class ZodiacAvatar extends StatelessWidget {
     super.key,
     this.size = 72,
     this.glow = false,
+    this.isVip = false,
     this.sign = ZodiacSign.cancer,
   });
 
   final double size;
   final bool glow;
+  final bool isVip;
   final ZodiacSign sign;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    return Semantics(
-      image: true,
-      label: l10n.zodiacAvatarSemantics(zodiacLabel(l10n, sign)),
-      child: AnimatedSwitcher(
-        duration: const Duration(milliseconds: 420),
-        switchInCurve: Curves.easeOutBack,
-        switchOutCurve: Curves.easeIn,
-        transitionBuilder: (child, animation) => FadeTransition(
-          opacity: animation,
-          child: ScaleTransition(
-            scale: Tween<double>(begin: 0.88, end: 1).animate(animation),
-            child: child,
-          ),
+    final crownSize = (size * 0.35).clamp(16.0, 32.0);
+
+    final avatarBody = AnimatedSwitcher(
+      duration: const Duration(milliseconds: 420),
+      switchInCurve: Curves.easeOutBack,
+      switchOutCurve: Curves.easeIn,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: ScaleTransition(
+          scale: Tween<double>(begin: 0.88, end: 1).animate(animation),
+          child: child,
         ),
-        child: Container(
-          key: ValueKey(sign),
-          width: size,
-          height: size,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            boxShadow: glow
-                ? [
-                    BoxShadow(
-                      color: CompassColors.blueLight.withValues(alpha: 0.3),
-                      blurRadius: size * 0.38,
-                      spreadRadius: size * 0.05,
-                    ),
-                  ]
-                : null,
-          ),
+      ),
+      child: Container(
+        key: ValueKey(sign),
+        width: size,
+        height: size,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          border: isVip
+              ? Border.all(
+                  color: const Color(0xFFF7D58C),
+                  width: 1.5,
+                )
+              : null,
+          boxShadow: isVip
+              ? [
+                  BoxShadow(
+                    color: CompassColors.gold.withValues(alpha: 0.45),
+                    blurRadius: size * 0.32,
+                    spreadRadius: size * 0.04,
+                  ),
+                  BoxShadow(
+                    color: const Color(0xFFD4AF37).withValues(alpha: 0.25),
+                    blurRadius: size * 0.55,
+                    spreadRadius: size * 0.02,
+                  ),
+                ]
+              : (glow
+                  ? [
+                      BoxShadow(
+                        color: CompassColors.blueLight.withValues(alpha: 0.3),
+                        blurRadius: size * 0.38,
+                        spreadRadius: size * 0.05,
+                      ),
+                    ]
+                  : null),
+        ),
+        child: ClipOval(
           child: Image.asset(
             sign.assetPath,
             key: Key('zodiac_avatar_${sign.name}'),
@@ -174,6 +195,45 @@ class ZodiacAvatar extends StatelessWidget {
           ),
         ),
       ),
+    );
+
+    return Semantics(
+      image: true,
+      label: l10n.zodiacAvatarSemantics(zodiacLabel(l10n, sign)),
+      child: isVip
+          ? Stack(
+              clipBehavior: Clip.none,
+              children: [
+                avatarBody,
+                Positioned(
+                  top: -crownSize * 0.46,
+                  right: -crownSize * 0.14,
+                  child: IgnorePointer(
+                    child: Transform.rotate(
+                      angle: 0.26,
+                      child: Text(
+                        '👑',
+                        style: TextStyle(
+                          fontSize: crownSize,
+                          shadows: [
+                            Shadow(
+                              color: Colors.black.withValues(alpha: 0.85),
+                              blurRadius: 5,
+                              offset: const Offset(0, 1.5),
+                            ),
+                            Shadow(
+                              color: CompassColors.gold.withValues(alpha: 0.65),
+                              blurRadius: 8,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : avatarBody,
     );
   }
 }

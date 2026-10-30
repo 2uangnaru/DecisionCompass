@@ -624,7 +624,7 @@ class _HomePageState extends State<HomePage>
                   borderRadius: BorderRadius.circular(16),
                   child: Row(
                     children: [
-                      ZodiacAvatar(size: 52, sign: _profile.zodiacSign),
+                      ZodiacAvatar(size: 52, sign: _profile.zodiacSign, isVip: widget.dependencies.plusActive),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(

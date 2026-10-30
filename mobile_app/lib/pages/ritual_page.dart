@@ -1024,6 +1024,7 @@ class _RitualPageState extends State<RitualPage>
                                     child: ZodiacAvatar(
                                       size: compact ? 46 : 54,
                                       sign: widget.profile.zodiacSign,
+                                      isVip: widget.dependencies.plusActive,
                                     ),
                                   ),
                                   SizedBox(height: compact ? 6 : 8),

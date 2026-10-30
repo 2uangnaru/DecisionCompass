@@ -713,6 +713,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 ZodiacAvatar(
                                   size: 92,
                                   glow: true,
+                                  isVip: widget.dependencies.plusActive,
                                   sign: _zodiac,
                                 ),
                                 const SizedBox(height: 8),
