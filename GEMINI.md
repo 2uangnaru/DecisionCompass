@@ -33,3 +33,14 @@
   flutter analyze
   ```
 * All test permutations must pass 100% with 0 analyzer issues.
+
+## 4. Building a Test APK
+
+* Every debug APK built for the owner to test must enable demo Plus billing:
+  ```powershell
+  $env:JAVA_HOME='C:\Users\ADMIN\develop\jdk-17'
+  $env:ANDROID_HOME='C:\Users\ADMIN\AppData\Local\Android\sdk'
+  C:\Users\ADMIN\develop\flutter\bin\flutter.bat build apk --debug --dart-define=PLUS_DEMO_BILLING=true
+  ```
+* Without the flag the APK uses real Play billing with no verifier: the Plus Buy button is blocked and does nothing visible, so the owner cannot test VIP.
+* The flag only works in debug builds; release builds ignore it. Never drop it to "fix" a build.

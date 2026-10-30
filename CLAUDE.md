@@ -573,10 +573,15 @@ C:\Users\ADMIN\develop\flutter\bin\flutter.bat analyze
 C:\Users\ADMIN\develop\flutter\bin\flutter.bat test
 ```
 
-Android debug build:
+Android debug build (owner test builds always use demo Plus billing):
 
 ```powershell
 $env:JAVA_HOME='C:\Users\ADMIN\develop\jdk-17'
 $env:ANDROID_HOME='C:\Users\ADMIN\AppData\Local\Android\sdk'
-C:\Users\ADMIN\develop\flutter\bin\flutter.bat build apk --debug
+C:\Users\ADMIN\develop\flutter\bin\flutter.bat build apk --debug --dart-define=PLUS_DEMO_BILLING=true
 ```
+
+Without `--dart-define=PLUS_DEMO_BILLING=true` a debug APK uses real Play
+billing with no verifier, so the Plus Buy button is blocked and does nothing
+visible. Every APK handed to the owner for testing needs the flag; release
+builds ignore it (see `mobile_app/PLUS_BILLING.md`).
