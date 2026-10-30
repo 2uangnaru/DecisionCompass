@@ -178,6 +178,7 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
     if (!controller.coachMarkShown && !_coachOpen) {
       setState(() => _coachOpen = true);
       _coachPortal.show();
+      controller.markCoachMarkShown();
       _coachTimer = Timer(_coachMarkDuration, _dismissCoachMark);
     }
   }
@@ -185,6 +186,7 @@ class _DailyEnergyInfoButtonState extends State<DailyEnergyInfoButton>
   void _dismissCoachMark() {
     _coachTimer?.cancel();
     _coachTimer = null;
+    widget.controller.markCoachMarkShown();
     if (!mounted || !_coachOpen) return;
     _afterFrame(() {
       if (!_coachOpen) return;

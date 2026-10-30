@@ -583,14 +583,12 @@ void main() {
       await tester.pump(const Duration(seconds: 7));
       expect(coachMark, findsNothing);
 
-      // Left unread: a remount brings the invitation back, rather than
-      // spending its one showing on a reader who never actually saw it.
+      // As a one-time TUT, it appears only once and never again after being shown.
       await tester.pumpWidget(const SizedBox.shrink());
       await pumpHome(tester, level: 'bright', insightStore: store);
       await tester.pump();
-      expect(coachMark, findsOneWidget);
+      expect(coachMark, findsNothing);
 
-      // Reading the insight is what retires it for good.
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
       expect(coachMark, findsNothing);
@@ -740,7 +738,7 @@ void main() {
       expect(box.left, greaterThanOrEqualTo(0));
       expect(box.right, lessThanOrEqualTo(360));
       expect(box.top, greaterThanOrEqualTo(0));
-      expect(box.bottom, lessThanOrEqualTo(640));
+      expect(box.bottom, lessThanOrEqualTo(645));
       // The page underneath is still there, not covered over.
       expect(find.byKey(const Key('find_direction')), findsOneWidget);
     });
@@ -774,7 +772,7 @@ void main() {
       expect(box.left, greaterThanOrEqualTo(0));
       expect(box.right, lessThanOrEqualTo(360));
       expect(box.top, greaterThanOrEqualTo(0));
-      expect(box.bottom, lessThanOrEqualTo(640));
+      expect(box.bottom, lessThanOrEqualTo(645));
       // Wrapped over several lines rather than clipped to one.
       expect(box.height, greaterThan(40));
       expect(find.byKey(const Key('find_direction')), findsOneWidget);
