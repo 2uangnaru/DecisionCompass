@@ -206,15 +206,16 @@ class ZodiacAvatar extends StatelessWidget {
               children: [
                 avatarBody,
                 Positioned(
-                  top: -crownSize * 0.42,
-                  right: -crownSize * 0.10,
-                  child: IgnorePointer(
-                    child: Transform.rotate(
-                      angle: 0.26,
+                  top: -crownSize * 0.52,
+                  left: 0,
+                  right: 0,
+                  child: Center(
+                    child: IgnorePointer(
                       child: Text(
                         '👑',
                         style: TextStyle(
                           fontSize: crownSize,
+                          height: 1.0,
                           shadows: [
                             Shadow(
                               color: Colors.black.withValues(alpha: 0.85),
