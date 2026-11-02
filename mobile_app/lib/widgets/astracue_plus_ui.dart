@@ -260,7 +260,12 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
   }
 
   @override
-  Widget build(BuildContext context) {
+  // Loops forever: a boundary keeps each frame to this widget instead of
+  // repainting the whole page around it.
+  Widget build(BuildContext context) =>
+      RepaintBoundary(child: _buildLooping(context));
+
+  Widget _buildLooping(BuildContext context) {
     final copy = _PlusLocalizedCopy.of(
       Localizations.localeOf(context).languageCode,
     );
@@ -1407,7 +1412,12 @@ class _AnimatedPlusGemBoxState extends State<_AnimatedPlusGemBox>
   }
 
   @override
-  Widget build(BuildContext context) {
+  // Loops forever: a boundary keeps each frame to this widget instead of
+  // repainting the whole page around it.
+  Widget build(BuildContext context) =>
+      RepaintBoundary(child: _buildLooping(context));
+
+  Widget _buildLooping(BuildContext context) {
     return GestureDetector(
       onTap: widget.onTap,
       behavior: HitTestBehavior.opaque,
@@ -2570,7 +2580,12 @@ class _B1LifetimeVipCrestState extends State<_B1LifetimeVipCrest>
   }
 
   @override
-  Widget build(BuildContext context) {
+  // Loops forever: a boundary keeps each frame to this widget instead of
+  // repainting the whole page around it.
+  Widget build(BuildContext context) =>
+      RepaintBoundary(child: _buildLooping(context));
+
+  Widget _buildLooping(BuildContext context) {
     return AnimatedBuilder(
       animation: _controller,
       builder: (context, _) {
@@ -2829,7 +2844,12 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
   }
 
   @override
-  Widget build(BuildContext context) {
+  // Loops forever: a boundary keeps each frame to this widget instead of
+  // repainting the whole page around it.
+  Widget build(BuildContext context) =>
+      RepaintBoundary(child: _buildLooping(context));
+
+  Widget _buildLooping(BuildContext context) {
     return Semantics(
       button: true,
       label: '${widget.semanticsLabel}, ${widget.saleBadgeLabel}',
