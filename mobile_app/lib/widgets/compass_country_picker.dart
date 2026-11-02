@@ -12,24 +12,73 @@ String _countryCodeToEmoji(String countryCode) {
   return String.fromCharCode(firstLetter) + String.fromCharCode(secondLetter);
 }
 
-/// Strips Vietnamese and Latin diacritics for flexible accent-insensitive search.
+/// Each accented letter the search folds, keyed by its code unit.
+final Map<int, String> _diacriticFold = () {
+  const groups = <String, String>{
+    'a': 'àáảãạâầấẩẫậăằắẳẵặ',
+    'A': 'ÀÁẢÃẠÂẦẤẨẪẬĂẰẮẲẴẶ',
+    'e': 'èéẻẽẹêềếểễệ',
+    'E': 'ÈÉẺẼẸÊỀẾỂỄỆ',
+    'i': 'ìíỉĩị',
+    'I': 'ÌÍỈĨỊ',
+    'o': 'òóỏõọôồốổỗộơờớởỡợ',
+    'O': 'ÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢ',
+    'u': 'ùúủũụưừứửữự',
+    'U': 'ÙÚỦŨỤƯỪỨỬỮỰ',
+    'y': 'ỳýỷỹỵ',
+    'Y': 'ỲÝỶỸỴ',
+    'd': 'đ',
+    'D': 'Đ',
+  };
+  return <int, String>{
+    for (final MapEntry(key: base, value: letters) in groups.entries)
+      for (final unit in letters.codeUnits) unit: base,
+  };
+}();
+
+/// Strips Vietnamese and Latin diacritics for flexible accent-insensitive
+/// search. One pass, no regular expressions: it runs for every country when
+/// the sheet opens.
 String _stripDiacritics(String text) {
-  var str = text;
-  str = str.replaceAll(RegExp(r'[àáảãạâầấẩẫậăằắẳẵặ]'), 'a');
-  str = str.replaceAll(RegExp(r'[ÀÁẢÃẠÂẦẤẨẪẬĂẰẮẲẴẶ]'), 'A');
-  str = str.replaceAll(RegExp(r'[èéẻẽẹêềếểễệ]'), 'e');
-  str = str.replaceAll(RegExp(r'[ÈÉẺẼẸÊỀẾỂỄỆ]'), 'E');
-  str = str.replaceAll(RegExp(r'[ìíỉĩị]'), 'i');
-  str = str.replaceAll(RegExp(r'[ÌÍỈĨỊ]'), 'I');
-  str = str.replaceAll(RegExp(r'[òóỏõọôồốổỗộơờớởỡợ]'), 'o');
-  str = str.replaceAll(RegExp(r'[ÒÓỎÕỌÔỒỐỔỖỘƠỜỚỞỠỢ]'), 'O');
-  str = str.replaceAll(RegExp(r'[ùúủũụưừứửữự]'), 'u');
-  str = str.replaceAll(RegExp(r'[ÙÚỦŨỤƯỪỨỬỮỰ]'), 'U');
-  str = str.replaceAll(RegExp(r'[ỳýỷỹỵ]'), 'y');
-  str = str.replaceAll(RegExp(r'[ỲÝỶỸỴ]'), 'Y');
-  str = str.replaceAll(RegExp(r'[đ]'), 'd');
-  str = str.replaceAll(RegExp(r'[Đ]'), 'D');
-  return str;
+  final out = StringBuffer();
+  for (final unit in text.codeUnits) {
+    final folded = _diacriticFold[unit];
+    if (folded != null) {
+      out.write(folded);
+    } else {
+      out.writeCharCode(unit);
+    }
+  }
+  return out.toString();
+}
+
+final RegExp _whitespaceRun = RegExp(r'\s+');
+
+/// Everything search and sorting read about one country, worked out once per
+/// language instead of on every keystroke and every comparison.
+class _SearchEntry {
+  _SearchEntry(this.country, this.displayName)
+    : name = displayName.toLowerCase(),
+      english = country.name.toLowerCase(),
+      vietnamese = countryNamesVI[country.countryCode]?.toLowerCase(),
+      code = country.countryCode.toLowerCase(),
+      sortKey = displayName.trim().toLowerCase(),
+      label = displayName.replaceAll(_whitespaceRun, ' ') {
+    nameFolded = _stripDiacritics(name);
+    englishFolded = _stripDiacritics(english);
+    vietnameseFolded = vietnamese == null ? null : _stripDiacritics(vietnamese!);
+    aliases = [
+      for (final alias in _countrySearchAliases[country.countryCode] ?? const [])
+        (alias, _stripDiacritics(alias)),
+    ];
+  }
+
+  final Country country;
+  final String displayName, name, english, code, sortKey, label;
+  final String? vietnamese;
+  late final String nameFolded, englishFolded;
+  late final String? vietnameseFolded;
+  late final List<(String, String)> aliases;
 }
 
 /// Common country search aliases so searching in any supported language
@@ -119,8 +168,11 @@ void showCompassCountryPicker({
     showDragHandle: showDragHandle,
     useRootNavigator: useRootNavigator,
     builder: (ctx) {
-      final deviceHeight = MediaQuery.of(ctx).size.height;
-      final statusBarHeight = MediaQuery.of(ctx).padding.top;
+      // `sizeOf`/`paddingOf`, not `MediaQuery.of`: the latter also depends on
+      // the keyboard inset, and the search field autofocuses, so the whole
+      // list would rebuild on every frame of the keyboard sliding in.
+      final deviceHeight = MediaQuery.sizeOf(ctx).height;
+      final statusBarHeight = MediaQuery.paddingOf(ctx).top;
       final height =
           countryListTheme?.bottomSheetHeight ??
           deviceHeight - (statusBarHeight + (kToolbarHeight / 1.5));
@@ -129,7 +181,7 @@ void showCompassCountryPicker({
       return Padding(
         padding:
             moveAlongWithKeyboard
-                ? MediaQuery.of(ctx).viewInsets
+                ? MediaQuery.viewInsetsOf(ctx)
                 : EdgeInsets.zero,
         child: Container(
           height: height,
@@ -232,7 +284,9 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
   late final TextEditingController _searchController;
   late final List<Country> _allCountries;
   List<Country>? _favoriteList;
-  List<Country> _filteredList = [];
+  List<_SearchEntry> _index = const [];
+  Map<String, _SearchEntry> _byCode = const {};
+  List<_SearchEntry> _filteredList = [];
   bool _isSearching = false;
 
   @override
@@ -271,14 +325,14 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
     }
 
     if (widget.exclude != null) {
-      countries.removeWhere(
-        (country) => widget.exclude!.contains(country.countryCode),
-      );
+      final exclude = widget.exclude!.toSet();
+      countries.removeWhere((country) => exclude.contains(country.countryCode));
     }
 
     if (widget.countryFilter != null) {
+      final allowed = widget.countryFilter!.toSet();
       countries.removeWhere(
-        (country) => !widget.countryFilter!.contains(country.countryCode),
+        (country) => !allowed.contains(country.countryCode),
       );
     }
 
@@ -294,6 +348,12 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final localizations = CountryLocalizations.of(context);
+    _index = [
+      for (final country in _allCountries)
+        _SearchEntry(country, _displayName(country, localizations)),
+    ];
+    _byCode = {for (final entry in _index) entry.country.countryCode: entry};
     _filterList(_searchController.text);
   }
 
@@ -308,38 +368,27 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
         country.name;
   }
 
-  bool _matchesCountry(
-    Country country,
-    String query,
-    String queryNorm,
-    CountryLocalizations? localizations,
-  ) {
+  bool _matchesCountry(_SearchEntry entry, String query, String queryNorm) {
     final cleanPhone = query.startsWith('+') ? query.substring(1) : query;
-    if (country.phoneCode.startsWith(cleanPhone)) return true;
-    if (country.countryCode.toLowerCase().startsWith(query)) return true;
+    if (entry.country.phoneCode.startsWith(cleanPhone)) return true;
+    if (entry.code.startsWith(query)) return true;
 
-    final locName = _displayName(country, localizations).toLowerCase();
-    if (locName.contains(query)) return true;
-    if (_stripDiacritics(locName).contains(queryNorm)) return true;
+    if (entry.name.contains(query)) return true;
+    if (entry.nameFolded.contains(queryNorm)) return true;
 
-    final engName = country.name.toLowerCase();
-    if (engName.contains(query)) return true;
-    if (_stripDiacritics(engName).contains(queryNorm)) return true;
+    if (entry.english.contains(query)) return true;
+    if (entry.englishFolded.contains(queryNorm)) return true;
 
     // Vietnamese name from CLDR (searchable in any locale, with or without accents)
-    final viName = countryNamesVI[country.countryCode]?.toLowerCase();
+    final viName = entry.vietnamese;
     if (viName != null) {
       if (viName.contains(query)) return true;
-      if (_stripDiacritics(viName).contains(queryNorm)) return true;
+      if (entry.vietnameseFolded!.contains(queryNorm)) return true;
     }
 
-    final aliases = _countrySearchAliases[country.countryCode];
-    if (aliases != null) {
-      for (final alias in aliases) {
-        if (alias.contains(query) ||
-            _stripDiacritics(alias).contains(queryNorm)) {
-          return true;
-        }
+    for (final (alias, aliasFolded) in entry.aliases) {
+      if (alias.contains(query) || aliasFolded.contains(queryNorm)) {
+        return true;
       }
     }
 
@@ -347,16 +396,11 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
   }
 
   void _filterList(String query) {
-    final localizations = CountryLocalizations.of(context);
     final trimmed = query.trim();
 
     if (trimmed.isEmpty) {
-      final sorted = List<Country>.from(_allCountries);
-      sorted.sort((a, b) {
-        final nameA = _displayName(a, localizations).trim().toLowerCase();
-        final nameB = _displayName(b, localizations).trim().toLowerCase();
-        return nameA.compareTo(nameB);
-      });
+      final sorted = List<_SearchEntry>.of(_index)
+        ..sort((a, b) => a.sortKey.compareTo(b.sortKey));
       setState(() {
         _isSearching = false;
         _filteredList = sorted;
@@ -367,35 +411,28 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
     final q = trimmed.toLowerCase();
     final qNorm = _stripDiacritics(q);
 
-    final matches = _allCountries
-        .where((c) => _matchesCountry(c, q, qNorm, localizations))
-        .toList();
+    final matches = _index.where((e) => _matchesCountry(e, q, qNorm)).toList();
 
     matches.sort((a, b) {
-      final nameA = _displayName(a, localizations).toLowerCase();
-      final nameB = _displayName(b, localizations).toLowerCase();
-      final normA = _stripDiacritics(nameA);
-      final normB = _stripDiacritics(nameB);
-
       // Exact ISO code match takes top priority (e.g. 'KR' or 'VN')
-      final exactA = a.countryCode.toLowerCase() == q;
-      final exactB = b.countryCode.toLowerCase() == q;
+      final exactA = a.code == q;
+      final exactB = b.code == q;
       if (exactA && !exactB) return -1;
       if (!exactA && exactB) return 1;
 
       // Prefix match on localized or English name
       final startsA =
-          nameA.startsWith(q) ||
-          normA.startsWith(qNorm) ||
-          a.name.toLowerCase().startsWith(q);
+          a.name.startsWith(q) ||
+          a.nameFolded.startsWith(qNorm) ||
+          a.english.startsWith(q);
       final startsB =
-          nameB.startsWith(q) ||
-          normB.startsWith(qNorm) ||
-          b.name.toLowerCase().startsWith(q);
+          b.name.startsWith(q) ||
+          b.nameFolded.startsWith(qNorm) ||
+          b.english.startsWith(q);
       if (startsA && !startsB) return -1;
       if (!startsA && startsB) return 1;
 
-      return nameA.compareTo(nameB);
+      return a.name.compareTo(b.name);
     });
 
     setState(() {
@@ -442,30 +479,43 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
               onChanged: _filterList,
             ),
           ),
-        Expanded(
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            children: [
-              if (_favoriteList != null && !_isSearching) ...[
-                for (final country in _favoriteList!)
-                  _buildListRow(country, textStyle),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20.0),
-                  child: Divider(thickness: 1),
-                ),
-              ],
-              for (final country in _filteredList)
-                _buildListRow(country, textStyle),
-            ],
-          ),
-        ),
+        Expanded(child: _buildList(textStyle)),
       ],
     );
   }
 
+  /// Built lazily: only the rows on screen are constructed, so opening the
+  /// sheet and every keystroke cost a screenful, not the whole world.
+  Widget _buildList(TextStyle textStyle) {
+    final favorites = _isSearching
+        ? const <Country>[]
+        : (_favoriteList ?? const <Country>[]);
+    final header = favorites.isEmpty ? 0 : favorites.length + 1;
+    return ListView.builder(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      itemCount: header + _filteredList.length,
+      itemBuilder: (context, index) {
+        if (index < favorites.length) {
+          return _buildListRow(favorites[index], textStyle);
+        }
+        if (index < header) {
+          return const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20.0),
+            child: Divider(thickness: 1),
+          );
+        }
+        return _buildListRow(_filteredList[index - header].country, textStyle);
+      },
+    );
+  }
+
   Widget _buildListRow(Country country, TextStyle textStyle) {
-    final localizations = CountryLocalizations.of(context);
-    final displayName = _displayName(country, localizations);
+    final label =
+        _byCode[country.countryCode]?.label ??
+        _displayName(
+          country,
+          CountryLocalizations.of(context),
+        ).replaceAll(_whitespaceRun, ' ');
 
     return Material(
       color: Colors.transparent,
@@ -482,10 +532,7 @@ class _CompassCountryListViewState extends State<_CompassCountryListView> {
               _flagWidget(country),
               const SizedBox(width: 15),
               Expanded(
-                child: Text(
-                  displayName.replaceAll(RegExp(r'\s+'), ' '),
-                  style: textStyle,
-                ),
+                child: Text(label, style: textStyle),
               ),
               if (widget.showPhoneCode) ...[
                 Text(
