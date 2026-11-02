@@ -15,6 +15,10 @@ import 'package:shared_preferences_platform_interface/shared_preferences_platfor
 /// the last word. The second matters more — a wrong guess about a country is a
 /// tap away from being fixed, but a guess that keeps overruling the fix is not.
 void main() {
+  // Every controller here leaves the phone out (`detectDeviceLocale: false`):
+  // these tests are about the country rule and storage, which only act when
+  // the phone names no bundled language. That precedence is covered in
+  // `onboarding_language_test.dart`.
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('the country table', () {
@@ -99,7 +103,7 @@ void main() {
 
   group('who gets the last word', () {
     LocaleController controllerWith(InMemoryLocaleStore store) =>
-        LocaleController(store: store);
+        LocaleController(store: store, detectDeviceLocale: false);
 
     test('the rule runs when nobody has chosen', () async {
       final store = InMemoryLocaleStore();
@@ -226,11 +230,11 @@ void main() {
   group('across a restart', () {
     test('an automatic choice is remembered as automatic', () async {
       final store = InMemoryLocaleStore();
-      final first = LocaleController(store: store);
+      final first = LocaleController(store: store, detectDeviceLocale: false);
       await first.ensureLoaded();
       await first.applyBirthCountryDefault('JP');
 
-      final second = LocaleController(store: store);
+      final second = LocaleController(store: store, detectDeviceLocale: false);
       await second.ensureLoaded();
 
       expect(second.locale, AppLocale.japanese);
@@ -246,7 +250,10 @@ void main() {
       // else would switch an existing reader's language on first launch
       // after the update.
       final store = InMemoryLocaleStore(tag: 'ja', provenanceName: null);
-      final controller = LocaleController(store: store);
+      final controller = LocaleController(
+        store: store,
+        detectDeviceLocale: false,
+      );
       await controller.ensureLoaded();
 
       expect(controller.locale, AppLocale.japanese);
@@ -261,7 +268,10 @@ void main() {
       // A tag from a build that offered a language this one does not. There
       // is no language to preserve, so there is nothing to protect.
       final store = InMemoryLocaleStore(tag: 'xx-YY', provenanceName: 'manual');
-      final controller = LocaleController(store: store);
+      final controller = LocaleController(
+        store: store,
+        detectDeviceLocale: false,
+      );
       await controller.ensureLoaded();
 
       expect(controller.locale, AppLocale.english);
@@ -276,7 +286,10 @@ void main() {
   group('when the language cannot be written', () {
     test('it still applies, and says it was not saved', () async {
       final store = InMemoryLocaleStore(failSaves: true);
-      final controller = LocaleController(store: store);
+      final controller = LocaleController(
+        store: store,
+        detectDeviceLocale: false,
+      );
       await controller.ensureLoaded();
 
       final outcome = await controller.applyBirthCountryDefault('VN');
@@ -294,12 +307,18 @@ void main() {
       // The honest consequence of the write having failed: nothing was
       // recorded, so nothing is remembered.
       final store = InMemoryLocaleStore(failSaves: true);
-      final controller = LocaleController(store: store);
+      final controller = LocaleController(
+        store: store,
+        detectDeviceLocale: false,
+      );
       await controller.ensureLoaded();
       await controller.applyBirthCountryDefault('VN');
 
       store.failSaves = false;
-      final restarted = LocaleController(store: store);
+      final restarted = LocaleController(
+        store: store,
+        detectDeviceLocale: false,
+      );
       await restarted.ensureLoaded();
       expect(restarted.locale, AppLocale.english);
       expect(restarted.provenance, LocaleProvenance.unset);
@@ -504,7 +523,10 @@ void main() {
           'not json',
         ]) {
           SharedPreferences.setMockInitialValues({'app_locale_v2': raw});
-          final controller = LocaleController(store: store);
+          final controller = LocaleController(
+            store: store,
+            detectDeviceLocale: false,
+          );
           await expectLater(controller.ensureLoaded(), completes);
           expect(controller.locale, AppLocale.english, reason: raw);
           expect(controller.provenance, LocaleProvenance.unset, reason: raw);
@@ -545,7 +567,10 @@ void main() {
         SharedPreferences.setMockInitialValues({});
         SharedPreferencesStorePlatform.instance = _RefusingStore();
 
-        final controller = LocaleController(store: store);
+        final controller = LocaleController(
+          store: store,
+          detectDeviceLocale: false,
+        );
         await controller.ensureLoaded();
 
         // The country rule turns it into a reportable outcome...

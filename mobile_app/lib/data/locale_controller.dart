@@ -63,8 +63,11 @@ class LocaleController extends ChangeNotifier {
       _locale = saved;
     } else if (saved == null && detectDeviceLocale) {
       final detected = _detectSystemLocale();
-      if (detected != null && detected != _locale) {
+      if (detected != null) {
         _locale = detected;
+        // Even when it is English and nothing moved: the phone has answered,
+        // so the country rule must not overrule it after the profile step.
+        _provenance = LocaleProvenance.device;
       }
     }
     notifyListeners();
@@ -106,7 +109,10 @@ class LocaleController extends ChangeNotifier {
       analytics.record(AnalyticsEvent.languageChanged(previous, locale));
   }
 
-  /// Chooses a language from the reader's country of birth, once.
+  /// Chooses a language from the reader's country of birth, once, and only
+  /// when nothing better is known: not after a choice, and not when the
+  /// phone's own language is one this build bundles. A reader born abroad,
+  /// or living abroad, keeps the language their phone is in.
   ///
   /// Returns which language is now on screen when the visible one changed, and
   /// whether the choice reached storage. A null `changedTo` means nothing

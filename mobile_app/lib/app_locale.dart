@@ -1,8 +1,10 @@
 /// The languages AstraCue offers, and how they are named to the reader.
 ///
-/// The choice is the reader's alone. Nothing here looks at the device locale,
-/// the current country, the birth country or the timezone: those decide a
-/// *reading*, never a language. English is the first-launch default.
+/// Precedence, strongest first: a language the reader picked; the phone's own
+/// language list on a first launch, when it names one bundled here; the
+/// country of birth, once, after the profile step; English. Neither the
+/// current country nor the timezone is ever read for this: those decide a
+/// *reading*, never a language.
 library;
 
 import 'package:flutter/widgets.dart';
@@ -26,7 +28,6 @@ enum AppLocale {
     ),
   ),
   korean('ko', '한국어', Locale('ko'));
-
 
   const AppLocale(this.tag, this.nativeName, this.locale);
 
@@ -60,13 +61,26 @@ enum AppLocale {
 
   /// The language a [Locale] belongs to, matching most specific first so
   /// `hi-IN` is never mistaken for a different Hindi.
+  ///
+  /// Traditional Chinese matches nothing. Only Simplified is bundled, and
+  /// Simplified is worse than English for a Traditional reader — the same
+  /// call the birth-country rule makes for TW and HK.
   static AppLocale? forLocale(Locale locale) {
     for (final value in AppLocale.values) {
       if (value.locale == locale) return value;
     }
+    if (_isTraditionalChinese(locale)) return null;
     for (final value in AppLocale.values) {
       if (value.locale.languageCode == locale.languageCode) return value;
     }
     return null;
+  }
+
+  /// `zh-Hant-*`, or a bare `zh` from a region that writes Traditional.
+  static bool _isTraditionalChinese(Locale locale) {
+    if (locale.languageCode != 'zh') return false;
+    final script = locale.scriptCode;
+    if (script != null) return script == 'Hant';
+    return const {'TW', 'HK', 'MO'}.contains(locale.countryCode);
   }
 }

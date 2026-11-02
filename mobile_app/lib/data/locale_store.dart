@@ -18,6 +18,13 @@ enum LocaleProvenance {
   /// nothing on screen changed, because the rule has still been spent.
   automatic,
 
+  /// The phone's own language list named a language this build bundles, on a
+  /// launch with nothing stored. It outranks the country rule: the phone's
+  /// language is what the reader actually reads every day, and a country of
+  /// birth is only a guess about that. Held in memory and never stored, so
+  /// the app keeps following the phone until somebody chooses.
+  device,
+
   /// The reader chose it, by tapping an option in the language sheet. Outranks
   /// everything and is never reconsidered.
   manual,

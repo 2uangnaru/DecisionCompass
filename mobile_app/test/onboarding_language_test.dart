@@ -312,7 +312,12 @@ void main() {
       // next launch finds no record and decides again. It reaches the same
       // answer from the same country, so the reader sees no difference — but
       // it is a retry, not a memory.
-      final restarted = LocaleController(store: rig.localeStore);
+      // The phone is left out so this reads storage alone, not the host's
+      // locale.
+      final restarted = LocaleController(
+        store: rig.localeStore,
+        detectDeviceLocale: false,
+      );
       await restarted.ensureLoaded();
       expect(restarted.locale, AppLocale.english);
       expect(restarted.provenance, LocaleProvenance.unset);
@@ -532,55 +537,155 @@ void main() {
   });
 
   group('device locale automatic detection on first launch', () {
-    testWidgets('detects Vietnamese device locale when unset', (tester) async {
-      tester.platformDispatcher.localesTestValue = [
-        const Locale('vi', 'VN'),
-      ];
+    Future<LocaleController> loaded(
+      WidgetTester tester,
+      List<Locale> phone, {
+      InMemoryLocaleStore? store,
+    }) async {
+      tester.platformDispatcher.localesTestValue = phone;
       addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-
-      final store = InMemoryLocaleStore();
       final controller = LocaleController(
-        store: store,
+        store: store ?? InMemoryLocaleStore(),
         platformDispatcher: tester.platformDispatcher,
       );
       await controller.ensureLoaded();
+      return controller;
+    }
 
+    testWidgets('detects Vietnamese device locale when unset', (tester) async {
+      final controller = await loaded(tester, [const Locale('vi', 'VN')]);
       expect(controller.locale, AppLocale.vietnamese);
-      expect(controller.provenance, LocaleProvenance.unset);
+      expect(controller.provenance, LocaleProvenance.device);
     });
 
     testWidgets('detects Japanese device locale when unset', (tester) async {
-      tester.platformDispatcher.localesTestValue = [
-        const Locale('ja', 'JP'),
-      ];
-      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-
-      final store = InMemoryLocaleStore();
-      final controller = LocaleController(
-        store: store,
-        platformDispatcher: tester.platformDispatcher,
-      );
-      await controller.ensureLoaded();
-
+      final controller = await loaded(tester, [const Locale('ja', 'JP')]);
       expect(controller.locale, AppLocale.japanese);
-      expect(controller.provenance, LocaleProvenance.unset);
+      expect(controller.provenance, LocaleProvenance.device);
     });
 
     testWidgets('respects saved choice over device locale', (tester) async {
-      tester.platformDispatcher.localesTestValue = [
+      final controller = await loaded(tester, [
         const Locale('vi', 'VN'),
-      ];
-      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
-
-      final store = InMemoryLocaleStore(tag: 'es', provenanceName: 'manual');
-      final controller = LocaleController(
-        store: store,
-        platformDispatcher: tester.platformDispatcher,
-      );
-      await controller.ensureLoaded();
-
+      ], store: InMemoryLocaleStore(tag: 'es', provenanceName: 'manual'));
       expect(controller.locale, AppLocale.spanish);
       expect(controller.provenance, LocaleProvenance.manual);
+    });
+
+    // Born in one country, living with a phone in another language: the
+    // phone is what the reader reads, so the birth country must not overrule
+    // it after the profile step.
+    for (final (phone, born, expected) in [
+      (const Locale('ko', 'KR'), 'US', AppLocale.korean),
+      (const Locale('ja', 'JP'), 'BR', AppLocale.japanese),
+      (const Locale('es', 'ES'), 'FR', AppLocale.spanish),
+      (const Locale('vi', 'VN'), 'JP', AppLocale.vietnamese),
+      (const Locale('en', 'US'), 'MX', AppLocale.english),
+    ]) {
+      testWidgets('a $phone phone keeps its language when born in $born', (
+        tester,
+      ) async {
+        final store = InMemoryLocaleStore();
+        final controller = await loaded(tester, [phone], store: store);
+        final result = await controller.applyBirthCountryDefault(born);
+        expect(result.changedTo, isNull);
+        expect(controller.locale, expected);
+        expect(controller.provenance, LocaleProvenance.device);
+        expect(store.tag, isNull, reason: 'the phone is followed, not stored');
+      });
+    }
+
+    testWidgets('a phone in an unbundled language falls back to the country', (
+      tester,
+    ) async {
+      final store = InMemoryLocaleStore();
+      final controller = await loaded(tester, [
+        const Locale('pt', 'BR'),
+      ], store: store);
+      expect(controller.locale, AppLocale.english);
+      expect(controller.provenance, LocaleProvenance.unset);
+      await controller.applyBirthCountryDefault('VN');
+      expect(controller.locale, AppLocale.vietnamese);
+      expect(controller.provenance, LocaleProvenance.automatic);
+      expect(store.tag, 'vi');
+    });
+
+    for (final phone in [
+      const Locale('zh', 'TW'),
+      const Locale('zh', 'HK'),
+      const Locale('zh', 'MO'),
+      const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hant',
+        countryCode: 'TW',
+      ),
+      const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
+    ]) {
+      testWidgets(
+        'a Traditional Chinese phone ($phone) never gets Simplified',
+        (tester) async {
+          final controller = await loaded(tester, [phone]);
+          expect(controller.locale, AppLocale.english);
+          expect(controller.provenance, LocaleProvenance.unset);
+        },
+      );
+    }
+
+    testWidgets('a Traditional phone moves on to its next bundled language', (
+      tester,
+    ) async {
+      final controller = await loaded(tester, [
+        const Locale('zh', 'TW'),
+        const Locale('ja', 'JP'),
+      ]);
+      expect(controller.locale, AppLocale.japanese);
+    });
+
+    for (final phone in [
+      const Locale('zh', 'CN'),
+      const Locale('zh', 'SG'),
+      const Locale('zh'),
+      const Locale.fromSubtags(
+        languageCode: 'zh',
+        scriptCode: 'Hans',
+        countryCode: 'SG',
+      ),
+    ]) {
+      testWidgets('a Simplified Chinese phone ($phone) gets Simplified', (
+        tester,
+      ) async {
+        final controller = await loaded(tester, [phone]);
+        expect(controller.locale, AppLocale.simplifiedChinese);
+      });
+    }
+
+    testWidgets('through the real screens: a Korean phone born in the US', (
+      tester,
+    ) async {
+      tester.platformDispatcher.localesTestValue = [const Locale('ko', 'KR')];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+      final rig = ReadingTestRig(
+        response: fixtureResponse('ready_yes_no_now.json'),
+        detectDeviceLocale: true,
+      );
+      await tester.pumpWidget(rig.app);
+      await tester.pump();
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('language_button_label')))
+            .data,
+        AppLocale.korean.nativeName,
+      );
+      await fillProfile(tester, countryCode: 'US', flag: usFlag);
+      await completeProfile(tester);
+
+      expect(rig.localeController.locale, AppLocale.korean);
+      expect(rig.localeController.provenance, LocaleProvenance.device);
+      expect(rig.localeStore.tag, isNull);
+      expect(
+        find.text(stringsFor(AppLocale.korean).findDirection),
+        findsOneWidget,
+      );
     });
   });
 }

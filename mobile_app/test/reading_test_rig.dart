@@ -60,6 +60,7 @@ class ReadingTestRig {
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const TestRewardAdService(),
+    this.detectDeviceLocale = false,
     this.guidanceLocks,
     this.plus,
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
@@ -176,10 +177,16 @@ class ReadingTestRig {
 
   /// Loaded synchronously when a test names a language, so the very first
   /// frame is already in it — the same guarantee `main` gives a real reader.
+  /// Off by default so a test never depends on the host machine's locale. A
+  /// test that turns it on sets `tester.platformDispatcher.localesTestValue`.
+  final bool detectDeviceLocale;
+
   late final LocaleController localeController = LocaleController(
     store: localeStore,
     initial: startingLocale,
     analytics: analytics,
+    detectDeviceLocale: detectDeviceLocale,
+    platformDispatcher: TestWidgetsFlutterBinding.instance.platformDispatcher,
   );
 
   /// The strings the app is currently rendering.
