@@ -124,14 +124,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get birthCountryRequired => 'Hãy chọn quốc gia nơi sinh để tiếp tục.';
 
   @override
-  String get createCompass => 'Tạo la bàn của tôi';
+  String get createCompass => 'Tạo kim chỉ nam của bạn';
 
   @override
   String get birthPrivacyPrototype =>
       'Trong bản thử nghiệm này, thông tin ngày giờ sinh của bạn được giữ riêng tư.';
 
   @override
-  String get homeEyebrow => 'LA BÀN CHỈ HƯỚNG GIÚP BẠN';
+  String get homeEyebrow => 'KIM CHỈ NAM DẪN LỐI BẠN';
 
   @override
   String get homeTitle => 'Bạn đang phân vân?';
@@ -799,7 +799,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyQuiet05 =>
-      'Khi mọi thứ xung quanh lắng xuống, chiếc la bàn trực giác bên trong bạn sẽ lên tiếng rõ ràng nhất.';
+      'Khi mọi thứ xung quanh lắng xuống, kim chỉ nam trực giác bên trong bạn sẽ lên tiếng rõ ràng nhất.';
 
   @override
   String get energyQuiet06 =>
@@ -895,7 +895,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyLively05 =>
-      'Sự tò mò chính là chiếc la bàn hữu ích hôm nay; hãy quan sát xem nó dẫn bạn về đâu trước khi quyết định gắn bó.';
+      'Sự tò mò chính là kim chỉ nam hữu ích hôm nay; hãy quan sát xem nó dẫn bạn về đâu trước khi quyết định gắn bó.';
 
   @override
   String get energyLively06 =>
