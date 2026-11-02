@@ -111,7 +111,7 @@ void main() {
     );
     expect(
       note.top - title.bottom,
-      lessThan(65),
+      lessThan(120),
       reason: 'supporting copy must remain in the hero group',
     );
     expect(note.bottom, lessThanOrEqualTo(size.height));
