@@ -154,24 +154,38 @@ void main() {
       }
     });
 
-    testWidgets('it drops under the icon when the band is too narrow', (
+    // A phone still has a usable band beside the icon, and the tab stays there
+    // rather than dropping onto the signal tiles below it.
+    testWidgets('on a phone it still sits beside the icon, over no tile', (
       tester,
     ) async {
       useScreen(tester, size: const Size(360, 640));
-      await pumpHome(tester, level: 'quiet');
+      await pumpHome(tester, level: 'focused'); // the longest sentence
       await tester.tap(infoButton);
       await tester.pumpAndSettle();
 
       final icon = tester.getRect(infoButton);
       final tab = tester.getRect(note);
       expect(
-        tab.top,
-        greaterThanOrEqualTo(icon.bottom),
-        reason: 'no room beside it on a phone, so it goes below',
+        tab.left,
+        greaterThanOrEqualTo(icon.right),
+        reason: 'the tab should sit in the band to the right',
       );
-      expect(tab.top - icon.bottom, lessThan(40));
-      expect(tab.left, greaterThanOrEqualTo(0));
+      expect(tab.left - icon.right, lessThan(40));
+      expect(
+        tab.bottom,
+        lessThanOrEqualTo(icon.bottom + 1),
+        reason: 'the tab must not reach below the energy row',
+      );
+      expect(tab.top, greaterThanOrEqualTo(0));
       expect(tab.right, lessThanOrEqualTo(360));
+      for (final label in ['Lucky number today:', 'Your colors today:']) {
+        expect(
+          tab.overlaps(tester.getRect(find.text(label))),
+          isFalse,
+          reason: 'the tab covers $label',
+        );
+      }
     });
 
     testWidgets('tapping outside the tab closes it', (tester) async {
