@@ -54,11 +54,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
+      'आपके दैनिक निर्णयों के लिए एक व्यक्तिगत ब्रह्मांडीय कंपास।';
 
   @override
   String get onboardingLanguageHint =>
-      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';
@@ -1366,11 +1366,11 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get onboardingTitle =>
-      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
+      'आपके दैनिक निर्णयों के लिए एक व्यक्तिगत ब्रह्मांडीय कंपास।';
 
   @override
   String get onboardingLanguageHint =>
-      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';

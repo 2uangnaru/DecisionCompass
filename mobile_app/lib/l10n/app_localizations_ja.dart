@@ -50,10 +50,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get history => '履歴';
 
   @override
-  String get onboardingTitle => '宇宙のサインと、あなたの直感に耳を澄ます。';
+  String get onboardingTitle => '日々の決断を導く、パーソナルな宇宙のコンパス。';
 
   @override
-  String get onboardingLanguageHint => '言語を変更するには、上の地球アイコンをタップしてください。';
+  String get onboardingLanguageHint => '宇宙のサインと、あなたの直感に耳を澄ます。';
 
   @override
   String get yourProfile => 'あなたのプロフィール';

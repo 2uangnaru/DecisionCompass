@@ -338,34 +338,16 @@ class _OnboardingPageState extends State<OnboardingPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'ASTRACUE',
-                              style: Theme.of(context).textTheme.displayLarge
-                                  ?.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: CompassColors.gold,
-                                    letterSpacing: 2.8,
-                                  ),
-                            ),
+                  Center(
+                    child: Text(
+                      'ASTRACUE',
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: CompassColors.gold,
+                            letterSpacing: 3.2,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // On the welcome screen itself, above the profile step:
-                      // an obvious globe and the current language, never an
-                      // unsolicited popup and never an extra required screen.
-                      LanguageButton(
-                        controller: widget.dependencies.localeController,
-                      ),
-                    ],
+                    ),
                   ),
                   Column(
                     children: [

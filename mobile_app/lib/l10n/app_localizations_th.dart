@@ -53,10 +53,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get history => 'ประวัติ';
 
   @override
-  String get onboardingTitle => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
+  String get onboardingTitle =>
+      'เข็มทิศจักรวาลส่วนตัวเพื่อการตัดสินใจในแต่ละวัน';
 
   @override
-  String get onboardingLanguageHint => 'แตะไอคอนรูปโลกด้านบนเพื่อเปลี่ยนภาษา';
+  String get onboardingLanguageHint => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
 
   @override
   String get yourProfile => 'โปรไฟล์ของคุณ';

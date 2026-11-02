@@ -54,11 +54,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'Listen to the signals of the universe and your intuition.';
+      'A personal cosmic compass for your daily decisions.';
 
   @override
   String get onboardingLanguageHint =>
-      'Tap the globe icon above to change language.';
+      'Listen to the signals of the universe and your intuition.';
 
   @override
   String get yourProfile => 'YOUR PROFILE';

@@ -500,7 +500,7 @@ void main() {
       expect(find.byKey(const Key('welcome_language_card')), findsOneWidget);
       expect(
         tester
-            .widget<Text>(find.byKey(const Key('welcome_language_card_name')))
+            .widget<Text>(find.byKey(const Key('language_button_label')))
             .data,
         AppLocale.english.nativeName,
       );
@@ -524,7 +524,7 @@ void main() {
       expect(rig.localeController.provenance, LocaleProvenance.manual);
       expect(
         tester
-            .widget<Text>(find.byKey(const Key('welcome_language_card_name')))
+            .widget<Text>(find.byKey(const Key('language_button_label')))
             .data,
         AppLocale.vietnamese.nativeName,
       );

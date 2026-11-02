@@ -50,10 +50,10 @@ class AppLocalizationsZh extends AppLocalizations {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
+  String get onboardingTitle => '指引你每日抉择的专属宇宙罗盘。';
 
   @override
-  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
+  String get onboardingLanguageHint => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get yourProfile => '你的资料';
@@ -1209,10 +1209,10 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
+  String get onboardingTitle => '指引你每日抉择的专属宇宙罗盘。';
 
   @override
-  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
+  String get onboardingLanguageHint => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get yourProfile => '你的资料';
@@ -2368,10 +2368,10 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get history => '历史记录';
 
   @override
-  String get onboardingTitle => '聆听宇宙的信号与你的直觉。';
+  String get onboardingTitle => '指引你每日抉择的专属宇宙罗盘。';
 
   @override
-  String get onboardingLanguageHint => '点击上方的地球图标以切换语言。';
+  String get onboardingLanguageHint => '聆听宇宙的信号与你的直觉。';
 
   @override
   String get yourProfile => '你的资料';

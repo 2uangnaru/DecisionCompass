@@ -114,6 +114,7 @@ class WelcomeLanguageCard extends StatelessWidget {
       label:
           '${l10n.languageSetting}: ${current.nativeName}. ${l10n.changeLanguage}',
       child: Material(
+        key: const Key('language_button'),
         color: Colors.transparent,
         child: InkWell(
           key: const Key('welcome_language_card'),
@@ -178,7 +179,7 @@ class WelcomeLanguageCard extends StatelessWidget {
                       const SizedBox(height: 2),
                       Text(
                         current.nativeName,
-                        key: const Key('welcome_language_card_name'),
+                        key: const Key('language_button_label'),
                         style: TextStyle(
                           fontSize: compact ? 14 : 15,
                           fontWeight: FontWeight.w700,

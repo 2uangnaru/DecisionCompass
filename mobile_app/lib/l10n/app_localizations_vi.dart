@@ -54,11 +54,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'Lắng nghe tín hiệu vũ trụ và trực giác của bạn.';
+      'Kim chỉ nam chiêm tinh định hướng mọi quyết định mỗi ngày.';
 
   @override
   String get onboardingLanguageHint =>
-      'Nhấn biểu tượng địa cầu phía trên để đổi ngôn ngữ.';
+      'Lắng nghe tín hiệu vũ trụ và trực giác của bạn.';
 
   @override
   String get yourProfile => 'HỒ SƠ CỦA BẠN';
