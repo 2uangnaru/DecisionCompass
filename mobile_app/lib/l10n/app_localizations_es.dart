@@ -384,7 +384,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get orbitZiWei => 'ZI WEI';
 
   @override
-  String get orbitVedic => 'ASTROLOGÍA VÉDICA';
+  String get orbitVedic => 'VÉDICA';
 
   @override
   String get orbitNumerology => 'NUMEROLOGÍA';
@@ -396,7 +396,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get orbitPlanetary => 'PLANETAS';
 
   @override
-  String get orbitYinYang => 'YIN / YANG';
+  String get orbitYinYang => 'YIN-YANG';
 
   @override
   String get safetyHeading => 'LÍMITES Y USO RESPONSABLE';

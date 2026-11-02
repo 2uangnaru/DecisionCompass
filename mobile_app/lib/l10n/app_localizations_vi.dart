@@ -385,19 +385,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get orbitZiWei => 'TỬ VI';
 
   @override
-  String get orbitVedic => 'CHIÊM TINH VỆ ĐÀ';
+  String get orbitVedic => 'VỆ ĐÀ';
 
   @override
-  String get orbitNumerology => 'THẦN SỐ HỌC';
+  String get orbitNumerology => 'THẦN SỐ';
 
   @override
-  String get orbitLunarPhase => 'PHA MẶT TRĂNG';
+  String get orbitLunarPhase => 'PHA TRĂNG';
 
   @override
   String get orbitPlanetary => 'HÀNH TINH';
 
   @override
-  String get orbitYinYang => 'ÂM / DƯƠNG';
+  String get orbitYinYang => 'ÂM DƯƠNG';
 
   @override
   String get safetyHeading => 'GIỚI HẠN & SỬ DỤNG CÓ TRÁCH NHIỆM';

@@ -360,7 +360,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get orbitZiWei => '자미두수';
 
   @override
-  String get orbitVedic => '베다 점성술';
+  String get orbitVedic => '베다';
 
   @override
   String get orbitNumerology => '수비학';
@@ -369,10 +369,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get orbitLunarPhase => '달의 위상';
 
   @override
-  String get orbitPlanetary => '행성 운행';
+  String get orbitPlanetary => '행성';
 
   @override
-  String get orbitYinYang => '음양의 조화';
+  String get orbitYinYang => '음양';
 
   @override
   String get safetyHeading => '안전한 이용 수칙';

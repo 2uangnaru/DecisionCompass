@@ -388,7 +388,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'वैदिक ज्योतिष';
+  String get orbitVedic => 'वैदिक';
 
   @override
   String get orbitNumerology => 'अंकशास्त्र';
@@ -400,7 +400,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get orbitPlanetary => 'ग्रह';
 
   @override
-  String get orbitYinYang => 'यिन / यांग';
+  String get orbitYinYang => 'यिन-यांग';
 
   @override
   String get safetyHeading => 'सीमाएँ और ज़िम्मेदार उपयोग';
@@ -1700,7 +1700,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'वैदिक ज्योतिष';
+  String get orbitVedic => 'वैदिक';
 
   @override
   String get orbitNumerology => 'अंकशास्त्र';
@@ -1712,7 +1712,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get orbitPlanetary => 'ग्रह';
 
   @override
-  String get orbitYinYang => 'यिन / यांग';
+  String get orbitYinYang => 'यिन-यांग';
 
   @override
   String get safetyHeading => 'सीमाएँ और ज़िम्मेदार उपयोग';

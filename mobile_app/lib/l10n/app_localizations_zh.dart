@@ -357,7 +357,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get orbitZiWei => '紫微';
 
   @override
-  String get orbitVedic => '吠陀占星';
+  String get orbitVedic => '吠陀';
 
   @override
   String get orbitNumerology => '生命数字';
@@ -369,7 +369,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get orbitPlanetary => '行星';
 
   @override
-  String get orbitYinYang => '阴／阳';
+  String get orbitYinYang => '阴阳';
 
   @override
   String get safetyHeading => '使用边界与安全说明';
@@ -1516,7 +1516,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get orbitZiWei => '紫微';
 
   @override
-  String get orbitVedic => '吠陀占星';
+  String get orbitVedic => '吠陀';
 
   @override
   String get orbitNumerology => '生命数字';
@@ -1528,7 +1528,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get orbitPlanetary => '行星';
 
   @override
-  String get orbitYinYang => '阴／阳';
+  String get orbitYinYang => '阴阳';
 
   @override
   String get safetyHeading => '使用边界与安全说明';
@@ -2675,7 +2675,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get orbitZiWei => '紫微';
 
   @override
-  String get orbitVedic => '吠陀占星';
+  String get orbitVedic => '吠陀';
 
   @override
   String get orbitNumerology => '生命数字';
@@ -2687,7 +2687,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get orbitPlanetary => '行星';
 
   @override
-  String get orbitYinYang => '阴／阳';
+  String get orbitYinYang => '阴阳';
 
   @override
   String get safetyHeading => '使用边界与安全说明';

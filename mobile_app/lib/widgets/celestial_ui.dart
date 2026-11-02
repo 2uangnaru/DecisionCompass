@@ -306,8 +306,8 @@ class _OrbitVisualState extends State<OrbitVisual>
           theme.textTheme.bodyMedium?.fontFamilyFallback ??
           CompassFonts.fallbackFor(AppLocale.english),
       color: CompassColors.secondary.withValues(alpha: 0.86),
-      fontSize: 8,
-      letterSpacing: 1.1,
+      fontSize: dimension < 160 ? 6.5 : (dimension < 240 ? 7.5 : 8.0),
+      letterSpacing: dimension < 160 ? 0.8 : (dimension < 240 ? 0.9 : 1.1),
       fontWeight: FontWeight.w600,
     );
     final centerChild = Center(
