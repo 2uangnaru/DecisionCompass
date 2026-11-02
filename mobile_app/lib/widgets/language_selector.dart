@@ -215,10 +215,10 @@ class WelcomeLanguageCard extends StatelessWidget {
                           color: CompassColors.gold,
                         ),
                       ),
-                      const SizedBox(width: 3),
+                      const SizedBox(width: 2),
                       const Icon(
-                        Icons.unfold_more_rounded,
-                        size: 14,
+                        Icons.chevron_right_rounded,
+                        size: 16,
                         color: CompassColors.gold,
                       ),
                     ],
