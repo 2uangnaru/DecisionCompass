@@ -331,56 +331,38 @@ class _OnboardingPageState extends State<OnboardingPage> {
             child: Padding(
               padding: EdgeInsets.fromLTRB(
                 24,
-                compact ? 18 : 32,
+                compact ? 12 : 32,
                 24,
-                compact ? 14 : 24,
+                compact ? 10 : 24,
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: FittedBox(
-                            fit: BoxFit.scaleDown,
-                            child: Text(
-                              'ASTRACUE',
-                              style: Theme.of(context).textTheme.displayLarge
-                                  ?.copyWith(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w700,
-                                    color: CompassColors.gold,
-                                    letterSpacing: 2.8,
-                                  ),
-                            ),
+                  Center(
+                    child: Text(
+                      'ASTRACUE',
+                      style: Theme.of(context).textTheme.displayLarge?.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: CompassColors.gold,
+                            letterSpacing: 3.2,
                           ),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // On the welcome screen itself, above the profile step:
-                      // an obvious globe and the current language, never an
-                      // unsolicited popup and never an extra required screen.
-                      LanguageButton(
-                        controller: widget.dependencies.localeController,
-                      ),
-                    ],
+                    ),
                   ),
                   Column(
                     children: [
                       OrbitVisual(
-                        size: compact ? 170 : 230,
+                        size: compact ? 120 : 220,
                         labels: welcomeOrbitLabels(l10n),
                       ),
-                      SizedBox(height: compact ? 14 : 28),
+                      SizedBox(height: compact ? 8 : 20),
                       Text(
                         l10n.onboardingLanguageHint,
                         key: const Key('onboarding_language_hint'),
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.headlineLarge,
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(height: compact ? 6 : 10),
                       Text(
                         l10n.onboardingTitle,
                         key: const Key('onboarding_title'),
@@ -391,13 +373,21 @@ class _OnboardingPageState extends State<OnboardingPage> {
                           color: CompassColors.muted,
                         ),
                       ),
+                      SizedBox(height: compact ? 10 : 20),
+                      WelcomeLanguageCard(
+                        controller: widget.dependencies.localeController,
+                        compact: compact,
+                      ),
                     ],
                   ),
-                  FilledButton.icon(
-                    key: const Key('continue_to_profile'),
-                    onPressed: _continueToProfile,
-                    icon: const Icon(Icons.arrow_forward_rounded),
-                    label: Text(l10n.continueAction),
+                  Padding(
+                    padding: EdgeInsets.only(top: compact ? 8 : 16),
+                    child: FilledButton.icon(
+                      key: const Key('continue_to_profile'),
+                      onPressed: _continueToProfile,
+                      icon: const Icon(Icons.arrow_forward_rounded),
+                      label: Text(l10n.continueAction),
+                    ),
                   ),
                 ],
               ),

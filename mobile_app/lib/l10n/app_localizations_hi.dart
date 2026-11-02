@@ -54,11 +54,11 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
+      'आपके दैनिक निर्णयों के लिए एक व्यक्तिगत ब्रह्मांडीय कंपास।';
 
   @override
   String get onboardingLanguageHint =>
-      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';
@@ -388,7 +388,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'वैदिक ज्योतिष';
+  String get orbitVedic => 'वैदिक';
 
   @override
   String get orbitNumerology => 'अंकशास्त्र';
@@ -400,7 +400,7 @@ class AppLocalizationsHi extends AppLocalizations {
   String get orbitPlanetary => 'ग्रह';
 
   @override
-  String get orbitYinYang => 'यिन / यांग';
+  String get orbitYinYang => 'यिन-यांग';
 
   @override
   String get safetyHeading => 'सीमाएँ और ज़िम्मेदार उपयोग';
@@ -1366,11 +1366,11 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get onboardingTitle =>
-      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
+      'आपके दैनिक निर्णयों के लिए एक व्यक्तिगत ब्रह्मांडीय कंपास।';
 
   @override
   String get onboardingLanguageHint =>
-      'भाषा बदलने के लिए ऊपर ग्लोब आइकन पर टैप करें।';
+      'ब्रह्मांड के संकेतों और अपने अंतर्ज्ञान को सुनें।';
 
   @override
   String get yourProfile => 'आपकी प्रोफ़ाइल';
@@ -1700,7 +1700,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'वैदिक ज्योतिष';
+  String get orbitVedic => 'वैदिक';
 
   @override
   String get orbitNumerology => 'अंकशास्त्र';
@@ -1712,7 +1712,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get orbitPlanetary => 'ग्रह';
 
   @override
-  String get orbitYinYang => 'यिन / यांग';
+  String get orbitYinYang => 'यिन-यांग';
 
   @override
   String get safetyHeading => 'सीमाएँ और ज़िम्मेदार उपयोग';

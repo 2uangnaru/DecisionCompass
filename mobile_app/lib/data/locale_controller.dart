@@ -20,11 +20,16 @@ class LocaleController extends ChangeNotifier {
     required this.store,
     AppLocale? initial,
     this.analytics = const NoopAnalyticsService(),
+    this.detectDeviceLocale = true,
+    PlatformDispatcher? platformDispatcher,
   }) : _locale = initial ?? AppLocale.english,
-       _loaded = initial != null;
+       _loaded = initial != null,
+       _platformDispatcher = platformDispatcher;
 
   final LocaleStore store;
   final AnalyticsService analytics;
+  final bool detectDeviceLocale;
+  final PlatformDispatcher? _platformDispatcher;
 
   AppLocale _locale;
   Future<void>? _loading;
@@ -56,9 +61,28 @@ class LocaleController extends ChangeNotifier {
     final saved = stored.locale;
     if (saved != null && saved != _locale) {
       _locale = saved;
+    } else if (saved == null && detectDeviceLocale) {
+      final detected = _detectSystemLocale();
+      if (detected != null && detected != _locale) {
+        _locale = detected;
+      }
     }
     notifyListeners();
     return;
+  }
+
+  AppLocale? _detectSystemLocale() {
+    try {
+      final dispatcher = _platformDispatcher ?? PlatformDispatcher.instance;
+      final systemLocales = dispatcher.locales;
+      for (final systemLocale in systemLocales) {
+        final match = AppLocale.forLocale(systemLocale);
+        if (match != null) return match;
+      }
+    } catch (_) {
+      // PlatformDispatcher or locales not ready
+    }
+    return null;
   }
 
   /// Switches language at the reader's explicit request, and persists both the

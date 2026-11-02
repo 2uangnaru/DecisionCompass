@@ -54,11 +54,11 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'Escucha las señales del universo y tu intuición.';
+      'Una brújula cósmica personal para tus decisiones diarias.';
 
   @override
   String get onboardingLanguageHint =>
-      'Toca el icono del globo de arriba para cambiar de idioma.';
+      'Escucha las señales del universo y tu intuición.';
 
   @override
   String get yourProfile => 'TU PERFIL';
@@ -384,7 +384,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get orbitZiWei => 'ZI WEI';
 
   @override
-  String get orbitVedic => 'ASTROLOGÍA VÉDICA';
+  String get orbitVedic => 'VÉDICA';
 
   @override
   String get orbitNumerology => 'NUMEROLOGÍA';
@@ -396,7 +396,7 @@ class AppLocalizationsEs extends AppLocalizations {
   String get orbitPlanetary => 'PLANETAS';
 
   @override
-  String get orbitYinYang => 'YIN / YANG';
+  String get orbitYinYang => 'YIN-YANG';
 
   @override
   String get safetyHeading => 'LÍMITES Y USO RESPONSABLE';

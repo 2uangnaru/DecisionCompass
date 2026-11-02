@@ -51,10 +51,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get history => '기록';
 
   @override
-  String get onboardingTitle => '우주의 신호와 당신의 직관에 귀 기울여 보세요.';
+  String get onboardingTitle => '매일의 선택을 이끄는 나만의 우주 나침반.';
 
   @override
-  String get onboardingLanguageHint => '언어를 변경하려면 상단의 지구본 아이콘을 탭하세요.';
+  String get onboardingLanguageHint => '우주의 신호와 당신의 직관에 귀 기울여 보세요.';
 
   @override
   String get yourProfile => '나의 프로필';
@@ -360,7 +360,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get orbitZiWei => '자미두수';
 
   @override
-  String get orbitVedic => '베다 점성술';
+  String get orbitVedic => '베다';
 
   @override
   String get orbitNumerology => '수비학';
@@ -369,10 +369,10 @@ class AppLocalizationsKo extends AppLocalizations {
   String get orbitLunarPhase => '달의 위상';
 
   @override
-  String get orbitPlanetary => '행성 운행';
+  String get orbitPlanetary => '행성';
 
   @override
-  String get orbitYinYang => '음양의 조화';
+  String get orbitYinYang => '음양';
 
   @override
   String get safetyHeading => '안전한 이용 수칙';

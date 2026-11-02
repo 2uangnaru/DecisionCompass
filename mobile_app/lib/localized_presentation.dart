@@ -268,12 +268,16 @@ List<String> loadingPhrases(AppLocalizations l10n, DecisionMode mode) => [
   l10n.loadingYinYang,
 ];
 
-/// The welcome screen's four orbit badges.
+/// The welcome screen's eight orbit badges.
 List<String> welcomeOrbitLabels(AppLocalizations l10n) => [
-  l10n.orbitMoment,
-  l10n.orbitRhythm,
-  l10n.orbitBalance,
+  l10n.orbitBaZi,
+  l10n.orbitZiWei,
   l10n.orbitAlmanac,
+  l10n.orbitVedic,
+  l10n.orbitNumerology,
+  l10n.orbitLunarPhase,
+  l10n.orbitPlanetary,
+  l10n.orbitYinYang,
 ];
 
 /// The loading screen's eight orbit badges.

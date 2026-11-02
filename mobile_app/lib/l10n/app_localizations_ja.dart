@@ -50,10 +50,10 @@ class AppLocalizationsJa extends AppLocalizations {
   String get history => '履歴';
 
   @override
-  String get onboardingTitle => '宇宙のサインと、あなたの直感に耳を澄ます。';
+  String get onboardingTitle => '日々の決断を導く、パーソナルな宇宙のコンパス。';
 
   @override
-  String get onboardingLanguageHint => '言語を変更するには、上の地球アイコンをタップしてください。';
+  String get onboardingLanguageHint => '宇宙のサインと、あなたの直感に耳を澄ます。';
 
   @override
   String get yourProfile => 'あなたのプロフィール';
@@ -358,7 +358,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'ヴェーダ占星術';
+  String get orbitVedic => 'ヴェーダ';
 
   @override
   String get orbitNumerology => '数秘術';
@@ -370,7 +370,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get orbitPlanetary => '惑星';
 
   @override
-  String get orbitYinYang => '陰／陽';
+  String get orbitYinYang => '陰陽';
 
   @override
   String get safetyHeading => '利用上の注意と安全について';

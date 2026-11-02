@@ -296,7 +296,7 @@ void main() {
           expect(zodiacLabel(l10n, sign).trim(), isNotEmpty);
         }
         expect(loadingPhrases(l10n, DecisionMode.yesNo), hasLength(7));
-        expect(welcomeOrbitLabels(l10n), hasLength(4));
+        expect(welcomeOrbitLabels(l10n), hasLength(8));
         expect(loadingOrbitLabels(l10n), hasLength(8));
       }
     });

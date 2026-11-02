@@ -198,13 +198,13 @@ abstract class AppLocalizations {
   /// No description provided for @onboardingTitle.
   ///
   /// In en, this message translates to:
-  /// **'Listen to the signals of the universe and your intuition.'**
+  /// **'A personal cosmic compass for your daily decisions.'**
   String get onboardingTitle;
 
   /// No description provided for @onboardingLanguageHint.
   ///
   /// In en, this message translates to:
-  /// **'Tap the globe icon above to change language.'**
+  /// **'Listen to the signals of the universe and your intuition.'**
   String get onboardingLanguageHint;
 
   /// No description provided for @yourProfile.
@@ -798,7 +798,7 @@ abstract class AppLocalizations {
   /// No description provided for @orbitVedic.
   ///
   /// In en, this message translates to:
-  /// **'VEDIC JYOTISH'**
+  /// **'VEDIC'**
   String get orbitVedic;
 
   /// No description provided for @orbitNumerology.
@@ -816,13 +816,13 @@ abstract class AppLocalizations {
   /// No description provided for @orbitPlanetary.
   ///
   /// In en, this message translates to:
-  /// **'PLANETARY'**
+  /// **'PLANETS'**
   String get orbitPlanetary;
 
   /// No description provided for @orbitYinYang.
   ///
   /// In en, this message translates to:
-  /// **'YIN / YANG'**
+  /// **'YIN-YANG'**
   String get orbitYinYang;
 
   /// No description provided for @safetyHeading.

@@ -54,11 +54,11 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get onboardingTitle =>
-      'Lắng nghe tín hiệu vũ trụ và trực giác của bạn.';
+      'Kim chỉ nam chiêm tinh định hướng mọi quyết định mỗi ngày.';
 
   @override
   String get onboardingLanguageHint =>
-      'Nhấn biểu tượng địa cầu phía trên để đổi ngôn ngữ.';
+      'Lắng nghe tín hiệu vũ trụ và trực giác của bạn.';
 
   @override
   String get yourProfile => 'HỒ SƠ CỦA BẠN';
@@ -124,14 +124,14 @@ class AppLocalizationsVi extends AppLocalizations {
   String get birthCountryRequired => 'Hãy chọn quốc gia nơi sinh để tiếp tục.';
 
   @override
-  String get createCompass => 'Tạo la bàn của tôi';
+  String get createCompass => 'Tạo kim chỉ nam của bạn';
 
   @override
   String get birthPrivacyPrototype =>
       'Trong bản thử nghiệm này, thông tin ngày giờ sinh của bạn được giữ riêng tư.';
 
   @override
-  String get homeEyebrow => 'LA BÀN CHỈ HƯỚNG GIÚP BẠN';
+  String get homeEyebrow => 'KIM CHỈ NAM DẪN LỐI BẠN';
 
   @override
   String get homeTitle => 'Bạn đang phân vân?';
@@ -385,19 +385,19 @@ class AppLocalizationsVi extends AppLocalizations {
   String get orbitZiWei => 'TỬ VI';
 
   @override
-  String get orbitVedic => 'CHIÊM TINH VỆ ĐÀ';
+  String get orbitVedic => 'VỆ ĐÀ';
 
   @override
-  String get orbitNumerology => 'THẦN SỐ HỌC';
+  String get orbitNumerology => 'THẦN SỐ';
 
   @override
-  String get orbitLunarPhase => 'PHA MẶT TRĂNG';
+  String get orbitLunarPhase => 'PHA TRĂNG';
 
   @override
   String get orbitPlanetary => 'HÀNH TINH';
 
   @override
-  String get orbitYinYang => 'ÂM / DƯƠNG';
+  String get orbitYinYang => 'ÂM DƯƠNG';
 
   @override
   String get safetyHeading => 'GIỚI HẠN & SỬ DỤNG CÓ TRÁCH NHIỆM';
@@ -799,7 +799,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyQuiet05 =>
-      'Khi mọi thứ xung quanh lắng xuống, chiếc la bàn trực giác bên trong bạn sẽ lên tiếng rõ ràng nhất.';
+      'Khi mọi thứ xung quanh lắng xuống, kim chỉ nam trực giác bên trong bạn sẽ lên tiếng rõ ràng nhất.';
 
   @override
   String get energyQuiet06 =>
@@ -895,7 +895,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get energyLively05 =>
-      'Sự tò mò chính là chiếc la bàn hữu ích hôm nay; hãy quan sát xem nó dẫn bạn về đâu trước khi quyết định gắn bó.';
+      'Sự tò mò chính là kim chỉ nam hữu ích hôm nay; hãy quan sát xem nó dẫn bạn về đâu trước khi quyết định gắn bó.';
 
   @override
   String get energyLively06 =>

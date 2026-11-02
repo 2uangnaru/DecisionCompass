@@ -53,10 +53,11 @@ class AppLocalizationsTh extends AppLocalizations {
   String get history => 'ประวัติ';
 
   @override
-  String get onboardingTitle => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
+  String get onboardingTitle =>
+      'เข็มทิศจักรวาลส่วนตัวเพื่อการตัดสินใจในแต่ละวัน';
 
   @override
-  String get onboardingLanguageHint => 'แตะไอคอนรูปโลกด้านบนเพื่อเปลี่ยนภาษา';
+  String get onboardingLanguageHint => 'ฟังสัญญาณจากจักรวาลและสัญชาตญาณของคุณ';
 
   @override
   String get yourProfile => 'โปรไฟล์ของคุณ';
@@ -379,19 +380,19 @@ class AppLocalizationsTh extends AppLocalizations {
   String get orbitZiWei => 'Zi Wei';
 
   @override
-  String get orbitVedic => 'โหราศาสตร์เวท';
+  String get orbitVedic => 'โหราเวท';
 
   @override
   String get orbitNumerology => 'เลขศาสตร์';
 
   @override
-  String get orbitLunarPhase => 'ข้างขึ้นข้างแรม';
+  String get orbitLunarPhase => 'จันทรคติ';
 
   @override
   String get orbitPlanetary => 'ดาวเคราะห์';
 
   @override
-  String get orbitYinYang => 'หยิน / หยาง';
+  String get orbitYinYang => 'หยิน-หยาง';
 
   @override
   String get safetyHeading => 'ขอบเขตและการใช้งานอย่างรับผิดชอบ';
