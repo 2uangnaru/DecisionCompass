@@ -90,6 +90,148 @@ class LanguageButton extends StatelessWidget {
   }
 }
 
+/// A prominent language selector card embedded directly in the onboarding welcome step.
+///
+/// Gives readers an unmissable, touch-friendly element on first launch so they know
+/// what language is active and can switch with a single tap.
+class WelcomeLanguageCard extends StatelessWidget {
+  const WelcomeLanguageCard({
+    super.key,
+    required this.controller,
+    this.compact = false,
+  });
+
+  final LocaleController controller;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final current = controller.locale;
+
+    return Semantics(
+      button: true,
+      label:
+          '${l10n.languageSetting}: ${current.nativeName}. ${l10n.changeLanguage}',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          key: const Key('welcome_language_card'),
+          borderRadius: BorderRadius.circular(16),
+          onTap: () => showLanguageSheet(context, controller),
+          child: Ink(
+            padding: EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: compact ? 8 : 12,
+            ),
+            decoration: BoxDecoration(
+              color: CompassColors.raised.withValues(alpha: 0.95),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: CompassColors.gold.withValues(alpha: 0.35),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: CompassColors.gold.withValues(alpha: 0.06),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: compact ? 32 : 38,
+                  height: compact ? 32 : 38,
+                  decoration: BoxDecoration(
+                    color: CompassColors.gold.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: CompassColors.gold.withValues(alpha: 0.25),
+                      width: 1,
+                    ),
+                  ),
+                  child: Icon(
+                    Icons.language_rounded,
+                    size: compact ? 17 : 20,
+                    color: CompassColors.gold,
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.languageSetting,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: CompassColors.gold.withValues(alpha: 0.85),
+                          letterSpacing: 0.5,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        current.nativeName,
+                        key: const Key('welcome_language_card_name'),
+                        style: TextStyle(
+                          fontSize: compact ? 14 : 15,
+                          fontWeight: FontWeight.w700,
+                          color: CompassColors.text,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: compact ? 4 : 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withValues(alpha: 0.06),
+                    borderRadius: BorderRadius.circular(999),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.15),
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        l10n.changeLanguage,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: CompassColors.gold,
+                        ),
+                      ),
+                      const SizedBox(width: 3),
+                      const Icon(
+                        Icons.unfold_more_rounded,
+                        size: 14,
+                        color: CompassColors.gold,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// The language bottom sheet: seven options, each in its own script.
 Future<void> showLanguageSheet(
   BuildContext context,

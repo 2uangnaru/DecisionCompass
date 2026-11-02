@@ -488,6 +488,101 @@ void main() {
       expect(notice, findsNothing);
     });
   });
+
+  group('welcome screen prominent language card', () {
+    testWidgets('shows current language and opens language sheet when tapped', (
+      tester,
+    ) async {
+      final rig = ReadingTestRig();
+      await tester.pumpWidget(rig.app);
+      await tester.pump();
+
+      expect(find.byKey(const Key('welcome_language_card')), findsOneWidget);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('welcome_language_card_name')))
+            .data,
+        AppLocale.english.nativeName,
+      );
+
+      // Tapping the card opens the language sheet
+      await tester.tap(find.byKey(const Key('welcome_language_card')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      allowCountryNameGap(tester);
+
+      expect(find.byKey(const Key('language_sheet')), findsOneWidget);
+
+      // Select Vietnamese from the sheet
+      await tester.tap(
+        find.byKey(Key('language_option_${AppLocale.vietnamese.tag}')),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(rig.localeController.locale, AppLocale.vietnamese);
+      expect(rig.localeController.provenance, LocaleProvenance.manual);
+      expect(
+        tester
+            .widget<Text>(find.byKey(const Key('welcome_language_card_name')))
+            .data,
+        AppLocale.vietnamese.nativeName,
+      );
+    });
+  });
+
+  group('device locale automatic detection on first launch', () {
+    testWidgets('detects Vietnamese device locale when unset', (tester) async {
+      tester.platformDispatcher.localesTestValue = [
+        const Locale('vi', 'VN'),
+      ];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
+      final store = InMemoryLocaleStore();
+      final controller = LocaleController(
+        store: store,
+        platformDispatcher: tester.platformDispatcher,
+      );
+      await controller.ensureLoaded();
+
+      expect(controller.locale, AppLocale.vietnamese);
+      expect(controller.provenance, LocaleProvenance.unset);
+    });
+
+    testWidgets('detects Japanese device locale when unset', (tester) async {
+      tester.platformDispatcher.localesTestValue = [
+        const Locale('ja', 'JP'),
+      ];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
+      final store = InMemoryLocaleStore();
+      final controller = LocaleController(
+        store: store,
+        platformDispatcher: tester.platformDispatcher,
+      );
+      await controller.ensureLoaded();
+
+      expect(controller.locale, AppLocale.japanese);
+      expect(controller.provenance, LocaleProvenance.unset);
+    });
+
+    testWidgets('respects saved choice over device locale', (tester) async {
+      tester.platformDispatcher.localesTestValue = [
+        const Locale('vi', 'VN'),
+      ];
+      addTearDown(tester.platformDispatcher.clearLocalesTestValue);
+
+      final store = InMemoryLocaleStore(tag: 'es', provenanceName: 'manual');
+      final controller = LocaleController(
+        store: store,
+        platformDispatcher: tester.platformDispatcher,
+      );
+      await controller.ensureLoaded();
+
+      expect(controller.locale, AppLocale.spanish);
+      expect(controller.provenance, LocaleProvenance.manual);
+    });
+  });
 }
 
 /// The profile step, already open, for a test that switched language first.
