@@ -336,9 +336,11 @@ class _RitualPageState extends State<RitualPage>
   Widget _quotaBadge({required Color accentColor}) {
     final quota = widget.dependencies.quotaManager;
     final total = quota.maxDailyFreeReadings;
-    final used = _freeReadingsUsed;
+    final remaining = total - _freeReadingsUsed;
     final bonus = quota.bonusReadings;
-    final badgeText = bonus > 0 ? '$used/$total (+$bonus)' : '$used/$total';
+    final badgeText = bonus > 0
+        ? '$remaining/$total (+$bonus)'
+        : '$remaining/$total';
 
     return Container(
       key: const Key('ritual_quota_badge'),
