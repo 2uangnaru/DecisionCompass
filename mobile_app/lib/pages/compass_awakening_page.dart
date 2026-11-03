@@ -560,9 +560,9 @@ class _CentralCompassAnchor extends StatelessWidget {
       ),
       child: Center(
         child: AnimatedRotation(
-          duration: const Duration(milliseconds: 700),
+          duration: const Duration(milliseconds: 750),
           curve: Curves.easeOutBack,
-          turns: isAwakened ? 0.0 : -0.04,
+          turns: isAwakened ? 0.0 : -75.0 / 360.0,
           child: AnimatedOpacity(
             duration: const Duration(milliseconds: 450),
             opacity: isAwakened ? 1.0 : 0.38,
