@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "今日免费次数已用尽",
   "watchAdPrompt": "您可以观看视频广告以继续",
   "watchAdButton": "观看广告",
-  "adUnlockedReward": "广告已观看！已立即解锁1次分析"
+  "adUnlockedReward": "广告已观看！已立即解锁1次分析",
+  "compassAwakeningConnecting": "正在连接六大本命能量场...",
+  "compassAwakeningReady": "你的专属罗盘已就绪",
+  "compassPillarZodiac": "星座",
+  "compassPillarPlanet": "守护星",
+  "compassPillarVedic": "吠陀月宿",
+  "compassPillarLifePath": "生命灵数",
+  "compassPillarElement": "五行本命",
+  "compassPillarAnimal": "生肖地支"
 }

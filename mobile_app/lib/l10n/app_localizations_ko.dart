@@ -1204,4 +1204,28 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get adUnlockedReward => '광고 시청 완료! 즉시 점술 1회 이용이 잠금 해제되었습니다';
+
+  @override
+  String get compassAwakeningConnecting => '6개의 에너지 영역을 연결하는 중...';
+
+  @override
+  String get compassAwakeningReady => '당신의 나침반이 준비되었습니다';
+
+  @override
+  String get compassPillarZodiac => '별자리';
+
+  @override
+  String get compassPillarPlanet => '수호성';
+
+  @override
+  String get compassPillarVedic => '베다 성수';
+
+  @override
+  String get compassPillarLifePath => '운명수';
+
+  @override
+  String get compassPillarElement => '오행본명';
+
+  @override
+  String get compassPillarAnimal => '지지 동물';
 }

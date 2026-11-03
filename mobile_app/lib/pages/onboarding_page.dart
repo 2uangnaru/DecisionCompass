@@ -16,7 +16,7 @@ import '../widgets/birth_date_picker.dart';
 import '../widgets/birth_time_picker.dart';
 import '../widgets/celestial_ui.dart';
 import '../widgets/language_selector.dart';
-import 'home_page.dart';
+import 'compass_awakening_page.dart';
 
 class OnboardingPage extends StatefulWidget {
   const OnboardingPage({
@@ -302,9 +302,14 @@ class _OnboardingPageState extends State<OnboardingPage> {
     if (!mounted) return;
 
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute<void>(
-        builder: (_) =>
-            HomePage(profile: profile, dependencies: widget.dependencies),
+      PageRouteBuilder<void>(
+        pageBuilder: (_, animation, secondaryAnimation) => CompassAwakeningPage(
+          profile: profile,
+          dependencies: widget.dependencies,
+        ),
+        transitionsBuilder: (_, animation, secondaryAnimation, child) =>
+            FadeTransition(opacity: animation, child: child),
+        transitionDuration: const Duration(milliseconds: 400),
       ),
     );
   }

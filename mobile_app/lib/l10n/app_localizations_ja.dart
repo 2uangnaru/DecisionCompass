@@ -1190,4 +1190,28 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get adUnlockedReward => '広告を視聴しました！すぐに1回分析できます';
+
+  @override
+  String get compassAwakeningConnecting => '6つのエネルギー領域を接続中...';
+
+  @override
+  String get compassAwakeningReady => 'あなたの羅針盤が整いました';
+
+  @override
+  String get compassPillarZodiac => '星座';
+
+  @override
+  String get compassPillarPlanet => '守護星';
+
+  @override
+  String get compassPillarVedic => 'ヴェーダ星宿';
+
+  @override
+  String get compassPillarLifePath => '運命数';
+
+  @override
+  String get compassPillarElement => '五行本命';
+
+  @override
+  String get compassPillarAnimal => '十二支';
 }

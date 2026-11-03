@@ -1319,4 +1319,29 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get adUnlockedReward =>
       '¡Anuncio visto! Se desbloqueó 1 lectura instantánea';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'Conectando campos de energía celestial...';
+
+  @override
+  String get compassAwakeningReady => 'Tu brújula está despierta';
+
+  @override
+  String get compassPillarZodiac => 'ZODÍACO';
+
+  @override
+  String get compassPillarPlanet => 'PLANETA REGENTE';
+
+  @override
+  String get compassPillarVedic => 'LUNA VÉDICA';
+
+  @override
+  String get compassPillarLifePath => 'NÚMERO MAESTRO';
+
+  @override
+  String get compassPillarElement => 'ELEMENTO';
+
+  @override
+  String get compassPillarAnimal => 'SIGNO ORIENTAL';
 }

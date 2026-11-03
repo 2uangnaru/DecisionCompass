@@ -2354,6 +2354,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Ad watched! 1 instant reading unlocked'**
   String get adUnlockedReward;
+
+  /// No description provided for @compassAwakeningConnecting.
+  ///
+  /// In en, this message translates to:
+  /// **'Connecting celestial energy fields...'**
+  String get compassAwakeningConnecting;
+
+  /// No description provided for @compassAwakeningReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Your compass is awakened'**
+  String get compassAwakeningReady;
+
+  /// No description provided for @compassPillarZodiac.
+  ///
+  /// In en, this message translates to:
+  /// **'ZODIAC'**
+  String get compassPillarZodiac;
+
+  /// No description provided for @compassPillarPlanet.
+  ///
+  /// In en, this message translates to:
+  /// **'RULING PLANET'**
+  String get compassPillarPlanet;
+
+  /// No description provided for @compassPillarVedic.
+  ///
+  /// In en, this message translates to:
+  /// **'VEDIC MOON'**
+  String get compassPillarVedic;
+
+  /// No description provided for @compassPillarLifePath.
+  ///
+  /// In en, this message translates to:
+  /// **'LIFE PATH'**
+  String get compassPillarLifePath;
+
+  /// No description provided for @compassPillarElement.
+  ///
+  /// In en, this message translates to:
+  /// **'ELEMENT'**
+  String get compassPillarElement;
+
+  /// No description provided for @compassPillarAnimal.
+  ///
+  /// In en, this message translates to:
+  /// **'EARTHLY BRANCH'**
+  String get compassPillarAnimal;
 }
 
 class _AppLocalizationsDelegate

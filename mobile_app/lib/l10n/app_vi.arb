@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "Đã dùng hết lượt miễn phí hôm nay",
   "watchAdPrompt": "Bạn có thể xem video quảng cáo để tiếp tục",
   "watchAdButton": "Xem quảng cáo",
-  "adUnlockedReward": "Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!"
+  "adUnlockedReward": "Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!",
+  "compassAwakeningConnecting": "Đang kết nối 6 trường năng lượng...",
+  "compassAwakeningReady": "Kim chỉ nam của bạn đã sẵn sàng",
+  "compassPillarZodiac": "CUNG HOÀNG ĐẠO",
+  "compassPillarPlanet": "SAO BẢO HỘ",
+  "compassPillarVedic": "CHIÊM TINH VỆ ĐÀ",
+  "compassPillarLifePath": "SỐ CHỦ ĐẠO",
+  "compassPillarElement": "BẢN MỆNH",
+  "compassPillarAnimal": "ĐỊA CHI"
 }
