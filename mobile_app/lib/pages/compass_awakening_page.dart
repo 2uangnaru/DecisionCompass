@@ -319,14 +319,15 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
           builder: (context, child) {
             final t = _controller.value;
             final isCentralAwakened = t >= 0.82;
+            final traceProgress = (t / 0.82).clamp(0.0, 1.0);
 
-            // Milestones for 6 nodes (0.0 to 0.80)
-            final n1 = (t >= 0.08); // Cung Hoàng Đạo
-            final n2 = (t >= 0.22); // Sao Bảo Hộ
-            final n3 = (t >= 0.36); // Chòm Vệ Đà
-            final n4 = (t >= 0.50); // Số Chủ Đạo
-            final n5 = (t >= 0.64); // Ngũ Hành
-            final n6 = (t >= 0.78); // Con Giáp Địa Chi
+            // Milestones for 6 nodes synchronized with the 60° golden arc tracing
+            final n1 = (t >= 0.04);
+            final n2 = (traceProgress >= 1.0 / 6.0); // 2h (60°)
+            final n3 = (traceProgress >= 2.0 / 6.0); // 4h (120°)
+            final n4 = (traceProgress >= 3.0 / 6.0); // 6h (180°)
+            final n5 = (traceProgress >= 4.0 / 6.0); // 8h (240°)
+            final n6 = (traceProgress >= 5.0 / 6.0); // 10h (300°)
 
             // Active step text
             String headline;
@@ -362,19 +363,13 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
-                        // Dotted / Dashed Celestial Orbit Guide Ring
-                        Transform.rotate(
-                          angle: t * math.pi * 0.4,
-                          child: Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: CompassColors.gold.withValues(alpha: 0.15),
-                                width: 1.2,
-                              ),
-                            ),
+                        // Golden Orbit Tracing Arc (1.2px thickness)
+                        CustomPaint(
+                          size: const Size(320, 380),
+                          painter: _CelestialOrbitArcPainter(
+                            radius: 128.0,
+                            progress: traceProgress,
+                            isCompleted: traceProgress >= 1.0,
                           ),
                         ),
 
@@ -560,7 +555,7 @@ class _CentralCompassAnchor extends StatelessWidget {
       ),
       child: Center(
         child: AnimatedRotation(
-          duration: const Duration(milliseconds: 750),
+          duration: const Duration(milliseconds: 700),
           curve: Curves.easeOutBack,
           turns: isAwakened ? 0.0 : -75.0 / 360.0,
           child: AnimatedOpacity(
@@ -859,6 +854,84 @@ class _SatelliteNode extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Golden arc painter tracing along the celestial orbit circumference (1.2px thickness)
+/// sequentially illuminating the 6 sacred pillars in clockwise order.
+class _CelestialOrbitArcPainter extends CustomPainter {
+  const _CelestialOrbitArcPainter({
+    required this.radius,
+    required this.progress,
+    required this.isCompleted,
+  });
+
+  final double radius;
+  final double progress; // 0.0 to 1.0
+  final bool isCompleted;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final rect = Rect.fromCircle(center: center, radius: radius);
+
+    // 1. Static faint background orbit guide ring
+    final bgPaint = Paint()
+      ..color = CompassColors.gold.withValues(alpha: 0.12)
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.0;
+    canvas.drawCircle(center, radius, bgPaint);
+
+    // 2. Active golden arc tracing along circumference (1.2px thickness)
+    if (progress > 0.0) {
+      final sweep = progress * 2 * math.pi;
+
+      // Subtle warm aura pass
+      final glowPaint = Paint()
+        ..color = CompassColors.gold.withValues(alpha: isCompleted ? 0.38 : 0.25)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.4
+        ..strokeCap = StrokeCap.round;
+      canvas.drawArc(rect, -math.pi / 2, sweep, false, glowPaint);
+
+      // Crisp 1.2px golden stroke
+      final arcPaint = Paint()
+        ..color = isCompleted
+            ? CompassColors.gold
+            : const Color(0xFFF7D58C)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..strokeCap = StrokeCap.round;
+      canvas.drawArc(rect, -math.pi / 2, sweep, false, arcPaint);
+
+      // 3. Leading golden spark head while tracing
+      if (progress < 1.0) {
+        final sparkAngle = -math.pi / 2 + sweep;
+        final sparkPos = Offset(
+          center.dx + radius * math.cos(sparkAngle),
+          center.dy + radius * math.sin(sparkAngle),
+        );
+
+        // Soft outer glow
+        canvas.drawCircle(
+          sparkPos,
+          3.5,
+          Paint()..color = CompassColors.gold.withValues(alpha: 0.5),
+        );
+        // Inner bright spark core
+        canvas.drawCircle(
+          sparkPos,
+          1.6,
+          Paint()..color = const Color(0xFFFFFBE8),
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CelestialOrbitArcPainter oldDelegate) =>
+      oldDelegate.progress != progress ||
+      oldDelegate.isCompleted != isCompleted ||
+      oldDelegate.radius != radius;
 }
 
 /// Shockwave circle expanding outward upon central compass awakening.
