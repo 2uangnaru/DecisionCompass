@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "Lecturas gratuitas diarias agotadas",
   "watchAdPrompt": "Puedes ver un anuncio en video para continuar",
   "watchAdButton": "Ver anuncio",
-  "adUnlockedReward": "¡Anuncio visto! Se desbloqueó 1 lectura instantánea"
+  "adUnlockedReward": "¡Anuncio visto! Se desbloqueó 1 lectura instantánea",
+  "compassAwakeningConnecting": "Conectando campos de energía celestial...",
+  "compassAwakeningReady": "Tu brújula está despierta",
+  "compassPillarZodiac": "ZODÍACO",
+  "compassPillarPlanet": "PLANETA REGENTE",
+  "compassPillarVedic": "LUNA VÉDICA",
+  "compassPillarLifePath": "NÚMERO MAESTRO",
+  "compassPillarElement": "ELEMENTO",
+  "compassPillarAnimal": "SIGNO ORIENTAL"
 }

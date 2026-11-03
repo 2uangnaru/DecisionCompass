@@ -1310,4 +1310,29 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get adUnlockedReward => 'Ad watched! 1 instant reading unlocked';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'Connecting celestial energy fields...';
+
+  @override
+  String get compassAwakeningReady => 'Your compass is awakened';
+
+  @override
+  String get compassPillarZodiac => 'ZODIAC';
+
+  @override
+  String get compassPillarPlanet => 'RULING PLANET';
+
+  @override
+  String get compassPillarVedic => 'VEDIC MOON';
+
+  @override
+  String get compassPillarLifePath => 'LIFE PATH';
+
+  @override
+  String get compassPillarElement => 'ELEMENT';
+
+  @override
+  String get compassPillarAnimal => 'EARTHLY BRANCH';
 }

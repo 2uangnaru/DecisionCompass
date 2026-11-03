@@ -1315,6 +1315,31 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get adUnlockedReward => 'विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'ब्रह्मांडीय ऊर्जा क्षेत्रों को जोड़ा जा रहा है...';
+
+  @override
+  String get compassAwakeningReady => 'आपका कम्पास तैयार है';
+
+  @override
+  String get compassPillarZodiac => 'राशि';
+
+  @override
+  String get compassPillarPlanet => 'स्वामी ग्रह';
+
+  @override
+  String get compassPillarVedic => 'वैदिक नक्षत्र';
+
+  @override
+  String get compassPillarLifePath => 'मूलांक';
+
+  @override
+  String get compassPillarElement => 'तत्व';
+
+  @override
+  String get compassPillarAnimal => 'राशि चक्र';
 }
 
 /// The translations for Hindi, as used in India (`hi_IN`).
@@ -2627,4 +2652,29 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get adUnlockedReward => 'विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'ब्रह्मांडीय ऊर्जा क्षेत्रों को जोड़ा जा रहा है...';
+
+  @override
+  String get compassAwakeningReady => 'आपका कम्पास तैयार है';
+
+  @override
+  String get compassPillarZodiac => 'राशि';
+
+  @override
+  String get compassPillarPlanet => 'स्वामी ग्रह';
+
+  @override
+  String get compassPillarVedic => 'वैदिक नक्षत्र';
+
+  @override
+  String get compassPillarLifePath => 'मूलांक';
+
+  @override
+  String get compassPillarElement => 'तत्व';
+
+  @override
+  String get compassPillarAnimal => 'राशि चक्र';
 }

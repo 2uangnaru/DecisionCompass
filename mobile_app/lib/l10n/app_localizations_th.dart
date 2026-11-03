@@ -1304,4 +1304,29 @@ class AppLocalizationsTh extends AppLocalizations {
   @override
   String get adUnlockedReward =>
       'ดูโฆษณาแล้ว! ปลดล็อกการวิเคราะห์ทันที 1 ครั้ง';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'กำลังเชื่อมต่อสนามพลังงานจักรวาล...';
+
+  @override
+  String get compassAwakeningReady => 'เข็มทิศนำทางของคุณพร้อมแล้ว';
+
+  @override
+  String get compassPillarZodiac => 'จักรราศี';
+
+  @override
+  String get compassPillarPlanet => 'ดาวประจำตัว';
+
+  @override
+  String get compassPillarVedic => 'นักษัตรเวท';
+
+  @override
+  String get compassPillarLifePath => 'เลขนำชีวิต';
+
+  @override
+  String get compassPillarElement => 'ธาตุประจำตัว';
+
+  @override
+  String get compassPillarAnimal => 'ปีนักษัตร';
 }

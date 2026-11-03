@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "आज के निःशुल्क पठन समाप्त हो गए",
   "watchAdPrompt": "आगे बढ़ने के लिए आप एक वीडियो विज्ञापन देख सकते हैं",
   "watchAdButton": "विज्ञापन देखें",
-  "adUnlockedReward": "विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया"
+  "adUnlockedReward": "विज्ञापन देखा गया! 1 तुरंत पठन अनलॉक हो गया",
+  "compassAwakeningConnecting": "ब्रह्मांडीय ऊर्जा क्षेत्रों को जोड़ा जा रहा है...",
+  "compassAwakeningReady": "आपका कम्पास तैयार है",
+  "compassPillarZodiac": "राशि",
+  "compassPillarPlanet": "स्वामी ग्रह",
+  "compassPillarVedic": "वैदिक नक्षत्र",
+  "compassPillarLifePath": "मूलांक",
+  "compassPillarElement": "तत्व",
+  "compassPillarAnimal": "राशि चक्र"
 }

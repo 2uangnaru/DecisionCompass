@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "本日の無料リーディング上限に達しました",
   "watchAdPrompt": "動画広告を視聴して続けることができます",
   "watchAdButton": "広告を見る",
-  "adUnlockedReward": "広告を視聴しました！すぐに1回分析できます"
+  "adUnlockedReward": "広告を視聴しました！すぐに1回分析できます",
+  "compassAwakeningConnecting": "6つのエネルギー領域を接続中...",
+  "compassAwakeningReady": "あなたの羅針盤が整いました",
+  "compassPillarZodiac": "星座",
+  "compassPillarPlanet": "守護星",
+  "compassPillarVedic": "ヴェーダ星宿",
+  "compassPillarLifePath": "運命数",
+  "compassPillarElement": "五行本命",
+  "compassPillarAnimal": "十二支"
 }

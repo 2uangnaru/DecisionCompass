@@ -372,5 +372,13 @@
   "quotaExhaustedNotice": "오늘의 무료 점술 횟수를 모두 소진했습니다",
   "watchAdPrompt": "동영상 광고를 시청하여 계속 진행할 수 있습니다",
   "watchAdButton": "광고 시청",
-  "adUnlockedReward": "광고 시청 완료! 즉시 점술 1회 이용이 잠금 해제되었습니다"
+  "adUnlockedReward": "광고 시청 완료! 즉시 점술 1회 이용이 잠금 해제되었습니다",
+  "compassAwakeningConnecting": "6개의 에너지 영역을 연결하는 중...",
+  "compassAwakeningReady": "당신의 나침반이 준비되었습니다",
+  "compassPillarZodiac": "별자리",
+  "compassPillarPlanet": "수호성",
+  "compassPillarVedic": "베다 성수",
+  "compassPillarLifePath": "운명수",
+  "compassPillarElement": "오행본명",
+  "compassPillarAnimal": "지지 동물"
 }

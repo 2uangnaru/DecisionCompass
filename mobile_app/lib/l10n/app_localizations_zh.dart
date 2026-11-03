@@ -1162,6 +1162,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
+
+  @override
+  String get compassAwakeningConnecting => '正在连接六大本命能量场...';
+
+  @override
+  String get compassAwakeningReady => '你的专属罗盘已就绪';
+
+  @override
+  String get compassPillarZodiac => '星座';
+
+  @override
+  String get compassPillarPlanet => '守护星';
+
+  @override
+  String get compassPillarVedic => '吠陀月宿';
+
+  @override
+  String get compassPillarLifePath => '生命灵数';
+
+  @override
+  String get compassPillarElement => '五行本命';
+
+  @override
+  String get compassPillarAnimal => '生肖地支';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -2321,6 +2345,30 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
+
+  @override
+  String get compassAwakeningConnecting => '正在连接六大本命能量场...';
+
+  @override
+  String get compassAwakeningReady => '你的专属罗盘已就绪';
+
+  @override
+  String get compassPillarZodiac => '星座';
+
+  @override
+  String get compassPillarPlanet => '守护星';
+
+  @override
+  String get compassPillarVedic => '吠陀月宿';
+
+  @override
+  String get compassPillarLifePath => '生命灵数';
+
+  @override
+  String get compassPillarElement => '五行本命';
+
+  @override
+  String get compassPillarAnimal => '生肖地支';
 }
 
 /// The translations for Chinese, as used in China, using the Han script (`zh_Hans_CN`).
@@ -3480,4 +3528,28 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get adUnlockedReward => '广告已观看！已立即解锁1次分析';
+
+  @override
+  String get compassAwakeningConnecting => '正在连接六大本命能量场...';
+
+  @override
+  String get compassAwakeningReady => '你的专属罗盘已就绪';
+
+  @override
+  String get compassPillarZodiac => '星座';
+
+  @override
+  String get compassPillarPlanet => '守护星';
+
+  @override
+  String get compassPillarVedic => '吠陀月宿';
+
+  @override
+  String get compassPillarLifePath => '生命灵数';
+
+  @override
+  String get compassPillarElement => '五行本命';
+
+  @override
+  String get compassPillarAnimal => '生肖地支';
 }

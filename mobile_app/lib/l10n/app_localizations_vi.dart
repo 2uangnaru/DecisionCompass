@@ -1313,4 +1313,29 @@ class AppLocalizationsVi extends AppLocalizations {
   @override
   String get adUnlockedReward =>
       'Đã xem quảng cáo & mở khóa 1 lượt phân tích ngay!';
+
+  @override
+  String get compassAwakeningConnecting =>
+      'Đang kết nối 6 trường năng lượng...';
+
+  @override
+  String get compassAwakeningReady => 'Kim chỉ nam của bạn đã sẵn sàng';
+
+  @override
+  String get compassPillarZodiac => 'CUNG HOÀNG ĐẠO';
+
+  @override
+  String get compassPillarPlanet => 'SAO BẢO HỘ';
+
+  @override
+  String get compassPillarVedic => 'CHIÊM TINH VỆ ĐÀ';
+
+  @override
+  String get compassPillarLifePath => 'SỐ CHỦ ĐẠO';
+
+  @override
+  String get compassPillarElement => 'BẢN MỆNH';
+
+  @override
+  String get compassPillarAnimal => 'ĐỊA CHI';
 }
