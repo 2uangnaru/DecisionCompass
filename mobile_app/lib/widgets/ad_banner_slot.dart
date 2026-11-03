@@ -64,6 +64,15 @@ class _AdBannerSlotState extends State<AdBannerSlot> {
   Widget build(BuildContext context) {
     final controller = _controller;
     if (controller == null) return const SizedBox.shrink();
+    return ValueListenableBuilder<AdPresentationState>(
+      valueListenable: widget.ads.presentation,
+      builder: (context, state, _) => state.bannerUnlocked
+          ? _slot(context, controller)
+          : const SizedBox.shrink(),
+    );
+  }
+
+  Widget _slot(BuildContext context, BannerAdController controller) {
     // This inherited aspect rebuilds on pushes, pops and modal sheets,
     // including while a covered Home route remains mounted.
     final active = ModalRoute.isCurrentOf(context) ?? true;

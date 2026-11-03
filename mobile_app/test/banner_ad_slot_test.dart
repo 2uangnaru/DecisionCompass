@@ -63,11 +63,11 @@ void main() {
       expect(backend.banners, isEmpty);
       expect(find.textContaining('Astra Store'), findsNothing);
       expect(native, findsNothing);
+      await ads.initialize();
+      await tester.pump();
       final before = tester.getRect(
         find.byKey(const Key('banner_layout_slot')),
       );
-      await ads.initialize();
-      await tester.pump();
       backend.banners.single.callbacks.loaded();
       await tester.pump();
       expect(native, findsOneWidget);
@@ -279,6 +279,8 @@ void main() {
       await tester.pump();
       await tester.pump();
       expect(backend.banners, isEmpty, reason: 'Home before any reading');
+      final frame = find.byKey(const Key('banner_layout_slot'));
+      expect(frame, findsNothing, reason: 'no blank banner frame either');
       await tester.ensureVisible(find.byKey(const Key('find_direction')));
       await tester.tap(find.byKey(const Key('find_direction')));
       await tester.pump();
@@ -286,6 +288,7 @@ void main() {
       await tester.pump();
       expect(find.byType(RitualPage), findsOneWidget);
       expect(backend.banners, isEmpty, reason: 'Reveal before any reading');
+      expect(frame, findsNothing);
       await tester.tap(find.byKey(const Key('reveal_button')));
       await tester.pump(const Duration(milliseconds: 380));
       await tester.pump();
@@ -300,6 +303,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 500));
       await tester.pump();
       expect(backend.banners, hasLength(1), reason: 'Home after the reading');
+      expect(frame, findsOneWidget);
       backend.banners.single.callbacks.loaded();
       await tester.pump();
       expect(native, findsOneWidget);

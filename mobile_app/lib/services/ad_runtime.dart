@@ -24,10 +24,15 @@ class AdPresentationState {
     this.canRequestAds = false,
     this.foreground = true,
     this.fullscreenBusy = false,
+    this.bannerUnlocked = false,
   });
   final bool canRequestAds;
   final bool foreground;
   final bool fullscreenBusy;
+
+  /// False until a result has been viewed on this install: no banner slot
+  /// at all, not even its blank reservation.
+  final bool bannerUnlocked;
   bool get canPresent => canRequestAds && foreground && !fullscreenBusy;
 }
 
@@ -233,12 +238,14 @@ class ManagedAdService implements AdService {
     final canRequest = _allowed && !_adFree && policy.hasViewedReading;
     if (previous.canRequestAds == canRequest &&
         previous.foreground == _foreground &&
-        previous.fullscreenBusy == busy)
+        previous.fullscreenBusy == busy &&
+        previous.bannerUnlocked == policy.hasViewedReading)
       return;
     _presentation.value = AdPresentationState(
       canRequestAds: canRequest,
       foreground: _foreground,
       fullscreenBusy: busy,
+      bannerUnlocked: policy.hasViewedReading,
     );
   }
 
@@ -312,6 +319,7 @@ class ManagedAdService implements AdService {
   Future<void> initialize() => _initializing ??= _initialize();
   Future<void> _initialize() async {
     await policy.initialize();
+    _publishPresentation();
     await _exclusive(_gatherConsent);
   }
 

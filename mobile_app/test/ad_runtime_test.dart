@@ -847,8 +847,10 @@ void main() {
         'and keeps it after midnight', () async {
       await service.initialize();
       expect(service.presentation.value.canRequestAds, isFalse);
+      expect(service.presentation.value.bannerUnlocked, isFalse);
       await service.markReadingViewed(clock);
       expect(service.presentation.value.canRequestAds, isTrue);
+      expect(service.presentation.value.bannerUnlocked, isTrue);
       clock = clock.add(const Duration(days: 1));
       expect(service.presentation.value.canRequestAds, isTrue);
     });

@@ -295,8 +295,10 @@ void main() {
     useScreen(tester, size: const Size(393, 900));
     final ads = ManagedAdService(
       backend: FakeBannerBackend(),
-      policy: AdPolicy(store: MemoryAdPolicyStore()),
+      // A reading has been viewed; a new install has no banner before one.
+      policy: AdPolicy(store: MemoryAdPolicyStore()..day = '2026-10-20'),
     );
+    await ads.initialize();
     final plus = controller(requireClaims: false);
     unawaited(plus.start());
     await tester.pump();
