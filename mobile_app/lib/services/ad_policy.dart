@@ -52,6 +52,10 @@ class AdPolicy {
   static String dayKey(DateTime local) =>
       '${local.year.toString().padLeft(4, '0')}-${local.month.toString().padLeft(2, '0')}-${local.day.toString().padLeft(2, '0')}';
   Future<void> initialize() => _loading ??= _load();
+
+  /// A new install sees no banner until its first result has been viewed.
+  /// Never cleared, so midnight does not hide banners again.
+  bool get hasViewedReading => _viewedDay != null;
   Future<void> _load() async {
     try {
       final data = await store.load().timeout(const Duration(seconds: 3));

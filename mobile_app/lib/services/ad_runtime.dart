@@ -227,9 +227,10 @@ class ManagedAdService implements AdService {
     if (_disposed) return;
     final previous = _presentation.value;
     final busy = _fullscreen || _bannerOverlay;
-    // Ad-free reads as "no permission" so banner slots drop their ad.
-    // Rewarded ads do not read this: a Plus owner may still opt in to one.
-    final canRequest = _allowed && !_adFree;
+    // Ad-free, and a new install before its first viewed result, read as
+    // "no permission" so banner slots drop their ad. Rewarded ads do not read
+    // this: a Plus owner or a brand-new reader may still opt in to one.
+    final canRequest = _allowed && !_adFree && policy.hasViewedReading;
     if (previous.canRequestAds == canRequest &&
         previous.foreground == _foreground &&
         previous.fullscreenBusy == busy)
@@ -438,7 +439,8 @@ class ManagedAdService implements AdService {
   }
 
   @override
-  Future<void> markReadingViewed(DateTime local) => policy.markViewed(local);
+  Future<void> markReadingViewed(DateTime local) =>
+      policy.markViewed(local).then((_) => _publishPresentation());
   bool _valid(_Slot slot) {
     if (slot.ad == null || slot.loadedAt == null) return false;
     final age = nowUtc().difference(slot.loadedAt!);

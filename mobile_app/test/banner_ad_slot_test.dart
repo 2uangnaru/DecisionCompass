@@ -25,7 +25,8 @@ void main() {
       backend = FakeBannerBackend();
       ads = ManagedAdService(
         backend: backend,
-        policy: AdPolicy(store: MemoryAdPolicyStore()),
+        // A reading has been viewed; a new install has no banner before one.
+        policy: AdPolicy(store: MemoryAdPolicyStore()..day = '2026-10-20'),
       );
       try {
         await body(tester);
@@ -256,6 +257,52 @@ void main() {
       expect(find.byKey(const Key('fake_native_banner_0')), findsOneWidget);
       expect(backend.banners, hasLength(2));
       expect(backend.banners.last.disposals, 1);
+    },
+  );
+
+  slotTest(
+    'new install: no banner on Home or Reveal until the first result is viewed',
+    (tester) async {
+      useScreen(tester);
+      ads.dispose();
+      ads = ManagedAdService(
+        backend: backend,
+        policy: AdPolicy(store: MemoryAdPolicyStore()),
+      );
+      await ads.initialize();
+      final rig = ReadingTestRig(
+        adService: ads,
+        response: fixtureResponse('ready_yes_no_now.json'),
+      );
+      await rig.profileRepository.save(profile);
+      await tester.pumpWidget(rig.app);
+      await tester.pump();
+      await tester.pump();
+      expect(backend.banners, isEmpty, reason: 'Home before any reading');
+      await tester.ensureVisible(find.byKey(const Key('find_direction')));
+      await tester.tap(find.byKey(const Key('find_direction')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 800));
+      await tester.pump();
+      expect(find.byType(RitualPage), findsOneWidget);
+      expect(backend.banners, isEmpty, reason: 'Reveal before any reading');
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump(const Duration(milliseconds: 380));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pump(const Duration(milliseconds: 5400));
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+      expect(find.byType(ResultPage), findsOneWidget);
+      Navigator.of(tester.element(find.byType(ResultPage)))
+          .popUntil((route) => route.isFirst);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+      expect(backend.banners, hasLength(1), reason: 'Home after the reading');
+      backend.banners.single.callbacks.loaded();
+      await tester.pump();
+      expect(native, findsOneWidget);
     },
   );
 

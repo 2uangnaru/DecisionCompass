@@ -173,6 +173,16 @@ Loading, Result, History, Profile, onboarding and Responsible Use have no slot;
 a modal sheet hides the underlying banner. First-daily protection is for
 interstitials only: banner eligibility does not depend on reading quota.
 
+**No banner before the first reading (2026-11-03 owner decision).** A new
+install requests and shows no banner (the slot keeps its blank
+reservation, as before consent settles) until its first
+billable result has been viewed (`AdPolicy.hasViewedReading`, the same
+`ad_policy_v1` record as the first-daily marker). From then on banners follow
+the rules below, every day; midnight does not hide them again. Installs with
+no record (none viewed since 2026-10-26, or broken storage) also wait for
+their next viewed result. Like Plus, this reads as no banner permission in
+`AdPresentationState`; rewarded ads do not read it.
+
 - `banner_ad.dart` defines a separate injectable SDK boundary; banner is NOT
   added to fullscreen `AdFormat` or its two preload caches.
 - `banner_ad_controller.dart` owns one native handle per mounted slot. Home

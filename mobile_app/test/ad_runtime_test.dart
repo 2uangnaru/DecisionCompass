@@ -841,4 +841,22 @@ void main() {
       expect(service.privacyOptionsRequired, true);
     });
   });
+
+  group('banner before the first reading', () {
+    test('a new install has no banner permission until a result is viewed, '
+        'and keeps it after midnight', () async {
+      await service.initialize();
+      expect(service.presentation.value.canRequestAds, isFalse);
+      await service.markReadingViewed(clock);
+      expect(service.presentation.value.canRequestAds, isTrue);
+      clock = clock.add(const Duration(days: 1));
+      expect(service.presentation.value.canRequestAds, isTrue);
+    });
+
+    test('an install that has viewed a reading shows banners at launch', () async {
+      store.day = '2026-10-20';
+      await service.initialize();
+      expect(service.presentation.value.canRequestAds, isTrue);
+    });
+  });
 }

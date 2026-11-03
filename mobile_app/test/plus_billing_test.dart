@@ -503,7 +503,8 @@ void main() {
       backend = FakeAdsBackend();
       service = ManagedAdService(
         backend: backend,
-        policy: AdPolicy(store: MemoryAdPolicyStore()),
+        // A reading has been viewed; a new install has no banner before one.
+        policy: AdPolicy(store: MemoryAdPolicyStore()..day = '2026-10-20'),
       );
     });
     tearDown(() => service.dispose());
