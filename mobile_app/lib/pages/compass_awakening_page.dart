@@ -333,7 +333,7 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
             if (isCentralAwakened) {
               headline = l10n.compassAwakeningReady;
             } else if (n6) {
-              headline = '✦ ${pillars.animalName} ${pillars.animalIcon}';
+              headline = '✦ ${l10n.orbitZiWei} · ${pillars.animalName} ${pillars.animalIcon}';
             } else if (n5) {
               headline = '✦ ${pillars.elementName} ${pillars.elementIcon}';
             } else if (n4) {
@@ -438,11 +438,11 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                           isActive: n5,
                         ),
 
-                        // 6. Top-Left (300°): Địa Chi Con Giáp
+                        // 6. Top-Left (300°): Tử Vi
                         _SatelliteNode(
                           angle: -5 * math.pi / 6, // 10 o'clock
                           radius: 128,
-                          category: l10n.compassPillarAnimal,
+                          category: l10n.orbitZiWei,
                           value: '${pillars.animalName} ${pillars.animalIcon}',
                           glyph: pillars.animalIcon,
                           isActive: n6,
