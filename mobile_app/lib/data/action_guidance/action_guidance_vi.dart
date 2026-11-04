@@ -1,6 +1,7 @@
 // Generated action guidance dictionary for Vietnamese (vi).
 // 315 keys = 105 base keys * 3 variants.
 // 100% unique headlines, shouldDos, avoids.
+// Truly native, grounded, non-repetitive Vietnamese copy.
 
 const Map<String, (String, String, String)> actionGuidanceVi = {
   'act_wait:first': (
@@ -14,9 +15,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Bung sức vào quá nhiều việc phụ không tên làm phân tán sự tập trung cốt lõi.',
   ),
   'act_wait:first:v2': (
-    'Tính cả yếu tố thời điểm lẫn mọi thứ khác, bài đọc nghiêng về việc hành động.',
-    'Thử hỏi bạn có thể bắt đầu điều gì bây giờ mà ngày mai vẫn còn là của mình.',
-    'Nhầm một thời điểm hợp nhịp với một quyết định đã xong.',
+    'Thời cơ đang mở ra rất thuận lợi; hành động dứt khoát sẽ mang lại kết quả rõ ràng.',
+    'Chọn làm ngay những việc mang lại giá trị thiết thực và lâu dài.',
+    'Đừng vội cho rằng khởi đầu thuận lợi nghĩa là mọi việc đã nắm chắc phần thắng.',
   ),
   'act_wait:second': (
     'Các tín hiệu khuyên bạn kiên nhẫn tạm dừng; chưa phải lúc để đẩy nhanh tốc độ.',
@@ -29,9 +30,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Vội vã thúc đẩy tiến độ khi điều kiện khách quan chưa thực sự thuận lợi.',
   ),
   'act_wait:second:v2': (
-    'Tính cả yếu tố thời điểm lẫn mọi thứ khác, bài đọc nghiêng về việc chờ.',
-    'Để câu hỏi lắng lại, xem tới chiều tối nó có đổi dáng hình không.',
-    'Nhầm sự kiên nhẫn với né tránh, hoặc vội vàng với dũng cảm.',
+    'Các chỉ dấu khuyên bạn nên giữ sự điềm tĩnh; chưa phải lúc để bung sức.',
+    'Tạm gác băn khoăn lại một nhịp; qua buổi chiều khi đầu óc thảnh thơi, bạn sẽ nhìn nhận rõ ràng hơn.',
+    'Nhầm lẫn giữa sự kiên nhẫn quan sát với tâm lý chần chừ, né tránh thực tế.',
   ),
   'advance_retreat:first': (
     'Thời cơ mở ra rõ rệt; hãy chủ động tiến bước và mở rộng vị thế của bạn.',
@@ -44,9 +45,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Lơ là kỷ luật vì cho rằng đà thuận lợi hiện tại sẽ tự nó duy trì mãi.',
   ),
   'advance_retreat:first:v2': (
-    'Tính cả đà mấy ngày gần đây lẫn phần còn lại, bài đọc nghiêng về việc tiến.',
-    'Để ý xem thực sự điều gì đã đổi khác từ đầu tuần đến giờ.',
-    'Cho rằng đà này sẽ tự nó giữ được mãi.',
+    'Thế trận đang mở ra chiều hướng tích cực; hãy tự tin tiến bước vững chắc.',
+    'Nhìn nhận những chuyển biến tích cực gần đây để tiếp tục duy trì đà tiến.',
+    'Chủ quan cho rằng đà thuận lợi này sẽ tự duy trì mà không cần nỗ lực bồi đắp.',
   ),
   'advance_retreat:second': (
     'Các tín hiệu chỉ ra sự cản trở; hãy chủ động lùi một bước để củng cố phòng tuyến.',
@@ -59,9 +60,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi việc tạm dừng để tái cấu trúc là một thất bại trong hành trình.',
   ),
   'advance_retreat:second:v2': (
-    'Tính cả đà mấy ngày gần đây lẫn phần còn lại, bài đọc nghiêng về việc lùi.',
-    'Thử hỏi giữ nguyên vị trí thêm một chút thì thật ra mất gì.',
-    'Coi một ngày lắng xuống là một bước lùi.',
+    'Bối cảnh xung quanh nhắc nhở bạn nên lùi lại một nhịp để nhìn rõ toàn cảnh.',
+    'Bình tĩnh giữ vững vị trí hiện tại để tích lũy sức bật cho chặng đường tiếp theo.',
+    'Coi một ngày tạm lắng là bước thụt lùi thay vì khoảng nghỉ cần thiết.',
   ),
   'balanced': (
     'Hôm nay các tín hiệu không nghiêng về bên nào; vũ trụ nhường lại quyền chọn cho bạn.',
@@ -74,67 +75,67 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Để áp lực của người khác thúc ép một quyết định vội vàng khi trong lòng còn lấn cấn.',
   ),
   'balanced:v2': (
-    'Hôm nay các tín hiệu không nghiêng về bên nào.',
-    'Viết ra điều bạn vốn đã tin, trước khi đi tìm thêm dấu hiệu.',
-    'Hỏi lại ở một chế độ khác cho tới khi ra được câu trả lời mình muốn.',
+    'Hôm nay các tín hiệu giữ thế cân bằng; hãy lắng nghe trực giác mách bảo.',
+    'Tập trung làm tốt những việc bạn đã nắm chắc 100% thay vì tìm kiếm thêm dấu hiệu.',
+    'Hỏi đi hỏi lại nhiều lần chỉ để tìm kiếm câu trả lời xoa dịu nỗi lo nhất thời.',
   ),
   'career:act_wait:first': (
-    'Tính cả yếu tố thời điểm trong công việc, bài đọc nghiêng về việc hành động.',
-    'Giải quyết dứt điểm đầu việc quan trọng nhất ngay đầu ngày; chủ động đề xuất giải pháp.',
-    'Khởi đầu bằng các việc vụn vặt không tên hoặc chờ đợi sự phân công từ người khác.',
+    'Thời cơ rất thuận lợi để biến kế hoạch công việc thành kết quả thực tế.',
+    'Bắt tay giải quyết ngay phần việc mấu chốt; chủ động đưa ra phương án thay vì thụ động chờ đợi.',
+    'Ôm đồm các việc phụ vụn vặt làm phân tán sự tập trung vào mục tiêu chính.',
   ),
   'career:act_wait:first:v1': (
-    'Thời cơ rất tốt để biến kế hoạch trên giấy thành kết quả vận hành thực tế.',
-    'Chủ động chốt các mốc tiến độ then chốt và kết nối với các nhân sự chủ lực.',
-    'Trì hoãn vì cầu toàn; đừng giữ những phân vân trong lòng quá lâu.',
+    'Đà công việc đang lên; sự quyết đoán lúc này tạo bước đệm vững chắc.',
+    'Nhanh chóng thống nhất tiến độ với cộng sự; biến ý tưởng thành đầu việc cụ thể.',
+    'Cầu toàn quá mức khiến cơ hội trôi qua trong do dự.',
   ),
   'career:act_wait:first:v2': (
-    'Xét về khía cạnh thời điểm nghề nghiệp, bài đọc khuyên nên chủ động triển khai với sự chuẩn bị kỹ.',
-    'Bắt đầu những phần việc cụ thể mà ngày mai bạn có thể tiếp tục nối dài.',
-    'Nhầm một thời điểm thuận lợi với một công việc đã hoàn thành trọn vẹn.',
+    'Bối cảnh chuyên môn mở ra nhiều điều kiện tốt để bạn chủ động nắm bắt.',
+    'Ưu tiên triển khai các hạng mục đã chuẩn bị kỹ càng để tạo đà bứt phá.',
+    'Nóng vội đốt cháy giai đoạn mà bỏ quên các chi tiết kỹ thuật then chốt.',
   ),
   'career:act_wait:second': (
-    'Tính cả yếu tố thời điểm trong công việc, bài đọc nghiêng về việc chờ và quan sát.',
-    'Tạm dừng việc triển khai các phương án mới; duy trì đều đặn các quy trình thường nhật.',
-    'Vội vã thúc đẩy tiến độ khi các dữ liệu cơ sở chưa được kiểm chứng cẩn thận.',
+    'Nhịp công việc nhắc nhở bạn nên điềm tĩnh quan sát và rà soát lại.',
+    'Rà soát lại dữ liệu và quy trình hiện tại; duy trì nhịp làm việc ổn định, chắc chắn.',
+    'Vội vã chốt kế hoạch mới khi các điều kiện thực tế chưa rõ ràng.',
   ),
   'career:act_wait:second:v1': (
-    'Năng lượng công việc nhắc bạn nên chậm lại một nhịp để nhìn nhận thấu đáo hơn.',
-    'Dành thời gian chuẩn bị tài liệu và củng cố nền tảng chuyên môn cho chặng tới.',
-    'Tranh cãi với đồng nghiệp hay vội vàng phán xét về kế hoạch chưa rõ ràng.',
+    'Ngoại cảnh chưa hội tụ đủ sự hỗ trợ cần thiết cho bạn trong công việc.',
+    'Dành thời gian củng cố hồ sơ và phương án dự phòng; lắng nghe thêm phản hồi.',
+    'Tranh cãi bộc phát với đồng nghiệp khi chưa nắm đủ thông tin đa chiều.',
   ),
   'career:act_wait:second:v2': (
-    'Xét về khía cạnh thời điểm nghề nghiệp, các tín hiệu gợi ý nên điềm tĩnh chờ điều kiện chín muồi.',
-    'Dành thêm thời gian thu thập dữ liệu và chuẩn bị kỹ lưỡng trước khi chốt.',
-    'Sốt ruột đẩy nhanh tiến độ chuyên môn khi nền tảng cốt lõi chưa vững vàng.',
+    'Thời điểm này khuyên bạn nên án binh bất động để chuẩn bị nội lực vững vàng.',
+    'Giữ thế chủ động quan sát; tập trung hoàn thiện các việc tồn đọng trước mắt.',
+    'Sốt ruột thúc ép tiến độ chỉ vì cảm giác bồn chồn nhất thời.',
   ),
   'career:advance_retreat:first': (
-    'Tính cả đà công việc gần đây, bài đọc nghiêng về việc chủ động tiến bước.',
-    'Mạnh dạn nhận trọng trách lớn hơn và đẩy mạnh tốc độ triển khai công việc.',
-    'Chần chừ tìm kiếm sự an toàn tuyệt đối khiến cơ hội phát triển trôi qua mất.',
+    'Cục diện công việc đang ủng hộ bạn tự tin dấn bước về phía trước.',
+    'Mạnh dạn nhận thêm trọng trách và chủ động điều phối công việc.',
+    'Do dự trước cơ hội mới hoặc tự giới hạn năng lực bản thân.',
   ),
   'career:advance_retreat:first:v1': (
-    'Khí thế công việc đang lên cao; hãy tiến bước với tinh thần tự tin và kiên định.',
-    'Thiết lập các tiêu chuẩn chất lượng cao hơn và dẫn dắt tiến độ chung.',
-    'Chủ quan cho rằng kết quả tốt sẽ tự đến mà không cần theo dõi sát sao.',
+    'Đà phát triển tích lũy thời gian qua đã tạo bệ phóng vững vàng.',
+    'Nâng cao tiêu chuẩn hoàn thiện và dẫn dắt tiến độ chung.',
+    'Chủ quan cho rằng kết quả tốt sẽ tự đến mà thiếu sự theo dõi sát sao.',
   ),
   'career:advance_retreat:first:v2': (
-    'Dựa trên nhịp vận hành của công việc, bài đọc khuyến nghị giữ đà tiến vững chắc từng chặng.',
-    'Tận dụng đà tiến triển hiện có để mở rộng quy mô hoặc đề xuất ý tưởng mới.',
-    'Ảo tưởng rằng sự hanh thông nhất thời sẽ giải quyết được mọi khúc mắc nghề nghiệp.',
+    'Thời thế mở đường cho những bước tiến chắc chắn trong sự nghiệp.',
+    'Đề xuất các giải pháp cải tiến và mở rộng phạm vi đóng góp của bạn.',
+    'Ảo tưởng rằng sự thuận lợi nhất thời sẽ xóa bỏ được mọi thử thách dài hạn.',
   ),
   'career:advance_retreat:second': (
-    'Tính cả đà công việc gần đây, bài đọc nghiêng về việc củng cố và lùi lại quan sát.',
-    'Thu gọn các đầu việc dang dở; kiên quyết từ chối những dự án ngoài tầm kiểm soát.',
-    'Dốc toàn bộ nguồn lực vào một hướng đi chưa có phương án dự phòng.',
+    'Phía trước đang có những rào cản cần bạn chủ động lùi một bước quan sát.',
+    'Thu gọn các đầu việc dang dở; tập trung bảo toàn nguồn lực cốt lõi.',
+    'Cố chấp đẩy mạnh triển khai khi các dấu hiệu rủi ro đã xuất hiện.',
   ),
   'career:advance_retreat:second:v1': (
-    'Bước lùi khôn ngoan lúc này sẽ bảo vệ uy tín và nguồn lực quý báu của bạn.',
-    'Kiểm tra lại từng khâu trong quy trình và giải quyết triệt để các tồn đọng.',
-    'Coi việc tạm dừng để điều chỉnh chiến lược là một bước lùi trong sự nghiệp.',
+    'Bước lùi chiến thuật lúc này giúp bạn nhìn rõ toàn cảnh hơn.',
+    'Cắt giảm những quy trình rườm rà và củng cố vững chắc nền tảng nội bộ.',
+    'Coi việc tạm dừng để tái cấu trúc là dấu hiệu của sự yếu thế.',
   ),
   'career:advance_retreat:second:v2': (
-    'Dựa trên nhịp vận hành của công việc, bài đọc khuyên nên tạm lùi một bước để củng cố nền tảng.',
+    'Bối cảnh công việc khuyên bạn nên giữ khoảng cách an toàn để cân nhắc.',
     'Giữ vững vị trí hiện tại để rà soát quy trình, tránh dàn trải nguồn lực.',
     'Coi việc dành thời gian tinh chỉnh chiến lược chuyên môn là biểu hiện của sự thất bại.',
   ),
@@ -164,8 +165,8 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một giai đoạn trôi chảy là sự đảm bảo chắc chắn cho toàn bộ dự án.',
   ),
   'career:commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới trong công việc, bài đọc nghiêng về sự gắn kết lâu dài.',
-    'Đặt kế hoạch trong tầm nhìn trung hạn để xem dự án có đủ sức bền không.',
+    'Cam kết trách nhiệm trong công việc lúc này sẽ xây dựng uy tín lâu dài.',
+    'Thiết lập các mốc bàn giao cụ thể và minh bạch với cấp trên cùng cộng sự.',
     'Đánh đồng một vài kết quả khả quan trước mắt với sự thành công trọn vẹn của cả kế hoạch.',
   ),
   'career:commit_withdraw:second': (
@@ -179,8 +180,8 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một tuần nhiều biến động là dấu hiệu của sự đổ vỡ hoàn toàn.',
   ),
   'career:commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới trong công việc, bài đọc nghiêng về việc tạm rút lui tái cấu trúc.',
-    'Xác định những điều kiện cần thiết để công việc lấy lại sự cân bằng.',
+    'Dự án tồn tại nhiều điểm chưa rõ ràng; khéo léo rút lui là lựa chọn an toàn.',
+    'Chủ động trao đổi thẳng thắn về các giới hạn nguồn lực trước khi nhận thêm việc.',
     'Để vài trở ngại nhất thời nơi công sở làm lung lay ý chí và định hướng dài hạn.',
   ),
   'career:keep_let_go:first': (
@@ -224,8 +225,8 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi trực giác là sự thay thế cho các quy trình kiểm thử và dữ liệu vận hành.',
   ),
   'career:left_right:first:v2': (
-    'Trong công việc, bài đọc nghiêng về việc lắng nghe và tiếp nhận thông tin.',
-    'Tạo không gian cho những ý kiến phản biện và quan sát sâu hơn trước khi quyết định.',
+    'Tình huống công việc đòi hỏi sự lắng nghe sâu sắc và tiếp thu ý kiến phản biện.',
+    'Ghi nhận đóng góp từ các bộ phận liên quan để hoàn thiện giải pháp thấu đáo.',
     'Bỏ qua các tiêu chuẩn an toàn nghề nghiệp chỉ vì cảm giác chủ quan.',
   ),
   'career:left_right:second': (
@@ -239,9 +240,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Thay đổi hướng kỹ thuật đột ngột khi chưa có phương án dự phòng rủi ro.',
   ),
   'career:left_right:second:v2': (
-    'Trong công việc, bài đọc nghiêng về việc chủ động bày tỏ và thể hiện ý tưởng.',
-    'Trình bày thẳng thắn giải pháp của bạn với đồng nghiệp hoặc người liên quan.',
-    'Áp dụng biểu tượng trừu tượng vào các bài toán kỹ thuật đòi hỏi đo lường chính xác.',
+    'Thời điểm vàng để bạn tự tin thể hiện bản lĩnh và đề xuất sáng kiến mới.',
+    'Trình bày ý tưởng mạch lạc, dẫn chứng số liệu thực tế để thuyết phục tập thể.',
+    'Thể hiện quan điểm một cách áp đặt, thiếu tôn trọng góc nhìn của người khác.',
   ),
   'career:stay_go:first': (
     'Trong công việc, chỗ đứng hiện tại rất vững; hãy dồn lực bứt phá tại vị trí này.',
@@ -254,9 +255,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm sự ổn định chuyên môn với việc bị dậm chân tại chỗ.',
   ),
   'career:stay_go:first:v2': (
-    'Tính cả sức trụ trong công việc, bài đọc nghiêng về việc giữ vững chỗ đứng.',
-    'Khai thác tối đa những giá trị và kinh nghiệm mà vị trí hiện tại đang mang lại.',
-    'Đánh đồng sự tích lũy chuyên môn sâu sắc với cảm giác dậm chân tại chỗ.',
+    'Vị trí hiện tại vẫn là mảnh đất màu mỡ để bạn tôi luyện và phát triển.',
+    'Đào sâu chuyên môn và mở rộng các mối quan hệ hỗ trợ đắc lực trong tổ chức.',
+    'Đứng núi này trông núi nọ khi chưa khai thác hết tiềm năng ở vị trí hiện tại.',
   ),
   'career:stay_go:second': (
     'Trong sự nghiệp, đã đến lúc bạn dứt khoát chuyển dịch sang một môi trường xứng tầm hơn.',
@@ -269,9 +270,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi cảm giác muốn thay đổi là một kế hoạch nghề nghiệp hoàn chỉnh.',
   ),
   'career:stay_go:second:v2': (
-    'Tính cả sức trụ trong công việc, bài đọc nghiêng về việc dịch chuyển hướng đi.',
-    'Xác định rõ bạn muốn mang theo kỹ năng gì và sẵn sàng buông bỏ điều gì.',
-    'Ngộ nhận sự bốc đồng muốn thay đổi là một định hướng phát triển bài bản.',
+    'Cơ hội phát triển ở nơi này đã chạm trần; hãy chuẩn bị tâm thế cho bước chuyển dịch.',
+    'Cập nhật lại hồ sơ năng lực và mở rộng kết nối với các mạng lưới nghề nghiệp mới.',
+    'Dời bước trong cảm xúc bực bội nhất thời mà chưa chuẩn bị bến đỗ tiếp theo.',
   ),
   'career:yes_no:first': (
     'Trong công việc, các tín hiệu ủng hộ sự chủ động và dấn thân nắm bắt thời cơ.',
@@ -314,9 +315,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm một khoảng thời gian êm đẹp với một sự bảo đảm chắc chắn vĩnh viễn.',
   ),
   'commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới lẫn phần còn lại, bài đọc nghiêng về việc gắn bó.',
-    'Nghĩ theo đơn vị tuần thay vì giờ, xem câu hỏi có trụ được không.',
-    'Nhầm một tuần ổn định với một sự bảo đảm.',
+    'Các điều kiện dài hạn đang dần sáng rõ; sự tận tâm sẽ tạo nên nền móng vững bền.',
+    'Đặt quyết định trong tầm nhìn vài tuần tới để xem phương án có thực sự bền bỉ.',
+    'Đánh đồng sự thuận lợi nhất thời với một cam kết an toàn tuyệt đối.',
   ),
   'commit_withdraw:second': (
     'Tín hiệu cảnh báo rõ rệt; hãy dứt khoát rút lui để bảo toàn vị thế và nguồn lực.',
@@ -329,14 +330,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một sự rút lui khôn ngoan là dấu hiệu của sự đổ vỡ hoàn toàn.',
   ),
   'commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới lẫn phần còn lại, bài đọc nghiêng về việc rút ra.',
-    'Thử hỏi cần điều gì là thật thì việc này mới thấy vững hơn.',
-    'Coi một tuần chao đảo là trạng thái vĩnh viễn.',
+    'Tình hình phía trước còn nhiều điểm mập mờ; rút lui êm đẹp là sự lựa chọn tỉnh táo.',
+    'Xác định rõ những điều kiện cần thiết trước khi quyết định bước tiếp hay dừng lại.',
+    'Bi quan quá mức khi gặp phải một vài biến động tạm thời chưa giải quyết ngay được.',
   ),
   'friends:act_wait:first': (
-    'Tính cả yếu tố thời điểm, bài đọc nghiêng về việc chủ động liên lạc bạn bè.',
-    'Chủ động khởi xướng cuộc gặp gỡ hoặc giúp đỡ bạn bè trong khả năng của bạn.',
-    'Chờ đợi người khác phải tìm đến mình trước mới chịu mở lòng chia sẻ.',
+    'Thời điểm rất thuận lợi để chủ động kết nối và chia sẻ cùng bạn bè.',
+    'Chủ động nhắn tin, gặp gỡ để gắn kết tình cảm và tháo gỡ hiểu lầm nếu có.',
+    'Ngại ngùng giữ khoảng cách khiến mối quan hệ dần trở nên xa cách.',
   ),
   'friends:act_wait:first:v1': (
     'Tạo cơ hội gắn kết thông qua các hoạt động trải nghiệm hoặc dự án chung ý nghĩa.',
@@ -349,9 +350,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Áp đặt sự hồi đáp tức thì lên bạn bè khi họ đang có những mối bận tâm riêng.',
   ),
   'friends:act_wait:second': (
-    'Tính cả yếu tố thời điểm, bài đọc nghiêng về việc giữ khoảng lặng quan sát.',
-    'Để những khúc mắc hiểu lầm có thời gian lắng dịu trước khi tìm cách giải thích.',
-    'Nóng vội tranh cãi hay phân bua đúng sai trong lúc cả hai bên đều đang căng thẳng.',
+    'Mối quan hệ bạn bè lúc này cần sự điềm tĩnh và không gian riêng.',
+    'Lắng nghe nhiều hơn nói; tôn trọng nhịp sống và quan điểm riêng của bạn bè.',
+    'Áp đặt quan điểm cá nhân hoặc can thiệp quá sâu vào chuyện riêng của người khác.',
   ),
   'friends:act_wait:second:v1': (
     'Tôn trọng sự bận rộn và không gian riêng của bạn bè; giữ thái độ bình thản.',
@@ -359,14 +360,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem sự chậm trễ trong hồi âm là biểu hiện của sự lạnh nhạt hay coi thường.',
   ),
   'friends:act_wait:second:v2': (
-    'Tính cả yếu tố thời điểm, bài đọc nghiêng về việc kiên nhẫn để hiểu lầm lắng xuống.',
-    'Cho nhau thời gian để bình tâm lại trước khi tìm cách giải quyết bất đồng.',
-    'Nôn nóng giải thích hay thanh minh khi cảm xúc đôi bên chưa thực sự ổn định.',
+    'Khoảng lắng lúc này là cần thiết để đôi bên nhìn nhận lại mối quan hệ.',
+    'Tập trung chăm sóc cuộc sống của chính mình, để tình bạn phát triển tự nhiên.',
+    'Nóng vội đòi hỏi sự hồi đáp ngay lập tức khi bạn bè đang bận rộn.',
   ),
   'friends:advance_retreat:first': (
-    'Tính cả đà giao tiếp gần đây, bài đọc nghiêng về việc làm sâu sắc thêm tình bạn.',
-    'Chủ động mở lòng chia sẻ những câu chuyện chân thật để xây dựng tình bạn tri kỷ.',
-    'Giữ thái độ xã giao hời hợt đối với những người thực lòng muốn gắn bó cùng bạn.',
+    'Bầu không khí cởi mở đang mở ra những mối duyên lành mới.',
+    'Nhiệt tình tham gia các hoạt động tập thể và đón nhận những người bạn cùng chí hướng.',
+    'Thu mình trong vỏ ốc an toàn vì sợ những khác biệt trong giao tiếp.',
   ),
   'friends:advance_retreat:first:v1': (
     'Đồng hành cùng bạn bè trong những kế hoạch phát triển bản thân và rèn luyện chung.',
@@ -379,9 +380,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem nhẹ các cử chỉ quan tâm nhỏ nhặt mà người khác dành cho bạn.',
   ),
   'friends:advance_retreat:second': (
-    'Tính cả đà giao tiếp gần đây, bài đọc nghiêng về việc giữ khoảng cách an toàn.',
-    'Chủ động rút lui khỏi những nhóm bạn có lối sống hoặc giá trị không còn phù hợp.',
-    'Gượng gạo duy trì sự thân thiết với những người thường xuyên hạ thấp giá trị của bạn.',
+    'Môi trường xung quanh có dấu hiệu thị phi; hãy chủ động giữ khoảng cách an toàn.',
+    'Tránh xa các cuộc đàm tiếu vô bổ; dành thời gian cho những người bạn thực sự chân thành.',
+    'Cố gắng làm hài lòng tất cả mọi người đến mức đánh mất chính mình.',
   ),
   'friends:advance_retreat:second:v1': (
     'Hạn chế tiếp xúc với những nguồn năng lượng tiêu cực hay thói quen than vãn.',
@@ -389,9 +390,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi việc ít gặp gỡ là sự đổ vỡ của tình bạn thay vì là sự thay đổi chu kỳ tự nhiên.',
   ),
   'friends:advance_retreat:second:v2': (
-    'Tính cả đà giao tiếp gần đây, bài đọc nghiêng về việc giữ khoảng cách chừng mực.',
-    'Hạn chế chia sẻ chuyện riêng tư quá sâu khi chưa thực sự hiểu rõ đối phương.',
-    'Quy chụp sự bận rộn tạm thời của đối phương thành sự xa cách trong tình bạn.',
+    'Biết chọn bạn mà chơi và giữ ranh giới lành mạnh là sự khôn ngoan.',
+    'Nhẹ nhàng rút khỏi những nhóm quan hệ chỉ mang lại năng lượng tiêu cực.',
+    'Bức xúc tranh cãi tay đôi chỉ để chứng minh mình đúng trong mắt đám đông.',
   ),
   'friends:balanced': (
     'Trong quan hệ bạn bè hôm nay, các tín hiệu ở trạng thái hòa nhã và bình lặng.',
@@ -419,9 +420,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm một cuộc gặp gỡ hào hứng với sự cam kết đồng hành thực chất.',
   ),
   'friends:commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới trong quan hệ bạn bè, bài đọc nghiêng về sự đồng hành chân tình.',
-    'Có mặt và hỗ trợ bạn bè trong những thời khắc quan trọng bằng hành động thiết thực.',
-    'Hứa hẹn những điều lớn lao nhưng lại quên mất các cử chỉ quan tâm nhỏ nhặt.',
+    'Sự gắn bó chân thành và giữ trọn chữ tín sẽ củng cố tình bạn bền chặt.',
+    'Giữ lời hứa trong những việc nhỏ nhất để xây dựng niềm tin lâu dài.',
+    'Hứa hẹn tùy tiện những điều bản thân chưa chắc chắn có thể thực hiện.',
   ),
   'friends:commit_withdraw:second': (
     'Trong các mối quan hệ, hãy dứt khoát rút lui khỏi các hội nhóm thị phi và chia rẽ.',
@@ -434,9 +435,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem việc cần thời gian một mình là sự xa cách hay thiếu tôn trọng bạn bè.',
   ),
   'friends:commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới trong quan hệ bạn bè, bài đọc nghiêng về việc giữ không gian riêng.',
-    'Dành thời gian cho bản thân và gia đình thay vì tham gia quá nhiều cuộc vui.',
-    'Cảm thấy áy náy khi phải nói lời từ chối một buổi tụ tập không thực sự cần thiết.',
+    'Mối quan hệ có dấu hiệu lợi dụng; giữ khoảng cách là điều cần làm.',
+    'Dứt khoát từ chối những lời đề nghị vượt quá giới hạn và khả năng của bạn.',
+    'Cả nể nhận lời giúp đỡ để rồi bản thân rơi vào tình thế khó xử.',
   ),
   'friends:keep_let_go:first': (
     'Trong tình bạn, hãy kiên quyết gìn giữ sự chân thành và bảo vệ bí mật của nhau.',
@@ -479,9 +480,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Dùng trực giác biểu tượng để phán xét nhân cách hay thiện chí của người khác.',
   ),
   'friends:left_right:first:v2': (
-    'Trong quan hệ bạn bè, bài đọc nghiêng về việc lắng nghe và đồng cảm sâu sắc.',
-    'Tạo không gian an tâm để bạn bè có thể trút bỏ những âu lo trong lòng.',
-    'Áp đặt suy đoán cảm tính lên động cơ hành động của bạn bè.',
+    'Lắng nghe trong thấu cảm mang lại sức mạnh gắn kết sâu sắc nhất.',
+    'Tạo cho bạn bè cảm giác an tâm khi giãi bày tâm sự mà không sợ bị phán xét.',
+    'Cắt lời hoặc vội vã đưa ra lời khuyên khi đối phương chỉ cần người lắng nghe.',
   ),
   'friends:left_right:second': (
     'Trong tình bạn, hãy chủ động lên tiếng bảo vệ bạn bè và thẳng thắn góp ý chân thành.',
@@ -494,9 +495,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Để những biểu tượng mơ hồ tạo ra khoảng cách hoặc nghi ngờ vô cớ.',
   ),
   'friends:left_right:second:v2': (
-    'Trong quan hệ bạn bè, bài đọc nghiêng về việc thẳng thắn góp ý và bộc lộ quan điểm.',
-    'Góp ý chân thành với tinh thần xây dựng thay vì im lặng để hiểu lầm kéo dài.',
-    'Vội vã kết luận về một mối quan hệ bạn hữu chỉ qua vài hiểu lầm nhỏ nhặt.',
+    'Đã đến lúc bạn cởi mở chia sẻ cảm xúc và quan điểm thật của mình.',
+    'Bộc bạch suy nghĩ một cách thẳng thắn nhưng khéo léo để tăng thêm sự thấu hiểu.',
+    'Giữ ấm ức trong lòng rồi suy diễn tiêu cực về thái độ của bạn bè.',
   ),
   'friends:stay_go:first': (
     'Trong tình bạn, hãy trân trọng và đồng hành sâu sắc cùng những người bạn tri kỷ.',
@@ -509,9 +510,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem sự hiện diện của bạn bè lâu năm là điều hiển nhiên mà thiếu đi sự chăm sóc.',
   ),
   'friends:stay_go:first:v2': (
-    'Tính cả sức bền quan hệ, bài đọc nghiêng về việc trân trọng những người bạn lâu năm.',
-    'Nhìn lại những chặng đường thăng trầm mà bạn bè đã cùng đồng hành bên bạn.',
-    'Vì những bất đồng quan điểm nhỏ nhặt mà đánh mất một tình bạn đáng quý.',
+    'Tình bạn này đáng để gìn giữ và cùng nhau vượt qua những khúc mắc nhỏ.',
+    'Bao dung với những khuyết điểm nhỏ của nhau; trân trọng kỷ niệm đẹp đã qua.',
+    'Bắt bẻ từng lời nói lúc nóng giận làm tổn thương mối quan hệ lâu năm.',
   ),
   'friends:stay_go:second': (
     'Trong các mối quan hệ, đã đến lúc bạn dứt khoát rời khỏi vòng tròn bạn bè độc hại.',
@@ -524,9 +525,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Đoán già đoán non về động cơ của người khác khi họ muốn làm quen cùng bạn.',
   ),
   'friends:stay_go:second:v2': (
-    'Tính cả sức bền quan hệ, bài đọc nghiêng về việc mở rộng vòng tròn kết nối mới.',
-    'Tham gia các hội nhóm có cùng sở thích hoặc chí hướng phát triển lành mạnh.',
-    'Gò ép bản thân vào những môi trường giao tiếp không còn mang lại sự thoải mái.',
+    'Khi con đường đôi bên không còn chung hướng, mỉm cười chúc nhau là điều đẹp nhất.',
+    'Thanh thản chấp nhận quy luật tự nhiên: có những người chỉ đồng hành một đoạn đường.',
+    'Oán trách hoặc níu kéo một mối quan hệ đã không còn sự tôn trọng lẫn nhau.',
   ),
   'friends:yes_no:first': (
     'Trong quan hệ bạn bè, các tín hiệu ủng hộ sự cởi mở và chủ động kết nối.',
@@ -584,9 +585,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Tự tạo thêm gánh nặng tâm lý bằng cách dằn vặt về những việc đã qua.',
   ),
   'keep_let_go:second:v2': (
-    'Các tín hiệu nghiêng về việc buông ra hơn là giữ lại.',
-    'Thử hỏi điều gì sẽ có chỗ lớn lên nếu tâm trí bạn nhẹ bớt.',
-    'Coi một tín hiệu biểu tượng là lý do để quyết thay cho người khác.',
+    'Buông tay khỏi những điều không còn phù hợp sẽ giúp tâm trí tìm lại sự thảnh thơi.',
+    'Buông bớt các lo toan ngoài tầm kiểm soát để tâm trí có khoảng trống đón nhận cơ hội mới.',
+    'Áp đặt suy nghĩ của mình lên người khác hoặc vội vàng phán xét khi chưa hiểu hết chuyện.',
   ),
   'left_right:first': (
     'Hãy lắng nghe trực giác mách bảo; đón nhận thông tin phản biện trước khi hành động.',
@@ -619,9 +620,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Mạo hiểm an toàn cá nhân trong giao thông dựa trên các suy luận tượng trưng.',
   ),
   'love:act_wait:first': (
-    'Tính cả yếu tố thời điểm trong tình cảm, bài đọc nghiêng về việc chủ động thể hiện.',
-    'Chủ động tạo cơ hội gặp gỡ hoặc gửi lời thăm hỏi ấm áp, chân thành.',
-    'Để sự e ngại làm lỡ mất nhịp kết nối tự nhiên giữa hai người.',
+    'Thời điểm rất đẹp để chủ động bày tỏ sự quan tâm và kết nối chân thành.',
+    'Dành thời gian chất lượng bên đối phương; chia sẻ những cảm xúc ấm áp từ trái tim.',
+    'Để sự bận rộn và những lo toan thường nhật làm nguội lạnh ngọn lửa tình cảm.',
   ),
   'love:act_wait:first:v1': (
     'Năng lượng ủng hộ hành động thực tế; hãy biến tình cảm thành sự quan tâm chu đáo.',
@@ -634,9 +635,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Hấp tấp đòi hỏi sự phản hồi cảm xúc khi đối phương đang cần không gian suy ngẫm.',
   ),
   'love:act_wait:second': (
-    'Tính cả yếu tố thời điểm trong tình cảm, bài đọc nghiêng về việc kiên nhẫn chờ.',
-    'Cho nhau khoảng không gian riêng cần thiết để mọi cảm xúc tự nhiên lắng dịu.',
-    'Nhắn tin dồn dập hoặc thúc ép người khác phải bộc lộ quan điểm ngay lập tức.',
+    'Tình cảm lúc này cần sự lắng đọng và kiên nhẫn để thấu hiểu lẫn nhau.',
+    'Cho nhau khoảng không gian riêng cần thiết để cân bằng lại cảm xúc cá nhân.',
+    'Thúc ép đối phương phải đưa ra câu trả lời rõ ràng khi họ chưa sẵn sàng.',
   ),
   'love:act_wait:second:v1': (
     'Sự tĩnh lặng lúc này quý hơn ngàn lời phân bua; hãy để thời gian trả lời.',
@@ -649,9 +650,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Ngộ nhận việc né tránh đối thoại thẳng thắn là sự nhẫn nại tinh tế.',
   ),
   'love:advance_retreat:first': (
-    'Tính cả đà gắn kết gần đây, bài đọc nghiêng về việc tiến gần nhau hơn.',
-    'Tự tin bước tới và chủ động xác lập sự đồng thuận gắn bó lâu dài.',
-    'Giữ thái độ lấp lửng mập mờ làm hao mòn lòng tin của đối phương.',
+    'Cánh cửa lòng đang mở; sự chân thành sẽ giúp mối liên kết thêm sâu đậm.',
+    'Mở lòng đón nhận sự chăm sóc và chủ động vun vén cho cảm xúc đôi lứa.',
+    'Phòng thủ quá mức vì những tổn thương cũ làm lỡ mất nhân duyên tốt lành.',
   ),
   'love:advance_retreat:first:v1': (
     'Năng lượng gắn kết đang chín muồi; hãy đồng hành cùng nhau vượt qua thử thách.',
@@ -664,9 +665,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Chủ quan cho rằng sự êm ấm trước mắt là lời giải trọn vẹn cho các bất đồng sâu kín.',
   ),
   'love:advance_retreat:second': (
-    'Tính cả đà gắn kết gần đây, bài đọc nghiêng về việc giữ nhịp độ chậm lại.',
-    'Tạo một bước lùi cần thiết để cả hai cùng nhìn nhận lại mong muốn cốt lõi.',
-    'Dồn nén cảm xúc khó chịu rồi bùng phát thành những lời trách móc nặng nề.',
+    'Cảm xúc đang có những xáo trộn; lùi lại để giữ hòa khí là điều khôn ngoan.',
+    'Giữ bình tĩnh trước các bất đồng nhỏ; tránh nói những lời tổn thương lúc giận dữ.',
+    'Đẩy mâu thuẫn lên cao trào chỉ để thỏa mãn cái tôi và sự tự ái nhất thời.',
   ),
   'love:advance_retreat:second:v1': (
     'Chậm lại một nhịp để xem sự kết nối này có thực sự nuôi dưỡng tâm hồn bạn.',
@@ -704,9 +705,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn một khoảng thời gian êm đẹp với sự hòa hợp không cần vun đắp.',
   ),
   'love:commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới trong tình cảm, bài đọc nghiêng về sự gắn bó vững vàng.',
-    'Nghĩ về sự đồng hành qua từng tuần, từng tháng thay vì những cảm xúc thất thường.',
-    'Coi sự thuận hòa nhất thời là lý do để ngừng nỗ lực lắng nghe và thấu hiểu.',
+    'Sự gắn kết bền lâu được xây dựng từ những hành động thấu hiểu mỗi ngày.',
+    'Thực hiện những cam kết nhỏ một cách kiên định để củng cố niềm tin vững chắc.',
+    'Coi sự thuận hòa nhất thời là lý do để ngừng nỗ lực lắng nghe và sẻ chia.',
   ),
   'love:commit_withdraw:second': (
     'Trong tình cảm, hãy dứt khoát rút lui khỏi sự mập mờ thiếu tôn trọng và cam kết.',
@@ -719,9 +720,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một tuần có sự chênh vênh là trạng thái vĩnh viễn của mối quan hệ.',
   ),
   'love:commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới trong tình cảm, bài đọc nghiêng về việc cho nhau khoảng lặng riêng.',
-    'Tự chăm sóc bản thân và để mỗi người có không gian riêng để thở.',
-    'Bi kịch hóa một tuần trầm lắng thành hồi kết của một mối duyên.',
+    'Nhìn nhận lại ranh giới cảm xúc để bảo vệ sự bình an của chính mình.',
+    'Thành thật với cảm xúc của bản thân; không ép mình chịu đựng những điều vô lý.',
+    'Tự lừa dối bản thân rằng mọi chuyện sẽ tự ổn mà không cần đối thoại rõ ràng.',
   ),
   'love:keep_let_go:first': (
     'Trong tình cảm, hãy kiên quyết bảo vệ sự tin tưởng và ranh giới tôn trọng lẫn nhau.',
@@ -764,9 +765,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Dùng các biểu tượng cảm tính để áp đặt kết luận lên mối quan hệ.',
   ),
   'love:left_right:first:v2': (
-    'Trong chuyện tình cảm, bài đọc nghiêng về sự thấu cảm và lắng nghe sâu sắc.',
-    'Dành sự chú tâm để lắng nghe những điều đối phương chưa nói thành lời.',
-    'Đem những suy diễn mơ hồ thay thế cho những cuộc trò chuyện chân thành.',
+    'Sự dịu dàng và biết lắng nghe là chìa khóa xoa dịu mọi khoảng cách.',
+    'Lắng nghe không phán xét để hiểu thấu nỗi niềm ẩn sâu của đối phương.',
+    'Phản ứng gay gắt ngay khi nghe những điều trái ý mình.',
   ),
   'love:left_right:second': (
     'Trong tình cảm, hãy chủ động bày tỏ cảm xúc và thẳng thắn chia sẻ mong muốn của bạn.',
@@ -779,9 +780,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Để linh cảm trừu tượng làm xói mòn niềm tin đã dày công xây đắp.',
   ),
   'love:left_right:second:v2': (
-    'Trong chuyện tình cảm, bài đọc nghiêng về sự bày tỏ và bộc lộ cảm xúc.',
-    'Dũng cảm nói ra tình cảm và mong muốn thực sự trong lòng bạn.',
-    'Tự tạo ra kịch bản bi quan trong tâm trí khi chưa có sự đối thoại rõ ràng.',
+    'Hãy dũng cảm bày tỏ những mong muốn và cảm xúc chân thật trong lòng.',
+    'Chia sẻ thẳng thắn về những kỳ vọng để cả hai cùng tìm được tiếng nói chung.',
+    'Im lặng chịu đựng rồi hy vọng đối phương tự hiểu hết suy nghĩ trong đầu mình.',
   ),
   'love:stay_go:first': (
     'Trong tình cảm, sự gắn kết hiện tại rất đáng trân quý; hãy vun đắp và gìn giữ.',
@@ -794,8 +795,8 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn sự bình yên quen thuộc với cảm giác buồn tẻ hay bế tắc.',
   ),
   'love:stay_go:first:v2': (
-    'Tính cả sức bền trong tình cảm, bài đọc nghiêng về việc trân trọng mối gắn kết hiện tại.',
-    'Nhìn lại những giá trị và sự đồng hành quý báu mà hai người đã cùng đi qua.',
+    'Sợi dây tình cảm này vẫn chứa đựng nhiều sự ấm áp đáng trân quý.',
+    'Nhìn lại những chặng đường thăng trầm đã cùng vượt qua để thêm trân trọng hiện tại.',
     'Nhầm lẫn sự bình yên lâu ngày với cảm giác nguội lạnh trong tình cảm.',
   ),
   'love:stay_go:second': (
@@ -809,9 +810,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Để cảm giác bồn chồn nhất thời dẫn dắt những phản ứng thiếu cân nhắc.',
   ),
   'love:stay_go:second:v2': (
-    'Tính cả sức bền trong tình cảm, bài đọc nghiêng về việc làm mới không gian giữa hai người.',
-    'Thử thay đổi cách tương tác và thói quen cũ để mang lại năng lượng mới.',
-    'Để nỗi bất an vô cớ thôi thúc những phản ứng làm tổn thương đối phương.',
+    'Khi sự tôn trọng không còn, buông xả là cách giải thoát cho cả hai tâm hồn.',
+    'Dũng cảm bước tiếp trên con đường riêng để tìm lại sự tự do và thanh thản.',
+    'Dằn vặt bản thân trong một mối quan hệ độc hại chỉ vì thói quen gắn bó cũ.',
   ),
   'love:yes_no:first': (
     'Trong chuyện tình cảm, các tín hiệu ủng hộ sự chân thành và mở lòng đón nhận.',
@@ -844,9 +845,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem sự dè dặt là dấu chấm hết thay vì là cơ hội để hai bên hiểu nhau hơn.',
   ),
   'money:act_wait:first': (
-    'Tính cả yếu tố thời điểm tài chính, bài đọc nghiêng về việc chủ động xử lý.',
-    'Quyết đoán chốt các thỏa thuận giá trị thực tế và thanh toán dứt điểm nghĩa vụ.',
-    'Để dây dưa các khoản tồn đọng làm phát sinh thêm chi phí và rủi ro phạt.',
+    'Thời điểm thuận lợi để bạn cơ cấu lại các nguồn lực và kế hoạch dự phòng.',
+    'Rà soát các khoản chi tiêu thực tế; tối ưu hóa nguồn lực sẵn có cho việc thiết thực.',
+    'Phân tán nguồn lực vào những hạng mục rủi ro cao mà bản thân chưa nắm rõ.',
   ),
   'money:act_wait:first:v1': (
     'Chủ động tái cơ cấu dòng tài chính và phân bổ ngân sách vào khâu hiệu quả nhất.',
@@ -854,14 +855,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Chần chừ chờ đợi mức giá hoàn hảo khiến tiến độ chung bị ngưng trệ.',
   ),
   'money:act_wait:first:v2': (
-    'Tính cả yếu tố thời điểm tài chính, bài đọc nghiêng về việc chủ động thực hiện.',
-    'Tiến hành các bước phân bổ ngân sách đã được lên kế hoạch từ trước.',
-    'Trì hoãn các nghĩa vụ tài chính cần giải quyết đúng hạn định.',
+    'Sự chủ động quản lý tài nguyên lúc này mang lại thế chủ động vững vàng.',
+    'Lập danh sách ưu tiên cho các nhu cầu cốt lõi; kiên quyết cắt bỏ lãng phí.',
+    'Chi tiêu ngẫu hứng chỉ để giải tỏa áp lực tâm lý tức thời.',
   ),
   'money:act_wait:second': (
-    'Tính cả yếu tố thời điểm tài chính, bài đọc nghiêng về việc kiên nhẫn tích lũy.',
-    'Giữ vững nguồn lực trong vùng an toàn; tạm dừng giải ngân các khoản mới.',
-    'Bốc đồng ký kết hợp đồng kinh tế khi tâm trí đang chịu áp lực vội vã.',
+    'Tình hình tài nguyên khuyên bạn nên siết chặt kỷ luật và quan sát thêm.',
+    'Bảo toàn nguồn dự trữ an toàn; tránh đưa ra các quyết định lớn lúc này.',
+    'Vội vã xuống tay với các kế hoạch mở rộng khi chưa đủ thanh khoản dự phòng.',
   ),
   'money:act_wait:second:v1': (
     'Chưa phải lúc bung vốn ra ngoài; thị trường xung quanh đang tiềm ẩn nhiều cạm bẫy.',
@@ -869,14 +870,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Vội vàng ra quyết định vì lo sợ bỏ lỡ cơ hội trong khi chưa kiểm tra thực tế.',
   ),
   'money:act_wait:second:v2': (
-    'Tính cả yếu tố thời điểm tài chính, bài đọc nghiêng về việc kiên nhẫn quan sát.',
-    'Để dòng chảy tài chính ổn định và dành thời gian đánh giá thêm các phương án.',
-    'Vội vã đưa ra quyết định ngân sách khi chưa nắm rõ toàn bộ bức tranh tài chính.',
+    'Giữ nguyên trạng thái ổn định là chiến lược bảo toàn nguồn lực khôn ngoan nhất.',
+    'Tập trung quản lý chặt chẽ ngân sách sinh hoạt thường nhật, tránh phát sinh mới.',
+    'Sốt ruột tìm kiếm những cơ hội có vẻ béo bở nhưng tiềm ẩn cạm bẫy khó lường.',
   ),
   'money:advance_retreat:first': (
-    'Tính cả đà tài chính gần đây, bài đọc nghiêng về việc chủ động củng cố nguồn thu.',
-    'Mạnh dạn mở rộng quy mô các hoạt động mang lại hiệu quả thực chất.',
-    'Bằng lòng với sự an toàn hạn hẹp trong khi năng lực cho phép bứt phá hơn.',
+    'Các nguồn lực đang tích lũy tốt, cho phép bạn mở rộng phạm vi hoạt động vừa phải.',
+    'Tận dụng thế mạnh sẵn có để gia tăng giá trị thực tế bền vững.',
+    'Tự mãn với kết quả tích lũy trước mắt mà quên mất việc trích lập quỹ an toàn.',
   ),
   'money:advance_retreat:first:v1': (
     'Vận khí tài chính thuận lợi cho việc gia tăng tích lũy từ công sức chuyên môn.',
@@ -889,9 +890,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Mở rộng các cam kết tài chính khi chưa có phương án dự phòng rủi ro.',
   ),
   'money:advance_retreat:second': (
-    'Tính cả đà tài chính gần đây, bài đọc nghiêng về việc phòng thủ và bảo toàn.',
-    'Cắt giảm ngay các khoản chi tiêu xa xỉ; thu hồi các cam kết không hiệu quả.',
-    'Tiếp tục gồng lỗ hoặc rót thêm tài lực vào những nơi không có tín hiệu phục hồi.',
+    'Áp lực tài nguyên đang gia tăng; phòng thủ chặt chẽ là thượng sách.',
+    'Tạm hoãn các kế hoạch mở rộng tốn kém; thu hẹp quy mô chi dùng không thiết yếu.',
+    'Cố chấp duy trì mức sống vượt quá năng lực thực tế chỉ vì sĩ diện bên ngoài.',
   ),
   'money:advance_retreat:second:v1': (
     'Bước lùi khôn ngoan để bảo vệ ngân sách và đảm bảo sự an toàn cho gia đình.',
@@ -929,9 +930,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn một tuần dòng chảy thông suốt với việc có thể buông lỏng kỷ luật.',
   ),
   'money:commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới trong tài chính, bài đọc nghiêng về sự cam kết dài hạn.',
-    'Kiên trì thực hiện kế hoạch tài chính đã đề ra với sự nhất quán và kỷ luật.',
-    'Buông lỏng kiểm soát ngân sách khi vừa có được một khoảng thời gian thuận lợi.',
+    'Tính toán đường dài và xây dựng quỹ dự phòng vững chắc cho tương lai.',
+    'Kiên định thực hiện kế hoạch tiết kiệm kỷ luật theo từng tháng.',
+    'Bỏ qua các điều khoản ràng buộc pháp lý khi cam kết quản lý tài sản chung.',
   ),
   'money:commit_withdraw:second': (
     'Về tài chính, hãy dứt khoát rút vốn hoặc chấm dứt các cam kết tiềm ẩn rủi ro cao.',
@@ -944,9 +945,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một quyết định rút lui bảo toàn vốn là sự thất bại hay thua cuộc.',
   ),
   'money:commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới trong tài chính, bài đọc nghiêng về việc tạm rút lui thận trọng.',
-    'Tránh tham gia vào các cam kết mới khi thị trường hoặc bối cảnh chưa rõ ràng.',
-    'Xem việc tạm dừng là sự bế tắc thay vì là bước đi chiến lược cần thiết.',
+    'Rút lui khỏi những thỏa thuận mập mờ để bảo vệ an toàn cho nguồn tài nguyên.',
+    'Thu hồi các khoản ủy thác không rõ ràng và củng cố lại sự tự chủ tài chính.',
+    'Cả nể giao phó tài sản cho người khác quản lý mà thiếu cơ chế giám sát.',
   ),
   'money:keep_let_go:first': (
     'Về tài chính, hãy thắt chặt kỷ luật và kiên quyết bảo vệ quỹ dự phòng của bạn.',
@@ -989,9 +990,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem biểu tượng tinh thần như một bảo chứng cho an toàn ngân sách.',
   ),
   'money:left_right:first:v2': (
-    'Về mặt tài chính, bài đọc nghiêng về việc quản lý nội tại và rà soát sổ sách.',
-    'Kiểm tra kỹ lưỡng các số liệu chi tiêu nội bộ để phát hiện kịp thời các bất hợp lý.',
-    'Để sự hào hứng cảm xúc làm lơ là việc quản lý thu chi thực tế.',
+    'Học hỏi và lắng nghe kinh nghiệm quản lý nguồn lực từ những người đi trước.',
+    'Nghiên cứu kỹ lưỡng các nguyên tắc quản trị rủi ro trước khi đưa ra quyết sách.',
+    'Tự tin thái quá vào phán đoán cảm tính mà bỏ qua lời cảnh báo chuyên môn.',
   ),
   'money:left_right:second': (
     'Về tài chính, hãy chủ động đàm phán để bảo vệ quyền lợi và nâng cao hạn mức của bạn.',
@@ -1004,9 +1005,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Dùng trực giác biểu tượng cho các quyết định liên quan đến tài sản hay nghĩa vụ.',
   ),
   'money:left_right:second:v2': (
-    'Về mặt tài chính, bài đọc nghiêng về việc dứt khoát giải quyết các nghĩa vụ tồn đọng.',
-    'Rõ ràng và dứt khoát trong việc giải quyết các nghĩa vụ tài chính còn tồn đọng.',
-    'Dùng trực giác thay cho việc cân đối dòng dự trữ phòng ngừa rủi ro.',
+    'Hành động dứt khoát để xử lý các lỗ rò rỉ ngân sách không đáng có.',
+    'Kiên quyết chấm dứt những khoản chi phí phát sinh vô bổ kéo dài.',
+    'Do dự chần chừ khiến chi phí duy trì ngày càng phình to vượt kiểm soát.',
   ),
   'money:stay_go:first': (
     'Về tài chính, chỗ đứng hiện tại rất an toàn; hãy kiên định duy trì sự ổn định.',
@@ -1019,9 +1020,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn sự ổn định vật chất với việc thiếu chí tiến thủ.',
   ),
   'money:stay_go:first:v2': (
-    'Tính cả sức bền tài chính, bài đọc nghiêng về việc giữ nguyên các nguồn thu hiện tại.',
-    'Tập trung phát huy các nguồn lực sẵn có thay vì mạo hiểm thay đổi đột ngột.',
-    'Bỏ qua những cơ hội tích lũy vững chắc để chạy theo các trào lưu nhất thời.',
+    'Chiến lược tích lũy đều đặn tại bến đỗ an toàn đang phát huy hiệu quả.',
+    'Kiên nhẫn bám sát mục tiêu tài chính dài hạn; không sốt ruột vì biến động ngắn.',
+    'Chạy theo các trào lưu nhất thời khiến cấu trúc tài sản bị xáo trộn mạnh.',
   ),
   'money:stay_go:second': (
     'Về tài chính, đã đến lúc thay đổi cách phân bổ nguồn lực để tạo đột phá mới.',
@@ -1034,9 +1035,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Thay đổi phương thức quản lý tài chính đột ngột khi chưa chuẩn bị lộ trình.',
   ),
   'money:stay_go:second:v2': (
-    'Tính cả sức bền tài chính, bài đọc nghiêng về việc tìm kiếm kênh tạo giá trị mới.',
-    'Lên kế hoạch cẩn trọng cho việc tìm kiếm nguồn thu mới từ kỹ năng chuyên môn.',
-    'Xáo trộn thói quen chi tiêu một cách bột phát khi chưa thiết lập quỹ an toàn.',
+    'Đã đến lúc chuyển dịch cơ cấu nguồn lực sang các kênh bền vững hơn.',
+    'Từng bước chuyển đổi tài nguyên sang những tài sản có tính phòng thủ cao.',
+    'Đổ dồn toàn bộ nguồn lực vào một giỏ duy nhất mà không có phương án dự phòng.',
   ),
   'money:yes_no:first': (
     'Về phương diện tài chính, các tín hiệu nghiêng về sự hanh thông và rõ ràng.',
@@ -1069,9 +1070,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Mạo hiểm nguồn lực vào những dự án có độ rủi ro cao hoặc cam kết mập mờ.',
   ),
   'other:act_wait:first': (
-    'Tính cả thời điểm hiện tại, bài đọc nghiêng về việc chủ động giải quyết.',
-    'Xử lý dứt điểm các vướng mắc nhỏ trước khi chúng tích tụ thành chuyện lớn.',
-    'Hành động bốc đồng khi chưa có phương án dự phòng thích hợp.',
+    'Thời cơ đã chín muồi; sự chủ động sẽ mở lối cho kết quả thuận lợi.',
+    'Bắt tay ngay vào việc quan trọng nhất; từng bước tháo gỡ khúc mắc.',
+    'Chần chừ phân vân quá lâu khiến tâm trí thêm mệt mỏi.',
   ),
   'other:act_wait:first:v1': (
     'Khí thế hành động đang thuận lợi; hãy chủ động tháo gỡ nút thắt then chốt.',
@@ -1084,9 +1085,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Hành động hấp tấp khi chưa chuẩn bị kịch bản ứng phó cho các tình huống bất ngờ.',
   ),
   'other:act_wait:second': (
-    'Tính cả thời điểm hiện tại, bài đọc nghiêng về việc kiên nhẫn quan sát.',
-    'Để sự việc diễn tiến thêm một thời gian để bộc lộ rõ bản chất.',
-    'Nóng ruột can thiệp làm đảo lộn tiến trình tự nhiên của sự việc.',
+    'Các chỉ dấu khuyên bạn nên giữ sự điềm tĩnh và lắng nghe thêm.',
+    'Cho bản thân thêm thời gian quan sát; việc gì chưa rõ ràng thì chưa cần quyết ngay.',
+    'Ép mình phải có câu trả lời tức thì trước sự thúc giục của bên ngoài.',
   ),
   'other:act_wait:second:v1': (
     'Khoảng lặng lúc này giúp các xáo trộn lắng xuống; hãy kiên nhẫn chờ thời cơ.',
@@ -1099,9 +1100,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Can thiệp nóng vội làm gián đoạn tiến trình đang dần định hình tự nhiên.',
   ),
   'other:advance_retreat:first': (
-    'Đối với tình huống này, các tín hiệu thôi thúc bạn chủ động dấn bước và khai phá hướng đi mới.',
-    'Mạnh dạn thử nghiệm phương án đột phá nhất; nắm bắt thời cơ để tạo chuyển biến tích cực.',
-    'Chần chừ do dự vì sợ thất bại mà bỏ lỡ thời điểm thuận lợi nhất để hành động.',
+    'Thế trận đang mở ra chiều hướng tích cực; hãy tự tin dấn bước.',
+    'Tự tin bước về phía trước và chủ động nắm bắt cơ hội mới.',
+    'Tự giới hạn bản thân trong những lo sợ vô cớ do suy diễn tạo ra.',
   ),
   'other:advance_retreat:first:v1': (
     'Thời điểm thích hợp để đẩy nhanh tiến độ và xác lập dấu ấn riêng biệt trong vấn đề của bạn.',
@@ -1114,9 +1115,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Hiểu lầm sự dấn bước là lời cam kết không thể điều chỉnh linh hoạt.',
   ),
   'other:advance_retreat:second': (
-    'Đối với tình huống này, các tín hiệu khuyên bạn nên lùi lại một bước để quan sát toàn cảnh.',
-    'Tạm hoãn các hành động mạo hiểm; thu hẹp phạm vi để đánh giá lại mức độ rủi ro.',
-    'Cố chấp lao về phía trước khi các dữ kiện xung quanh chưa thực sự rõ ràng.',
+    'Phía trước đang có những điểm bất lợi; lùi một nhịp là sự khôn ngoan.',
+    'Thu hẹp phạm vi xáo trộn; tập trung chăm sóc sự bình an nội tâm.',
+    'Cố chấp đối đầu với hoàn cảnh chỉ vì cái tôi bướng bỉnh.',
   ),
   'other:advance_retreat:second:v1': (
     'Chiến lược tối ưu lúc này là củng cố vị thế an toàn và bảo toàn nguồn lực hiện có.',
@@ -1304,9 +1305,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm sự tĩnh tại để tích lũy nội lực với việc bị dậm chân tại chỗ.',
   ),
   'stay_go:first:v2': (
-    'Tính cả sức trụ lẫn phần còn lại, bài đọc nghiêng về việc giữ chỗ đứng.',
-    'Nghĩ xem chỗ đứng hiện tại thật ra đang cho bạn những gì.',
-    'Nhầm sự tĩnh tại với việc bị mắc kẹt.',
+    'Chỗ đứng hiện tại vẫn còn nhiều giá trị nâng đỡ; kiên trì bồi đắp sẽ gặt hái quả ngọt.',
+    'Trân trọng những nền tảng và kinh nghiệm quý báu mà môi trường này đang mang lại.',
+    'Nhầm lẫn sự tĩnh tại, ổn định với cảm giác bị mắc kẹt hay giậm chân tại chỗ.',
   ),
   'stay_go:second': (
     'Đã đến lúc dứt khoát dịch chuyển; môi trường mới đang chờ đón bước chân bạn.',
@@ -1319,14 +1320,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi cảm giác bồn chồn nhất thời là một kế hoạch dịch chuyển hoàn chỉnh.',
   ),
   'stay_go:second:v2': (
-    'Tính cả sức trụ lẫn phần còn lại, bài đọc nghiêng về việc dịch chuyển.',
-    'Thử hỏi bạn sẽ mang theo điều gì, và đặt xuống điều gì.',
-    'Coi sự bồn chồn là một kế hoạch.',
+    'Không gian cũ đã chạm ngưỡng giới hạn; khởi hành tìm hướng mới sẽ mang lại nguồn cảm hứng.',
+    'Xác định rõ những điều thực sự quan trọng cần mang theo sang chặng đường mới.',
+    'Hành động hấp tấp chỉ để giải tỏa cảm giác bồn chồn nhất thời trong lòng.',
   ),
   'study:act_wait:first': (
-    'Tính cả yếu tố thời điểm trong học tập, bài đọc nghiêng về việc thực hành ngay.',
-    'Làm bài tập hoặc áp dụng kiến thức vào thực tế ngay hôm nay; đừng chỉ đọc lý thuyết.',
-    'Đọc đi đọc lại tài liệu một cách thụ động mà không bắt tay vào làm thử.',
+    'Trí tuệ đang rất minh mẫn; bắt tay vào học tập sẽ đạt hiệu quả vượt trội.',
+    'Tập trung tiếp thu kiến thức trọng tâm; giải quyết dứt điểm các bài tập hóc búa.',
+    'Vừa học vừa lướt mạng xã hội làm đứt gãy luồng tư duy sâu.',
   ),
   'study:act_wait:first:v1': (
     'Khí thế học tập đang lên cao; hãy hoàn thành dứt điểm mục tiêu ôn luyện hôm nay.',
@@ -1334,14 +1335,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Chần chừ chờ người khác giải thích hộ thay vì tự mình tìm tòi, tra cứu.',
   ),
   'study:act_wait:first:v2': (
-    'Tính cả yếu tố thời điểm trong học tập, bài đọc nghiêng về việc bắt tay vào làm.',
-    'Luyện tập hoặc viết ra những gì bạn hiểu ngay thay vì chỉ đọc thụ động.',
-    'Trì hoãn việc ôn luyện vì cho rằng vẫn còn nhiều thời gian phía trước.',
+    'Thời điểm vàng để thực hành và biến lý thuyết thành kỹ năng thành thạo.',
+    'Thực hành áp dụng kiến thức ngay qua các bài tập cụ thể để khắc sâu trí nhớ.',
+    'Trì hoãn việc ôn luyện vì chủ quan cho rằng mình đã nắm vững bài.',
   ),
   'study:act_wait:second': (
-    'Tính cả yếu tố thời điểm trong học tập, bài đọc nghiêng về việc tạm nghỉ và tích lũy.',
-    'Cho não bộ thời gian nghỉ ngơi thư giãn để kiến thức được thẩm thấu tự nhiên.',
-    'Cố nhồi nhét bài vở thâu đêm làm suy giảm trí nhớ và kiệt quệ thể lực.',
+    'Não bộ đang cần nghỉ ngơi để củng cố và sắp xếp lại các luồng kiến thức.',
+    'Nghỉ ngơi điều độ; đọc sách nhẹ nhàng để nạp lại năng lượng tư duy.',
+    'Nhồi nhét kiến thức trong trạng thái kiệt sức khiến việc tiếp thu phản tác dụng.',
   ),
   'study:act_wait:second:v1': (
     'Chậm lại một nhịp để nhìn nhận phương pháp học xem đã thực sự tối ưu chưa.',
@@ -1349,14 +1350,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Ép buộc bản thân học tập trong trạng thái mệt mỏi, thiếu tỉnh táo.',
   ),
   'study:act_wait:second:v2': (
-    'Tính cả yếu tố thời điểm trong học tập, bài đọc nghiêng về việc để đầu óc nghỉ ngơi.',
-    'Cho trí não khoảng thời gian thư giãn để các ý tưởng mới tự nhiên kết nối.',
-    'Cố gắng học dồn dập khi cơ thể và tâm trí đã xuất hiện dấu hiệu mệt mỏi.',
+    'Chậm lại một nhịp để hệ thống hóa kiến thức sẽ giúp bạn hiểu sâu hơn.',
+    'Vẽ sơ đồ tư duy, rà soát lại các lỗ hổng kiến thức căn bản trước khi học nâng cao.',
+    'Nóng vội chạy theo tiến độ bề nổi mà bỏ qua các khái niệm nền tảng.',
   ),
   'study:advance_retreat:first': (
-    'Tính cả đà học tập gần đây, bài đọc nghiêng về việc đặt mục tiêu cao hơn.',
-    'Thử sức với các đề tài khó khăn hơn và dấn thân vào các dự án nghiên cứu thực tế.',
-    'Tự mãn với điểm số hay kết quả hiện tại mà dừng việc trau dồi bản thân.',
+    'Đà học tập đang lên rất cao; hãy mạnh dạn thử sức với những mục tiêu lớn hơn.',
+    'Đăng ký các chứng chỉ nâng cao hoặc tham gia các đề tài nghiên cứu thử thách.',
+    'Tự ti giậm chân tại chỗ ở những vùng kiến thức quá an toàn.',
   ),
   'study:advance_retreat:first:v1': (
     'Đẩy mạnh tốc độ ôn luyện để chuẩn bị sẵn sàng cho các kỳ sát hạch quan trọng.',
@@ -1364,14 +1365,14 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Chủ quan cho rằng mình đã nắm chắc mọi thứ mà bỏ qua khâu kiểm tra lại.',
   ),
   'study:advance_retreat:first:v2': (
-    'Tính cả đà học tập gần đây, bài đọc nghiêng về việc đặt mục tiêu thử thách hơn.',
-    'Thử sức với các bài tập hoặc đề tài khó hơn để bứt phá giới hạn bản thân.',
-    'Thỏa mãn với những kết quả dễ dàng đạt được mà thiếu đi sự đào sâu nghiên cứu.',
+    'Tự tin mở rộng chân trời hiểu biết để phát huy tối đa tiềm năng trí tuệ.',
+    'Tìm kiếm thêm tài liệu chuyên sâu và kết nối với những người thầy giỏi.',
+    'Thỏa mãn quá sớm với một vài điểm số tốt mà lơ là kỷ luật rèn luyện.',
   ),
   'study:advance_retreat:second': (
-    'Tính cả đà học tập gần đây, bài đọc nghiêng về việc giảm tải và củng cố nền tảng.',
-    'Cắt giảm bớt các môn học phụ; tập trung toàn lực vào môn học quan trọng nhất.',
-    'Ôm đồm quá nhiều chứng chỉ hay khóa học cùng lúc khiến không việc nào ra việc nào.',
+    'Khối lượng học tập đang quá tải; thu hẹp trọng tâm là lựa chọn sáng suốt.',
+    'Tập trung ôn tập những môn học then chốt; tạm gác lại các khóa học phụ trợ.',
+    'Ôm đồm quá nhiều mục tiêu cùng lúc khiến môn nào cũng dở dang.',
   ),
   'study:advance_retreat:second:v1': (
     'Quay về với các nguyên lý cơ bản nhất; sự thấu suốt cội nguồn sẽ giúp bạn bứt phá sau này.',
@@ -1379,9 +1380,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Tự ti khi thấy mình phải học lại từ đầu; đó là bước lùi cần thiết để vững vàng hơn.',
   ),
   'study:advance_retreat:second:v2': (
-    'Tính cả đà học tập gần đây, bài đọc nghiêng về việc giảm tải và tập trung trọng tâm.',
-    'Khoanh vùng những môn học hoặc kỹ năng quan trọng nhất để dồn sức ôn luyện.',
-    'Cố gắng tham gia quá nhiều khóa học cùng lúc khiến kiến thức bị dàn trải.',
+    'Củng cố nền móng kiến thức thật chắc chắn trước khi tiếp tục bứt phá.',
+    'Rèn luyện lại các bài tập căn bản để hình thành phản xạ tư duy vững chắc.',
+    'Xấu hổ giấu dốt, không dám thừa nhận những phần kiến thức mình chưa hiểu.',
   ),
   'study:balanced': (
     'Trong học tập và rèn luyện, các tín hiệu hôm nay nghiêng về sự tích lũy tĩnh tại.',
@@ -1409,9 +1410,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn việc ngồi vào bàn học nhiều giờ với việc học tập có hiệu suất cao.',
   ),
   'study:commit_withdraw:first:v2': (
-    'Tính cả tuần sắp tới trong học tập, bài đọc nghiêng về sự cam kết mục tiêu rõ ràng.',
-    'Lên kế hoạch học tập chi tiết theo từng tuần và kiên trì bám sát lộ trình.',
-    'Đặt ra mục tiêu quá xa vời nhưng thiếu kế hoạch hành động cụ thể từng ngày.',
+    'Kiên trì theo đuổi lộ trình học vấn sẽ đem lại uy tín và chuyên môn vững vàng.',
+    'Duy trì thời gian biểu tự học đều đặn mỗi ngày như một thói quen bất biến.',
+    'Học theo cảm hứng nhất thời, bỏ bê khi gặp những chủ đề khô khan, phức tạp.',
   ),
   'study:commit_withdraw:second': (
     'Trong học tập, hãy dứt khoát rút lui khỏi những lớp học hay khóa đào tạo kém chất lượng.',
@@ -1424,9 +1425,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Xem một kết quả chưa như ý là dấu chấm hết cho năng lực học hỏi của bạn.',
   ),
   'study:commit_withdraw:second:v2': (
-    'Tính cả tuần sắp tới trong học tập, bài đọc nghiêng về việc tạm lùi để nạp năng lượng.',
-    'Dành thời gian thư giãn hợp lý để phục hồi sự tập trung và khả năng sáng tạo.',
-    'Cố gắng học thêm kiến thức mới trong trạng thái trí óc đã quá tải.',
+    'Rút lui khỏi những khóa học không mang lại giá trị thực tế để tiết kiệm thời gian.',
+    'Dũng cảm cắt bỏ các đầu việc học tập ngoài lề để dồn sức cho mục tiêu chính.',
+    'Tiếc công sức đã bỏ ra mà tiếp tục theo đuổi một định hướng không còn phù hợp.',
   ),
   'study:keep_let_go:first': (
     'Trong học tập, hãy kiên định bảo vệ phương pháp tư duy logic và tính kỷ luật bản thân.',
@@ -1469,9 +1470,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Trông chờ vào linh cảm thay vì nỗ lực rèn luyện bài vở bài bản.',
   ),
   'study:left_right:first:v2': (
-    'Trong việc học hỏi, bài đọc nghiêng về việc tự nghiên cứu và tư duy độc lập.',
-    'Dành không gian yên tĩnh để tự mình đào sâu suy ngẫm trước các vấn đề khó.',
-    'Bỏ qua các phương pháp học tập khoa học để đi theo trực giác tùy tiện.',
+    'Lắng nghe sự chỉ dẫn từ thầy cô và bạn học sẽ mở rộng góc nhìn của bạn.',
+    'Chăm chú ghi chép và đặt câu hỏi phản biện sâu sắc trong các buổi trao đổi.',
+    'Bảo thủ với định kiến cũ, ngại tiếp thu những phương pháp tiếp cận mới.',
   ),
   'study:left_right:second': (
     'Trong học tập, hãy chủ động trình bày công trình nghiên cứu và bảo vệ luận điểm của bạn.',
@@ -1484,9 +1485,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Thay đổi môn học hoặc chuyên ngành liên tục mà không tích lũy đủ sâu.',
   ),
   'study:left_right:second:v2': (
-    'Trong việc học hỏi, bài đọc nghiêng về việc trao đổi và thảo luận nhóm.',
-    'Chủ động đặt câu hỏi và chia sẻ cách hiểu của bạn với thầy cô và bạn bè.',
-    'Xem thường việc kiểm tra kiến thức thực tế chỉ vì cảm thấy đã hiểu bài.',
+    'Chủ động trình bày ý kiến và chia sẻ kiến thức với bạn bè để khắc sâu bài học.',
+    'Tham gia thảo luận nhóm, giải thích bài cho người khác để củng cố trí nhớ.',
+    'Giấu tài liệu hoặc ích kỷ giữ kiến thức riêng cho bản thân.',
   ),
   'study:stay_go:first': (
     'Trong học tập, hãy kiên trì bám sát chuyên ngành và lộ trình đào tạo hiện tại.',
@@ -1499,9 +1500,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Bỏ dở nửa chừng vì cảm thấy giai đoạn thực hành ban đầu hơi khô khan.',
   ),
   'study:stay_go:first:v2': (
-    'Tính cả sức bền học tập, bài đọc nghiêng về việc kiên trì với lộ trình đã chọn.',
-    'Tiếp tục đào sâu vào chuyên môn bạn đang theo đuổi thay vì nản lòng giữa chừng.',
-    'Bỏ dở việc học chỉ vì những khó khăn hay khái niệm phức tạp ban đầu.',
+    'Môi trường đào tạo hiện tại vẫn đang cung cấp những kiến thức giá trị.',
+    'Khai thác triệt để các nguồn tài nguyên sách vở và thư viện sẵn có.',
+    'Đổ lỗi cho hoàn cảnh học tập thay vì tự giác nâng cao tinh thần tự học.',
   ),
   'study:stay_go:second': (
     'Trong học tập, đã đến lúc bạn dứt khoát chuyển dịch sang một lĩnh vực mới phù hợp hơn.',
@@ -1514,9 +1515,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Thay đổi định hướng học tập một cách tùy tiện mà không có kế hoạch rõ ràng.',
   ),
   'study:stay_go:second:v2': (
-    'Tính cả sức bền học tập, bài đọc nghiêng về việc đổi mới phương pháp tiếp cận.',
-    'Thử nghiệm cách học mới như vẽ sơ đồ tư duy hoặc giải thích lại cho người khác.',
-    'Bảo thủ giữ mãi một cách học cũ kỹ dù nó không còn mang lại sự tiến bộ.',
+    'Đã đến lúc tìm kiếm một phương pháp hoặc môi trường học tập đột phá hơn.',
+    'Thay đổi cách học thụ động sang thực hành ứng dụng thực tế nhiều hơn.',
+    'Bám víu lấy lối học vẹt sáo rỗng đã không còn đáp ứng được yêu cầu mới.',
   ),
   'study:yes_no:first': (
     'Trong việc học hỏi, các tín hiệu ủng hộ sự tiếp thu kiến thức mới một cách dứt khoát.',
@@ -1559,9 +1560,9 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Nhầm lẫn sự phấn khởi nhất thời với một kế hoạch hành động đã chuẩn bị kỹ.',
   ),
   'yes_no:first:v2': (
-    'Hôm nay các tín hiệu nghiêng về sự cởi mở hơn là sự cản trở.',
-    'Để ý xem bạn vốn đã nghiêng về đâu, và điều đó nói lên điều gì.',
-    'Xem một tín hiệu biểu tượng là cái cớ để bỏ qua lý lẽ của chính mình.',
+    'Tình thế xung quanh đang rất ủng hộ cho một sự đón nhận và cởi mở.',
+    'Lắng nghe tiếng nói trực giác và sự mách bảo chân thật nhất từ bên trong bạn.',
+    'Dựa dẫm quá nhiều vào dấu hiệu bên ngoài mà bỏ qua lý trí và thực tế rõ ràng.',
   ),
   'yes_no:second': (
     'Các tín hiệu cảnh báo rào cản; dứt khoát dừng lại hoặc từ chối để tránh rủi ro.',
@@ -1574,8 +1575,8 @@ const Map<String, (String, String, String)> actionGuidanceVi = {
     'Coi trở ngại tạm thời là bế tắc thay vì là lý do để hoàn thiện phương án.',
   ),
   'yes_no:second:v2': (
-    'Hôm nay các tín hiệu nghiêng về sự cản trở hơn là sự cởi mở.',
-    'Gọi tên thẳng sự do dự bạn đang có, trước khi tranh luận với nó.',
-    'Coi sự cản trở là phán quyết thay vì là lý do để nhìn lại.',
+    'Các dữ kiện cảnh báo nhắc bạn nên thận trọng; nói lời từ chối lúc này là sáng suốt.',
+    'Thẳng thắn nhìn nhận những e ngại đang có để chuẩn bị phương án khắc phục chu đáo.',
+    'Vội nản lòng trước trở ngại nhỏ thay vì xem đó là cơ hội rà soát lại phương án.',
   ),
 };
