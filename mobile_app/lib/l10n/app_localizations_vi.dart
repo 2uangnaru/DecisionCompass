@@ -675,7 +675,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription04 =>
-      'Mỗi thời điểm đều mang một trạng thái riêng. Hãy đặt nỗi niềm của bạn vào sự tĩnh lặng để cảm nhận hướng đi tự nhiên nhất.';
+      'Mỗi thời điểm đều mang một trạng thái riêng. Hãy để những băn khoăn của bạn lắng dịu lại để cảm nhận hướng đi tự nhiên nhất.';
 
   @override
   String get homeDescription05 =>
@@ -719,7 +719,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription15 =>
-      'Có những lựa chọn cảm thấy rất nặng lòng, bởi vì nó chạm vào những điều bạn trân quý nhất.';
+      'Có những lựa chọn khiến bạn rất nặng lòng, bởi vì nó chạm vào những điều bạn trân quý nhất.';
 
   @override
   String get homeDescription16 =>
@@ -775,263 +775,263 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription29 =>
-      'Cuộc sống vốn dĩ không có sự chắc chắn tuyệt đối. Điều bạn có thể tìm thấy ở đây là một sự an tâm và một hướng đi sáng rõ.';
+      'Cuộc sống vốn không có gì chắc chắn tuyệt đối. Điều bạn tìm kiếm ở đây không phải một phán quyết, mà là một điểm tựa bình tâm để tự mình lựa chọn.';
 
   @override
   String get energyQuiet00 =>
-      'Năng lượng hôm nay lắng đọng và hướng vào nội tâm, mở ra khoảng lặng để bạn suy ngẫm.';
+      'Hôm nay nên chậm lại quan sát hơn là vội vã đưa ra quyết định.';
 
   @override
   String get energyQuiet01 =>
-      'Nhịp điệu vũ trụ hôm nay hướng về sự tĩnh lặng; chỉ khi lắng lại, bạn mới thấy rõ những điều từng bị xao nhãng che khuất.';
+      'Hãy cho tâm trí một khoảng lặng để nhìn nhận mọi việc sáng suốt hơn.';
 
   @override
   String get energyQuiet02 =>
-      'Bầu trời hôm nay mang sắc thái trầm mặc; hãy cho tâm trí thời gian để lắng dịu.';
+      'Đây là ngày thích hợp để lắng nghe thay vì thúc ép tìm câu trả lời.';
 
   @override
   String get energyQuiet03 =>
-      'Dòng chảy hôm nay nhẹ nhàng và sâu lắng, mời bạn tĩnh tâm quan sát thay vì vội vã đưa ra quyết định.';
+      'Sự tĩnh lặng lúc này sẽ giúp bạn nhận ra điều gì mới thực sự quan trọng.';
 
   @override
   String get energyQuiet04 =>
-      'Tín hiệu hôm nay gợi nhắc sự chiêm nghiệm; đôi khi tạm dừng một nhịp cũng chính là một phần của hành trình tiến bước.';
+      'Tạm dừng một nhịp cũng là cách chuẩn bị tốt nhất cho bước đi tiếp theo.';
 
   @override
   String get energyQuiet05 =>
-      'Khi mọi thứ xung quanh lắng xuống, kim chỉ nam trực giác bên trong bạn sẽ lên tiếng rõ ràng nhất.';
+      'Khi xung quanh nhiều xao nhãng, quay về bên trong sẽ giúp bạn định tâm.';
 
   @override
   String get energyQuiet06 =>
-      'Năng lượng hôm nay dành không gian để bạn lắng nghe trực giác trước khi vội vã tìm kiếm câu trả lời.';
+      'Hãy cho bản thân thêm thời gian thay vì để áp lực thúc ép hành động.';
 
   @override
   String get energyQuiet07 =>
-      'Không phải thông điệp nào cũng ồn ào; hôm nay bạn sẽ dễ dàng nhận ra tín hiệu hơn khi chậm lại.';
+      'Càng ít ồn ào, bạn càng dễ nhận ra hướng đi đúng đắn cho mình.';
 
   @override
   String get energySoft00 =>
-      'Năng lượng hôm nay chuyển động nhẹ nhàng, phù hợp cho sự cẩn trọng và từng bước đi vững chắc.';
+      'Cứ làm từng bước nhỏ vừa sức thay vì tự tạo áp lực cho bản thân.';
 
   @override
   String get energySoft01 =>
-      'Dòng chảy vũ trụ hôm nay rất dịu êm; từng bước đi nhỏ sẽ tự nhiên và an tâm hơn một bước nhảy vội.';
+      'Hãy tiếp cận công việc một cách nhẹ nhàng và không cần đốt cháy giai đoạn.';
 
   @override
   String get energySoft02 =>
-      'Năng lượng hôm nay nhắc bạn nhẹ nhàng với chính mình; hãy tiếp cận quyết định mà không tự tạo áp lực phải chắc chắn ngay.';
+      'Một bước đi cẩn trọng hôm nay sẽ mang lại sự an tâm lâu dài.';
 
   @override
   String get energySoft03 =>
-      'Nhịp điệu thư thái của ngày hôm nay sẽ giúp bạn bắt đầu từ những điều vừa sức và nhẹ nhàng nhất.';
+      'Đôi khi sự mềm mỏng và kiên nhẫn lại đem lại kết quả tốt nhất.';
 
   @override
   String get energySoft04 =>
-      'Sự mềm mỏng cũng chứa đựng sức mạnh; hãy nhận biết lúc nào bạn cần thoải mái thay vì tự tạo áp lực.';
+      'Tập trung giải quyết việc trước mắt với một tâm thế thật thoải mái.';
 
   @override
   String get energySoft05 =>
-      'Tín hiệu hôm nay gợi ý một khởi đầu nhẹ nhàng: vừa đủ để chuyển động, không cần phải thúc ép tiến độ.';
+      'Không cần gồng gánh quá nhiều việc cùng một lúc trong ngày hôm nay.';
 
   @override
   String get energySoft06 =>
-      'Dòng năng lượng hôm nay rất tinh tế; một hành động giản dị nhưng thấu đáo sẽ mang lại nhiều ý nghĩa.';
+      'Làm việc thấu đáo và an yên quan trọng hơn việc ép buộc tiến độ.';
 
   @override
   String get energySoft07 =>
-      'Ngay cả một cơ hội nhỏ cũng đáng trân trọng; nhịp điệu dịu dàng hôm nay mở ra không gian để bạn khám phá nó.';
+      'Hãy bắt đầu từ những điều giản dị và dễ làm nhất để lấy đà.';
 
   @override
   String get energySteady00 =>
-      'Năng lượng hôm nay giữ nhịp điệu cân bằng và vững chãi.';
+      'Hãy duy trì nhịp độ làm việc bền bỉ và vững vàng mà bạn đang có.';
 
   @override
   String get energySteady01 =>
-      'Năng lượng hôm nay duy trì nhịp độ ổn định; hãy tin tưởng vào tốc độ bền bỉ mà bạn có thể bước tiếp.';
+      'Giữ tâm thế điềm tĩnh sẽ giúp bạn kiểm soát tốt mọi tình huống hôm nay.';
 
   @override
   String get energySteady02 =>
-      'Chuyển động vũ trụ hôm nay mang lại cảm giác vững tâm, cho bạn không gian để suy xét và bước đi thấu đáo.';
+      'Tập trung củng cố nền tảng sẵn có thay vì tìm kiếm những thay đổi đột ngột.';
 
   @override
   String get energySteady03 =>
-      'Dòng năng lượng hôm nay êm đềm và vững chãi; sự chú tâm sâu lắng sẽ hữu ích hơn là vội vã.';
+      'Nhịp bước đều đặn và chắc chắn sẽ đưa bạn đến đích an toàn nhất.';
 
   @override
   String get energySteady04 =>
-      'Tín hiệu hôm nay hướng về sự cân bằng, nhắc bạn giữ tâm thế vững vàng nhưng không ngừng tiến bước.';
+      'Hãy kiên định với kế hoạch và nguyên tắc mà bạn đã đặt ra từ trước.';
 
   @override
   String get energySteady05 =>
-      'Kiên định chính là một nguồn sức mạnh; hãy tạm dừng một nhịp để cảm nhận bước đi tiếp theo nào mới thực sự đúng đắn.';
+      'Đây là thời điểm tốt để hoàn thiện dứt điểm những công việc còn dang dở.';
 
   @override
   String get energySteady06 =>
-      'Ngày hôm nay mang nguồn năng lượng chừng mực, tạo không gian để quyết định của bạn dần định hình rõ nét.';
+      'Một thái độ nhất quán sẽ giúp bạn tạo dựng niềm tin và sự tôn trọng.';
 
   @override
   String get energySteady07 =>
-      'Một nhịp điệu bình tâm sẽ là người dẫn đường tốt nhất; hôm nay không nhất thiết phải có những bước tiến quá vội vàng.';
+      'Cứ kiên trì bước tiếp theo đúng lộ trình mà không cần phải vội vã.';
 
   @override
   String get energyLively00 =>
-      'Một làn gió tươi mới khơi dậy nguồn năng lượng hôm nay, mang đến sự tò mò và cảm hứng chuyển động.';
+      'Hãy cởi mở đón nhận các cơ hội mới nhưng chưa cần vội vàng chốt hạ.';
 
   @override
   String get energyLively01 =>
-      'Trực giác tò mò đang đánh thức năng lượng hôm nay; một góc nhìn mới mẻ rất đáng để bạn khám phá.';
+      'Đây là ngày rất tốt để trao đổi ý tưởng và kết nối với mọi người.';
 
   @override
   String get energyLively02 =>
-      'Ngày hôm nay tràn ngập sinh khí; hãy để ý điều thu hút bạn nhưng đừng vội lao theo trong bốc đồng.';
+      'Một góc nhìn mới mẻ và linh hoạt sẽ giúp bạn tìm ra lối thoát bất ngờ.';
 
   @override
   String get energyLively03 =>
-      'Nhịp điệu vũ trụ hôm nay thôi thúc bạn khám phá, đồng thời vẫn giữ được sự sáng suốt và tỉnh táo.';
+      'Cứ thoải mái tìm hiểu các phương án khác nhau trước khi đưa ra cam kết.';
 
   @override
   String get energyLively04 =>
-      'Một nguồn năng lượng tươi vui đang lan tỏa; những cơ hội bất ngờ có thể xuất hiện ở nơi bạn ít ngờ tới nhất.';
+      'Hãy tận dụng cảm hứng dồi dào hôm nay để thử nghiệm cách làm mới.';
 
   @override
   String get energyLively05 =>
-      'Sự tò mò chính là kim chỉ nam hữu ích hôm nay; hãy quan sát xem nó dẫn bạn về đâu trước khi quyết định gắn bó.';
+      'Giữ tinh thần hào hứng nhưng luôn tỉnh táo để phân biệt điều cốt lõi.';
 
   @override
   String get energyLively06 =>
-      'Các tín hiệu hôm nay đầy chuyển động; bạn hoàn toàn có thể thử nghiệm mà chưa cần vội vàng gắn bó.';
+      'Đừng ngại lắng nghe những ý kiến trái chiều để hoàn thiện kế hoạch của mình.';
 
   @override
   String get energyLively07 =>
-      'Nguồn năng lượng dồi dào hôm nay sẽ giúp bạn mở rộng các góc nhìn trước khi đưa ra lựa chọn sau cùng.';
+      'Sự nhạy bén và tò mò sẽ dẫn dắt bạn đến những phát hiện thú vị hôm nay.';
 
   @override
   String get energyBright00 =>
-      'Năng lượng hôm nay bừng sáng và tràn đầy động lực, mở ra không gian để bạn tự tin thể hiện bản thân.';
+      'Thời điểm rất thuận lợi để bạn tự tin bày tỏ quan điểm và khẳng định mình.';
 
   @override
   String get energyBright01 =>
-      'Năng lượng hôm nay soi rọi rõ nét hơn những điều bạn hằng ấp ủ muốn bày tỏ.';
+      'Mọi thứ đã dần sáng tỏ, hãy bắt tay vào thực hiện một cách dứt khoát.';
 
   @override
   String get energyBright02 =>
-      'Dòng chảy vũ trụ tươi sáng sẽ giúp bạn nhận ra cơ hội nào thực sự xứng đáng với tâm sức của mình.';
+      'Hãy chủ động nắm lấy thế cờ và chia sẻ ý tưởng với người đồng hành.';
 
   @override
   String get energyBright03 =>
-      'Tín hiệu hôm nay rất cởi mở và rõ ràng; bạn sẽ dễ dàng nhận ra bước đi tiếp theo của mình.';
+      'Bạn đang có đà tiến rất tốt, hãy dũng cảm bước ra phía trước.';
 
   @override
   String get energyBright04 =>
-      'Hôm nay mang đến đà thuận lợi để bày tỏ; hãy chia sẻ điều quan trọng khi cảm xúc thấy vừa vặn.';
+      'Khả năng phán đoán đang rất rõ ràng, hãy dồn tâm sức cho việc xứng đáng nhất.';
 
   @override
   String get energyBright05 =>
-      'Nhịp điệu thoáng đãng hôm nay sẽ mang lại sự sáng tỏ tự nhiên mà không cần phải hối hả.';
+      'Một ngày thuận lợi để giải quyết các việc tồn đọng một cách dứt khoát.';
 
   @override
   String get energyBright06 =>
-      'Năng lượng hôm nay hướng ngoại và lan tỏa; hãy đón nhận những điều bạn đã thực sự sẵn sàng bước ra ánh sáng.';
+      'Hãy tin tưởng vào năng lực của mình và nắm bắt thời cơ đang mở ra.';
 
   @override
   String get energyBright07 =>
-      'Một tia sáng mới có thể thay đổi toàn bộ góc nhìn; chuyển động hôm nay khích lệ bạn tự tin hướng về phía trước.';
+      'Năng lượng hôm nay đang ủng hộ bạn biến suy nghĩ thành hành động thực tế.';
 
   @override
   String get energyRadiant00 =>
-      'Năng lượng hôm nay rực rỡ và thăng hoa nhất: rộng mở, bao dung và ngập tràn cảm hứng.';
+      'Hãy mở rộng tầm nhìn để đón nhận những mục tiêu và cơ hội lớn hơn.';
 
   @override
   String get energyRadiant01 =>
-      'Năng lượng hôm nay mở rộng tầm nhìn, giúp bạn thấy được nhiều hơn một con đường đầy hứa hẹn.';
+      'Thời điểm vàng để bạn bứt phá và biến những ý tưởng lớn thành hiện thực.';
 
   @override
   String get energyRadiant02 =>
-      'Dòng năng lượng rạng ngời lan tỏa hôm nay; hãy đón nhận những tiềm năng mới mà không đánh mất sự vững tâm.';
+      'Đừng tự giới hạn bản thân trong những khuôn khổ quen thuộc trước đây.';
 
   @override
   String get energyRadiant03 =>
-      'Bầu trời hôm nay đặc biệt bao la và cởi mở; hãy mở rộng lòng mình cho những điều truyền cảm hứng.';
+      'Hãy đón nhận mọi chuyển biến hôm nay với tâm thế tự tin và hào phóng.';
 
   @override
   String get energyRadiant04 =>
-      'Nguồn năng lượng rực rỡ hôm nay thắp sáng mọi triển vọng, giúp bạn nhìn nhận tương lai ở một tầm vóc rộng lớn hơn.';
+      'Nguồn năng lượng tích cực hôm nay sẽ truyền cảm hứng mạnh mẽ cho người khác.';
 
   @override
   String get energyRadiant05 =>
-      'Tín hiệu hôm nay ngập tràn cảm hứng mở rộng; bạn sẽ dễ dàng mường tượng ra những bước tiến tốt đẹp tiếp theo.';
+      'Hãy dũng cảm đặt cược vào những mục tiêu mang lại cảm hứng lớn nhất cho bạn.';
 
   @override
   String get energyRadiant06 =>
-      'Hãy để nguồn năng lượng ấm áp mở rộng góc nhìn của bạn, trong khi quyền quyết định sau cùng luôn nằm trong tay bạn.';
+      'Tầm nhìn đang rất rộng mở, hãy tự tin định hình bước chuyển mình tiếp theo.';
 
   @override
   String get energyRadiant07 =>
-      'Bầu trời hôm nay gửi gắm nguồn năng lượng hào phóng; hãy đón nhận mọi cơ hội mới bằng một tâm trí vững vàng.';
+      'Giữ vững sự tỉnh táo để chuyển hóa nguồn năng lượng dồi dào này thành kết quả.';
 
   @override
   String get energyFocused00 =>
-      'Năng lượng hôm nay hội tụ về một hướng đi rõ rệt; tín hiệu hành động đang chiếm ưu thế.';
+      'Hãy dồn toàn bộ tâm sức để giải quyết dứt điểm một việc quan trọng nhất.';
 
   @override
   String get energyFocused01 =>
-      'Tín hiệu hành động hôm nay rất sắc nét; hãy chú tâm vào bước đi mà bạn cảm thấy có ý nghĩa nhất.';
+      'Tập trung cao độ vào mục tiêu chính và gạt bỏ mọi phiền nhiễu xung quanh.';
 
   @override
   String get energyFocused02 =>
-      'Dòng năng lượng hôm nay thôi thúc hành động, nhưng nhịp bước nhanh hay chậm hoàn toàn do bạn quyết định.';
+      'Sự dứt khoát và quyết đoán lúc này sẽ tạo ra lợi thế lớn cho bạn.';
 
   @override
   String get energyFocused03 =>
-      'Một định hướng rõ ràng đang dẫn lối hôm nay; hãy dành trọn tâm trí cho điều bạn thực sự có thể tác động.';
+      'Hãy làm rõ mục tiêu trước khi ra tay để một phát bắn trúng ngay hồng tâm.';
 
   @override
   String get energyFocused04 =>
-      'Khi có quá nhiều lựa chọn khiến bạn băn khoăn, tín hiệu hôm nay nhắc bạn hãy tập trung vào một bước đi thực tế nhất.';
+      'Đây là lúc bắt tay vào hành động thực tế chứ không phải lúc chần chừ do dự.';
 
   @override
   String get energyFocused05 =>
-      'Các tín hiệu hôm nay cùng hội tụ về một mục tiêu duy nhất; hãy dành trọn sự chú ý cho nó mà không cần hấp tấp.';
+      'Chỉ dành tâm sức cho những việc bạn thực sự có thể kiểm soát và thay đổi.';
 
   @override
   String get energyFocused06 =>
-      'Động lực hành động hôm nay rất mạnh mẽ; hãy làm rõ lý do trong tim trước khi quyết định tiến bước.';
+      'Hãy làm xong dứt điểm việc này rồi mới chuyển sang việc tiếp theo.';
 
   @override
   String get energyFocused07 =>
-      'Hôm nay cần sự thấu suốt và chuẩn xác hơn là sự gượng ép; hãy để con đường bạn chọn dần dần lộ diện.';
+      'Chủ động mở đường bằng những bước đi cụ thể, rõ ràng và có tính toán.';
 
   @override
   String get energyFlowing00 =>
-      'Năng lượng hôm nay uyển chuyển như dòng thủy triều; tín hiệu chuyển biến đang dần chiếm ưu thế.';
+      'Hãy linh hoạt thích ứng với hoàn cảnh thay vì bám chặt vào kế hoạch cũ.';
 
   @override
   String get energyFlowing01 =>
-      'Tín hiệu chuyển biến đang đến gần; hãy giữ cho các kế hoạch của bạn sự linh hoạt cần thiết.';
+      'Tùy cơ ứng biến thuận theo tình thế là nước đi thông minh nhất hôm nay.';
 
   @override
   String get energyFlowing02 =>
-      'Dòng năng lượng vũ trụ đang chuyển hướng; sự thích ứng linh hoạt sẽ mở ra cho bạn một con đường mới.';
+      'Đừng cố gượng ép mọi thứ, hãy để sự việc diễn tiến một cách tự nhiên.';
 
   @override
   String get energyFlowing03 =>
-      'Làn sóng đổi thay đang hiện diện rõ nét; hãy mở lòng đón nhận những điều mà góc nhìn mới mẻ mang lại.';
+      'Sự mềm dẻo và khéo léo sẽ giúp bạn vượt qua mọi khúc quanh trở ngại.';
 
   @override
   String get energyFlowing04 =>
-      'Tín hiệu hôm nay hướng về sự luân chuyển giữa các khả năng, chứ không trói buộc bạn vào một đích đến cố định.';
+      'Hãy cho phép bản thân thay đổi quyết định khi nhìn thấy những dữ kiện mới.';
 
   @override
   String get energyFlowing05 =>
-      'Khi hoàn cảnh xoay chuyển, sự linh hoạt nhạy bén sẽ giá trị hơn nhiều so với một kế hoạch cứng nhắc.';
+      'Nhận diện sự chuyển dịch xung quanh để uyển chuyển nương theo một cách khôn ngoan.';
 
   @override
   String get energyFlowing06 =>
-      'Một dòng chảy nhẹ nhàng nâng đỡ ngày hôm nay; hãy để mọi thứ diễn tiến tự nhiên mà không cần cưỡng ép câu trả lời.';
+      'Lùi lại một bước để quan sát toàn cảnh trước khi điều chỉnh hướng đi.';
 
   @override
   String get energyFlowing07 =>
-      'Dòng năng lượng hôm nay đang trong giai đoạn chuyển giao; hãy thong thả thuận dòng theo nhịp độ của riêng bạn.';
+      'Hãy kiên nhẫn thuận theo dòng chảy, mọi khúc mắc rồi sẽ tự tìm ra lối thoát.';
 
   @override
   String get defaultUserName => 'Nhà thám hiểm';
