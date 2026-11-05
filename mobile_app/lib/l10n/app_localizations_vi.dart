@@ -659,123 +659,123 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get homeDescription00 =>
-      'Hôm nay vũ trụ đang gửi đến bạn tín hiệu gì? Hãy nghĩ về điều khiến bạn băn khoăn và khám phá những dấu hiệu quanh khoảnh khắc này.';
+      'Mỗi ngày đều có một nhịp chảy riêng. Hãy gom lại điều bạn đang trăn trở và xem trực giác bên trong đang hướng về đâu.';
 
   @override
   String get homeDescription01 =>
-      'Đang phân vân giữa hai ngả đường? Hãy để những tín hiệu vũ trụ hôm nay gợi mở cho bạn một góc nhìn mới.';
+      'Đứng trước hai lựa chọn, đôi khi câu trả lời không nằm ở việc bạn muốn gì, mà ở việc bạn cần gì mới thực sự quan trọng.';
 
   @override
   String get homeDescription02 =>
-      'Các vì sao không quyết định thay bạn, nhưng nhịp điệu của chúng có thể giúp bạn nhìn nhận bước tiếp theo theo cách khác.';
+      'Không ai có thể quyết định thay bạn, nhưng một nhịp dừng thấu suốt sẽ giúp bạn nhìn rõ hướng đi tiếp theo.';
 
   @override
   String get homeDescription03 =>
-      'Khi con đường phía trước chưa rõ ràng, hãy chậm lại và nhìn sâu hơn. Tín hiệu hôm nay đang gợi nhắc điều gì?';
+      'Khi con đường phía trước chưa rõ ràng, việc chậm lại một nhịp để nhìn nhận thấu đáo cũng chính là một bước tiến.';
 
   @override
   String get homeDescription04 =>
-      'Mỗi khoảnh khắc mang một nguồn năng lượng riêng. Hãy nghĩ về điều bạn băn khoăn và xem trực giác đang hướng bạn về đâu.';
+      'Mỗi thời điểm đều mang một trạng thái riêng. Hãy đặt nỗi niềm của bạn vào sự tĩnh lặng để cảm nhận hướng đi tự nhiên nhất.';
 
   @override
   String get homeDescription05 =>
-      'Có lẽ vũ trụ đang nhắc bạn chậm lại một nhịp. Hãy khám phá tín hiệu hôm nay trước khi chọn hướng đi.';
+      'Đôi khi điều bạn cần không phải là đi nhanh hơn, mà là đi chậm lại để không bỏ sót những điều cốt lõi.';
 
   @override
   String get homeDescription06 =>
-      'Đứng trước ngã rẽ? Hãy xem những chuyển động trên bầu trời hôm nay gợi mở điều gì cho câu hỏi của bạn.';
+      'Đứng trước ngã rẽ, hãy lắng nghe cả sự thận trọng lẫn lòng can đảm trước khi bạn đặt bước chân đầu tiên.';
 
   @override
   String get homeDescription07 =>
-      'Hãy lắng nghe nhịp điệu của khoảnh khắc này. Tín hiệu hôm nay có thể mở ra một hướng đi đáng để bạn cân nhắc.';
+      'Lắng nghe khoảnh khắc hiện tại; một lời gợi mở sâu sắc thường chỉ đến khi tâm trí bạn thực sự buông bỏ sự ồn ào.';
 
   @override
   String get homeDescription08 =>
-      'Khoảnh khắc này đang nhắn gửi điều gì? Hãy lắng nghe các dấu hiệu, rồi tin vào chính mình khi lựa chọn.';
+      'Quan sát những chuyển biến xung quanh, rồi tin tưởng vào bản lĩnh của chính mình khi lựa chọn.';
 
   @override
   String get homeDescription09 =>
-      'Một góc nhìn từ vũ trụ có thể giúp mọi thứ sáng rõ hơn. Hãy chọn điều quan trọng hôm nay và xem tín hiệu đang hướng về đâu.';
+      'Chỉ cần một tâm thế thông suốt, những điều rối rắm sẽ tự khắc sắp xếp lại theo trật tự vốn có của nó.';
 
   @override
   String get homeDescription10 =>
-      'Bạn vẫn đang trăn trở về cùng một lựa chọn? Hãy xem nguồn năng lượng hôm nay soi rọi điều gì.';
+      'Nếu một suy nghĩ cứ lặp đi lặp lại nhiều ngày, có lẽ đã đến lúc bạn nhìn nhận nó ở một khía cạnh hoàn toàn khác.';
 
   @override
   String get homeDescription11 =>
-      'Khi lý trí kéo bạn về một phía còn trực giác nghiêng về phía khác, hãy khám phá những tín hiệu của ngày hôm nay.';
+      'Khi lý trí phân tích một đằng nhưng linh cảm mách bảo một nẻo, hãy cho bản thân một khoảng lặng để tìm lại sự cân bằng.';
 
   @override
   String get homeDescription12 =>
-      'Chưa biết nên tiến bước hay tạm dừng? Hãy để nhịp điệu của ngày hôm nay mang lại cho bạn một điểm tựa bình tâm.';
+      'Chưa rõ nên tiến bước hay tạm dừng? Hãy bắt đầu từ một điểm tựa bình tâm thay vì sự nôn nóng muốn có kết quả.';
 
   @override
   String get homeDescription13 =>
-      'Biết đâu sự thông suốt lại bắt đầu từ một góc nhìn khác? Hãy dõi theo những chuyển động của vũ trụ hôm nay.';
+      'Sự thông suốt thường bắt đầu khi bạn dám buông bỏ định kiến cũ để đón nhận những chuyển biến bất ngờ.';
 
   @override
   String get homeDescription14 =>
-      'Một câu hỏi cứ lặp đi lặp lại trong tâm trí bạn. Hãy khám phá xem các tín hiệu hôm nay muốn bạn chú ý đến điều gì.';
+      'Một câu hỏi không ngừng quay trở lại chính là dấu hiệu nhắc bạn đã đến lúc đối diện thẳng thắn với nó.';
 
   @override
   String get homeDescription15 =>
-      'Có những quyết định trở nên nặng lòng hơn vào một thời điểm nào đó. Hãy cảm nhận nguồn năng lượng xung quanh trước khi lựa chọn.';
+      'Có những lựa chọn cảm thấy rất nặng lòng, bởi vì nó chạm vào những điều bạn trân quý nhất.';
 
   @override
   String get homeDescription16 =>
-      'Lúc này con đường có thể chưa tỏ tường. Những vì sao có thể soi sáng điều gì phía sau sự do dự của bạn?';
+      'Phía sau mỗi sự do dự luôn ẩn chứa một nỗi e ngại vô hình. Nhận diện được điều đó là lúc bạn tìm thấy lối ra.';
 
   @override
   String get homeDescription17 =>
-      'Trước khi hành động theo một thôi thúc bất chợt, hãy hít một hơi thật sâu và xem tín hiệu vũ trụ hôm nay gợi mở điều gì.';
+      'Trước khi quyết định theo một thôi thúc nhất thời, hãy hít thở sâu và để cảm xúc lắng dịu lại.';
 
   @override
   String get homeDescription18 =>
-      'Không phải ngã rẽ nào cũng cần câu trả lời ngay. Hãy để lần trải nghiệm hôm nay cho bạn một khoảng lặng để suy ngẫm.';
+      'Không phải khúc mắc nào cũng cần giải đáp ngay lập tức. Đôi khi kiên nhẫn chờ đúng thời điểm mới là nước đi khôn ngoan.';
 
   @override
   String get homeDescription19 =>
-      'Bạn đang tự hỏi liệu đây đã đúng thời điểm? Hãy khám phá những tín hiệu hôm nay để tìm một điểm tựa vững tâm hơn.';
+      'Bạn băn khoăn liệu đã đúng lúc? Hãy xem sự sẵn sàng bên trong bạn đã bắt kịp với hoàn cảnh bên ngoài hay chưa.';
 
   @override
   String get homeDescription20 =>
-      'Khi mọi thứ đều có thể mà chẳng điều gì chắc chắn, hãy để chuyển động của bầu trời mở ra một góc nhìn mới.';
+      'Khi mọi thứ đều có vẻ mông lung, điều bạn cần là một chiếc la bàn nội tâm để biết đâu là phương hướng chủ đạo.';
 
   @override
   String get homeDescription21 =>
-      'Quyết định sau cùng vẫn luôn thuộc về bạn. Dấu hiệu hôm nay sẽ giúp bạn thấu tỏ điều gì mới thực sự quan trọng.';
+      'Lựa chọn sau cùng là của bạn; điều cốt lõi là phân biệt được điều gì đáng để giữ và điều gì nên để nó trôi qua.';
 
   @override
   String get homeDescription22 =>
-      'Khi sự hoài nghi che mờ bước tiếp theo, hãy xem cung hoàng đạo và năng lượng hôm nay soi tỏ điều gì.';
+      'Khi sự hoài nghi che mờ bước tiếp theo, hãy quay về với những giá trị nền tảng và nội lực tự nhiên của bản thân.';
 
   @override
   String get homeDescription23 =>
-      'Có lẽ bạn không cần một câu trả lời đao to búa lớn — chỉ cần một phút lắng lòng để cảm nhận những tín hiệu của hôm nay.';
+      'Bạn không cần tìm kiếm những lời khuyên quá ồn ào — đôi khi chỉ cần một phút tĩnh lặng để lắng nghe chính mình.';
 
   @override
   String get homeDescription24 =>
-      'Trực giác đang nhắc bạn hành động hay kiên nhẫn chờ đợi? Hãy xem nhịp điệu vũ trụ hôm nay phản chiếu điều gì.';
+      'Nên chủ động tiến bước hay án binh bất động? Hãy để nhịp điệu hôm nay chỉ ra thế chủ động cho bạn.';
 
   @override
   String get homeDescription25 =>
-      'Giữa điều bạn mong muốn và điều bạn lo sợ luôn có chỗ để dừng lại. Hãy để những dấu hiệu hôm nay giúp bạn bình tâm nhìn nhận.';
+      'Giữa điều bạn khao khát và điều bạn âu lo luôn có một khoảng trống bình yên để bạn nhìn lại mọi việc thật khách quan.';
 
   @override
   String get homeDescription26 =>
-      'Bạn đã thấu tỏ câu hỏi trong lòng. Giờ hãy lắng nghe khoảnh khắc này: tín hiệu từ vũ trụ đang gợi mở điều gì?';
+      'Bạn đã biết rõ câu hỏi của mình. Bây giờ hãy quan sát thời thế: hoàn cảnh xung quanh đang ủng hộ điều gì?';
 
   @override
   String get homeDescription27 =>
-      'Khi một quyết định trở nên rối rắm, hãy để các biểu tượng cổ xưa và thời khắc hôm nay mở ra cho bạn một góc nhìn mới.';
+      'Khi một tình huống rơi vào bế tắc, hãy thử đổi cách tiếp cận: vấn đề có thể không nằm ở trở ngại, mà ở góc nhìn.';
 
   @override
   String get homeDescription28 =>
-      'Có lẽ đây là lúc để bước tới, hoặc cho mọi chuyện thêm không gian. Hãy cảm nhận nguồn năng lượng xung quanh lựa chọn của bạn.';
+      'Có những việc càng cố ghì chặt càng dễ vuột mất; đôi khi cho nhau một khoảng lùi lại là cách tốt nhất để đi tiếp.';
 
   @override
   String get homeDescription29 =>
-      'Bạn không cần tìm kiếm sự chắc chắn tuyệt đối ở đây. Chỉ cần một phút bình tâm, một tín hiệu vũ trụ và một hướng đi để cân nhắc.';
+      'Cuộc sống vốn dĩ không có sự chắc chắn tuyệt đối. Điều bạn có thể tìm thấy ở đây là một sự an tâm và một hướng đi sáng rõ.';
 
   @override
   String get energyQuiet00 =>
