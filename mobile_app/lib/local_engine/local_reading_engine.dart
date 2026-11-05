@@ -123,11 +123,14 @@ class _RawScore {
 
 /// One evaluated instant: the calendar view, the six modules and their fusion.
 class _Evaluated {
-  const _Evaluated(this.calendar, this.modules, this.evidence);
+  const _Evaluated(this.calendar, this.modules, this.evidence, this.raw);
 
   final CalendarAt calendar;
   final Map<String, ModuleResult> modules;
   final Evidence evidence;
+
+  /// The fusion before the luck baseline, read by the daily energy only.
+  final Evidence raw;
 }
 
 /// The reading calculator for one profile.
@@ -206,7 +209,11 @@ class ReadingCalculator {
         ? clampUnit(raw.c - luckBaseline * raw.coverage)
         : 0.0;
     final fusion = Evidence(a, c, raw.coverage);
-    return _cache.set(key, _Evaluated(calendar, modules, fusion));
+    // `raw` is kept for the daily energy. The baseline above was set when the
+    // fused pair still decided YES / NO; since v9.1 it decides nothing, and
+    // under it the energy sat a point and a half low (v9.7 section of
+    // VERIFICATION.md).
+    return _cache.set(key, _Evaluated(calendar, modules, fusion, raw));
   }
 
   MomentSignals _moments(double ms, String zone, String category) {
@@ -578,7 +585,7 @@ class ReadingCalculator {
     ];
     final energy = dailyEnergy(<({double duration, Evidence evidence})>[
       for (final s in daySegments)
-        (duration: s.duration, evidence: s.value.evidence),
+        (duration: s.duration, evidence: s.value.raw),
     ]);
     final dayStart = daySegments.first.value;
     final colors = dailyColors(

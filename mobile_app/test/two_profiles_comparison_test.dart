@@ -5,6 +5,48 @@ import 'package:decision_compass/data/action_guidance.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/local_engine/local_reading_engine.dart';
 
+/// Days in a week, from [first], on which the two profiles' Should / Avoid
+/// text differs. The variant is a 1-in-3 hash of the reading key, so one fixed
+/// pair cannot be promised a different text on one given day (a ruleset bump
+/// reshuffles every key); what must hold is that the profile moves it.
+({int shouldDo, int avoid}) _daysDiffering(
+  AppLocale locale,
+  DateTime first,
+  String zone,
+  String country,
+) {
+  var shouldDo = 0, avoid = 0;
+  for (var d = 0; d < 7; d++) {
+    ActionGuidance guidance(String date, String time, String convention) =>
+        resolveActionGuidance(
+          locale: locale,
+          reading: ReadingResponse.fromJson(
+            calculateReading(
+              profile: {
+                'birthDate': date,
+                'birthTime': time,
+                'birthCountry': country,
+                'traditionalProfile': convention,
+                'revision': 1,
+              },
+              context: {
+                'instantUtc': first.add(Duration(days: d)).toIso8601String(),
+                'deviceTimezone': zone,
+              },
+              period: 'morning',
+              mode: 'act_wait',
+              category: 'career',
+            ),
+          ),
+        );
+    final a = guidance('1990-05-15', '08:00', 'male');
+    final b = guidance('1997-10-24', '15:30', 'female');
+    if (a.shouldDo != b.shouldDo) shouldDo++;
+    if (a.avoid != b.avoid) avoid++;
+  }
+  return (shouldDo: shouldDo, avoid: avoid);
+}
+
 void main() {
   test('compare real engine readings across two distinct profiles', () {
     final context = <String, Object?>{
@@ -63,10 +105,16 @@ void main() {
     print('• Tránh: ${g2.avoid}');
 
     expect(g1.headline, isNot(g2.headline));
-    expect(g1.shouldDo, isNot(g2.shouldDo));
-    expect(g1.avoid, isNot(g2.avoid));
     expect(g1.headline, contains('Kim'));
     expect(g2.headline, contains('Thổ'));
+    final week = _daysDiffering(
+      AppLocale.vietnamese,
+      DateTime.utc(2026, 10, 16, 1, 30),
+      'Asia/Ho_Chi_Minh',
+      'VN',
+    );
+    expect(week.shouldDo, greaterThanOrEqualTo(2));
+    expect(week.avoid, greaterThanOrEqualTo(2));
   });
 
   test('compare english readings across two distinct profiles (Zodiac differentiation)', () {
@@ -117,7 +165,13 @@ void main() {
     expect(g1.headline, isNot(g2.headline));
     expect(g1.headline, contains('Taurus'));
     expect(g2.headline, contains('Scorpio'));
-    expect(g1.shouldDo, isNot(g2.shouldDo));
-    expect(g1.avoid, isNot(g2.avoid));
+    final week = _daysDiffering(
+      AppLocale.english,
+      DateTime.utc(2026, 10, 16, 13),
+      'America/New_York',
+      'US',
+    );
+    expect(week.shouldDo, greaterThanOrEqualTo(2));
+    expect(week.avoid, greaterThanOrEqualTo(2));
   });
 }

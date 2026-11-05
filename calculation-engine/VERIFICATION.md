@@ -15,6 +15,120 @@ Pinned package versions and tzdb are emitted in every result.
 > **Reconfirmed on 2026-09-21:** `node --test test/*.test.js` passed **47/47** on
 > Node **v24.19.0** after the metadata change (see the 2026-09-21 run below).
 
+## v9.7 ruleset — daily energy only — 2026-11-05
+
+Engine **4.4.0-mvp** / ruleset
+**`civil-midnight-chinese-calendar-symbolic-v9.7-experimental`**. Scoring stays
+**`v9.6-experimental`** and the scales stay `v9.3-cohort-2026-09-30`: no mode
+score, percentage, window, lucky number, daily colour or birth chart moved.
+Only `dailyBrief.energy` changed, plus every `readingKey` (it hashes the
+ruleset). Saved readings keep their own energy and are never recalculated.
+
+### Why
+
+The owner reported the energy reading weak too often. An audit of the shipped
+Dart engine (`outputs/ENERGY_AUDIT_2026-11-05.md`, 128 configurations × 41
+days, 512 rows matched against full readings) found QUIET + SOFT on 37.5% of
+days, BRIGHT on 0.6% and RADIANT never. Two causes, both in the engine:
+
+1. **The luck baseline.** Commit `453de81` (2026-09-25) subtracted `0.05 × coverage` from
+   both fused axes to bring YES / NO back to 50/50. The energy cutoffs had been
+   set two days earlier, on the unshifted axes, and were not moved; the
+   baseline cost the energy index about 1.5 points against bands one or two
+   points wide. Since v9.1 the fused pair decides no mode at all
+   (`src/index.js`: "The fused pair no longer decides anything"), so the
+   baseline only ever reached the energy.
+2. **The cutoffs.** They were set by hand on three profiles. The day index
+   stays within about 45–57, so RADIANT (≥ 58) was unreachable either way.
+
+### What changed
+
+- `evaluate()` keeps the fusion before the baseline (`raw`) beside the
+  baselined one; the daily energy reads `raw`. Everything else still reads the
+  baselined fusion.
+- The level is cut from the continuous projection
+  `P = .65 A_day + .35 C_day`, not from the rounded index, which is too coarse
+  to split. The index formula is unchanged (`round(50 + 40 × clamp(P))`) and
+  remains an internal number.
+- FOCUSED when `A_day > 0` and `A_day − C_day ≥ 0.0893`; FLOWING when
+  `C_day > 0` and `C_day − A_day ≥ 0.0687`; otherwise QUIET below −0.0155,
+  SOFT below 0.0099, STEADY below 0.0376, LIVELY below 0.0635, BRIGHT below
+  0.0969, RADIANT above. The positive-axis gate keeps the v7 rule that an axis
+  does not "lead" merely because the other is lower.
+- `probeEnergyAxes` (calibration only) reports the day axes as
+  `scoring.energyAxes`. It cannot change a result. Not ported to Dart.
+
+### Calibration
+
+`scripts/calibrate-energy.mjs` sets each cutoff as a quantile of a synthetic
+calibration cohort so that each tone takes the share the owner chose:
+QUIET 7%, SOFT 10%, STEADY 15%, LIVELY 17%, BRIGHT 15%, RADIANT 8%, FOCUSED
+14%, FLOWING 14%. Cohort: 160 profiles from `scripts/cohort.mjs` (seed
+20261105), 12 random dates each across 2025–2027, each in a random device
+zone, read as a full production NOW reading: 1,920 days.
+
+### Held-out cohort
+
+64 different profiles (seed 20269024), 30 consecutive days each in 2028:
+1,920 days, never used to choose anything. The v9.6 column is the old rule on
+the same cached axes (the baseline is linear in coverage, so subtracting it
+from the day average is exact).
+
+| Tone | Target | v9.7 held-out | v9.6 held-out |
+|---|---:|---:|---:|
+| QUIET | 7% | 6.1% | 16.6% |
+| SOFT | 10% | 8.7% | 16.9% |
+| STEADY | 15% | 15.9% | 32.8% |
+| LIVELY | 17% | 17.7% | 9.3% |
+| BRIGHT | 15% | 15.5% | 1.3% |
+| RADIANT | 8% | 6.8% | 0.0% |
+| FOCUSED | 14% | 14.5% | 10.1% |
+| FLOWING | 14% | 14.8% | 13.1% |
+
+Per reader over 30 consecutive days (median / p90 / max):
+
+| | v9.7 | v9.6 |
+|---|---|---|
+| Distinct tones seen | 7 / 8 / 8 | 6 / 7 / 7 |
+| Longest same-tone run | 3 / 4 / 5 | 3 / 4 / 8 |
+| Longest QUIET/SOFT run | 1 / 2 / 4 | 3 / 4 / 9 |
+| Share of the most frequent tone | 27% / 33% / 47% | 37% / 43% / 53% |
+| QUIET/SOFT share | 13% / 26% / 43% | 33% / 50% / 60% |
+
+### Not verified, and not claimed
+
+- The shares are for the synthetic population. A single reader's natal chart
+  still tilts their days: one held-out reader had QUIET/SOFT on 43% of a month.
+  That was reported, not tuned away; nothing forces a tone because of
+  yesterday's.
+- The held-out year is 2028 only. Seasonal effects outside the 2025–2028
+  samples were not measured.
+- The labels are editorial symbolic tones, not measured mood or energy.
+- The Home capsule bar maps each tone to a length using the index inside
+  bands designed for the v9.6 ranges. Its ordering by tone is unchanged, but
+  its small within-tone variation now mostly clamps to each tone's floor or
+  ceiling. Not changed here (UI).
+
+### Commands executed on 2026-11-05
+
+- `node scripts/calibrate-energy.mjs` (calibration + held-out above).
+- `node --test test/*.test.js`: **197/197**. `test/foundations.json` was
+  recaptured after confirming that the 51 differing values were all energy
+  `index` / `level`.
+- `node scripts/mobile-fixtures.mjs --write` then `--check`: **18/18**;
+  `node scripts/port/gen_edge_readings.mjs`: 16 edge readings. Only
+  `engineVersion`, `rulesetVersion`, `readingKey` and energy fields moved.
+- `flutter analyze`: no issues. `flutter test`: see the commit; three failures
+  predate this change and also fail on a clean checkout of `68071bd`
+  (`daily_energy_insight_test` discovery orbit and `home_signals_test` resume,
+  both after the compass awakening screen was added, and
+  `monetization_options_lock_test` quota badge after `f8b7329`).
+- `two_profiles_comparison_test` asserted that one fixed pair of profiles gets
+  different Should / Avoid text on one fixed day. The text variant is a
+  1-in-3 hash of the reading key, so the ruleset bump collided that pair. It
+  now requires a difference on at least two of seven days (observed 5/7 in
+  Vietnamese, 3/7 in English); headlines still must differ every time.
+
 ## v9.6 ruleset — two modes, three signals that read the tradition — 2026-10-15
 
 Engine **4.3.0-mvp** / ruleset

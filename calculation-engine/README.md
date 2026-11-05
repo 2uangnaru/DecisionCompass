@@ -1,8 +1,9 @@
 # AstraCue: Cosmic Decisions — Calculation Engine
 
-Engine MVP 4.3.0-mvp, ruleset
-`civil-midnight-chinese-calendar-symbolic-v9.6-experimental`, cập nhật
-15/10/2026. Nhận hồ sơ người dùng
+Engine MVP 4.4.0-mvp, ruleset
+`civil-midnight-chinese-calendar-symbolic-v9.7-experimental`, cập nhật
+05/11/2026 (v9.7 chỉ đổi năng lượng trong ngày; điểm các chế độ vẫn là
+scoring `v9.6-experimental`). Nhận hồ sơ người dùng
 và thời điểm hiện tại, tự lập dữ liệu lịch/lá số/thiên văn rồi trả kết quả số. Chạy offline
 trên Node.js, không AI, không API trả phí, không sinh văn bản luận giải, không có random
 trong đường tính kết quả.
@@ -76,16 +77,22 @@ trước khi chiếu theo decision mode; giá trị lạ bị từ chối bằng
 trung thực nhưng vẫn là category riêng với reading snapshot riêng.
 
 `dailyBrief.energy` gồm `level`, `index`, `dataCoverage`. Với mỗi khung của
-toàn ngày địa phương, tính fusion `general`; lấy trung bình `A` và `C` theo số
-giây thực của khung. `index = round(50 + 40 × clamp(0.65 × A_day + 0.35 × C_day))`.
-Nhãn tông dùng các dải `QUIET` (<49), `SOFT` (49), `STEADY` (50–51),
-`LIVELY` (52–53), `BRIGHT` (54–57), `RADIANT` (≥58). Nếu trục hành động
-trội hơn trục thay đổi ít nhất 0.06 và đạt 0.04, nhãn là `FOCUSED`; chiều
-ngược lại là `FLOWING`. Nếu độ phủ <0.2, trả `unavailable` và index `null`.
+toàn ngày địa phương, tính fusion `general` **trước** luck baseline (từ v9.7);
+lấy trung bình `A` và `C` theo số giây thực của khung. Gọi
+`P = 0.65 × A_day + 0.35 × C_day`; `index = round(50 + 40 × clamp(P))`.
+Nếu `A_day > 0` và `A_day − C_day ≥ 0.0893`, nhãn là `FOCUSED`; nếu
+`C_day > 0` và `C_day − A_day ≥ 0.0687`, nhãn là `FLOWING`. Còn lại, `P`
+chia sáu dải: `QUIET` (< −0.0155), `SOFT` (< 0.0099), `STEADY` (< 0.0376),
+`LIVELY` (< 0.0635), `BRIGHT` (< 0.0969), `RADIANT`. Các ngưỡng là phân vị
+của một cohort hiệu chuẩn (`scripts/calibrate-energy.mjs`), đặt theo tỉ lệ
+chủ app chọn ngày 05/11/2026: QUIET 7%, SOFT 10%, STEADY 15%, LIVELY 17%,
+BRIGHT 15%, RADIANT 8%, FOCUSED 14%, FLOWING 14%. Nếu độ phủ <0.2, trả
+`unavailable` và index `null`.
 Đây là nhãn biên tập cho suy ngẫm, không phải
 đo năng lượng thể chất hay xác suất thành công. Cùng hồ sơ, ngày và timezone
 cho cùng nhãn, không phụ thuộc mode/category/period; ngày DST 23/25 giờ dùng
-đúng số giây thực. Xem `outputs/Daily_Energy_Formula_v2.md`.
+đúng số giây thực. Hiệu chuẩn và số đo: mục v9.7 trong `VERIFICATION.md`
+(`outputs/Daily_Energy_Formula_v2.md` là quy tắc v7 cũ, chỉ còn giá trị lịch sử).
 Các mode được hỗ trợ: YES/NO, ACT/WAIT, ADVANCE/RETREAT, STAY/GO, KEEP/LET GO,
 COMMIT/WITHDRAW, LEFT/RIGHT, REASON/EMOTION và CONFRONT/AVOID.
 LEFT/RIGHT vẫn là biểu tượng (LEFT = receptive/inward,

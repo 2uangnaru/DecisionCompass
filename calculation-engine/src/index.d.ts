@@ -43,6 +43,12 @@ export interface ReadingInput {
    * ones this mode mixes. It cannot change the result.
    */
   probeAllSignals?: boolean;
+  /**
+   * Calibration scripts only: add `scoring.energyAxes`, the day's
+   * duration-weighted axes the energy tone is cut from. It cannot change the
+   * result.
+   */
+  probeEnergyAxes?: boolean;
 }
 
 /**
@@ -69,6 +75,8 @@ export interface Scoring {
   priorDatesUsed: number;
   priorMedian: number | null;
   adjustedModeScore: number;
+  /** Only with `probeEnergyAxes`: the day axes the energy tone is cut from. */
+  energyAxes?: { a: number; c: number; coverage: number };
   meaning: 'symbolic_alignment_not_success_probability';
 }
 export interface ModuleResult {

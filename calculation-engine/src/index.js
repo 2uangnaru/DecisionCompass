@@ -10,7 +10,7 @@ import { buildBaZi, scoreBaZi } from './bazi.js';
 import { buildZiWei, scoreZiWei, inspectZiWei } from './ziwei.js';
 import { natalSky, skyAt, western, cosmic } from './astronomy.js';
 import { almanac } from './calendar.js';
-import { dailyEnergy } from './daily-energy.js';
+import { dailyEnergy, dailyEnergyAxes } from './daily-energy.js';
 import { scoreVedic } from './vedic.js';
 
 export { resolveCurrentContext, VERSION, RULESET, CATEGORIES, MODES, LEGACY_MODES, SCORING_VERSION, SCALE_VERSION };
@@ -56,7 +56,11 @@ export function createCalculator(inputProfile) {
     const a = raw.coverage > 0 ? clamp(raw.a - LUCK_BASELINE * raw.coverage) : 0;
     const c = raw.coverage > 0 ? clamp(raw.c - LUCK_BASELINE * raw.coverage) : 0;
     const fusion = evidence(a, c, raw.coverage);
-    return cache.set(key,{calendar,modules,evidence:fusion});
+    // `raw` is kept for the daily energy. The baseline above was set when the
+    // fused pair still decided YES / NO; since v9.1 it decides nothing, and
+    // under it the energy sat a point and a half low (v9.7 section of
+    // VERIFICATION.md).
+    return cache.set(key,{calendar,modules,evidence:fusion,raw});
   }
   function moments(ms,zone,category) {
     const key=`${ms}|${zone}|${category}`;
@@ -247,7 +251,8 @@ export function createCalculator(inputProfile) {
     // moment the app was opened.
     const daySegments=segments.map(s=>({start:s.start,end:s.end,duration:(s.end-s.start)/1000,
       ...evaluate(s.start,zone,'general')}));
-    const energy=dailyEnergy(daySegments.map(s=>({start:s.start,end:s.end,evidence:s.evidence})));
+    const energySegments=daySegments.map(s=>({start:s.start,end:s.end,evidence:s.raw}));
+    const energy=dailyEnergy(energySegments);
     const dayStart=daySegments[0];
     const colors=dailyColors(daySegments.map(s=>({duration:s.duration,modules:s.modules})),
       dayStart.calendar.day.stem,dayStart.modules.N.diagnostics.personalDay);
@@ -263,6 +268,7 @@ export function createCalculator(inputProfile) {
         priorDatesUsed:priorScores.length,
         priorMedian:priorScores.length?round(median(priorScores)):null,
         adjustedModeScore:round(adjusted),
+        ...(input.probeEnergyAxes?{energyAxes:dailyEnergyAxes(energySegments)}:{}),
         meaning:'symbolic_alignment_not_success_probability'},
       evaluatedAtUtc:new Date(evaluated[0].start).toISOString(),luckyWindows:windows,
       windowStatus:period==='now'?'not_applicable':windows.length===2?'two_available':windows.length===1?'one_remaining':'no_15_minute_window',

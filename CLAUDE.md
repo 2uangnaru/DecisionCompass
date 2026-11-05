@@ -395,10 +395,11 @@ The current APK is a visual prototype, not a functional MVP.
 
 Resolve these before tagging a release:
 
-- Engine metadata is `4.3.0-mvp` /
-  `civil-midnight-chinese-calendar-symbolic-v9.6-experimental` across
+- Engine metadata is `4.4.0-mvp` /
+  `civil-midnight-chinese-calendar-symbolic-v9.7-experimental` across
   `src/core.js`, `package.json`, `README.md` and the Dart port, resynchronized
-  on 2026-10-15. Keep them together.
+  on 2026-11-05. Keep them together. v9.7 changed only the daily energy;
+  `SCORING_VERSION` stays `v9.6-experimental`.
 - `calculation-engine/VERIFICATION.md`'s header still says `3.0.0-mvp`; that is
   the engine version on 2026-09-19, when the checks in that first section ran,
   and it is history rather than drift. Each later section states its own.

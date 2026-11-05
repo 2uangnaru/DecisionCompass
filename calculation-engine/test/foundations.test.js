@@ -16,6 +16,11 @@ import { createCalculator } from '../src/index.js';
  *
  * If one of these ever has to change, it is a separate decision with its own
  * reasoning, not a side effect of a scoring release.
+ *
+ * v9.7 (2026-11-05) was such a decision, for the energy only: it reads the
+ * fusion before the luck baseline and has recalibrated cutoffs (VERIFICATION.md).
+ * The file was recaptured from the v9.7 engine after checking that the energy
+ * `index` and `level` were the only values that moved.
  */
 const BASELINE = JSON.parse(readFileSync(fileURLToPath(new URL('./foundations.json', import.meta.url)), 'utf8'));
 
