@@ -24,24 +24,24 @@ class AppLocalizationsEs extends AppLocalizations {
       'No se pudo guardar tu recompensa, así que no se añadió nada. Inténtalo de nuevo.';
 
   @override
-  String get networkDialogTag => 'COSMIC CONNECTION';
+  String get networkDialogTag => 'CONEXIÓN CÓSMICA';
 
   @override
-  String get networkDialogTitle => 'Cosmic signal interrupted';
+  String get networkDialogTitle => 'Señal cósmica interrumpida';
 
   @override
   String get networkDialogBody =>
-      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+      'AstraCue necesita conexión a internet. Activa el Wi-Fi o los datos móviles y toca Reconectar.';
 
   @override
-  String get networkDialogRetry => 'Reconnect';
+  String get networkDialogRetry => 'Reconectar';
 
   @override
-  String get networkDialogChecking => 'Checking connection…';
+  String get networkDialogChecking => 'Comprobando conexión…';
 
   @override
   String get networkDialogStillOffline =>
-      'Still no connection. Check Wi-Fi or mobile data and try again.';
+      'Aún sin conexión. Comprueba el Wi-Fi o los datos móviles e inténtalo de nuevo.';
 
   @override
   String get analyticsConsentTitle => 'Estadísticas de uso (opcional)';

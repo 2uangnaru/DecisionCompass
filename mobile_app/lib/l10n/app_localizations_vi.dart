@@ -24,24 +24,24 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không lưu được phần thưởng nên chưa có gì được cộng. Bạn thử lại nhé.';
 
   @override
-  String get networkDialogTag => 'COSMIC CONNECTION';
+  String get networkDialogTag => 'KẾT NỐI VŨ TRỤ';
 
   @override
-  String get networkDialogTitle => 'Cosmic signal interrupted';
+  String get networkDialogTitle => 'Tín hiệu vũ trụ bị gián đoạn';
 
   @override
   String get networkDialogBody =>
-      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+      'Cần kết nối mạng để đón nhận năng lượng thời gian thực từ các vì sao và đồng bộ vị trí thiên văn.';
 
   @override
-  String get networkDialogRetry => 'Reconnect';
+  String get networkDialogRetry => 'Kết nối lại';
 
   @override
-  String get networkDialogChecking => 'Checking connection…';
+  String get networkDialogChecking => 'Đang kiểm tra kết nối…';
 
   @override
   String get networkDialogStillOffline =>
-      'Still no connection. Check Wi-Fi or mobile data and try again.';
+      'Vẫn chưa có kết nối. Vui lòng kiểm tra Wi-Fi hoặc 4G rồi thử lại.';
 
   @override
   String get analyticsConsentTitle => 'Thống kê sử dụng (không bắt buộc)';

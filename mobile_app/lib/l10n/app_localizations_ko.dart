@@ -22,24 +22,24 @@ class AppLocalizationsKo extends AppLocalizations {
   String get adRewardNotSaved => '보상을 저장하지 못해 아무것도 추가되지 않았어요. 다시 시도해 주세요.';
 
   @override
-  String get networkDialogTag => 'COSMIC CONNECTION';
+  String get networkDialogTag => '우주 연결';
 
   @override
-  String get networkDialogTitle => 'Cosmic signal interrupted';
+  String get networkDialogTitle => '우주의 신호가 끊어졌습니다';
 
   @override
   String get networkDialogBody =>
-      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+      'AstraCue는 인터넷 연결이 필요합니다. Wi-Fi 또는 모바일 데이터를 켜고 다시 연결을 눌러주세요.';
 
   @override
-  String get networkDialogRetry => 'Reconnect';
+  String get networkDialogRetry => '다시 연결';
 
   @override
-  String get networkDialogChecking => 'Checking connection…';
+  String get networkDialogChecking => '연결 확인 중…';
 
   @override
   String get networkDialogStillOffline =>
-      'Still no connection. Check Wi-Fi or mobile data and try again.';
+      '아직 연결되지 않았습니다. Wi-Fi 또는 모바일 데이터를 확인한 뒤 다시 시도해 주세요.';
 
   @override
   String get analyticsConsentTitle => '이용 현황 분석 (선택)';

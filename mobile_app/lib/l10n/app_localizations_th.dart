@@ -24,24 +24,24 @@ class AppLocalizationsTh extends AppLocalizations {
       'บันทึกรางวัลไม่สำเร็จ จึงยังไม่มีการเพิ่มสิทธิ์ โปรดลองอีกครั้ง';
 
   @override
-  String get networkDialogTag => 'COSMIC CONNECTION';
+  String get networkDialogTag => 'การเชื่อมต่อจักรวาล';
 
   @override
-  String get networkDialogTitle => 'Cosmic signal interrupted';
+  String get networkDialogTitle => 'สัญญาณจักรวาลขาดหาย';
 
   @override
   String get networkDialogBody =>
-      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+      'AstraCue ต้องการการเชื่อมต่ออินเทอร์เน็ต โปรดเปิด Wi-Fi หรือข้อมูลมือถือ แล้วแตะเชื่อมต่ออีกครั้ง';
 
   @override
-  String get networkDialogRetry => 'Reconnect';
+  String get networkDialogRetry => 'เชื่อมต่ออีกครั้ง';
 
   @override
-  String get networkDialogChecking => 'Checking connection…';
+  String get networkDialogChecking => 'กำลังตรวจสอบการเชื่อมต่อ…';
 
   @override
   String get networkDialogStillOffline =>
-      'Still no connection. Check Wi-Fi or mobile data and try again.';
+      'ยังไม่มีการเชื่อมต่อ โปรดตรวจสอบ Wi-Fi หรือข้อมูลมือถือแล้วลองใหม่อีกครั้ง';
 
   @override
   String get analyticsConsentTitle => 'สถิติการใช้งาน (ไม่บังคับ)';

@@ -24,24 +24,24 @@ class AppLocalizationsHi extends AppLocalizations {
       'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
 
   @override
-  String get networkDialogTag => 'COSMIC CONNECTION';
+  String get networkDialogTag => 'ब्रह्मांडीय संपर्क';
 
   @override
-  String get networkDialogTitle => 'Cosmic signal interrupted';
+  String get networkDialogTitle => 'ब्रह्मांडीय संकेत बाधित हो गया';
 
   @override
   String get networkDialogBody =>
-      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+      'AstraCue को इंटरनेट कनेक्शन की आवश्यकता है। वाई-फाई या मोबाइल डेटा चालू करें, फिर पुनः कनेक्ट पर टैप करें।';
 
   @override
-  String get networkDialogRetry => 'Reconnect';
+  String get networkDialogRetry => 'पुनः कनेक्ट';
 
   @override
-  String get networkDialogChecking => 'Checking connection…';
+  String get networkDialogChecking => 'कनेक्शन की जांच जारी है…';
 
   @override
   String get networkDialogStillOffline =>
-      'Still no connection. Check Wi-Fi or mobile data and try again.';
+      'अभी भी कोई कनेक्शन नहीं है। वाई-फाई या मोबाइल डेटा की जांच करें और पुनः प्रयास करें।';
 
   @override
   String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';
@@ -1379,6 +1379,26 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get adRewardNotSaved =>
       'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
+
+  @override
+  String get networkDialogTag => 'ब्रह्मांडीय संपर्क';
+
+  @override
+  String get networkDialogTitle => 'ब्रह्मांडीय संकेत बाधित हो गया';
+
+  @override
+  String get networkDialogBody =>
+      'AstraCue को इंटरनेट कनेक्शन की आवश्यकता है। वाई-फाई या मोबाइल डेटा चालू करें, फिर पुनः कनेक्ट पर टैप करें।';
+
+  @override
+  String get networkDialogRetry => 'पुनः कनेक्ट';
+
+  @override
+  String get networkDialogChecking => 'कनेक्शन की जांच जारी है…';
+
+  @override
+  String get networkDialogStillOffline =>
+      'अभी भी कोई कनेक्शन नहीं है। वाई-फाई या मोबाइल डेटा की जांच करें और पुनः प्रयास करें।';
 
   @override
   String get analyticsConsentTitle => 'उपयोग के आँकड़े (वैकल्पिक)';

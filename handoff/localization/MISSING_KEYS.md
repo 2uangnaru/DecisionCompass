@@ -5,7 +5,7 @@ Codex translated all 57 keys on 2026-09-28 and regenerated Flutter localizations
 The current `mobile_app/untranslated.json` is `{}`. The table is retained as an
 audit trail, **not** a list of outstanding fallback strings.
 
-## Outstanding — 6 keys for Antigravity (added 2026-11-06)
+## Completed — 6 keys translated by Antigravity (2026-11-06)
 
 The offline dialog (`lib/widgets/celestial_network_dialog.dart`) shipped with
 English only, by the owner's decision: Antigravity writes the other seven
