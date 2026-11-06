@@ -16,6 +16,7 @@ Future<void> showCelestialNetworkDialog(
   BuildContext context, {
   required Future<bool> Function() isOnline,
   Duration pollEvery = const Duration(seconds: 4),
+  Duration manualDelay = const Duration(milliseconds: 700),
 }) {
   return showDialog<void>(
     context: context,
@@ -58,6 +59,7 @@ Future<void> showCelestialNetworkDialog(
             child: _CelestialNetworkContent(
               isOnline: isOnline,
               pollEvery: pollEvery,
+              manualDelay: manualDelay,
               onOnline: () => Navigator.of(dialogContext).pop(),
             ),
           ),
@@ -72,10 +74,12 @@ class _CelestialNetworkContent extends StatefulWidget {
     required this.isOnline,
     required this.pollEvery,
     required this.onOnline,
+    this.manualDelay = const Duration(milliseconds: 700),
   });
 
   final Future<bool> Function() isOnline;
   final Duration pollEvery;
+  final Duration manualDelay;
   final VoidCallback onOnline;
 
   @override
@@ -110,22 +114,34 @@ class _CelestialNetworkContentState extends State<_CelestialNetworkContent>
   /// the "still offline" line, which belong to the reader's tap.
   Future<void> _check({bool silent = false}) async {
     if (_checking || _closed) return;
-    _checking = true;
-    if (!silent) setState(() => _stillOffline = false);
+    setState(() {
+      _checking = true;
+      if (!silent) _stillOffline = false;
+    });
     bool online;
     try {
-      online = await widget.isOnline();
+      if (!silent && widget.manualDelay > Duration.zero) {
+        final results = await Future.wait([
+          widget.isOnline(),
+          Future.delayed(widget.manualDelay),
+        ]);
+        online = results[0] as bool;
+      } else {
+        online = await widget.isOnline();
+      }
     } catch (_) {
       online = false;
     }
-    _checking = false;
     if (!mounted || _closed) return;
-    if (online) {
-      _closed = true;
-      widget.onOnline();
-    } else {
-      setState(() => _stillOffline = _stillOffline || !silent);
-    }
+    setState(() {
+      _checking = false;
+      if (online) {
+        _closed = true;
+        widget.onOnline();
+      } else {
+        _stillOffline = _stillOffline || !silent;
+      }
+    });
   }
 
   @override

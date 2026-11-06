@@ -87,13 +87,16 @@ void main() {
 
     await tester.tap(retry);
     await tester.pump();
-    await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 750));
     expect(dialog, findsOneWidget);
     expect(stillOffline, findsOneWidget);
 
     online = true;
     await tester.tap(retry);
     await tester.pump();
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 750));
     await tester.pump(const Duration(milliseconds: 400));
     expect(dialog, findsNothing);
     await tester.pump();
