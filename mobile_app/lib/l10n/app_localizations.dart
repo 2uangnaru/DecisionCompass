@@ -141,6 +141,42 @@ abstract class AppLocalizations {
   /// **'Your reward couldn\'t be saved, so nothing was added. Please try again.'**
   String get adRewardNotSaved;
 
+  /// No description provided for @networkDialogTag.
+  ///
+  /// In en, this message translates to:
+  /// **'COSMIC CONNECTION'**
+  String get networkDialogTag;
+
+  /// No description provided for @networkDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Cosmic signal interrupted'**
+  String get networkDialogTitle;
+
+  /// No description provided for @networkDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.'**
+  String get networkDialogBody;
+
+  /// No description provided for @networkDialogRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconnect'**
+  String get networkDialogRetry;
+
+  /// No description provided for @networkDialogChecking.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking connection…'**
+  String get networkDialogChecking;
+
+  /// No description provided for @networkDialogStillOffline.
+  ///
+  /// In en, this message translates to:
+  /// **'Still no connection. Check Wi-Fi or mobile data and try again.'**
+  String get networkDialogStillOffline;
+
   /// No description provided for @analyticsConsentTitle.
   ///
   /// In en, this message translates to:

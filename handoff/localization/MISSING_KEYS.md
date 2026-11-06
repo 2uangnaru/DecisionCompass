@@ -5,7 +5,25 @@ Codex translated all 57 keys on 2026-09-28 and regenerated Flutter localizations
 The current `mobile_app/untranslated.json` is `{}`. The table is retained as an
 audit trail, **not** a list of outstanding fallback strings.
 
-**0 keys** currently fall back to English. The 57 rows below were previously
+## Outstanding — 6 keys for Antigravity (added 2026-11-06)
+
+The offline dialog (`lib/widgets/celestial_network_dialog.dart`) shipped with
+English only, by the owner's decision: Antigravity writes the other seven
+languages. Until then these fall back to English in every other locale and are
+listed in `mobile_app/untranslated.json`. Hindi uses the danda `।`, never `।.`.
+
+| Key | English source | Screen |
+|---|---|---|
+| `networkDialogTag` | COSMIC CONNECTION (a star icon is drawn beside it; do not add ✦, the bundled fonts lack it) | Offline dialog — badge |
+| `networkDialogTitle` | Cosmic signal interrupted | Offline dialog — title |
+| `networkDialogBody` | AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect. | Offline dialog — body; "Reconnect" must match `networkDialogRetry` |
+| `networkDialogRetry` | Reconnect | Offline dialog — button |
+| `networkDialogChecking` | Checking connection… | Offline dialog — button while checking |
+| `networkDialogStillOffline` | Still no connection. Check Wi-Fi or mobile data and try again. | Offline dialog — shown after a Reconnect tap that found no connection |
+
+## Earlier audit
+
+**0 keys** fell back to English after the 2026-09-28 pass. The 57 rows below were previously
 missing in `es`, `hi`, `hi-IN`, `ja`, `th`, `vi`, `zh`, `zh-Hans`, and `zh-Hans-CN`.
 
 The translated values now live in the corresponding `mobile_app/lib/l10n/app_*.arb`

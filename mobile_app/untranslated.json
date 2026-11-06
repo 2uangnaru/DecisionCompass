@@ -1,1 +1,91 @@
-{}
+{
+  "es": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "hi": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "hi_IN": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "ja": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "ko": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "th": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "vi": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "zh": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "zh_Hans": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ],
+
+  "zh_Hans_CN": [
+    "networkDialogTag",
+    "networkDialogTitle",
+    "networkDialogBody",
+    "networkDialogRetry",
+    "networkDialogChecking",
+    "networkDialogStillOffline"
+  ]
+}

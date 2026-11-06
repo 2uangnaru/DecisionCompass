@@ -24,6 +24,26 @@ class AppLocalizationsVi extends AppLocalizations {
       'Không lưu được phần thưởng nên chưa có gì được cộng. Bạn thử lại nhé.';
 
   @override
+  String get networkDialogTag => 'COSMIC CONNECTION';
+
+  @override
+  String get networkDialogTitle => 'Cosmic signal interrupted';
+
+  @override
+  String get networkDialogBody =>
+      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+
+  @override
+  String get networkDialogRetry => 'Reconnect';
+
+  @override
+  String get networkDialogChecking => 'Checking connection…';
+
+  @override
+  String get networkDialogStillOffline =>
+      'Still no connection. Check Wi-Fi or mobile data and try again.';
+
+  @override
   String get analyticsConsentTitle => 'Thống kê sử dụng (không bắt buộc)';
 
   @override

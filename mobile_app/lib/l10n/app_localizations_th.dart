@@ -24,6 +24,26 @@ class AppLocalizationsTh extends AppLocalizations {
       'บันทึกรางวัลไม่สำเร็จ จึงยังไม่มีการเพิ่มสิทธิ์ โปรดลองอีกครั้ง';
 
   @override
+  String get networkDialogTag => 'COSMIC CONNECTION';
+
+  @override
+  String get networkDialogTitle => 'Cosmic signal interrupted';
+
+  @override
+  String get networkDialogBody =>
+      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+
+  @override
+  String get networkDialogRetry => 'Reconnect';
+
+  @override
+  String get networkDialogChecking => 'Checking connection…';
+
+  @override
+  String get networkDialogStillOffline =>
+      'Still no connection. Check Wi-Fi or mobile data and try again.';
+
+  @override
   String get analyticsConsentTitle => 'สถิติการใช้งาน (ไม่บังคับ)';
 
   @override

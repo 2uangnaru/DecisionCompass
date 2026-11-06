@@ -10,6 +10,7 @@ import 'l10n/app_localizations.dart';
 import 'pages/home_page.dart';
 import 'pages/onboarding_page.dart';
 import 'reading_dependencies.dart';
+import 'services/network_guard.dart';
 import 'theme.dart';
 import 'widgets/startup_loading_view.dart';
 
@@ -40,6 +41,7 @@ class DecisionCompassApp extends StatefulWidget {
     this.minimumStartupDuration = Duration.zero,
     this.startupPreparation,
     this.onContentReady,
+    this.internetCheck,
   });
 
   final ReadingDependencies dependencies;
@@ -53,6 +55,12 @@ class DecisionCompassApp extends StatefulWidget {
   final Future<void>? startupPreparation;
   final VoidCallback? onContentReady;
 
+  /// When set, the startup screen is held until this reports online, so the
+  /// reader's day is never shown before the offline dialog; later losses of
+  /// connection show the dialog over whatever is on screen. Null in tests,
+  /// which have no network.
+  final InternetCheck? internetCheck;
+
   @override
   State<DecisionCompassApp> createState() => _DecisionCompassAppState();
 }
@@ -62,12 +70,28 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   final Completer<void> _startupAnimationShown = Completer<void>();
   bool _startupTimerStarted = false;
   bool _contentReadyNotified = false;
+  final _navigatorKey = GlobalKey<NavigatorState>();
+  late final NetworkGuard? _networkGuard = widget.internetCheck == null
+      ? null
+      : NetworkGuard(navigatorKey: _navigatorKey, check: widget.internetCheck!);
 
   /// Read once at startup, so a saved profile skips onboarding entirely —
   /// restarting the app must return to Home, not lose everything.
   late final Future<AppProfile?> _savedProfile = _loadSavedProfile();
 
+  /// Started in [initState], alongside the startup animation.
+  Future<bool>? _firstProbe;
+
   Future<AppProfile?> _loadSavedProfile() {
+    final guard = _networkGuard;
+    if (guard == null) return _loadProfile();
+    return _loadProfile().then((profile) async {
+      await guard.ensureOnline(first: _firstProbe);
+      return profile;
+    });
+  }
+
+  Future<AppProfile?> _loadProfile() {
     final profile = widget.dependencies.profileRepository.load();
     if (widget.minimumStartupDuration == Duration.zero &&
         widget.startupPreparation == null) {
@@ -97,20 +121,24 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   }
 
   void _notifyContentReady() {
-    if (_contentReadyNotified || widget.onContentReady == null) return;
+    if (_contentReadyNotified) return;
     _contentReadyNotified = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) widget.onContentReady?.call();
+      if (!mounted) return;
+      widget.onContentReady?.call();
+      _networkGuard?.start();
     });
   }
 
   @override
   void initState() {
     super.initState();
+    _firstProbe = widget.internetCheck?.call();
     _lifecycle = AppLifecycleListener(
       onStateChange: (state) {
         final resumed = state == AppLifecycleState.resumed;
         widget.dependencies.adService.setForeground(resumed);
+        _networkGuard?.setForeground(resumed);
         if (resumed) widget.dependencies.plus?.appResumed();
       },
       onDetach: widget.onDetached,
@@ -123,6 +151,7 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
   @override
   void dispose() {
     _lifecycle?.dispose();
+    _networkGuard?.dispose();
     super.dispose();
   }
 
@@ -135,6 +164,7 @@ class _DecisionCompassAppState extends State<DecisionCompassApp> {
       builder: (context, _) {
         final locale = widget.dependencies.localeController.locale;
         return MaterialApp(
+          navigatorKey: _navigatorKey,
           onGenerateTitle: (context) => AppLocalizations.of(context).appName,
           debugShowCheckedModeBanner: false,
           theme: buildCompassTheme(locale),

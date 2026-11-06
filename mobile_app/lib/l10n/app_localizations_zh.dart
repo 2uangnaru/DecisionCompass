@@ -22,6 +22,26 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
 
   @override
+  String get networkDialogTag => 'COSMIC CONNECTION';
+
+  @override
+  String get networkDialogTitle => 'Cosmic signal interrupted';
+
+  @override
+  String get networkDialogBody =>
+      'AstraCue needs an internet connection. Turn on Wi-Fi or mobile data, then tap Reconnect.';
+
+  @override
+  String get networkDialogRetry => 'Reconnect';
+
+  @override
+  String get networkDialogChecking => 'Checking connection…';
+
+  @override
+  String get networkDialogStillOffline =>
+      'Still no connection. Check Wi-Fi or mobile data and try again.';
+
+  @override
   String get analyticsConsentTitle => '使用情况统计（可选）';
 
   @override

@@ -31,6 +31,7 @@ import 'data/reading_quota_controller.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
 import 'services/ad_service.dart';
+import 'services/network_guard.dart';
 
 /// AstraCue calculates entirely on the device.
 ///
@@ -110,6 +111,7 @@ Future<void> main() async {
         }
       },
       onDetached: adService.dispose,
+      internetCheck: probeInternet,
       dependencies: ReadingDependencies(
         repository: repository,
         contextProvider: contextProvider,
