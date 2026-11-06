@@ -170,7 +170,7 @@ class _CelestialNetworkContentState extends State<_CelestialNetworkContent>
                   ),
                   child: const Center(
                     child: Icon(
-                      Icons.wifi_find_rounded,
+                      Icons.wifi_rounded,
                       size: 30,
                       color: CompassColors.gold,
                     ),
