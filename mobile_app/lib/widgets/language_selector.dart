@@ -120,111 +120,131 @@ class WelcomeLanguageCard extends StatelessWidget {
           key: const Key('welcome_language_card'),
           borderRadius: BorderRadius.circular(16),
           onTap: () => showLanguageSheet(context, controller),
-          child: Ink(
-            padding: EdgeInsets.symmetric(
-              horizontal: 14,
-              vertical: compact ? 8 : 12,
-            ),
-            decoration: BoxDecoration(
-              color: CompassColors.raised.withValues(alpha: 0.95),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: CompassColors.gold.withValues(alpha: 0.35),
-                width: 1.2,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 48),
+            child: Ink(
+              padding: EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: compact ? 8 : 12,
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: CompassColors.gold.withValues(alpha: 0.06),
-                  blurRadius: 12,
-                  offset: const Offset(0, 3),
+              decoration: BoxDecoration(
+                color: CompassColors.raised.withValues(alpha: 0.95),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: CompassColors.gold.withValues(alpha: 0.35),
+                  width: 1.2,
                 ),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: compact ? 32 : 38,
-                  height: compact ? 32 : 38,
-                  decoration: BoxDecoration(
-                    color: CompassColors.gold.withValues(alpha: 0.12),
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: CompassColors.gold.withValues(alpha: 0.25),
-                      width: 1,
-                    ),
+                boxShadow: [
+                  BoxShadow(
+                    color: CompassColors.gold.withValues(alpha: 0.06),
+                    blurRadius: 12,
+                    offset: const Offset(0, 3),
                   ),
-                  child: Icon(
-                    Icons.language_rounded,
-                    size: compact ? 17 : 20,
-                    color: CompassColors.gold,
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
+                ],
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final iconDiameter = compact ? 32.0 : 38.0;
+                  final pillMaxWidth =
+                      ((constraints.maxWidth - iconDiameter - 18) * 0.54)
+                          .clamp(0.0, double.infinity);
+                  return Row(
                     children: [
-                      Text(
-                        l10n.languageSetting,
-                        style: TextStyle(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w500,
-                          color: CompassColors.gold.withValues(alpha: 0.85),
-                          letterSpacing: 0.5,
+                      Container(
+                        width: iconDiameter,
+                        height: iconDiameter,
+                        decoration: BoxDecoration(
+                          color: CompassColors.gold.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: CompassColors.gold.withValues(alpha: 0.25),
+                            width: 1,
+                          ),
                         ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        current.nativeName,
-                        key: const Key('language_button_label'),
-                        style: TextStyle(
-                          fontSize: compact ? 14 : 15,
-                          fontWeight: FontWeight.w700,
-                          color: CompassColors.text,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: compact ? 4 : 6,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.06),
-                    borderRadius: BorderRadius.circular(999),
-                    border: Border.all(
-                      color: Colors.white.withValues(alpha: 0.15),
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        l10n.changeLanguage,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
+                        child: Icon(
+                          Icons.language_rounded,
+                          size: compact ? 17 : 20,
                           color: CompassColors.gold,
                         ),
                       ),
-                      const SizedBox(width: 2),
-                      const Icon(
-                        Icons.chevron_right_rounded,
-                        size: 16,
-                        color: CompassColors.gold,
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              l10n.languageSetting,
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500,
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.85,
+                                ),
+                                letterSpacing: 0.5,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              current.nativeName,
+                              key: const Key('language_button_label'),
+                              style: TextStyle(
+                                fontSize: compact ? 14 : 15,
+                                fontWeight: FontWeight.w700,
+                                color: CompassColors.text,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ConstrainedBox(
+                        constraints: BoxConstraints(maxWidth: pillMaxWidth),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: compact ? 4 : 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.06),
+                            borderRadius: BorderRadius.circular(999),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.15),
+                            ),
+                          ),
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  l10n.changeLanguage,
+                                  maxLines: 1,
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: CompassColors.gold,
+                                  ),
+                                ),
+                                const SizedBox(width: 2),
+                                const Icon(
+                                  Icons.chevron_right_rounded,
+                                  size: 16,
+                                  color: CompassColors.gold,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     ],
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
           ),
         ),

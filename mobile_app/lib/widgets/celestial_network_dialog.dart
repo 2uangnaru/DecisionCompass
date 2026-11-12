@@ -149,9 +149,10 @@ class _CelestialNetworkContentState extends State<_CelestialNetworkContent>
     final l10n = AppLocalizations.of(context);
     final busy = _checking && !_closed;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
         // Pulsing beacon. It loops, so it repaints on its own layer.
         RepaintBoundary(
           child: SizedBox(
@@ -309,7 +310,8 @@ class _CelestialNetworkContentState extends State<_CelestialNetworkContent>
                 : Text(l10n.networkDialogRetry),
           ),
         ),
-      ],
+        ],
+      ),
     );
   }
 }

@@ -312,12 +312,16 @@ class _OrbitVisualState extends State<OrbitVisual>
     );
     final centerChild = Center(
       child: widget.sign == null
-          ? const Icon(
+          ? Icon(
               Icons.auto_awesome_rounded,
-              size: 48,
+              size: dimension < 160 ? 32 : 48,
               color: CompassColors.gold,
             )
-          : ZodiacAvatar(size: 86, glow: true, sign: widget.sign!),
+          : ZodiacAvatar(
+              size: dimension < 160 ? 48 : 86,
+              glow: true,
+              sign: widget.sign!,
+            ),
     );
 
     return SizedBox.square(

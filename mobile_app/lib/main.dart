@@ -71,9 +71,11 @@ Future<void> main() async {
       ? AdMobService(analytics: analytics)
       : const NoOpAdService();
   final plusConfig = PlusBillingConfig.fromEnvironment();
-  // Debug + PLUS_DEMO_BILLING only; a release build always uses the store.
-  final plusDemo = plusDemoBillingEnabled();
-  final plusEnabled = PlusBillingConfig.plusEnabled || plusDemo;
+  const plusEnabled = PlusBillingConfig.plusEnabled;
+  // Debug + PLUS_DEMO_BILLING + PLUS_ENABLED only; a release build always uses
+  // the store, and when VIP is turned off (`PLUS_ENABLED=false`, the default)
+  // neither debug nor release builds expose any VIP UI.
+  final plusDemo = effectiveDemoPlusBilling(plusEnabled: plusEnabled);
   final PlusEntitlementController? plus = plusEnabled
       ? PlusEntitlementController(
           store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),

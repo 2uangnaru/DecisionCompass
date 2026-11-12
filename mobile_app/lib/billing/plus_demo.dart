@@ -15,6 +15,14 @@ bool plusDemoBillingEnabled({
   bool requested = const bool.fromEnvironment('PLUS_DEMO_BILLING'),
 }) => debug && requested;
 
+/// Demo billing only engages when VIP itself ([plusEnabled]) is also enabled,
+/// so debug builds run with `--dart-define=PLUS_DEMO_BILLING=true` still keep
+/// VIP hidden while `PLUS_ENABLED` defaults to false.
+bool effectiveDemoPlusBilling({
+  bool plusEnabled = PlusBillingConfig.plusEnabled,
+  bool? demoBilling,
+}) => plusEnabled && (demoBilling ?? plusDemoBillingEnabled());
+
 /// Proofs from the demo store carry this source; nothing else accepts it.
 const plusDemoSource = 'astracue_demo';
 

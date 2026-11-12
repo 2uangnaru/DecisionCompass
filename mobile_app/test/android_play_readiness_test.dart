@@ -1,6 +1,7 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/billing/plus_billing.dart';
+import 'package:decision_compass/billing/plus_demo.dart';
 import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/reading_quota_controller.dart';
@@ -200,9 +201,14 @@ void main() {
   );
 
   test(
-    'PlusBillingConfig disables VIP by default when PLUS_ENABLED is omitted',
+    'PlusBillingConfig disables VIP by default even if PLUS_DEMO_BILLING=true',
     () {
       expect(PlusBillingConfig.plusEnabled, isFalse);
+      expect(effectiveDemoPlusBilling(demoBilling: true), isFalse);
+      expect(
+        effectiveDemoPlusBilling(plusEnabled: true, demoBilling: true),
+        isTrue,
+      );
     },
   );
 

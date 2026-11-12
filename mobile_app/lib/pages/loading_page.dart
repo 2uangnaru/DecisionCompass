@@ -429,133 +429,178 @@ class _LoadingPageState extends State<LoadingPage>
         failure: failure,
         period: widget.period,
         onRetry: _retry,
+        adsEnabled: widget.dependencies.adsEnabled,
       );
 
     final l10n = AppLocalizations.of(context);
     final phrases = loadingPhrases(l10n, widget.mode);
     assert(phrases.length == _phraseCount);
     final category = categoryLabel(l10n, widget.category);
-    final compact = MediaQuery.sizeOf(context).height < 700;
     return CelestialScaffold(
       child: Listener(
         key: const Key('loading_tap_surface'),
         behavior: HitTestBehavior.opaque,
         onPointerUp: (_) => _registerTap(),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 28, 24, 30),
-          child: Column(
-            children: [
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: Text(
-                  modeLabel(l10n, widget.mode),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    color: CompassColors.gold,
-                    letterSpacing: trackingFor(context, 1.8),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final maxHeight = constraints.maxHeight;
+            final shortLandscape = maxHeight < 460;
+            final compact = maxHeight < 700;
+            final orbitSize = shortLandscape
+                ? 110.0
+                : (compact ? 210.0 : 300.0);
+            final phraseMinHeight = shortLandscape ? 44.0 : 66.0;
+            return SingleChildScrollView(
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: maxHeight),
+                child: Padding(
+                  padding: EdgeInsets.fromLTRB(
+                    24,
+                    shortLandscape ? 12 : 28,
+                    24,
+                    shortLandscape ? 14 : 30,
                   ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: Semantics(
-                  label: l10n.readingAreaSemantics(category),
-                  child: Text(
-                    key: const Key('loading_category_label'),
-                    l10n.readingForCategory(category),
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: CompassColors.blueLight,
-                      letterSpacing: trackingFor(context, 1),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 4),
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: Text(
-                  key: const Key('loading_period_label'),
-                  periodLabel(l10n, widget.period),
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.muted,
-                    letterSpacing: trackingFor(context, 1.1),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              AnimatedBuilder(
-                animation: _apertureController,
-                builder: (context, _) => OrbitVisual(
-                  size: compact ? 220 : 300,
-                  sign: widget.profile.zodiacSign,
-                  labels: loadingOrbitLabels(l10n),
-                  ringScale: _ringScale.value,
-                  ringOpacity: _ringOpacity.value,
-                  avatarScale: _avatarScale.value,
-                  avatarOpacity: _avatarOpacity.value,
-                ),
-              ),
-              SizedBox(height: compact ? 22 : 38),
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: SizedBox(
-                  height: 66,
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 150),
-                    child: Text(
-                      _showingReassurance
-                          ? l10n.loadingReassurance
-                          : phrases[_phraseIndex],
-                      key: ValueKey('${_showingReassurance}_$_phraseIndex'),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: _showingReassurance
-                            ? CompassColors.blueLight
-                            : CompassColors.text,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          FadeTransition(
+                            opacity: _ambientOpacity,
+                            child: Text(
+                              modeLabel(l10n, widget.mode),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.labelLarge
+                                  ?.copyWith(
+                                    color: CompassColors.gold,
+                                    letterSpacing: trackingFor(context, 1.8),
+                                  ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          FadeTransition(
+                            opacity: _ambientOpacity,
+                            child: Semantics(
+                              label: l10n.readingAreaSemantics(category),
+                              child: Text(
+                                key: const Key('loading_category_label'),
+                                l10n.readingForCategory(category),
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.labelSmall
+                                    ?.copyWith(
+                                      color: CompassColors.blueLight,
+                                      letterSpacing: trackingFor(context, 1),
+                                    ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          FadeTransition(
+                            opacity: _ambientOpacity,
+                            child: Text(
+                              key: const Key('loading_period_label'),
+                              periodLabel(l10n, widget.period),
+                              textAlign: TextAlign.center,
+                              style: Theme.of(context).textTheme.labelSmall
+                                  ?.copyWith(
+                                    color: CompassColors.muted,
+                                    letterSpacing: trackingFor(context, 1.1),
+                                  ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: List.generate(
-                    _phraseCount,
-                    (index) => AnimatedContainer(
-                      duration: const Duration(milliseconds: 180),
-                      width: index == _phraseIndex ? 20 : 5,
-                      height: 5,
-                      margin: const EdgeInsets.symmetric(horizontal: 3),
-                      decoration: BoxDecoration(
-                        color: index <= _phraseIndex
-                            ? CompassColors.blueLight
-                            : CompassColors.line,
-                        borderRadius: BorderRadius.circular(9),
+                      Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: shortLandscape ? 8 : 16),
+                          AnimatedBuilder(
+                            animation: _apertureController,
+                            builder: (context, _) => OrbitVisual(
+                              size: orbitSize,
+                              sign: widget.profile.zodiacSign,
+                              labels: loadingOrbitLabels(l10n),
+                              ringScale: _ringScale.value,
+                              ringOpacity: _ringOpacity.value,
+                              avatarScale: _avatarScale.value,
+                              avatarOpacity: _avatarOpacity.value,
+                            ),
+                          ),
+                          SizedBox(
+                            height: shortLandscape ? 10 : (compact ? 22 : 38),
+                          ),
+                          FadeTransition(
+                            opacity: _ambientOpacity,
+                            child: ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minHeight: phraseMinHeight,
+                              ),
+                              child: AnimatedSwitcher(
+                                duration: const Duration(milliseconds: 150),
+                                child: Text(
+                                  _showingReassurance
+                                      ? l10n.loadingReassurance
+                                      : phrases[_phraseIndex],
+                                  key: ValueKey(
+                                    '${_showingReassurance}_$_phraseIndex',
+                                  ),
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context).textTheme.bodyLarge
+                                      ?.copyWith(
+                                        color: _showingReassurance
+                                            ? CompassColors.blueLight
+                                            : CompassColors.text,
+                                      ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: shortLandscape ? 8 : 18),
+                          FadeTransition(
+                            opacity: _ambientOpacity,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                _phraseCount,
+                                (index) => AnimatedContainer(
+                                  duration: const Duration(milliseconds: 180),
+                                  width: index == _phraseIndex ? 20 : 5,
+                                  height: 5,
+                                  margin: const EdgeInsets.symmetric(
+                                    horizontal: 3,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: index <= _phraseIndex
+                                        ? CompassColors.blueLight
+                                        : CompassColors.line,
+                                    borderRadius: BorderRadius.circular(9),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: shortLandscape ? 8 : 16),
+                        ],
                       ),
-                    ),
+                      FadeTransition(
+                        opacity: _ambientOpacity,
+                        child: Text(
+                          l10n.loadingLocalMoment,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.labelSmall
+                              ?.copyWith(
+                                color: CompassColors.muted,
+                                letterSpacing: trackingFor(context, 1.3),
+                              ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              const Spacer(),
-              FadeTransition(
-                opacity: _ambientOpacity,
-                child: Text(
-                  l10n.loadingLocalMoment,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: CompassColors.muted,
-                    letterSpacing: trackingFor(context, 1.3),
-                  ),
-                ),
-              ),
-            ],
-          ),
+            );
+          },
         ),
       ),
     );
@@ -569,6 +614,7 @@ class _ReadingErrorView extends StatelessWidget {
     required this.failure,
     required this.period,
     required this.onRetry,
+    this.adsEnabled = true,
   });
 
   final ReadingApiException failure;
@@ -577,6 +623,7 @@ class _ReadingErrorView extends StatelessWidget {
   /// period it refused rather than saying something went wrong.
   final TimePeriod period;
   final VoidCallback onRetry;
+  final bool adsEnabled;
 
   bool get _quotaFailure =>
       failure.safeCode == 'reading_quota_exhausted' ||
@@ -600,8 +647,8 @@ class _ReadingErrorView extends StatelessWidget {
     };
   }
 
-  String _detail(AppLocalizations l10n) {
-    if (_quotaFailure) return l10n.watchAdPrompt;
+  String? _detail(AppLocalizations l10n) {
+    if (_quotaFailure) return adsEnabled ? l10n.watchAdPrompt : null;
     return switch (failure.kind) {
       ReadingApiFailureKind.timeout ||
       ReadingApiFailureKind.network => l10n.errorNetworkDetail,
@@ -632,6 +679,7 @@ class _ReadingErrorView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
+    final detail = _detail(l10n);
     return CelestialScaffold(
       child: SingleChildScrollView(
         key: const Key('reading_error'),
@@ -653,13 +701,16 @@ class _ReadingErrorView extends StatelessWidget {
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.headlineLarge,
             ),
-            const SizedBox(height: 12),
-            Text(
-              _detail(l10n),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 30),
+            if (detail != null) ...[
+              const SizedBox(height: 12),
+              Text(
+                detail,
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+              const SizedBox(height: 30),
+            ] else
+              const SizedBox(height: 26),
             if (_canRetry) ...[
               FilledButton.icon(
                 key: const Key('retry_reading'),

@@ -354,158 +354,232 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                 // Starry backdrop painter
                 const CustomPaint(painter: _CosmicBackdropPainter()),
 
-                // Sacred Astrolabe Disk & 6 Hexagonal Pillars
-                Center(
-                  child: SizedBox(
-                    width: 320,
-                    height: 380,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        // Dotted / Dashed Celestial Orbit Guide Ring
-                        Transform.rotate(
-                          angle: t * math.pi * 0.4,
-                          child: Container(
-                            width: 250,
-                            height: 250,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              border: Border.all(
-                                color: CompassColors.gold.withValues(alpha: 0.15),
-                                width: 1.2,
+                SafeArea(
+                  child: LayoutBuilder(
+                    builder: (context, constraints) {
+                      final shortHeight = constraints.maxHeight < 460;
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(
+                          16,
+                          shortHeight ? 10 : 20,
+                          16,
+                          shortHeight ? 14 : 32,
+                        ),
+                        child: Column(
+                          children: [
+                            // Sacred Astrolabe Disk & 6 Hexagonal Pillars
+                            Expanded(
+                              child: LayoutBuilder(
+                                builder: (context, astrolabeBox) {
+                                  final fitScale = math
+                                      .min(
+                                        astrolabeBox.maxWidth / 340.0,
+                                        astrolabeBox.maxHeight / 380.0,
+                                      )
+                                      .clamp(0.45, 1.15);
+                                  return Center(
+                                    child: SizedBox(
+                                      key: const Key(
+                                        'compass_awakening_astrolabe',
+                                      ),
+                                      width: 340.0 * fitScale,
+                                      height: 380.0 * fitScale,
+                                      child: FittedBox(
+                                        fit: BoxFit.contain,
+                                        child: SizedBox(
+                                          width: 340,
+                                          height: 380,
+                                          child: Stack(
+                                            alignment: Alignment.center,
+                                            children: [
+                                              // Dotted / Dashed Celestial Orbit Guide Ring
+                                              Transform.rotate(
+                                                angle: t * math.pi * 0.4,
+                                                child: Container(
+                                                  width: 244,
+                                                  height: 244,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: CompassColors.gold
+                                                          .withValues(
+                                                            alpha: 0.15,
+                                                          ),
+                                                      width: 1.2,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+
+                                              // Outward Shockwave when central compass ignites
+                                              if (isCentralAwakened)
+                                                _AwakeningShockwave(
+                                                  progress: ((t - 0.82) / 0.18)
+                                                      .clamp(0.0, 1.0),
+                                                ),
+
+                                              // Central Compass Anchor (Dormant -> Awakened)
+                                              _CentralCompassAnchor(
+                                                isAwakened: isCentralAwakened,
+                                              ),
+
+                                              // 6 Hexagonal Satellite Nodes (Radius ~120px)
+                                              // 1. Top (North - 0°): Cung Hoàng Đạo
+                                              _SatelliteNode(
+                                                angle: -math.pi / 2, // 12 o'clock
+                                                radius: 120,
+                                                category:
+                                                    l10n.compassPillarZodiac,
+                                                value:
+                                                    '${pillars.zodiacName} ${pillars.zodiacSign.glyph}',
+                                                glyph: pillars.zodiacSign.glyph,
+                                                isActive: n1,
+                                              ),
+
+                                              // 2. Top-Right (60°): Sao Bảo Hộ
+                                              _SatelliteNode(
+                                                angle: -math.pi / 6, // 2 o'clock
+                                                radius: 120,
+                                                category:
+                                                    l10n.compassPillarPlanet,
+                                                value:
+                                                    '${pillars.planetName} ${pillars.planetGlyph}',
+                                                glyph: pillars.planetGlyph,
+                                                isActive: n2,
+                                              ),
+
+                                              // 3. Bottom-Right (120°): Chòm Sao Vệ Đà
+                                              _SatelliteNode(
+                                                angle: math.pi / 6, // 4 o'clock
+                                                radius: 120,
+                                                category:
+                                                    l10n.compassPillarVedic,
+                                                value: pillars.vedicNakshatra,
+                                                glyph: '✦',
+                                                isActive: n3,
+                                              ),
+
+                                              // 4. Bottom (South - 180°): Số Chủ Đạo
+                                              _SatelliteNode(
+                                                angle: math.pi / 2, // 6 o'clock
+                                                radius: 120,
+                                                category:
+                                                    l10n.compassPillarLifePath,
+                                                value:
+                                                    '${l10n.compassPillarLifePath} ${pillars.lifePathNumber}',
+                                                glyph:
+                                                    '${pillars.lifePathNumber}',
+                                                isActive: n4,
+                                              ),
+
+                                              // 5. Bottom-Left (240°): Bản Mệnh Ngũ Hành
+                                              _SatelliteNode(
+                                                angle:
+                                                    5 *
+                                                    math.pi /
+                                                    6, // 8 o'clock
+                                                radius: 120,
+                                                category:
+                                                    l10n.compassPillarElement,
+                                                value:
+                                                    '${pillars.elementName} ${pillars.elementIcon}',
+                                                glyph: pillars.elementIcon,
+                                                isActive: n5,
+                                              ),
+
+                                              // 6. Top-Left (300°): Tử Vi
+                                              _SatelliteNode(
+                                                angle:
+                                                    -5 *
+                                                    math.pi /
+                                                    6, // 10 o'clock
+                                                radius: 120,
+                                                category: l10n.orbitZiWei,
+                                                value:
+                                                    '${pillars.animalName} ${pillars.animalIcon}',
+                                                glyph: pillars.animalIcon,
+                                                isActive: n6,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
                             ),
-                          ),
-                        ),
+                            SizedBox(height: shortHeight ? 8 : 16),
 
-                        // Outward Shockwave when central compass ignites
-                        if (isCentralAwakened)
-                          _AwakeningShockwave(
-                            progress: ((t - 0.82) / 0.18).clamp(0.0, 1.0),
-                          ),
-
-                        // Central Compass Anchor (Dormant -> Awakened)
-                        _CentralCompassAnchor(isAwakened: isCentralAwakened),
-
-                        // 6 Hexagonal Satellite Nodes (Radius ~128px)
-                        // 1. Top (North - 0°): Cung Hoàng Đạo
-                        _SatelliteNode(
-                          angle: -math.pi / 2, // 12 o'clock
-                          radius: 128,
-                          category: l10n.compassPillarZodiac,
-                          value: '${pillars.zodiacName} ${pillars.zodiacSign.glyph}',
-                          glyph: pillars.zodiacSign.glyph,
-                          isActive: n1,
-                        ),
-
-                        // 2. Top-Right (60°): Sao Bảo Hộ
-                        _SatelliteNode(
-                          angle: -math.pi / 6, // 2 o'clock
-                          radius: 128,
-                          category: l10n.compassPillarPlanet,
-                          value: '${pillars.planetName} ${pillars.planetGlyph}',
-                          glyph: pillars.planetGlyph,
-                          isActive: n2,
-                        ),
-
-                        // 3. Bottom-Right (120°): Chòm Sao Vệ Đà
-                        _SatelliteNode(
-                          angle: math.pi / 6, // 4 o'clock
-                          radius: 128,
-                          category: l10n.compassPillarVedic,
-                          value: pillars.vedicNakshatra,
-                          glyph: '✦',
-                          isActive: n3,
-                        ),
-
-                        // 4. Bottom (South - 180°): Số Chủ Đạo
-                        _SatelliteNode(
-                          angle: math.pi / 2, // 6 o'clock
-                          radius: 128,
-                          category: l10n.compassPillarLifePath,
-                          value: '${l10n.compassPillarLifePath} ${pillars.lifePathNumber}',
-                          glyph: '${pillars.lifePathNumber}',
-                          isActive: n4,
-                        ),
-
-                        // 5. Bottom-Left (240°): Bản Mệnh Ngũ Hành
-                        _SatelliteNode(
-                          angle: 5 * math.pi / 6, // 8 o'clock
-                          radius: 128,
-                          category: l10n.compassPillarElement,
-                          value: '${pillars.elementName} ${pillars.elementIcon}',
-                          glyph: pillars.elementIcon,
-                          isActive: n5,
-                        ),
-
-                        // 6. Top-Left (300°): Tử Vi
-                        _SatelliteNode(
-                          angle: -5 * math.pi / 6, // 10 o'clock
-                          radius: 128,
-                          category: l10n.orbitZiWei,
-                          value: '${pillars.animalName} ${pillars.animalIcon}',
-                          glyph: pillars.animalIcon,
-                          isActive: n6,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-
-                // Bottom Status Section
-                Positioned(
-                  left: 24,
-                  right: 24,
-                  bottom: 48,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        isCentralAwakened
-                            ? l10n.compassAwakeningReady.toUpperCase()
-                            : l10n.compassAwakeningConnecting.toUpperCase(),
-                        style: TextStyle(
-                          color: CompassColors.gold.withValues(alpha: 0.9),
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w700,
-                          letterSpacing: 2.0,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 6),
-                      AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 300),
-                        child: Text(
-                          headline,
-                          key: ValueKey<String>(headline),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 14.5,
-                            fontWeight: FontWeight.w600,
-                            letterSpacing: 0.3,
-                          ),
-                          textAlign: TextAlign.center,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Gold Progress Track
-                      SizedBox(
-                        width: 160,
-                        height: 3,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(2),
-                          child: LinearProgressIndicator(
-                            value: t,
-                            backgroundColor: Colors.white.withValues(alpha: 0.08),
-                            valueColor: const AlwaysStoppedAnimation<Color>(
-                              CompassColors.gold,
+                            // Bottom Status Section
+                            Padding(
+                              key: const Key('compass_awakening_status'),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8,
+                              ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    isCentralAwakened
+                                        ? l10n.compassAwakeningReady
+                                            .toUpperCase()
+                                        : l10n.compassAwakeningConnecting
+                                            .toUpperCase(),
+                                    style: TextStyle(
+                                      color: CompassColors.gold.withValues(
+                                        alpha: 0.9,
+                                      ),
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w700,
+                                      letterSpacing: 2.0,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                  const SizedBox(height: 6),
+                                  AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 300),
+                                    child: Text(
+                                      headline,
+                                      key: ValueKey<String>(headline),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14.5,
+                                        fontWeight: FontWeight.w600,
+                                        letterSpacing: 0.3,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                  SizedBox(height: shortHeight ? 10 : 16),
+                                  // Gold Progress Track
+                                  SizedBox(
+                                    width: 160,
+                                    height: 3,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(2),
+                                      child: LinearProgressIndicator(
+                                        value: t,
+                                        backgroundColor: Colors.white
+                                            .withValues(alpha: 0.08),
+                                        valueColor:
+                                            const AlwaysStoppedAnimation<Color>(
+                                              CompassColors.gold,
+                                            ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                      ),
-                    ],
+                      );
+                    },
                   ),
                 ),
               ],
@@ -792,69 +866,76 @@ class _SatelliteNode extends StatelessWidget {
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
         opacity: isActive ? 1.0 : 0.25,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 500),
-              curve: Curves.easeOutCubic,
-              width: 36,
-              height: 36,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isActive ? const Color(0xFF252026) : const Color(0xFF111726),
-                border: Border.all(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 112),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 500),
+                curve: Curves.easeOutCubic,
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
                   color: isActive
-                      ? CompassColors.gold
-                      : Colors.white.withValues(alpha: 0.15),
-                  width: isActive ? 1.5 : 1.0,
+                      ? const Color(0xFF252026)
+                      : const Color(0xFF111726),
+                  border: Border.all(
+                    color: isActive
+                        ? CompassColors.gold
+                        : Colors.white.withValues(alpha: 0.15),
+                    width: isActive ? 1.5 : 1.0,
+                  ),
+                  boxShadow: isActive
+                      ? [
+                          BoxShadow(
+                            color: CompassColors.gold.withValues(alpha: 0.45),
+                            blurRadius: 14,
+                            spreadRadius: 2,
+                          ),
+                        ]
+                      : null,
                 ),
-                boxShadow: isActive
-                    ? [
-                        BoxShadow(
-                          color: CompassColors.gold.withValues(alpha: 0.45),
-                          blurRadius: 14,
-                          spreadRadius: 2,
-                        ),
-                      ]
-                    : null,
-              ),
-              child: Center(
-                child: Text(
-                  glyph,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: isActive ? Colors.white : Colors.white70,
+                child: Center(
+                  child: Text(
+                    glyph,
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      color: isActive ? Colors.white : Colors.white70,
+                    ),
                   ),
                 ),
               ),
-            ),
-            const SizedBox(height: 3),
-            Text(
-              category,
-              style: TextStyle(
-                color: isActive
-                    ? CompassColors.gold.withValues(alpha: 0.9)
-                    : Colors.white30,
-                fontSize: 8.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.8,
+              const SizedBox(height: 3),
+              Text(
+                category,
+                style: TextStyle(
+                  color: isActive
+                      ? CompassColors.gold.withValues(alpha: 0.9)
+                      : Colors.white30,
+                  fontSize: 8.5,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            Text(
-              value,
-              style: TextStyle(
-                color: isActive ? Colors.white : Colors.white54,
-                fontSize: 10.5,
-                fontWeight: FontWeight.w600,
+              Text(
+                value,
+                style: TextStyle(
+                  color: isActive ? Colors.white : Colors.white54,
+                  fontSize: 10.5,
+                  fontWeight: FontWeight.w600,
+                ),
+                textAlign: TextAlign.center,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
