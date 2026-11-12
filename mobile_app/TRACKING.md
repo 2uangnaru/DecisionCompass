@@ -140,7 +140,7 @@ The automatic birth-country language default is not a manual language event.
 1. In Firebase Console create/select the owner's project and enable Google
    Analytics. Choose the intended reporting timezone and retention settings.
 2. Register the Android app with its **actual build applicationId**, currently
-   `com.decisioncompass.decision_compass`. Do not change the applicationId as
+   `com.astracue.cosmicdecisions`. Do not change the applicationId as
    part of analytics setup; re-register if the owner later changes it.
 3. Download the genuine `google-services.json` into
    `mobile_app/android/app/google-services.json`. It is locally ignored by Git.
@@ -161,7 +161,7 @@ The automatic birth-country language default is not a manual language event.
 7. Enable DebugView:
 
    ```powershell
-   adb shell setprop debug.firebase.analytics.app com.decisioncompass.decision_compass
+   adb shell setprop debug.firebase.analytics.app com.astracue.cosmicdecisions
    ```
 
    Inspect Firebase Console > Analytics > DebugView for exact event names and

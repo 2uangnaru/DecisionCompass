@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/billing/plus_billing.dart';
@@ -304,6 +306,21 @@ void main() {
       await tester.tap(card);
       await tester.pump();
       expect(find.byKey(const Key('astracue_plus_sheet')), findsNothing);
+    },
+  );
+
+  test(
+    'Android Gradle config defaults applicationId to com.astracue.cosmicdecisions and wires release signing',
+    () {
+      final gradleFile = File('android/app/build.gradle.kts');
+      expect(gradleFile.existsSync(), isTrue);
+      final gradleText = gradleFile.readAsStringSync();
+      expect(gradleText, contains('"com.astracue.cosmicdecisions"'));
+      expect(
+        gradleText,
+        contains('decodedDartDefines["ANDROID_APPLICATION_ID"]'),
+      );
+      expect(gradleText, contains('rootProject.file("key.properties")'));
     },
   );
 }

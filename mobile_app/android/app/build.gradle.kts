@@ -33,7 +33,7 @@ val admobAppId = decodedDartDefines["ADMOB_ANDROID_APP_ID"]
     ?: testAdmobAppId
 val customApplicationId = decodedDartDefines["ANDROID_APPLICATION_ID"]
     ?.takeIf { it.isNotBlank() }
-    ?: "com.decisioncompass.decision_compass"
+    ?: "com.astracue.cosmicdecisions"
 
 val keystoreProperties = Properties()
 val keystorePropertiesFile = rootProject.file("key.properties")
@@ -68,8 +68,8 @@ android {
         manifestPlaceholders["analyticsDeactivated"] =
             (!analyticsRequested || !file("google-services.json").exists()).toString()
         manifestPlaceholders["admobAppId"] = admobAppId
-        // Override with --dart-define=ANDROID_APPLICATION_ID=com.publisher.astracue
-        // once the publisher supplies their Play Console package identifier.
+        // Default Play Store package ID for "AstraCue: Cosmic Decisions";
+        // override with --dart-define=ANDROID_APPLICATION_ID=... if needed.
         applicationId = customApplicationId
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.

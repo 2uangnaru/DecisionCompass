@@ -22,8 +22,14 @@ mobile_app/android/app/profile/
 mobile_app/android/app/release/
 mobile_app/.metadata
 mobile_app/android/app/google-services.json
+mobile_app/android/key.properties
 mobile_app/android/.kotlin/
 mobile_app/android/build/
+
+# Signing secrets — never commit keystores or key properties
+*.jks
+*.keystore
+**/key.properties
 
 # Misc
 *.log
