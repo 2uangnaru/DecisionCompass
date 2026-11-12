@@ -60,6 +60,8 @@ class ReadingTestRig {
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const TestRewardAdService(),
+    this.adsEnabled = true,
+    this.privacyPolicyUrl = '',
     this.detectDeviceLocale = false,
     this.guidanceLocks,
     this.plus,
@@ -127,6 +129,8 @@ class ReadingTestRig {
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
   final AdService adService;
+  final bool adsEnabled;
+  final String privacyPolicyUrl;
   final GuidanceLockStore? guidanceLocks;
   final PlusEntitlementController? plus;
 
@@ -157,6 +161,8 @@ class ReadingTestRig {
     analytics: analytics,
     quotaManager: quotaManager,
     adService: adService,
+    adsEnabled: adsEnabled,
+    privacyPolicyUrl: privacyPolicyUrl,
     guidanceLocks: guidanceLocks,
     plus: plus,
     nowUtc: () {

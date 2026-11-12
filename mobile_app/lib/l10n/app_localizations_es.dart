@@ -20,6 +20,9 @@ class AppLocalizationsEs extends AppLocalizations {
   String get adPrivacyOptions => 'Opciones de privacidad de anuncios';
 
   @override
+  String get privacyPolicy => 'Política de privacidad';
+
+  @override
   String get adRewardNotSaved =>
       'No se pudo guardar tu recompensa, así que no se añadió nada. Inténtalo de nuevo.';
 
@@ -149,7 +152,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'En este prototipo, tus datos de nacimiento se mantienen privados.';
+      'Tus datos de nacimiento se guardan de forma privada en tu dispositivo.';
 
   @override
   String get homeEyebrow => 'UNA BRÚJULA QUE GUÍA TU CAMINO';

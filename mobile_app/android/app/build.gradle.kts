@@ -1,4 +1,6 @@
+import java.io.FileInputStream
 import java.util.Base64
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -10,12 +12,44 @@ plugins {
 if (file("google-services.json").exists()) {
     apply(plugin = "com.google.gms.google-services")
 }
-val analyticsRequested = (project.findProperty("dart-defines") as? String)
+
+val decodedDartDefines: Map<String, String> = (project.findProperty("dart-defines") as? String)
     ?.split(",")
-    ?.any {
-        String(Base64.getDecoder().decode(it), Charsets.UTF_8) ==
-            "FIREBASE_ANALYTICS_ENABLED=true"
-    } ?: false
+    ?.mapNotNull { encoded ->
+        if (encoded.isBlank()) return@mapNotNull null
+        val raw = String(Base64.getDecoder().decode(encoded), Charsets.UTF_8)
+        val idx = raw.indexOf('=')
+        if (idx <= 0) null else raw.substring(0, idx) to raw.substring(idx + 1)
+    }
+    ?.toMap()
+    ?: emptyMap()
+
+val analyticsRequested = decodedDartDefines["FIREBASE_ANALYTICS_ENABLED"] == "true"
+val adsRequested = decodedDartDefines["ADS_ENABLED"] == "true"
+val testAdmobAppId = "ca-app-pub-3940256099942544~3347511713"
+val admobAppId = decodedDartDefines["ADMOB_ANDROID_APP_ID"]
+    ?.takeIf { it.isNotBlank() }
+    ?: testAdmobAppId
+val customApplicationId = decodedDartDefines["ANDROID_APPLICATION_ID"]
+    ?.takeIf { it.isNotBlank() }
+    ?: "com.decisioncompass.decision_compass"
+
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+if (keystorePropertiesFile.exists()) {
+    FileInputStream(keystorePropertiesFile).use { keystoreProperties.load(it) }
+}
+
+if (adsRequested && admobAppId == testAdmobAppId) {
+    val hasReleaseTask = gradle.startParameter.taskNames.any {
+        it.contains("Release", ignoreCase = true)
+    }
+    if (hasReleaseTask) {
+        throw GradleException(
+            "ADS_ENABLED=true in a release build requires --dart-define=ADMOB_ANDROID_APP_ID=<production_app_id>."
+        )
+    }
+}
 
 android {
     namespace = "com.decisioncompass.decision_compass"
@@ -32,8 +66,10 @@ android {
         // including before Dart starts and regardless of prior SDK consent.
         manifestPlaceholders["analyticsDeactivated"] =
             (!analyticsRequested || !file("google-services.json").exists()).toString()
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.decisioncompass.decision_compass"
+        manifestPlaceholders["admobAppId"] = admobAppId
+        // Override with --dart-define=ANDROID_APPLICATION_ID=com.publisher.astracue
+        // once the publisher supplies their Play Console package identifier.
+        applicationId = customApplicationId
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -46,12 +82,31 @@ android {
         versionName = flutter.versionName
     }
 
+    signingConfigs {
+        if (keystorePropertiesFile.exists()) {
+            create("release") {
+                keyAlias = keystoreProperties.getProperty("keyAlias")
+                keyPassword = keystoreProperties.getProperty("keyPassword")
+                storeFile = keystoreProperties.getProperty("storeFile")
+                    ?.trim()
+                    ?.takeIf { it.isNotEmpty() }
+                    ?.let { path -> file(path).takeIf { it.exists() } ?: rootProject.file(path) }
+                storePassword = keystoreProperties.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            // Picks up mobile_app/android/key.properties when present; falls back
+            // to debug keys only when key.properties is absent during dev testing.
+            signingConfig = signingConfigs.findByName("release")
+                ?: signingConfigs.getByName("debug")
         }
+    }
+
+    if (!adsRequested) {
+        sourceSets.getByName("release").manifest.srcFile("src/noAds/AndroidManifest.xml")
     }
 }
 

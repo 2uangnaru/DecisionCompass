@@ -20,6 +20,9 @@ class AppLocalizationsHi extends AppLocalizations {
   String get adPrivacyOptions => 'विज्ञापन गोपनीयता विकल्प';
 
   @override
+  String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
   String get adRewardNotSaved =>
       'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
 
@@ -148,7 +151,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'इस प्रोटोटाइप में आपके जन्म से जुड़े विवरण निजी रहते हैं।';
+      'आपके जन्म से जुड़े विवरण आपके डिवाइस पर निजी रूप से सहेजे जाते हैं।';
 
   @override
   String get homeEyebrow => 'आपका मार्गदर्शन करने वाला दिशासूचक';
@@ -1377,6 +1380,9 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   String get adPrivacyOptions => 'विज्ञापन गोपनीयता विकल्प';
 
   @override
+  String get privacyPolicy => 'गोपनीयता नीति';
+
+  @override
   String get adRewardNotSaved =>
       'आपका इनाम सहेजा नहीं जा सका, इसलिए कुछ नहीं जोड़ा गया। कृपया फिर से कोशिश करें।';
 
@@ -1505,7 +1511,7 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
 
   @override
   String get birthPrivacyPrototype =>
-      'इस प्रोटोटाइप में आपके जन्म से जुड़े विवरण निजी रहते हैं।';
+      'आपके जन्म से जुड़े विवरण आपके डिवाइस पर निजी रूप से सहेजे जाते हैं।';
 
   @override
   String get homeEyebrow => 'आपका मार्गदर्शन करने वाला दिशासूचक';

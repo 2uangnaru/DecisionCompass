@@ -19,6 +19,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get adPrivacyOptions => '광고 개인정보 설정';
 
   @override
+  String get privacyPolicy => '개인정보처리방침';
+
+  @override
   String get adRewardNotSaved => '보상을 저장하지 못해 아무것도 추가되지 않았어요. 다시 시도해 주세요.';
 
   @override
@@ -141,8 +144,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get createCompass => '나의 나침반 만들기';
 
   @override
-  String get birthPrivacyPrototype =>
-      '이 체험 버전에서는 출생 정보가 외부에 공개되지 않고 안전하게 보호됩니다.';
+  String get birthPrivacyPrototype => '출생 정보는 기기 내에 비공개로 안전하게 저장됩니다.';
 
   @override
   String get homeEyebrow => '당신을 이끄는 마음의 나침반';

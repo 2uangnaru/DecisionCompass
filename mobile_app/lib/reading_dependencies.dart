@@ -28,6 +28,8 @@ class ReadingDependencies {
     this.analytics = const NoopAnalyticsService(),
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const NoOpAdService(),
+    this.adsEnabled = true,
+    this.privacyPolicyUrl = '',
     this.guidanceLocks,
     this.plus,
     this.nowUtc = _systemNowUtc,
@@ -55,6 +57,15 @@ class ReadingDependencies {
   final AnalyticsService analytics;
   final ReadingQuotaController quotaManager;
   final AdService adService;
+
+  /// Whether ad-gated unlocks and rewarded prompts are active in this build.
+  /// Production defaults to `false` until `--dart-define=ADS_ENABLED=true` is
+  /// supplied; tests default to `true` to keep exercising ad flows.
+  final bool adsEnabled;
+
+  /// Optional HTTPS Privacy Policy URL supplied via
+  /// `--dart-define=PRIVACY_POLICY_URL=https://...`.
+  final String privacyPolicyUrl;
 
   /// Null (tests, previews) never locks Action Guidance.
   final GuidanceLockStore? guidanceLocks;

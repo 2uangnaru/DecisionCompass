@@ -1,13 +1,15 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- Product analytics does not need advertising identifiers. -->
-    <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove" />
-    <uses-permission android:name="android.permission.ACCESS_ADSERVICES_AD_ID" tools:node="remove" />
     <!-- A reading needs no network: the calculation engine is bundled in the
          app and runs on-device, so readings work in airplane mode. This
          permission is kept only for the network features still to come (ads,
          analytics, store services). Drop it if those are dropped. -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- One-shot current-location fixes never run a foreground service. Strip
+         geolocator's foreground service permissions so Play Console does not
+         require a Foreground Service Location declaration. -->
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" tools:node="remove" />
 
     <application
         android:label="AstraCue"
@@ -21,10 +23,13 @@
         <meta-data android:name="google_analytics_default_allow_ad_storage" android:value="false" />
         <meta-data android:name="google_analytics_default_allow_ad_user_data" android:value="false" />
         <meta-data android:name="google_analytics_default_allow_ad_personalization_signals" android:value="false" />
-        <!-- Sample AdMob App ID for testing. Replace with real App ID in production. -->
+        <!-- Injected from build.gradle.kts; stripped from release builds via src/noAds/AndroidManifest.xml until ADS_ENABLED=true. -->
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-3940256099942544~3347511713"/>
+            android:value="${admobAppId}"/>
+        <service
+            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+            tools:node="remove" />
         <activity
             android:name=".MainActivity"
             android:exported="true"

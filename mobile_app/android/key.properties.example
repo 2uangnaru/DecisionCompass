@@ -1,0 +1,6 @@
+# Copy this file to mobile_app/android/key.properties (gitignored) and replace
+# with the Upload Keystore values provided by the publisher or generated via keytool.
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=upload
+storeFile=../upload-keystore.jks

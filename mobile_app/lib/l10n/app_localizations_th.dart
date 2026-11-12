@@ -20,6 +20,9 @@ class AppLocalizationsTh extends AppLocalizations {
   String get adPrivacyOptions => 'ตัวเลือกความเป็นส่วนตัวของโฆษณา';
 
   @override
+  String get privacyPolicy => 'นโยบายความเป็นส่วนตัว';
+
+  @override
   String get adRewardNotSaved =>
       'บันทึกรางวัลไม่สำเร็จ จึงยังไม่มีการเพิ่มสิทธิ์ โปรดลองอีกครั้ง';
 
@@ -145,7 +148,7 @@ class AppLocalizationsTh extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'ในต้นแบบนี้ ข้อมูลการเกิดของคุณจะยังเป็นส่วนตัว';
+      'ข้อมูลการเกิดของคุณจะถูกเก็บเป็นส่วนตัวบนอุปกรณ์ของคุณ';
 
   @override
   String get homeEyebrow => 'เข็มทิศนำทางเพื่อช่วยคุณ';

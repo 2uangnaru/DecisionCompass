@@ -1,5 +1,7 @@
 package com.decisioncompass.decision_compass
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import com.google.android.gms.auth.blockstore.Blockstore
@@ -28,6 +30,25 @@ class MainActivity : FlutterActivity() {
                 } else {
                     result.notImplemented()
                 }
+            }
+        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "astracue/external_links")
+            .setMethodCallHandler { call, result ->
+                if (call.method != "openHttpsUrl") {
+                    result.notImplemented()
+                    return@setMethodCallHandler
+                }
+                val rawUrl = call.arguments as? String
+                val uri = rawUrl?.let { runCatching { Uri.parse(it) }.getOrNull() }
+                if (uri == null || uri.scheme?.lowercase() != "https" || uri.host.isNullOrBlank()) {
+                    result.success(false)
+                    return@setMethodCallHandler
+                }
+                val opened = runCatching {
+                    startActivity(
+                        Intent(Intent.ACTION_VIEW, uri).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    )
+                }.isSuccess
+                result.success(opened)
             }
         // Failures answer null: the Dart side then falls back to app storage.
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "astracue/block_store")
@@ -74,4 +95,3 @@ class MainActivity : FlutterActivity() {
         const val GUIDANCE_COUNT_KEY = "astracue.guidance_reading_count"
     }
 }
-

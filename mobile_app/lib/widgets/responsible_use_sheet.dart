@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../l10n/app_localizations.dart';
 import '../analytics/analytics_service.dart';
@@ -15,6 +16,7 @@ Future<bool> showResponsibleUseSheet(
   bool isFirstTimeAcknowledgement = false,
   AnalyticsService analytics = const NoopAnalyticsService(),
   AdService ads = const NoOpAdService(),
+  String privacyPolicyUrl = '',
 }) async {
   final result = await showModalBottomSheet<bool>(
     context: context,
@@ -24,6 +26,7 @@ Future<bool> showResponsibleUseSheet(
       isFirstTimeAcknowledgement: isFirstTimeAcknowledgement,
       analytics: analytics,
       ads: ads,
+      privacyPolicyUrl: privacyPolicyUrl,
     ),
   );
   return result ?? false;
@@ -48,11 +51,13 @@ class ResponsibleUseSheet extends StatefulWidget {
     this.isFirstTimeAcknowledgement = false,
     this.analytics = const NoopAnalyticsService(),
     this.ads = const NoOpAdService(),
+    this.privacyPolicyUrl = '',
   });
 
   final bool isFirstTimeAcknowledgement;
   final AnalyticsService analytics;
   final AdService ads;
+  final String privacyPolicyUrl;
 
   @override
   State<ResponsibleUseSheet> createState() => _ResponsibleUseSheetState();
@@ -78,6 +83,26 @@ class _ResponsibleUseSheetState extends State<ResponsibleUseSheet> {
   /// the end — a fraction of a logical pixel would otherwise leave the button
   /// locked forever with nothing left to scroll.
   static const double _endSlack = 2;
+  static const MethodChannel _externalLinksChannel = MethodChannel(
+    'astracue/external_links',
+  );
+
+  bool get _hasValidPrivacyPolicyUrl {
+    final uri = Uri.tryParse(widget.privacyPolicyUrl.trim());
+    return uri != null &&
+        uri.scheme.toLowerCase() == 'https' &&
+        uri.host.isNotEmpty;
+  }
+
+  Future<void> _openPrivacyPolicy() async {
+    final url = widget.privacyPolicyUrl.trim();
+    if (!_hasValidPrivacyPolicyUrl) return;
+    try {
+      await _externalLinksChannel.invokeMethod<bool>('openHttpsUrl', url);
+    } on MissingPluginException {
+      // No native handler registered (e.g. non-Android harness / widget tests).
+    }
+  }
 
   @override
   void dispose() {
@@ -364,6 +389,14 @@ class _ResponsibleUseSheetState extends State<ResponsibleUseSheet> {
                             onPressed: () => widget.ads.showPrivacyOptions(),
                             icon: const Icon(Icons.privacy_tip_outlined),
                             label: Text(l10n.adPrivacyOptions),
+                          ),
+                        if (!widget.isFirstTimeAcknowledgement &&
+                            _hasValidPrivacyPolicyUrl)
+                          TextButton.icon(
+                            key: const Key('privacy_policy_link'),
+                            onPressed: _openPrivacyPolicy,
+                            icon: const Icon(Icons.policy_outlined),
+                            label: Text(l10n.privacyPolicy),
                           ),
                       ],
                     ),

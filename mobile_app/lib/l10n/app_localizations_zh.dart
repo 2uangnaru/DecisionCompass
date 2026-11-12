@@ -19,6 +19,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get adPrivacyOptions => '广告隐私选项';
 
   @override
+  String get privacyPolicy => '隐私政策';
+
+  @override
   String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
 
   @override
@@ -137,7 +140,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get createCompass => '创建我的指引罗盘';
 
   @override
-  String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
+  String get birthPrivacyPrototype => '你的出生信息仅私密保存在本地设备中。';
 
   @override
   String get homeEyebrow => '指引方向的专属罗盘';
@@ -1220,6 +1223,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get adPrivacyOptions => '广告隐私选项';
 
   @override
+  String get privacyPolicy => '隐私政策';
+
+  @override
   String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
 
   @override
@@ -1338,7 +1344,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get createCompass => '创建我的指引罗盘';
 
   @override
-  String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
+  String get birthPrivacyPrototype => '你的出生信息仅私密保存在本地设备中。';
 
   @override
   String get homeEyebrow => '指引方向的专属罗盘';
@@ -2421,6 +2427,9 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get adPrivacyOptions => '广告隐私选项';
 
   @override
+  String get privacyPolicy => '隐私政策';
+
+  @override
   String get adRewardNotSaved => '奖励未能保存，因此没有增加任何次数。请重试。';
 
   @override
@@ -2539,7 +2548,7 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
   String get createCompass => '创建我的指引罗盘';
 
   @override
-  String get birthPrivacyPrototype => '在此原型版本中，你的出生信息将保持私密。';
+  String get birthPrivacyPrototype => '你的出生信息仅私密保存在本地设备中。';
 
   @override
   String get homeEyebrow => '指引方向的专属罗盘';

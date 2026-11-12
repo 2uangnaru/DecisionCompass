@@ -20,6 +20,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get adPrivacyOptions => 'Lựa chọn quyền riêng tư quảng cáo';
 
   @override
+  String get privacyPolicy => 'Chính sách quyền riêng tư';
+
+  @override
   String get adRewardNotSaved =>
       'Không lưu được phần thưởng nên chưa có gì được cộng. Bạn thử lại nhé.';
 
@@ -148,7 +151,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'Trong bản thử nghiệm này, thông tin ngày giờ sinh của bạn được giữ riêng tư.';
+      'Thông tin ngày giờ sinh của bạn được lưu giữ riêng tư trên thiết bị.';
 
   @override
   String get homeEyebrow => 'KIM CHỈ NAM DẪN LỐI BẠN';

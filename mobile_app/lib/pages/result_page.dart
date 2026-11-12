@@ -229,7 +229,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   /// only looks its state up. Storage failure leaves guidance readable.
   Future<void> _resolveGuidanceLock() async {
     final locks = widget.dependencies.guidanceLocks;
-    if (locks == null || !_showsGuidance) {
+    if (!widget.dependencies.adsEnabled || locks == null || !_showsGuidance) {
       _guidanceLocked = false;
       return;
     }
@@ -616,6 +616,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   context,
                   analytics: widget.dependencies.analytics,
                   ads: widget.dependencies.adService,
+                  privacyPolicyUrl: widget.dependencies.privacyPolicyUrl,
                 ),
                 borderRadius: BorderRadius.circular(10),
                 child: Padding(

@@ -11,8 +11,12 @@ import 'ad_runtime.dart';
 import 'banner_ad.dart';
 export 'ad_runtime.dart';
 
-/// Google's TEST units. No production ad IDs are configured by this change.
+/// Google's TEST units and compile-time production configuration.
 class AdConstants {
+  /// Ads stay completely off in production until `--dart-define=ADS_ENABLED=true`
+  /// and production ad unit IDs are supplied.
+  static const adsEnabled = bool.fromEnvironment('ADS_ENABLED');
+
   static const testAndroidInterstitialUnitId =
       'ca-app-pub-3940256099942544/1033173712';
   static const testIosInterstitialUnitId =
@@ -23,7 +27,8 @@ class AdConstants {
   static const testAndroidBannerUnitId =
       'ca-app-pub-3940256099942544/9214589741';
   static const testIosBannerUnitId = 'ca-app-pub-3940256099942544/2435281174';
-  // Empty until the owner supplies production units. No live ads by default.
+  // Empty until the owner supplies production units. Release builds never fall
+  // back to Google test IDs.
   static const realAndroidBannerUnitId = String.fromEnvironment(
     'ADMOB_ANDROID_BANNER_UNIT_ID',
   );
@@ -33,29 +38,47 @@ class AdConstants {
   static String get bannerAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
-      ? (realAndroidBannerUnitId.isEmpty
-            ? testAndroidBannerUnitId
-            : realAndroidBannerUnitId)
+      ? (realAndroidBannerUnitId.isNotEmpty
+            ? realAndroidBannerUnitId
+            : (kReleaseMode ? '' : testAndroidBannerUnitId))
       : Platform.isIOS
-      ? (realIosBannerUnitId.isEmpty
-            ? testIosBannerUnitId
-            : realIosBannerUnitId)
+      ? (realIosBannerUnitId.isNotEmpty
+            ? realIosBannerUnitId
+            : (kReleaseMode ? '' : testIosBannerUnitId))
       : '';
-  static const String? realAndroidInterstitialUnitId = null;
-  static const String? realIosInterstitialUnitId = null;
+  static const realAndroidInterstitialUnitId = String.fromEnvironment(
+    'ADMOB_ANDROID_INTERSTITIAL_UNIT_ID',
+  );
+  static const realIosInterstitialUnitId = String.fromEnvironment(
+    'ADMOB_IOS_INTERSTITIAL_UNIT_ID',
+  );
   static String get interstitialAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
-      ? realAndroidInterstitialUnitId ?? testAndroidInterstitialUnitId
+      ? (realAndroidInterstitialUnitId.isNotEmpty
+            ? realAndroidInterstitialUnitId
+            : (kReleaseMode ? '' : testAndroidInterstitialUnitId))
       : Platform.isIOS
-      ? realIosInterstitialUnitId ?? testIosInterstitialUnitId
+      ? (realIosInterstitialUnitId.isNotEmpty
+            ? realIosInterstitialUnitId
+            : (kReleaseMode ? '' : testIosInterstitialUnitId))
       : '';
+  static const realAndroidRewardedUnitId = String.fromEnvironment(
+    'ADMOB_ANDROID_REWARDED_UNIT_ID',
+  );
+  static const realIosRewardedUnitId = String.fromEnvironment(
+    'ADMOB_IOS_REWARDED_UNIT_ID',
+  );
   static String get rewardedAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
-      ? testAndroidRewardedUnitId
+      ? (realAndroidRewardedUnitId.isNotEmpty
+            ? realAndroidRewardedUnitId
+            : (kReleaseMode ? '' : testAndroidRewardedUnitId))
       : Platform.isIOS
-      ? testIosRewardedUnitId
+      ? (realIosRewardedUnitId.isNotEmpty
+            ? realIosRewardedUnitId
+            : (kReleaseMode ? '' : testIosRewardedUnitId))
       : '';
 }
 

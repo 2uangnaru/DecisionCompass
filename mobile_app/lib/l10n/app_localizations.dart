@@ -135,6 +135,12 @@ abstract class AppLocalizations {
   /// **'Ad privacy choices'**
   String get adPrivacyOptions;
 
+  /// No description provided for @privacyPolicy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
   /// No description provided for @adRewardNotSaved.
   ///
   /// In en, this message translates to:
@@ -372,7 +378,7 @@ abstract class AppLocalizations {
   /// No description provided for @birthPrivacyPrototype.
   ///
   /// In en, this message translates to:
-  /// **'Your birth details remain private in this prototype.'**
+  /// **'Your birth details are stored privately on your device.'**
   String get birthPrivacyPrototype;
 
   /// No description provided for @homeEyebrow.

@@ -244,8 +244,11 @@ class _RitualPageState extends State<RitualPage>
       _periodTriggers.putIfAbsent(p, () => ValueNotifier<int>(0));
 
   bool _isPeriodLocked(TimePeriod period) {
-    // Plus unlocks still-available periods; elapsed ones stay muted elsewhere.
-    if (period == TimePeriod.now || widget.dependencies.plusActive) {
+    // Plus and ad-free builds unlock still-available periods; elapsed ones
+    // stay muted elsewhere.
+    if (!widget.dependencies.adsEnabled ||
+        period == TimePeriod.now ||
+        widget.dependencies.plusActive) {
       return false;
     }
     final now = widget.dependencies.nowLocal();
@@ -861,6 +864,7 @@ class _RitualPageState extends State<RitualPage>
                       context,
                       analytics: widget.dependencies.analytics,
                       ads: widget.dependencies.adService,
+                      privacyPolicyUrl: widget.dependencies.privacyPolicyUrl,
                     ),
               icon: const Icon(Icons.shield_outlined, size: 20),
             ),
@@ -1139,10 +1143,11 @@ class _RitualPageState extends State<RitualPage>
   }
 
   /// Free readers in cooldown or out of credits, and Plus owners who spent
-  /// all six, may opt in to a rewarded ad for a bonus credit. Plus never
-  /// waits on a cooldown, so it is never offered one for that.
+  /// all six, may opt in to a rewarded ad for a bonus credit when ads are
+  /// enabled. Plus never waits on a cooldown, so it is never offered one for that.
   bool _offersRewardedCredit(ReadingEnergySnapshot snapshot) =>
-      _isQuotaExhausted || (!snapshot.isPlusActive && _isCooldown);
+      widget.dependencies.adsEnabled &&
+      (_isQuotaExhausted || (!snapshot.isPlusActive && _isCooldown));
 
   ReadingEnergySnapshot _currentEnergySnapshot() {
     return ReadingEnergySnapshot.fromQuota(

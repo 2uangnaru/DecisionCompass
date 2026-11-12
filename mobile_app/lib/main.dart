@@ -65,7 +65,11 @@ Future<void> main() async {
   // Optional telemetry must not extend the startup ritual or hold Home back.
   // The consent control is disabled until this background load settles.
   unawaited(analytics.ensureLoaded());
-  final adService = AdMobService(analytics: analytics);
+  const adsEnabled = AdConstants.adsEnabled;
+  const privacyPolicyUrl = String.fromEnvironment('PRIVACY_POLICY_URL');
+  final AdService adService = adsEnabled
+      ? AdMobService(analytics: analytics)
+      : const NoOpAdService();
   final plusConfig = PlusBillingConfig.fromEnvironment();
   // Debug + PLUS_DEMO_BILLING only; a release build always uses the store.
   final plusDemo = plusDemoBillingEnabled();
@@ -129,9 +133,11 @@ Future<void> main() async {
         analytics: analytics,
         quotaManager: quotaManager,
         adService: adService,
-        guidanceLocks: GuidanceLockStore(
-          backup: const BlockStoreCounterBackup(),
-        ),
+        adsEnabled: adsEnabled,
+        privacyPolicyUrl: privacyPolicyUrl,
+        guidanceLocks: adsEnabled
+            ? GuidanceLockStore(backup: const BlockStoreCounterBackup())
+            : null,
         plus: plus,
       ),
     ),

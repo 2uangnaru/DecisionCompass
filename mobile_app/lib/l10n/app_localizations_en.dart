@@ -20,6 +20,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adPrivacyOptions => 'Ad privacy choices';
 
   @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
   String get adRewardNotSaved =>
       'Your reward couldn\'t be saved, so nothing was added. Please try again.';
 
@@ -147,7 +150,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get birthPrivacyPrototype =>
-      'Your birth details remain private in this prototype.';
+      'Your birth details are stored privately on your device.';
 
   @override
   String get homeEyebrow => 'A COMPASS TO GUIDE YOUR PATH';

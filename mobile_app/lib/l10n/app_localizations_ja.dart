@@ -19,6 +19,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get adPrivacyOptions => '広告のプライバシー設定';
 
   @override
+  String get privacyPolicy => 'プライバシーポリシー';
+
+  @override
   String get adRewardNotSaved => '特典を保存できなかったため、追加されていません。もう一度お試しください。';
 
   @override
@@ -139,7 +142,7 @@ class AppLocalizationsJa extends AppLocalizations {
   String get createCompass => '私のコンパスを作る';
 
   @override
-  String get birthPrivacyPrototype => 'この試作版では、出生情報は非公開のまま保たれます。';
+  String get birthPrivacyPrototype => '出生情報は端末内にのみ非公開で安全に保存されます。';
 
   @override
   String get homeEyebrow => 'あなたを導く、心の羅針盤';

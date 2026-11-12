@@ -88,7 +88,9 @@ class _HomePageState extends State<HomePage>
       <engine.ReadingCategory>{};
 
   bool _isModeLocked(DecisionMode mode) {
-    if (mode == DecisionMode.yesNo || widget.dependencies.plusActive) {
+    if (!widget.dependencies.adsEnabled ||
+        mode == DecisionMode.yesNo ||
+        widget.dependencies.plusActive) {
       return false;
     }
     final now = widget.dependencies.nowLocal();
@@ -98,7 +100,8 @@ class _HomePageState extends State<HomePage>
   }
 
   bool _isCategoryLocked(engine.ReadingCategory category) {
-    if (category == engine.ReadingCategory.general ||
+    if (!widget.dependencies.adsEnabled ||
+        category == engine.ReadingCategory.general ||
         widget.dependencies.plusActive) {
       return false;
     }
@@ -691,6 +694,7 @@ class _HomePageState extends State<HomePage>
             context,
             analytics: widget.dependencies.analytics,
             ads: widget.dependencies.adService,
+            privacyPolicyUrl: widget.dependencies.privacyPolicyUrl,
           ),
           onOpenHistory: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
