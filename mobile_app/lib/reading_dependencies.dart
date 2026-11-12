@@ -9,6 +9,7 @@ import 'data/history_repository.dart';
 import 'data/locale_controller.dart';
 import 'data/profile_repository.dart';
 import 'data/reading_quota_controller.dart';
+import 'data/ritual_tut_store.dart';
 import 'data/reading_repository.dart';
 import 'services/ad_service.dart';
 
@@ -33,6 +34,7 @@ class ReadingDependencies {
     this.privacyPolicyUrl = '',
     this.guidanceLocks,
     this.plus,
+    this.ritualTutStore,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
   });
@@ -80,6 +82,9 @@ class ReadingDependencies {
   /// active and cannot check out.
   final PlusEntitlementController? plus;
   bool get plusActive => plusEnabled && (plus?.isActive ?? false);
+
+  /// Remembers whether the first-time Reveal orb hand tutorial was dismissed.
+  final RitualTutStore? ritualTutStore;
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;

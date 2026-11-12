@@ -506,6 +506,9 @@ class AppLocalizationsEs extends AppLocalizations {
       'Desplázate hasta el final y lee todo el contenido para continuar.';
 
   @override
+  String get safetyScrollCuePill => 'Desliza para leer los términos';
+
+  @override
   String get knowBirthTime => 'Sé mi hora de nacimiento';
 
   @override

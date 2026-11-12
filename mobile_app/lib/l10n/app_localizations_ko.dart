@@ -477,6 +477,9 @@ class AppLocalizationsKo extends AppLocalizations {
   String get safetyScrollToContinue => '계속하려면 아래로 스크롤하세요';
 
   @override
+  String get safetyScrollCuePill => '아래로 스크롤해 약관 읽기';
+
+  @override
   String get knowBirthTime => '출생 시간을 알고 계신가요?';
 
   @override

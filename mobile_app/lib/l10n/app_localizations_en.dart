@@ -504,6 +504,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'Scroll to the end and read everything to continue.';
 
   @override
+  String get safetyScrollCuePill => 'Scroll down to read terms';
+
+  @override
   String get knowBirthTime => 'I know my birth time';
 
   @override

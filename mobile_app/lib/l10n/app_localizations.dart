@@ -1011,6 +1011,12 @@ abstract class AppLocalizations {
   /// **'Scroll to the end and read everything to continue.'**
   String get safetyScrollToContinue;
 
+  /// Floating pill cue shown near the bottom of the first-time safety terms scroll view while more content remains below the fold.
+  ///
+  /// In en, this message translates to:
+  /// **'Scroll down to read terms'**
+  String get safetyScrollCuePill;
+
   /// No description provided for @knowBirthTime.
   ///
   /// In en, this message translates to:

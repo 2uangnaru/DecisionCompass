@@ -7,6 +7,7 @@ import 'package:decision_compass/billing/plus_demo.dart';
 import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/reading_quota_controller.dart';
+import 'package:decision_compass/data/ritual_tut_store.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/home_page.dart';
 import 'package:decision_compass/pages/result_page.dart';
@@ -68,7 +69,9 @@ void main() {
       await tester.pump();
 
       expect(
-        tester.widget<GlassCard>(find.byKey(const Key('category_love'))).selected,
+        tester
+            .widget<GlassCard>(find.byKey(const Key('category_love')))
+            .selected,
         isTrue,
       );
       expect(find.text(rig.strings.adNotReady), findsNothing);
@@ -309,18 +312,61 @@ void main() {
     },
   );
 
-  test(
-    'Android Gradle config defaults applicationId to com.astracue.cosmicdecisions and wires release signing',
-    () {
-      final gradleFile = File('android/app/build.gradle.kts');
-      expect(gradleFile.existsSync(), isTrue);
-      final gradleText = gradleFile.readAsStringSync();
-      expect(gradleText, contains('"com.astracue.cosmicdecisions"'));
-      expect(
-        gradleText,
-        contains('decodedDartDefines["ANDROID_APPLICATION_ID"]'),
+  test('Android Gradle config defaults applicationId to com.astracue.cosmicdecisions and wires release signing', () {
+    final gradleFile = File('android/app/build.gradle.kts');
+    expect(gradleFile.existsSync(), isTrue);
+    final gradleText = gradleFile.readAsStringSync();
+    expect(gradleText, contains('"com.astracue.cosmicdecisions"'));
+    expect(
+      gradleText,
+      contains('decodedDartDefines["ANDROID_APPLICATION_ID"]'),
+    );
+    expect(gradleText, contains('rootProject.file("key.properties")'));
+  });
+
+  testWidgets(
+    'First-time hand TUT and ResponsibleUse scroll cue work with adsEnabled=false and plusEnabled=false',
+    (tester) async {
+      useScreen(tester, size: const Size(393, 873));
+      final tutStore = InMemoryRitualTutStore();
+      final rig = ReadingTestRig(
+        locale: AppLocale.vietnamese,
+        adService: const NoOpAdService(),
+        adsEnabled: false,
+        plusEnabled: false,
+        privacyPolicyUrl: 'https://astracue.example.com/privacy',
+        ritualTutStore: tutStore,
+        safetyAcknowledged: false,
       );
-      expect(gradleText, contains('rootProject.file("key.properties")'));
+      final unacknowledgedProfile = profile.copyWith(safetyAcknowledged: false);
+
+      await tester.pumpWidget(
+        localizedApp(
+          theme: buildCompassTheme(),
+          locale: AppLocale.vietnamese,
+          home: RitualPage(
+            mode: DecisionMode.yesNo,
+            period: TimePeriod.now,
+            category: engine.ReadingCategory.general,
+            profile: unacknowledgedProfile,
+            dependencies: rig.dependencies,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.byKey(const Key('ritual_reveal_hand_tut')), findsOneWidget);
+      await tester.tap(find.byKey(const Key('reveal_button')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(tutStore.seen, isTrue);
+      expect(find.byKey(const Key('ritual_reveal_hand_tut')), findsNothing);
+      expect(find.byKey(const Key('responsible_use_sheet')), findsOneWidget);
+      expect(find.byKey(const Key('safety_scroll_cue_pill')), findsOneWidget);
+      // Privacy policy link only shows in reference mode, not first-time gate.
+      expect(find.byKey(const Key('privacy_policy_link')), findsNothing);
     },
   );
 }

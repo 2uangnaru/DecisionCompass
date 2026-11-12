@@ -185,6 +185,10 @@
   "@safetyScrollToContinue": {
     "description": "Shown just above the first-time acknowledgement button while the safety content has not been scrolled to the end. Also the button's accessibility hint while it is locked."
   },
+  "safetyScrollCuePill": "Scroll down to read terms",
+  "@safetyScrollCuePill": {
+    "description": "Floating pill cue shown near the bottom of the first-time safety terms scroll view while more content remains below the fold."
+  },
   "knowBirthTime": "I know my birth time",
   "knowBirthTimeDetail": "An exact time sharpens the hour-based cycles.",
   "selectBirthTime": "Select your time of birth",

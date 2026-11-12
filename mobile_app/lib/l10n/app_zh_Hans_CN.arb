@@ -149,6 +149,7 @@
   "acknowledge": "我已了解并同意",
   "acknowledgementOnce": "此确认仅会在第一次解读前出现一次。",
   "safetyScrollToContinue": "滑动到底部并阅读全部内容后继续。",
+  "safetyScrollCuePill": "向下滑动阅读全部条款",
   "knowBirthTime": "我知道自己的出生时间",
   "knowBirthTimeDetail": "越准确的时间，时辰周期越清晰。",
   "selectBirthTime": "选择出生时间",
