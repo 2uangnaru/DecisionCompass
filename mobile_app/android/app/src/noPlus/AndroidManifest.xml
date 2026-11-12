@@ -1,0 +1,19 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- While PLUS_ENABLED != true, strip Play Billing permissions and
+         activities from the release artifact so Play Console does not see an
+         active billing declaration before in-app purchases are launched. -->
+    <uses-permission android:name="com.android.vending.BILLING" tools:node="remove" />
+
+    <application>
+        <meta-data
+            android:name="com.google.android.play.billingclient.version"
+            tools:node="remove" />
+        <activity
+            android:name="com.android.billingclient.api.ProxyBillingActivity"
+            tools:node="remove" />
+        <activity
+            android:name="com.android.billingclient.api.ProxyBillingActivityV2"
+            tools:node="remove" />
+    </application>
+</manifest>

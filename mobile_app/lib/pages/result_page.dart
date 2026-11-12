@@ -305,6 +305,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   Future<void> _openPlusSheet() async {
+    if (!widget.dependencies.plusEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       await showAstraCueVipStatusSheet(
@@ -564,6 +565,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   snapshot: _currentEnergySnapshot(),
                   locale: widget.dependencies.localeController.locale,
                   isPostReadingResult: true,
+                  showPlusUpsell: widget.dependencies.plusEnabled,
                   onTapPlus: _openPlusSheet,
                 ),
               ],

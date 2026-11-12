@@ -1115,13 +1115,15 @@ class _RitualPageState extends State<RitualPage>
                 onTap: _watchAdAndUnlock,
               ),
             ],
-            if (!energySnapshot.isPlusActive) ...[
+            if (widget.dependencies.plusEnabled &&
+                !energySnapshot.isPlusActive) ...[
               SizedBox(height: compact ? 10 : 14),
               AnalysisEnergyPlusCard(
                 key: const Key('ritual_energy_plus_card'),
                 snapshot: energySnapshot,
                 locale: widget.dependencies.localeController.locale,
                 onTapPlus: _openPlusSheet,
+                showPlusUpsell: widget.dependencies.plusEnabled,
               ),
             ],
             SizedBox(height: compact ? 8 : 10),
@@ -1160,6 +1162,7 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _openPlusSheet() async {
+    if (!widget.dependencies.plusEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       await showAstraCueVipStatusSheet(

@@ -612,11 +612,13 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
     required this.snapshot,
     required this.locale,
     required this.onTapPlus,
+    this.showPlusUpsell = true,
   });
 
   final ReadingEnergySnapshot snapshot;
   final AppLocale locale;
   final VoidCallback onTapPlus;
+  final bool showPlusUpsell;
 
   @override
   Widget build(BuildContext context) {
@@ -965,8 +967,10 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
     }
 
     return Semantics(
-      button: true,
-      label: '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}',
+      button: showPlusUpsell,
+      label: showPlusUpsell
+          ? '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}'
+          : '${copy.t3CurrentLabel}: $statusLine',
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -998,7 +1002,7 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                     child: Material(
                       color: Colors.transparent,
                       child: InkWell(
-                        onTap: onTapPlus,
+                        onTap: showPlusUpsell ? onTapPlus : null,
                         borderRadius: BorderRadius.circular(14),
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -1066,15 +1070,17 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
-                  // RIGHT CELL: AstraCue Plus Upgrade with Option 1 (100% H3+H1 animation)
-                  Expanded(
-                    child: _AnimatedPlusGemBox(
-                      actionLabel: copy.t3PlusActionLabel,
-                      onTap: onTapPlus,
-                      singleRow: false,
+                  if (showPlusUpsell) ...[
+                    const SizedBox(width: 8),
+                    // RIGHT CELL: AstraCue Plus Upgrade with Option 1 (100% H3+H1 animation)
+                    Expanded(
+                      child: _AnimatedPlusGemBox(
+                        actionLabel: copy.t3PlusActionLabel,
+                        onTap: onTapPlus,
+                        singleRow: false,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),
@@ -1095,12 +1101,14 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
     required this.locale,
     required this.onTapPlus,
     this.isPostReadingResult = false,
+    this.showPlusUpsell = true,
   });
 
   final ReadingEnergySnapshot snapshot;
   final AppLocale locale;
   final VoidCallback onTapPlus;
   final bool isPostReadingResult;
+  final bool showPlusUpsell;
 
   @override
   Widget build(BuildContext context) {
@@ -1112,8 +1120,11 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
     final copy = _PlusLocalizedCopy.forLocale(locale);
 
     // On RitualPage (màn phân tích), omit the remaining-turns box and show only
-    // the animated H3+H1 golden Plus bar.
+    // the animated H3+H1 golden Plus bar (or hide completely when Plus is off).
     if (!isPostReadingResult) {
+      if (!showPlusUpsell) {
+        return const SizedBox.shrink();
+      }
       return Semantics(
         button: true,
         label: copy.headerSemanticsLabel,
@@ -1164,8 +1175,10 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
     }
 
     return Semantics(
-      button: true,
-      label: '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}',
+      button: showPlusUpsell,
+      label: showPlusUpsell
+          ? '${copy.t3CurrentLabel}: $statusLine. ${copy.t3PlusActionLabel}'
+          : '${copy.t3CurrentLabel}: $statusLine',
       child: IntrinsicHeight(
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1174,7 +1187,7 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
               child: Material(
                 color: Colors.transparent,
                 child: InkWell(
-                  onTap: onTapPlus,
+                  onTap: showPlusUpsell ? onTapPlus : null,
                   borderRadius: BorderRadius.circular(14),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
@@ -1238,14 +1251,16 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _AnimatedPlusGemBox(
-                actionLabel: copy.t3PlusActionLabel,
-                onTap: onTapPlus,
-                singleRow: false,
+            if (showPlusUpsell) ...[
+              const SizedBox(width: 8),
+              Expanded(
+                child: _AnimatedPlusGemBox(
+                  actionLabel: copy.t3PlusActionLabel,
+                  onTap: onTapPlus,
+                  singleRow: false,
+                ),
               ),
-            ),
+            ],
           ],
         ),
       ),

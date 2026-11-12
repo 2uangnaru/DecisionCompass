@@ -26,6 +26,7 @@ val decodedDartDefines: Map<String, String> = (project.findProperty("dart-define
 
 val analyticsRequested = decodedDartDefines["FIREBASE_ANALYTICS_ENABLED"] == "true"
 val adsRequested = decodedDartDefines["ADS_ENABLED"] == "true"
+val plusRequested = decodedDartDefines["PLUS_ENABLED"] == "true"
 val testAdmobAppId = "ca-app-pub-3940256099942544~3347511713"
 val admobAppId = decodedDartDefines["ADMOB_ANDROID_APP_ID"]
     ?.takeIf { it.isNotBlank() }
@@ -105,8 +106,13 @@ android {
         }
     }
 
-    if (!adsRequested) {
-        sourceSets.getByName("release").manifest.srcFile("src/noAds/AndroidManifest.xml")
+    when {
+        !adsRequested && !plusRequested ->
+            sourceSets.getByName("release").manifest.srcFile("src/noAdsNoPlus/AndroidManifest.xml")
+        !adsRequested ->
+            sourceSets.getByName("release").manifest.srcFile("src/noAds/AndroidManifest.xml")
+        !plusRequested ->
+            sourceSets.getByName("release").manifest.srcFile("src/noPlus/AndroidManifest.xml")
     }
 }
 

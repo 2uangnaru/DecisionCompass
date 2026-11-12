@@ -252,6 +252,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _openPlusSheet() {
+    if (!widget.dependencies.plusEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       showAstraCueVipStatusSheet(
@@ -663,18 +664,20 @@ class _HomePageState extends State<HomePage>
                 ),
               ),
             ),
-            const SizedBox(width: 6),
-            IgnorePointer(
-              ignoring: _isSettingsOpen,
-              child: AnimatedOpacity(
-                opacity: _isSettingsOpen ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 180),
-                child: AstraCuePlusHeaderBadge(
-                  onTap: _openPlusSheet,
-                  isVip: _currentEnergySnapshot().isPlusActive,
+            if (widget.dependencies.plusEnabled) ...[
+              const SizedBox(width: 6),
+              IgnorePointer(
+                ignoring: _isSettingsOpen,
+                child: AnimatedOpacity(
+                  opacity: _isSettingsOpen ? 0.0 : 1.0,
+                  duration: const Duration(milliseconds: 180),
+                  child: AstraCuePlusHeaderBadge(
+                    onTap: _openPlusSheet,
+                    isVip: _currentEnergySnapshot().isPlusActive,
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
           ],
         ),
@@ -1001,6 +1004,7 @@ class _HomePageState extends State<HomePage>
             snapshot: energySnapshot,
             locale: widget.dependencies.localeController.locale,
             onTapPlus: _openPlusSheet,
+            showPlusUpsell: widget.dependencies.plusEnabled,
           ),
         ],
       ),

@@ -11,6 +11,11 @@ import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_inte
 class PlusBillingConfig {
   const PlusBillingConfig({required this.productId});
 
+  /// VIP / Plus purchases stay off in production until
+  /// `--dart-define=PLUS_ENABLED=true` is supplied. Debug builds with
+  /// `--dart-define=PLUS_DEMO_BILLING=true` keep demo Plus enabled for QA.
+  static const plusEnabled = bool.fromEnvironment('PLUS_ENABLED');
+
   /// `--dart-define=PLUS_PRODUCT_ID=...`: the one-time, non-consumable
   /// product configured in Play Console. The default is a placeholder.
   static const defaultProductId = String.fromEnvironment(

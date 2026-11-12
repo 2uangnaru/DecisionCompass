@@ -73,16 +73,21 @@ Future<void> main() async {
   final plusConfig = PlusBillingConfig.fromEnvironment();
   // Debug + PLUS_DEMO_BILLING only; a release build always uses the store.
   final plusDemo = plusDemoBillingEnabled();
-  final plus = PlusEntitlementController(
-    store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),
-    verifier: plusDemo ? const DemoPlusVerifier() : plusVerifierFor(plusConfig),
-    productId: plusConfig.productId,
-    ads: adService,
-    // The approved CTA's reference price and discount are preview copy; the
-    // store build stays blocked on them until real offer data exists.
-    requireSupportedSaleClaims: !plusDemo,
-    acceptDemoProofs: plusDemo,
-  );
+  final plusEnabled = PlusBillingConfig.plusEnabled || plusDemo;
+  final PlusEntitlementController? plus = plusEnabled
+      ? PlusEntitlementController(
+          store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),
+          verifier: plusDemo
+              ? const DemoPlusVerifier()
+              : plusVerifierFor(plusConfig),
+          productId: plusConfig.productId,
+          ads: adService,
+          // The approved CTA's reference price and discount are preview copy; the
+          // store build stays blocked on them until real offer data exists.
+          requireSupportedSaleClaims: !plusDemo,
+          acceptDemoProofs: plusDemo,
+        )
+      : null;
   final quotaManager = SharedPreferencesReadingQuotaController(plus: plus);
   final localeController = LocaleController(
     store: const SharedPreferencesLocaleStore(),
@@ -96,7 +101,7 @@ Future<void> main() async {
     localeController.ensureLoaded(),
     quotaManager.ensureLoaded(),
     // Local only: a Plus owner's first frame is already ad-free and at 6.
-    plus.loadCached(),
+    if (plus != null) plus.loadCached(),
   ]);
 
   runApp(
@@ -106,7 +111,9 @@ Future<void> main() async {
       onContentReady: () {
         // UMP may show a native form; only start after the first content frame.
         unawaited(adService.initialize());
-        unawaited(plus.start());
+        if (plus != null) {
+          unawaited(plus.start());
+        }
         if (defaultTargetPlatform == TargetPlatform.android) {
           unawaited(
             const MethodChannel('astracue/startup')
@@ -134,6 +141,7 @@ Future<void> main() async {
         quotaManager: quotaManager,
         adService: adService,
         adsEnabled: adsEnabled,
+        plusEnabled: plusEnabled,
         privacyPolicyUrl: privacyPolicyUrl,
         guidanceLocks: adsEnabled
             ? GuidanceLockStore(backup: const BlockStoreCounterBackup())

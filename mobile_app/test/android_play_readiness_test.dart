@@ -1,5 +1,6 @@
 import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/app_profile.dart';
+import 'package:decision_compass/billing/plus_billing.dart';
 import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/reading_quota_controller.dart';
@@ -9,6 +10,7 @@ import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
 import 'package:decision_compass/services/ad_service.dart';
 import 'package:decision_compass/theme.dart';
+import 'package:decision_compass/widgets/astracue_plus_ui.dart';
 import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:decision_compass/widgets/responsible_use_sheet.dart';
 import 'package:flutter/material.dart';
@@ -194,6 +196,108 @@ void main() {
       await tester.pump();
 
       expect(openedUrls, ['https://astracue.example.com/privacy']);
+    },
+  );
+
+  test(
+    'PlusBillingConfig disables VIP by default when PLUS_ENABLED is omitted',
+    () {
+      expect(PlusBillingConfig.plusEnabled, isFalse);
+    },
+  );
+
+  testWidgets(
+    'HomePage hides header Plus badge and Plus tray upsell when plusEnabled is false',
+    (tester) async {
+      useScreen(tester, size: const Size(393, 900));
+      final rig = ReadingTestRig(
+        locale: AppLocale.vietnamese,
+        adService: const NoOpAdService(),
+        adsEnabled: false,
+        plusEnabled: false,
+      );
+      await tester.pumpWidget(
+        localizedApp(
+          theme: buildCompassTheme(),
+          locale: AppLocale.vietnamese,
+          home: HomePage(profile: profile, dependencies: rig.dependencies),
+        ),
+      );
+      await tester.pump();
+
+      expect(find.byType(AstraCuePlusHeaderBadge), findsNothing);
+      final tray = find.byKey(const Key('home_daily_energy_tray'));
+      expect(tray, findsOneWidget);
+      expect(find.textContaining('✦ PLUS'), findsNothing);
+
+      await tester.ensureVisible(tray);
+      await tester.tap(tray);
+      await tester.pump();
+      expect(find.byKey(const Key('astracue_plus_sheet')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'RitualPage hides AnalysisEnergyPlusCard when plusEnabled is false',
+    (tester) async {
+      useScreen(tester, size: const Size(393, 873));
+      final rig = ReadingTestRig(
+        locale: AppLocale.vietnamese,
+        adService: const NoOpAdService(),
+        adsEnabled: false,
+        plusEnabled: false,
+      );
+      await tester.pumpWidget(
+        localizedApp(
+          theme: buildCompassTheme(),
+          locale: AppLocale.vietnamese,
+          home: RitualPage(
+            mode: DecisionMode.yesNo,
+            period: TimePeriod.now,
+            category: engine.ReadingCategory.general,
+            profile: profile,
+            dependencies: rig.dependencies,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 400));
+
+      expect(find.byKey(const Key('ritual_energy_plus_card')), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'ResultPage keeps free energy status non-tappable and hides Plus gem when plusEnabled is false',
+    (tester) async {
+      useScreen(tester, size: const Size(412, 2400));
+      final reading = fixtureResponse('ready_yes_no_now.json');
+      final rig = ReadingTestRig(
+        locale: AppLocale.vietnamese,
+        adService: const NoOpAdService(),
+        adsEnabled: false,
+        plusEnabled: false,
+      );
+      await tester.pumpWidget(
+        localizedApp(
+          home: ResultPage(
+            reading: reading,
+            dependencies: rig.dependencies,
+            autoSave: false,
+            billableResult: false,
+          ),
+        ),
+      );
+      await tester.pump();
+
+      final card = find.byKey(const Key('result_energy_plus_card'));
+      expect(card, findsOneWidget);
+      expect(find.textContaining('✦ PLUS'), findsNothing);
+
+      await tester.ensureVisible(card);
+      await tester.tap(card);
+      await tester.pump();
+      expect(find.byKey(const Key('astracue_plus_sheet')), findsNothing);
     },
   );
 }

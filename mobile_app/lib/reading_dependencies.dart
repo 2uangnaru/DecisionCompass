@@ -29,6 +29,7 @@ class ReadingDependencies {
     this.quotaManager = const NoopReadingQuotaController(),
     this.adService = const NoOpAdService(),
     this.adsEnabled = true,
+    this.plusEnabled = true,
     this.privacyPolicyUrl = '',
     this.guidanceLocks,
     this.plus,
@@ -63,6 +64,11 @@ class ReadingDependencies {
   /// supplied; tests default to `true` to keep exercising ad flows.
   final bool adsEnabled;
 
+  /// Whether AstraCue Plus / VIP UI and billing are active in this build.
+  /// Production defaults to `false` until `--dart-define=PLUS_ENABLED=true` is
+  /// supplied; tests default to `true` to keep exercising Plus flows.
+  final bool plusEnabled;
+
   /// Optional HTTPS Privacy Policy URL supplied via
   /// `--dart-define=PRIVACY_POLICY_URL=https://...`.
   final String privacyPolicyUrl;
@@ -73,7 +79,7 @@ class ReadingDependencies {
   /// The single Plus entitlement source. Null (tests, previews) is never
   /// active and cannot check out.
   final PlusEntitlementController? plus;
-  bool get plusActive => plus?.isActive ?? false;
+  bool get plusActive => plusEnabled && (plus?.isActive ?? false);
 
   /// Injected so tests can pin the instant a Reveal tap records.
   final DateTime Function() nowUtc;
