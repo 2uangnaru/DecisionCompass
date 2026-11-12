@@ -5,6 +5,7 @@ import 'package:decision_compass/app_profile.dart';
 import 'package:decision_compass/billing/plus_entitlement.dart';
 import 'package:decision_compass/data/guidance_lock_store.dart';
 import 'package:decision_compass/data/reading_quota_controller.dart';
+import 'package:decision_compass/data/ritual_tut_store.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/monetization_policy.dart';
@@ -17,6 +18,8 @@ import 'package:decision_compass/widgets/ad_banner_slot.dart';
 import 'package:decision_compass/widgets/astracue_plus_ui.dart';
 import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:decision_compass/widgets/responsible_use_sheet.dart';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show FontLoader, rootBundle;
 import 'package:flutter_test/flutter_test.dart';
@@ -383,4 +386,70 @@ void main() {
     expect(rig.repository.requests, isEmpty);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets(
+    'free iOS edition shows first-time Ritual hand TUT and safety scroll cue alongside legal links',
+    (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      try {
+        useScreen(tester, size: const Size(393, 852));
+
+        final tutStore = InMemoryRitualTutStore();
+        final rig = ReadingTestRig(
+          response: fixtureResponse('ready_yes_no_now.json'),
+          monetizationEnabled: false,
+          ritualTutStore: tutStore,
+        );
+
+        await tester.pumpWidget(
+          localizedApp(
+            home: RitualPage(
+              mode: DecisionMode.yesNo,
+              period: TimePeriod.now,
+              category: engine.ReadingCategory.general,
+              profile: _profile.copyWith(safetyAcknowledged: false),
+              dependencies: rig.dependencies,
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        final handTut = find.byKey(const Key('ritual_reveal_hand_tut'));
+        expect(handTut, findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('reveal_button')));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 400));
+
+        expect(handTut, findsNothing);
+        expect(tutStore.seen, isTrue);
+        expect(find.byType(ResponsibleUseSheet), findsOneWidget);
+        final cuePill = find.byKey(const Key('safety_scroll_cue_pill'));
+        expect(cuePill, findsOneWidget);
+        expect(
+          find.byKey(const Key('safety_scroll_bottom_fade')),
+          findsOneWidget,
+        );
+
+        for (var i = 0; i < 8 && cuePill.evaluate().isNotEmpty; i++) {
+          await tester.tap(cuePill);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 450));
+        }
+
+        expect(cuePill, findsNothing);
+        expect(find.byKey(const Key('legal_privacy')), findsOneWidget);
+        expect(find.byKey(const Key('legal_terms')), findsOneWidget);
+
+        await tester.tap(find.byKey(const Key('agree_safety_boundaries')));
+        await tester.pump(const Duration(milliseconds: 380));
+        await pumpPastRitual(tester);
+        expect(find.byType(ResultPage), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+      } finally {
+        debugDefaultTargetPlatformOverride = null;
+      }
+    },
+  );
 }

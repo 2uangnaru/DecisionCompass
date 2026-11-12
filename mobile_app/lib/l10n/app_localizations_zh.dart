@@ -464,6 +464,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
 
   @override
+  String get safetyScrollCuePill => '向下滑动阅读全部条款';
+
+  @override
   String get knowBirthTime => '我知道自己的出生时间';
 
   @override
@@ -1715,6 +1718,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
 
   @override
+  String get safetyScrollCuePill => '向下滑动阅读全部条款';
+
+  @override
   String get knowBirthTime => '我知道自己的出生时间';
 
   @override
@@ -2964,6 +2970,9 @@ class AppLocalizationsZhHansCn extends AppLocalizationsZh {
 
   @override
   String get safetyScrollToContinue => '滑动到底部并阅读全部内容后继续。';
+
+  @override
+  String get safetyScrollCuePill => '向下滑动阅读全部条款';
 
   @override
   String get knowBirthTime => '我知道自己的出生时间';

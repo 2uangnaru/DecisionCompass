@@ -148,6 +148,7 @@
   "acknowledge": "Tôi hiểu và đồng ý",
   "acknowledgementOnce": "Xác nhận này chỉ xuất hiện một lần trước lần phân tích đầu tiên.",
   "safetyScrollToContinue": "Cuộn đến cuối, đọc hết để tiếp tục.",
+  "safetyScrollCuePill": "Cuộn xuống để đọc hết điều khoản",
   "knowBirthTime": "Tôi biết giờ sinh của mình",
   "knowBirthTimeDetail": "Giờ sinh chính xác giúp các chu kỳ theo giờ rõ nét hơn.",
   "selectBirthTime": "Chọn giờ sinh",

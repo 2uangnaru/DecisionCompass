@@ -63,7 +63,19 @@ class _RitualPageState extends State<RitualPage>
   Timer? _countdownTimer;
   Timer? _periodRefreshTimer;
   late final AnimationController _pulseController;
+  late final AnimationController _handTutController;
+  var _handTutLoaded = false;
+  var _handTutSeen = false;
   late AppProfile _profile = widget.profile;
+
+  bool get _showHandTut =>
+      _handTutLoaded &&
+      !_handTutSeen &&
+      !_profile.safetyAcknowledged &&
+      !_locked &&
+      !_isCooldown &&
+      !_isQuotaExhausted &&
+      _availability(_period).selectable;
 
   bool get _isQuotaExhausted {
     if (!widget.dependencies.monetizationEnabled) return false;
@@ -423,10 +435,55 @@ class _RitualPageState extends State<RitualPage>
           ? const Duration(milliseconds: 3200)
           : const Duration(milliseconds: 1500),
     )..repeat(reverse: true);
+    _handTutController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1600),
+    );
+    unawaited(_loadHandTut());
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     widget.dependencies.plus?.addListener(_onQuotaChanged);
     _resolveTimezone();
+  }
+
+  Future<void> _loadHandTut() async {
+    if (_profile.safetyAcknowledged) {
+      _handTutLoaded = true;
+      _handTutSeen = true;
+      return;
+    }
+    final store = widget.dependencies.ritualTutStore;
+    final seen = store == null ? false : await store.isSeen();
+    if (!mounted) return;
+    final reduceMotion =
+        MediaQuery.maybeOf(context)?.disableAnimations ?? false;
+    setState(() {
+      _handTutLoaded = true;
+      _handTutSeen = seen || _handTutSeen;
+      if (_showHandTut && !reduceMotion && !_handTutController.isAnimating) {
+        _handTutController.repeat();
+      }
+    });
+  }
+
+  void _dismissHandTut() {
+    if (_handTutSeen) return;
+    _handTutSeen = true;
+    _handTutController.stop();
+    final store = widget.dependencies.ritualTutStore;
+    if (store != null) {
+      unawaited(store.markSeen());
+    }
+    if (mounted) setState(() {});
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.of(context).disableAnimations &&
+        _handTutController.isAnimating) {
+      _handTutController.stop();
+    }
   }
 
   @override
@@ -449,6 +506,7 @@ class _RitualPageState extends State<RitualPage>
     _countdownTimer?.cancel();
     _noticeTimer?.cancel();
     _noticeAnimation.dispose();
+    _handTutController.dispose();
     _pulseController.dispose();
     for (final notifier in _periodTriggers.values) {
       notifier.dispose();
@@ -602,6 +660,7 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _reveal() async {
+    _dismissHandTut();
     if (_locked || _checkingEntitlement) return;
     _checkingEntitlement = true;
     try {
@@ -936,6 +995,7 @@ class _RitualPageState extends State<RitualPage>
 
                       return Stack(
                         alignment: Alignment.center,
+                        clipBehavior: Clip.none,
                         children: [
                           Transform.scale(
                             scale: ringScale,
@@ -1072,6 +1132,20 @@ class _RitualPageState extends State<RitualPage>
                               ),
                             ),
                           ),
+                          if (_showHandTut)
+                            Positioned(
+                              right: ringSize * 0.02,
+                              bottom: -ringSize * 0.03,
+                              child: IgnorePointer(
+                                child: ExcludeSemantics(
+                                  child: _RevealHandTut(
+                                    key: const Key('ritual_reveal_hand_tut'),
+                                    animation: _handTutController,
+                                    reduceMotion: reduceMotion,
+                                  ),
+                                ),
+                              ),
+                            ),
                         ],
                       );
                     },
@@ -1361,4 +1435,187 @@ class _CategoryBadge extends StatelessWidget {
       ),
     );
   }
+}
+
+/// First-time animated Celestial Gold Outline Hand & tap ripples anchored at
+/// the lower-right rim of the Reveal orb (hand + ripples only, no card/text).
+class _RevealHandTut extends StatelessWidget {
+  const _RevealHandTut({
+    super.key,
+    required this.animation,
+    required this.reduceMotion,
+  });
+
+  final Animation<double> animation;
+  final bool reduceMotion;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 56,
+      height: 56,
+      child: AnimatedBuilder(
+        animation: animation,
+        builder: (context, child) {
+          final t = reduceMotion ? 0.0 : animation.value;
+          return CustomPaint(painter: _RevealHandTutPainter(progress: t));
+        },
+      ),
+    );
+  }
+}
+
+class _RevealHandTutPainter extends CustomPainter {
+  const _RevealHandTutPainter({required this.progress});
+
+  final double progress;
+
+  // Hand path authored on 38x44 viewBox, scaled to 36x42 anchored at (10, 12).
+  static const double _handScale = 36 / 38;
+  static const Offset _handOrigin = Offset(10, 12);
+  // Index fingertip rests near (16.5, 6.5) inside the 38x44 hand box.
+  static const Offset _tapCenter = Offset(
+    10 + 16.5 * _handScale,
+    12 + 6.5 * _handScale,
+  );
+  // Rotate around upper-left wrist/knuckle region matching CSS `6px 4px`.
+  static const Offset _handPivot = Offset(
+    10 + 6 * _handScale,
+    12 + 4 * _handScale,
+  );
+
+  static final Path _handPath = _buildHandPath();
+
+  static Path _buildHandPath() {
+    return Path()
+      ..moveTo(13, 6.5)
+      ..cubicTo(13, 4.567, 14.567, 3, 16.5, 3)
+      ..cubicTo(18.433, 3, 20, 4.567, 20, 6.5)
+      ..lineTo(20, 19.2)
+      ..cubicTo(20.7, 18.6, 21.6, 18.2, 22.6, 18.2)
+      ..cubicTo(24.2, 18.2, 25.5, 19.2, 25.9, 20.6)
+      ..cubicTo(26.6, 20.1, 27.5, 19.8, 28.4, 19.8)
+      ..cubicTo(30.4, 19.8, 32, 21.4, 32, 23.4)
+      ..lineTo(32, 29.5)
+      ..cubicTo(32, 35.8, 27.2, 40.5, 21, 40.5)
+      ..lineTo(17.5, 40.5)
+      ..cubicTo(13.6, 40.5, 10.6, 38.4, 8.7, 35.1)
+      ..lineTo(4.6, 27.8)
+      ..cubicTo(3.6, 26, 4.2, 23.7, 6, 22.7)
+      ..cubicTo(7.6, 21.8, 9.6, 22.3, 10.7, 23.8)
+      ..lineTo(13, 26.8)
+      ..lineTo(13, 6.5)
+      ..close();
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final t = progress.clamp(0.0, 1.0);
+
+    // Subtle fingertip tap glow dot (peaks at press impact ~0.38).
+    final impactWeight = t <= 0.38
+        ? (t / 0.38)
+        : (1.0 - ((t - 0.38) / 0.62)).clamp(0.0, 1.0);
+    final dotRadius = 3.5 + impactWeight * 2.2;
+    canvas.drawCircle(
+      _tapCenter,
+      dotRadius,
+      Paint()
+        ..color = CompassColors.blueLight.withValues(
+          alpha: 0.35 + impactWeight * 0.55,
+        ),
+    );
+    canvas.drawCircle(
+      _tapCenter,
+      1.8,
+      Paint()..color = Colors.white.withValues(alpha: 0.5 + impactWeight * 0.5),
+    );
+
+    // Twin expanding ripples (`blueLight` then `gold`).
+    _drawRipple(
+      canvas,
+      t,
+      start: 0.34,
+      end: 0.90,
+      color: CompassColors.blueLight,
+    );
+    _drawRipple(canvas, t, start: 0.46, end: 1.00, color: CompassColors.gold);
+
+    // Hand tap motion: 0 -> 0.38 press down-left, 0.38 -> 0.54 release back.
+    final double press;
+    if (t <= 0.38) {
+      press = Curves.easeInOut.transform(t / 0.38);
+    } else if (t <= 0.54) {
+      press = 1.0 - Curves.easeInOut.transform((t - 0.38) / 0.16);
+    } else {
+      press = 0.0;
+    }
+
+    final dx = -3.0 * press;
+    final dy = -4.0 * press;
+    final scale = 1.0 - 0.12 * press;
+    final angleRad = (-6.0 - 4.0 * press) * math.pi / 180.0;
+
+    canvas.save();
+    canvas.translate(dx, dy);
+    canvas.translate(_handPivot.dx, _handPivot.dy);
+    canvas.rotate(angleRad);
+    canvas.scale(scale, scale);
+    canvas.translate(-_handPivot.dx, -_handPivot.dy);
+    canvas.translate(_handOrigin.dx, _handOrigin.dy);
+    canvas.scale(_handScale, _handScale);
+
+    // Soft celestial shadow beneath outline hand.
+    canvas.save();
+    canvas.translate(0, 2.2);
+    canvas.drawPath(
+      _handPath,
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.55)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0),
+    );
+    canvas.restore();
+
+    canvas.drawPath(_handPath, Paint()..color = CompassColors.raised);
+    canvas.drawPath(
+      _handPath,
+      Paint()
+        ..color = CompassColors.gold
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.0
+        ..strokeJoin = StrokeJoin.round,
+    );
+    canvas.drawCircle(
+      const Offset(16.5, 7.5),
+      2.1,
+      Paint()..color = CompassColors.blueLight.withValues(alpha: 0.85),
+    );
+    canvas.restore();
+  }
+
+  void _drawRipple(
+    Canvas canvas,
+    double t, {
+    required double start,
+    required double end,
+    required Color color,
+  }) {
+    if (t < start || t > end) return;
+    final local = ((t - start) / (end - start)).clamp(0.0, 1.0);
+    final eased = Curves.easeOut.transform(local);
+    final radius = 5.5 + eased * 20.5;
+    final alpha = (1.0 - eased) * 0.90;
+    canvas.drawCircle(
+      _tapCenter,
+      radius,
+      Paint()
+        ..color = color.withValues(alpha: alpha)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.8,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _RevealHandTutPainter oldDelegate) =>
+      oldDelegate.progress != progress;
 }

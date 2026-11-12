@@ -499,6 +499,9 @@ class AppLocalizationsTh extends AppLocalizations {
       'เลื่อนลงไปจนสุดและอ่านเนื้อหาทั้งหมดเพื่อดำเนินการต่อ';
 
   @override
+  String get safetyScrollCuePill => 'เลื่อนลงเพื่ออ่านข้อกำหนด';
+
+  @override
   String get knowBirthTime => 'ฉันทราบเวลาเกิดของฉัน';
 
   @override

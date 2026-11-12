@@ -27,6 +27,8 @@ void main() {
 
   final agree = find.byKey(const Key('agree_safety_boundaries'));
   final hint = find.byKey(const Key('safety_scroll_hint'));
+  final cuePill = find.byKey(const Key('safety_scroll_cue_pill'));
+  final bottomFade = find.byKey(const Key('safety_scroll_bottom_fade'));
   final sheet = find.byKey(const Key('responsible_use_sheet'));
 
   /// Mounts the sheet directly, so the gate can be exercised without walking
@@ -186,6 +188,8 @@ void main() {
       await scrollToEnd(tester);
 
       expect(hint, findsNothing);
+      expect(cuePill, findsNothing);
+      expect(bottomFade, findsNothing);
       expect(
         agreeBackground(tester),
         isNull,
@@ -249,10 +253,51 @@ void main() {
       );
 
       expect(agreeBackground(tester), isNull);
+      expect(cuePill, findsNothing);
+      expect(bottomFade, findsNothing);
       await tester.tap(agree);
       await tester.pumpAndSettle();
       expect(result(), isTrue);
     });
+  });
+
+  group('scroll cue pill, bottom fade and golden scrollbar (Option 1A)', () {
+    testWidgets(
+      'gated overflow shows cue pill, bottom fade and golden scrollbar on open',
+      (tester) async {
+        await openSheet(tester);
+
+        expect(cuePill, findsOneWidget);
+        expect(bottomFade, findsOneWidget);
+        final scrollbar = tester.widget<RawScrollbar>(
+          find.byType(RawScrollbar).first,
+        );
+        expect(scrollbar.thumbVisibility, isTrue);
+        expect(scrollbar.trackVisibility, isTrue);
+      },
+    );
+
+    testWidgets(
+      'tapping the cue pill scrolls down smoothly until bottom unlocks',
+      (tester) async {
+        final result = await openSheet(tester);
+        expect(cuePill, findsOneWidget);
+        expect(agreeBackground(tester), isNotNull);
+
+        for (var i = 0; i < 6 && cuePill.evaluate().isNotEmpty; i++) {
+          await tester.tap(cuePill);
+          await tester.pumpAndSettle();
+        }
+
+        expect(cuePill, findsNothing);
+        expect(bottomFade, findsNothing);
+        expect(agreeBackground(tester), isNull);
+
+        await tester.tap(agree);
+        await tester.pumpAndSettle();
+        expect(result(), isTrue);
+      },
+    );
   });
 
   group('dismissing without agreeing', () {
@@ -295,6 +340,8 @@ void main() {
       expect(find.byKey(const Key('close_safety_sheet')), findsOneWidget);
       expect(agree, findsNothing);
       expect(hint, findsNothing);
+      expect(cuePill, findsNothing);
+      expect(bottomFade, findsNothing);
       // The crisis-support line is reference-mode only and still there.
       expect(find.byKey(const Key('crisis_support')), findsOneWidget);
     });
@@ -320,6 +367,23 @@ void main() {
           textScale: 1.5,
           locale: locale.locale,
         );
+        expect(
+          tester.takeException(),
+          isNull,
+          reason: '${locale.tag} initial cue overflow',
+        );
+        expect(cuePill, findsOneWidget);
+        final cueText = tester.widget<Text>(
+          find.descendant(of: cuePill, matching: find.byType(Text)),
+        );
+        expect(cueText.data, stringsFor(locale).safetyScrollCuePill);
+        expect(cueText.maxLines, isNull);
+        expect(cueText.overflow, isNot(TextOverflow.ellipsis));
+        final cueBox = tester.getRect(cuePill);
+        expect(cueBox.left, greaterThanOrEqualTo(0));
+        expect(cueBox.right, lessThanOrEqualTo(320));
+        expect(cueBox.bottom, lessThanOrEqualTo(640));
+
         await tester.tap(agree);
         await tester.pumpAndSettle();
 

@@ -503,6 +503,9 @@ class AppLocalizationsVi extends AppLocalizations {
   String get safetyScrollToContinue => 'Cuộn đến cuối, đọc hết để tiếp tục.';
 
   @override
+  String get safetyScrollCuePill => 'Cuộn xuống để đọc hết điều khoản';
+
+  @override
   String get knowBirthTime => 'Tôi biết giờ sinh của mình';
 
   @override
