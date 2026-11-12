@@ -148,6 +148,7 @@
   "acknowledge": "理解して同意する",
   "acknowledgementOnce": "この確認は、最初のリーディング前に一度だけ表示されます。",
   "safetyScrollToContinue": "最後までスクロールして内容を読み、続行してください。",
+  "safetyScrollCuePill": "下へスクロールして規約を読む",
   "knowBirthTime": "出生時刻がわかる",
   "knowBirthTimeDetail": "正確な時刻ほど、時辰の周期がはっきりします。",
   "selectBirthTime": "出生時刻を選択",

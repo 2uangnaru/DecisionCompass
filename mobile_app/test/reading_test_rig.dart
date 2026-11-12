@@ -19,6 +19,7 @@ import 'package:decision_compass/data/history_entry.dart';
 import 'package:decision_compass/data/in_memory_history_repository.dart';
 import 'package:decision_compass/data/in_memory_profile_repository.dart';
 import 'package:decision_compass/data/reading_quota_controller.dart';
+import 'package:decision_compass/data/ritual_tut_store.dart';
 import 'package:decision_compass/data/models/models.dart';
 import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/l10n/app_localizations.dart';
@@ -63,7 +64,9 @@ class ReadingTestRig {
     this.detectDeviceLocale = false,
     this.guidanceLocks,
     this.plus,
+    InMemoryRitualTutStore? ritualTutStore,
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
+       ritualTutStore = ritualTutStore ?? InMemoryRitualTutStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
        insightStore = insightStore ?? InMemoryDailyEnergyInsightStore.ordered(),
@@ -129,6 +132,7 @@ class ReadingTestRig {
   final AdService adService;
   final GuidanceLockStore? guidanceLocks;
   final PlusEntitlementController? plus;
+  final InMemoryRitualTutStore ritualTutStore;
 
   /// Device wall clock the ritual reads to mute periods that are over.
   DateTime localClock;
@@ -159,6 +163,7 @@ class ReadingTestRig {
     adService: adService,
     guidanceLocks: guidanceLocks,
     plus: plus,
+    ritualTutStore: ritualTutStore,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own

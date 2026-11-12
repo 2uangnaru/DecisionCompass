@@ -507,6 +507,9 @@ class AppLocalizationsHi extends AppLocalizations {
       'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
 
   @override
+  String get safetyScrollCuePill => 'शर्तें पढ़ने के लिए नीचे स्क्रॉल करें';
+
+  @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';
 
   @override
@@ -1862,6 +1865,9 @@ class AppLocalizationsHiIn extends AppLocalizationsHi {
   @override
   String get safetyScrollToContinue =>
       'आगे बढ़ने के लिए अंत तक स्क्रॉल करें और पूरी जानकारी पढ़ें।';
+
+  @override
+  String get safetyScrollCuePill => 'शर्तें पढ़ने के लिए नीचे स्क्रॉल करें';
 
   @override
   String get knowBirthTime => 'मुझे अपना जन्म समय पता है';

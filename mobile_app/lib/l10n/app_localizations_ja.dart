@@ -470,6 +470,9 @@ class AppLocalizationsJa extends AppLocalizations {
   String get safetyScrollToContinue => '最後までスクロールして内容を読み、続行してください。';
 
   @override
+  String get safetyScrollCuePill => '下へスクロールして規約を読む';
+
+  @override
   String get knowBirthTime => '出生時刻がわかる';
 
   @override

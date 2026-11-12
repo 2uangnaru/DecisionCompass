@@ -28,6 +28,7 @@ import 'data/shared_preferences_history_repository.dart';
 import 'data/shared_preferences_home_description_store.dart';
 import 'data/shared_preferences_profile_repository.dart';
 import 'data/reading_quota_controller.dart';
+import 'data/ritual_tut_store.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
 import 'services/ad_service.dart';
@@ -133,6 +134,7 @@ Future<void> main() async {
           backup: const BlockStoreCounterBackup(),
         ),
         plus: plus,
+        ritualTutStore: const SharedPreferencesRitualTutStore(),
       ),
     ),
   );
