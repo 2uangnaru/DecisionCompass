@@ -386,5 +386,21 @@
   "compassPillarVedic": "吠陀月宿",
   "compassPillarLifePath": "生命灵数",
   "compassPillarElement": "五行本命",
-  "compassPillarAnimal": "生肖地支"
+  "compassPillarAnimal": "生肖地支",
+  "legalPrivacy": "隐私政策",
+  "legalTerms": "使用条款",
+  "legalSupport": "支持",
+  "legalPublishedPage": "打开已发布页面",
+  "legalPrivacyBody": "您的姓名、出生信息、偏好设置和解读历史保存在设备上，用于象征性计算。这些信息不会发送给 AI 服务或 AstraCue 账户服务器。分享解读时，您选择的文字会发送到其他应用。\n\n可选的使用情况分析在配置并启用后使用 Firebase。广告合作伙伴可能处理设备标识符、广告互动、诊断信息、通过网络推断的大致位置和同意设置。在 iOS 上，跨应用跟踪需要单独许可；拒绝不会影响使用。Apple 处理购买，我们使用经过验证的购买标识符管理 Plus。\n\n您可以在“负责任使用”页面更改使用情况分析和可用的广告隐私选项。卸载应用通常会删除本地数据；平台备份、Apple 购买记录和提供商持有的数据遵循各自的保留规则。如有隐私请求，请联系支持。AstraCue 没有需要删除的在线账户。",
+  "legalTermsBody": "AstraCue 为日常选择提供个性化的象征性思考提示。百分比和每日能量并非现实概率、测量值或保证准确的预测。您需自行对决定负责。请遵守“负责任使用”规则，并在医疗、法律、财务或紧急事务中寻求专业帮助。\n\n如有提供，Plus 是一次性购买、非消耗型的功能解锁，提供每日解读额度和购买前展示的权益。每日额度在当地时间午夜重置，不会累积。购买、退款和恢复遵循相应商店的规则。激励广告为可选项，仅在广告提供商确认完成后发放奖励。\n\n应用及内容仅授权个人使用。不得滥用、干扰服务或用于违法活动。可用性和功能可能变化；您的法定权利和商店条款仍然适用。如需帮助，请联系支持。",
+  "purchaseNotAvailable": "目前无法购买，请稍后重试。",
+  "purchasePending": "付款正在等待处理。您可以关闭此页面，确认后 Plus 将自动启用。",
+  "purchaseCanceled": "已取消购买。",
+  "purchaseFailed": "未能完成购买，请重试。",
+  "purchaseVerified": "AstraCue Plus 已启用。",
+  "purchaseRestored": "已恢复您的购买。",
+  "purchaseNothingToRestore": "此商店账户中未找到 Plus 购买记录。",
+  "purchaseRestoreFailed": "目前无法恢复购买，请重试。",
+  "purchaseVerifying": "正在确认购买…",
+  "purchaseLoadingPrice": "正在加载商店价格…"
 }

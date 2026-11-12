@@ -30,6 +30,7 @@ import 'data/shared_preferences_profile_repository.dart';
 import 'data/reading_quota_controller.dart';
 import 'local_engine/local_reading_repository.dart';
 import 'reading_dependencies.dart';
+import 'monetization_policy.dart';
 import 'services/ad_service.dart';
 import 'services/network_guard.dart';
 
@@ -57,7 +58,9 @@ Future<void> main() async {
     store: const SharedPreferencesDailyEnergyInsightStore(),
   );
   final analytics = ProductAnalytics(
-    store: const SharedPreferencesAnalyticsConsentStore(),
+    store: SharedPreferencesAnalyticsConsentStore(
+      defaultEnabled: defaultTargetPlatform != TargetPlatform.iOS,
+    ),
     sink: const bool.fromEnvironment('FIREBASE_ANALYTICS_ENABLED')
         ? FirebaseAnalyticsSink()
         : const NoopAnalyticsSink(),
@@ -65,21 +68,32 @@ Future<void> main() async {
   // Optional telemetry must not extend the startup ritual or hold Home back.
   // The consent control is disabled until this background load settles.
   unawaited(analytics.ensureLoaded());
-  final adService = AdMobService(analytics: analytics);
+  final monetizationEnabled = MonetizationPolicy.enabledFor(
+    defaultTargetPlatform,
+  );
+  final AdService adService = monetizationEnabled
+      ? AdMobService(analytics: analytics)
+      : const NoOpAdService();
   final plusConfig = PlusBillingConfig.fromEnvironment();
   // Debug + PLUS_DEMO_BILLING only; a release build always uses the store.
   final plusDemo = plusDemoBillingEnabled();
-  final plus = PlusEntitlementController(
-    store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),
-    verifier: plusDemo ? const DemoPlusVerifier() : plusVerifierFor(plusConfig),
-    productId: plusConfig.productId,
-    ads: adService,
-    // The approved CTA's reference price and discount are preview copy; the
-    // store build stays blocked on them until real offer data exists.
-    requireSupportedSaleClaims: !plusDemo,
-    acceptDemoProofs: plusDemo,
-  );
-  final quotaManager = SharedPreferencesReadingQuotaController(plus: plus);
+  final plus = !monetizationEnabled
+      ? null
+      : PlusEntitlementController(
+          store: plusDemo ? DemoPlusStore() : InAppPurchasePlusStore(),
+          verifier: plusDemo
+              ? const DemoPlusVerifier()
+              : plusVerifierFor(plusConfig),
+          productId: plusConfig.productId,
+          ads: adService,
+          // iOS uses the App Store price without the Android/demo promotion.
+          requireSupportedSaleClaims:
+              !plusDemo && defaultTargetPlatform != TargetPlatform.iOS,
+          acceptDemoProofs: plusDemo,
+        );
+  final ReadingQuotaController quotaManager = monetizationEnabled
+      ? SharedPreferencesReadingQuotaController(plus: plus)
+      : const NoopReadingQuotaController();
   final localeController = LocaleController(
     store: const SharedPreferencesLocaleStore(),
     analytics: analytics,
@@ -92,7 +106,7 @@ Future<void> main() async {
     localeController.ensureLoaded(),
     quotaManager.ensureLoaded(),
     // Local only: a Plus owner's first frame is already ad-free and at 6.
-    plus.loadCached(),
+    if (plus != null) plus.loadCached(),
   ]);
 
   runApp(
@@ -101,8 +115,10 @@ Future<void> main() async {
       startupPreparation: startupPreparation,
       onContentReady: () {
         // UMP may show a native form; only start after the first content frame.
-        unawaited(adService.initialize());
-        unawaited(plus.start());
+        if (monetizationEnabled) {
+          unawaited(adService.initialize());
+          unawaited(plus!.start());
+        }
         if (defaultTargetPlatform == TargetPlatform.android) {
           unawaited(
             const MethodChannel('astracue/startup')
@@ -114,6 +130,7 @@ Future<void> main() async {
       internetCheck: probeInternet,
       dependencies: ReadingDependencies(
         repository: repository,
+        monetizationEnabled: monetizationEnabled,
         contextProvider: contextProvider,
         historyRepository: const SharedPreferencesHistoryRepository(),
         profileRepository: const SharedPreferencesProfileRepository(),

@@ -1364,4 +1364,59 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get compassPillarAnimal => 'SIGNO ORIENTAL';
+
+  @override
+  String get legalPrivacy => 'Política de privacidad';
+
+  @override
+  String get legalTerms => 'Condiciones de uso';
+
+  @override
+  String get legalSupport => 'Ayuda';
+
+  @override
+  String get legalPublishedPage => 'Abrir página publicada';
+
+  @override
+  String get legalPrivacyBody =>
+      'Tu nombre, datos de nacimiento, preferencias e historial se guardan en tu dispositivo para cálculos simbólicos. No se envían a un servicio de IA ni a un servidor de cuentas de AstraCue. Compartir una lectura envía el texto elegido a otra app.\n\nEl análisis de uso opcional utiliza Firebase cuando está configurado y activado. Los socios publicitarios pueden procesar identificadores del dispositivo, interacciones con anuncios, diagnósticos, ubicación aproximada deducida de la red y preferencias de consentimiento. En iOS, el seguimiento entre apps requiere un permiso aparte; rechazarlo no impide usar la app. Apple procesa las compras y los identificadores verificados permiten gestionar Plus.\n\nPuedes cambiar el análisis de uso y las opciones de privacidad publicitaria disponibles en Uso responsable. Desinstalar la app normalmente elimina los datos locales; las copias de seguridad, los registros de compra de Apple y los datos de los proveedores tienen sus propias reglas de conservación. Contacta con Ayuda para solicitudes de privacidad. AstraCue no tiene cuentas en línea que eliminar.';
+
+  @override
+  String get legalTermsBody =>
+      'AstraCue ofrece reflexiones simbólicas personalizadas para decisiones cotidianas. Los porcentajes y la energía diaria no son probabilidades reales, mediciones ni predicciones garantizadas. Eres responsable de tus decisiones. Sigue las normas de Uso responsable y busca ayuda cualificada en asuntos médicos, legales, financieros o urgentes.\n\nCuando se ofrece, Plus es un desbloqueo no consumible de pago único que ofrece un cupo diario de lecturas y las ventajas indicadas antes de comprar. El cupo se renueva a medianoche local y no se acumula. Las compras, reembolsos y restauraciones siguen las reglas de la tienda. Los anuncios con recompensa son opcionales; la recompensa solo se concede cuando el proveedor confirma que se han completado.\n\nLa app y su contenido se licencian para uso personal. No los explotes, interfieras en su funcionamiento ni los uses de forma ilícita. La disponibilidad y las funciones pueden cambiar; tus derechos legales y las condiciones de la tienda siguen vigentes. Contacta con Ayuda si lo necesitas.';
+
+  @override
+  String get purchaseNotAvailable =>
+      'Las compras no están disponibles ahora. Inténtalo más tarde.';
+
+  @override
+  String get purchasePending =>
+      'El pago está pendiente. Puedes cerrar esta pantalla; Plus se activará tras la confirmación.';
+
+  @override
+  String get purchaseCanceled => 'Compra cancelada.';
+
+  @override
+  String get purchaseFailed =>
+      'No se pudo completar la compra. Inténtalo de nuevo.';
+
+  @override
+  String get purchaseVerified => 'AstraCue Plus está activo.';
+
+  @override
+  String get purchaseRestored => 'Tu compra se ha restaurado.';
+
+  @override
+  String get purchaseNothingToRestore =>
+      'No se encontró ninguna compra de Plus en esta cuenta de la tienda.';
+
+  @override
+  String get purchaseRestoreFailed =>
+      'No se pudo restaurar la compra ahora. Inténtalo de nuevo.';
+
+  @override
+  String get purchaseVerifying => 'Confirmando tu compra…';
+
+  @override
+  String get purchaseLoadingPrice => 'Cargando el precio de la tienda…';
 }

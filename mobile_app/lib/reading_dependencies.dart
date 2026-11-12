@@ -26,13 +26,17 @@ class ReadingDependencies {
     required this.dailyEnergyInsights,
     required this.localeController,
     this.analytics = const NoopAnalyticsService(),
-    this.quotaManager = const NoopReadingQuotaController(),
-    this.adService = const NoOpAdService(),
-    this.guidanceLocks,
-    this.plus,
+    ReadingQuotaController quotaManager = const NoopReadingQuotaController(),
+    AdService adService = const NoOpAdService(),
+    GuidanceLockStore? guidanceLocks,
+    PlusEntitlementController? plus,
+    this.monetizationEnabled = true,
     this.nowUtc = _systemNowUtc,
     this.nowLocal = _systemNowLocal,
-  });
+  }) : _quotaManager = quotaManager,
+       _adService = adService,
+       _guidanceLocks = guidanceLocks,
+       _plus = plus;
 
   final ReadingRepository repository;
   final CurrentContextProvider contextProvider;
@@ -53,15 +57,23 @@ class ReadingDependencies {
   /// behind in the previous language.
   final LocaleController localeController;
   final AnalyticsService analytics;
-  final ReadingQuotaController quotaManager;
-  final AdService adService;
+  final bool monetizationEnabled;
+  final ReadingQuotaController _quotaManager;
+  final AdService _adService;
+  ReadingQuotaController get quotaManager =>
+      monetizationEnabled ? _quotaManager : const NoopReadingQuotaController();
+  AdService get adService =>
+      monetizationEnabled ? _adService : const NoOpAdService();
 
   /// Null (tests, previews) never locks Action Guidance.
-  final GuidanceLockStore? guidanceLocks;
+  final GuidanceLockStore? _guidanceLocks;
+  GuidanceLockStore? get guidanceLocks =>
+      monetizationEnabled ? _guidanceLocks : null;
 
   /// The single Plus entitlement source. Null (tests, previews) is never
   /// active and cannot check out.
-  final PlusEntitlementController? plus;
+  final PlusEntitlementController? _plus;
+  PlusEntitlementController? get plus => monetizationEnabled ? _plus : null;
   bool get plusActive => plus?.isActive ?? false;
 
   /// Injected so tests can pin the instant a Reveal tap records.

@@ -6,6 +6,7 @@ import '../services/ad_service.dart';
 import 'analytics_consent_tile.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
+import '../pages/legal_page.dart';
 
 /// Shows the Responsible Use & Safety boundaries modal.
 ///
@@ -355,6 +356,7 @@ class _ResponsibleUseSheetState extends State<ResponsibleUseSheet> {
                             ],
                           ),
                         ),
+                        const IOSLegalLinks(),
                         if (!widget.isFirstTimeAcknowledgement)
                           AnalyticsConsentTile(analytics: widget.analytics),
                         if (!widget.isFirstTimeAcknowledgement &&

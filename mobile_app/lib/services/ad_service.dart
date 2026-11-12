@@ -9,6 +9,7 @@ import '../analytics/analytics_service.dart';
 import 'ad_policy.dart';
 import 'ad_runtime.dart';
 import 'banner_ad.dart';
+import 'ios_platform_bridge.dart';
 export 'ad_runtime.dart';
 
 /// Google's TEST units. No production ad IDs are configured by this change.
@@ -30,6 +31,26 @@ class AdConstants {
   static const realIosBannerUnitId = String.fromEnvironment(
     'ADMOB_IOS_BANNER_UNIT_ID',
   );
+
+  /// Test units are only used by debug builds on iOS. Profile uses the native
+  /// release settings too, so it must also fail closed without live setup.
+  /// A store build
+  /// without explicit live configuration serves no ads and requests no ATT.
+  @visibleForTesting
+  static String iosUnit({
+    required String configured,
+    required String test,
+    bool release = !kDebugMode,
+    bool enabled = const bool.fromEnvironment('IOS_ADS_ENABLED'),
+  }) {
+    if (!release) return configured.isEmpty ? test : configured;
+    if (!enabled ||
+        !RegExp(r'^ca-app-pub-\d{16}/\d{10}$').hasMatch(configured) ||
+        configured.startsWith('ca-app-pub-3940256099942544/'))
+      return '';
+    return configured;
+  }
+
   static String get bannerAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
@@ -37,25 +58,33 @@ class AdConstants {
             ? testAndroidBannerUnitId
             : realAndroidBannerUnitId)
       : Platform.isIOS
-      ? (realIosBannerUnitId.isEmpty
-            ? testIosBannerUnitId
-            : realIosBannerUnitId)
+      ? iosUnit(configured: realIosBannerUnitId, test: testIosBannerUnitId)
       : '';
   static const String? realAndroidInterstitialUnitId = null;
-  static const String? realIosInterstitialUnitId = null;
+  static const realIosInterstitialUnitId = String.fromEnvironment(
+    'ADMOB_IOS_INTERSTITIAL_UNIT_ID',
+  );
   static String get interstitialAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
       ? realAndroidInterstitialUnitId ?? testAndroidInterstitialUnitId
       : Platform.isIOS
-      ? realIosInterstitialUnitId ?? testIosInterstitialUnitId
+      ? iosUnit(
+          configured: realIosInterstitialUnitId,
+          test: testIosInterstitialUnitId,
+        )
       : '';
   static String get rewardedAdUnitId => kIsWeb
       ? ''
       : Platform.isAndroid
       ? testAndroidRewardedUnitId
       : Platform.isIOS
-      ? testIosRewardedUnitId
+      ? iosUnit(
+          configured: const String.fromEnvironment(
+            'ADMOB_IOS_REWARDED_UNIT_ID',
+          ),
+          test: testIosRewardedUnitId,
+        )
       : '';
 }
 
@@ -75,10 +104,44 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
   final String? interstitialUnit;
   final String? bannerUnit;
   Future<void>? _sdkInitialization;
+  bool _trackingAuthorized = false;
+
+  AdRequest get _request => AdRequest(
+    nonPersonalizedAds: Platform.isIOS && !_trackingAuthorized ? true : null,
+  );
 
   Future<void> _initializeSdk() => _sdkInitialization ??= _startSdk();
+
+  Future<void> _refreshTrackingAuthorization() async {
+    if (!Platform.isIOS) return;
+    if (!const bool.fromEnvironment('IOS_TRACKING_ENABLED')) {
+      _trackingAuthorized = false;
+      return;
+    }
+    try {
+      // Read-only: returning from iOS Settings must not retain a stale grant.
+      _trackingAuthorized =
+          await const IOSPlatformBridge().trackingStatus() == 'authorized';
+    } catch (_) {
+      _trackingAuthorized = false;
+    }
+  }
+
   Future<void> _startSdk() async {
     try {
+      if (Platform.isIOS) {
+        // Kept inside the coordinator's exclusive consent/SDK phase.
+        if (const bool.fromEnvironment('IOS_TRACKING_ENABLED')) {
+          try {
+            _trackingAuthorized =
+                await const IOSPlatformBridge().requestTracking() ==
+                'authorized';
+          } catch (_) {
+            _trackingAuthorized = false;
+          }
+        }
+        await MobileAds.instance.setSameAppKeyEnabled(false);
+      }
       await MobileAds.instance.initialize();
     } catch (_) {
       _sdkInitialization = null;
@@ -140,7 +203,8 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
       await ConsentInformation.instance.getPrivacyOptionsRequirementStatus() ==
           PrivacyOptionsRequirementStatus.required;
   @override
-  Future<void> initializeSdk() => _initializeSdk();
+  Future<void> initializeSdk() =>
+      _supported ? _initializeSdk() : Future.value();
 
   @override
   Future<BannerHandle?> createBanner({
@@ -149,6 +213,7 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
   }) async {
     final unit = bannerUnit ?? AdConstants.bannerAdUnitId;
     if (unit.isEmpty) return null;
+    await _refreshTrackingAuthorization();
     // v9.1 deprecates the compact anchored API in favour of LARGE anchored
     // (up to 150dp). Retain the standard 50-90dp format agreed for this UI;
     // adopting the taller format is a product/layout change, not a rename.
@@ -162,7 +227,7 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
         adUnitId: unit,
         size: size,
         // Ordinary anchored banner, deliberately not collapsible.
-        request: const AdRequest(),
+        request: _request,
         listener: BannerAdListener(
           onAdLoaded: (_) => callbacks.loaded(),
           onAdFailedToLoad: (_, _) => callbacks.failed(),
@@ -182,11 +247,12 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
     AdFormat format,
     void Function(FullscreenAd) onLoaded,
     VoidCallback onFailed,
-  ) {
+  ) async {
+    await _refreshTrackingAuthorization();
     if (format == AdFormat.interstitial) {
       return InterstitialAd.load(
         adUnitId: interstitialUnit ?? AdConstants.interstitialAdUnitId,
-        request: const AdRequest(),
+        request: _request,
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (ad) => onLoaded(GoogleFullscreenAd(interstitial: ad)),
           onAdFailedToLoad: (_) => onFailed(),
@@ -195,7 +261,7 @@ class GoogleAdsBackend implements AdsBackend, BannerBackend {
     }
     return RewardedAd.load(
       adUnitId: AdConstants.rewardedAdUnitId,
-      request: const AdRequest(),
+      request: _request,
       rewardedAdLoadCallback: RewardedAdLoadCallback(
         onAdLoaded: (ad) => onLoaded(GoogleFullscreenAd(rewarded: ad)),
         onAdFailedToLoad: (_) => onFailed(),

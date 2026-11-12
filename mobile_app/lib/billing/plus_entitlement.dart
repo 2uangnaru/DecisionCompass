@@ -304,6 +304,28 @@ class PlusEntitlementController extends ChangeNotifier implements PlusAccess {
     _notify();
     if (!_storeAvailable) await refreshStore();
     if (_disposed) return PlusRestoreResult.failed;
+    // StoreKit's normal query is silent. Only an explicit Restore may call
+    // AppStore.sync(), which can ask the user to sign in on a new device.
+    if (store case final PlusPurchaseSynchronizer synchronizer
+        when synchronizer.requiresSynchronization) {
+      final adService = ads;
+      if (adService != null && !adService.claimFullscreen()) {
+        _checkout = PlusCheckoutState.idle;
+        return _finishRestore(PlusRestoreResult.failed);
+      }
+      try {
+        // A timeout does not close Apple's native authentication sheet. Keep
+        // ads excluded until the underlying operation actually settles.
+        await Future<void>.sync(synchronizer.synchronizePurchases)
+            .whenComplete(() => adService?.releaseFullscreen())
+            .timeout(storeTimeout);
+      } catch (_) {
+        if (_disposed) return PlusRestoreResult.failed;
+        _checkout = PlusCheckoutState.idle;
+        return _finishRestore(PlusRestoreResult.failed);
+      }
+    }
+    if (_disposed) return PlusRestoreResult.failed;
     final run = await _reconcileOwned();
     if (_disposed) return PlusRestoreResult.failed;
     if (_checkout == PlusCheckoutState.restoring) {

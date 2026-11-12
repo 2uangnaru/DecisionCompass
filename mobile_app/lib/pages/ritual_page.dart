@@ -66,6 +66,7 @@ class _RitualPageState extends State<RitualPage>
   late AppProfile _profile = widget.profile;
 
   bool get _isQuotaExhausted {
+    if (!widget.dependencies.monetizationEnabled) return false;
     if (_isQuotaExhaustedOverride != null) {
       return _isQuotaExhaustedOverride!;
     }
@@ -244,6 +245,7 @@ class _RitualPageState extends State<RitualPage>
       _periodTriggers.putIfAbsent(p, () => ValueNotifier<int>(0));
 
   bool _isPeriodLocked(TimePeriod period) {
+    if (!widget.dependencies.monetizationEnabled) return false;
     // Plus unlocks still-available periods; elapsed ones stay muted elsewhere.
     if (period == TimePeriod.now || widget.dependencies.plusActive) {
       return false;
@@ -401,11 +403,15 @@ class _RitualPageState extends State<RitualPage>
     final now = widget.dependencies.nowLocal();
     final quota = widget.dependencies.quotaManager;
     final isExhausted =
-        widget.isQuotaExhausted ??
-        (quota.bonusReadings == 0 &&
-            quota.dailyFreeReadingsUsed(now) >= quota.maxDailyFreeReadings);
+        widget.dependencies.monetizationEnabled &&
+        (widget.isQuotaExhausted ??
+            (quota.bonusReadings == 0 &&
+                quota.dailyFreeReadingsUsed(now) >=
+                    quota.maxDailyFreeReadings));
 
-    _isCooldown = widget.isCooldown ?? (isExhausted || quota.isCooldown(now));
+    _isCooldown =
+        widget.dependencies.monetizationEnabled &&
+        (widget.isCooldown ?? (isExhausted || quota.isCooldown(now)));
 
     _countdownString = quota.remainingTimeString(now);
     if (_isCooldown || isExhausted) {
@@ -814,7 +820,8 @@ class _RitualPageState extends State<RitualPage>
             ),
           ),
           // Plus is ad-free: no banner and no reserved blank slot.
-          if (!widget.dependencies.plusActive)
+          if (widget.dependencies.monetizationEnabled &&
+              !widget.dependencies.plusActive)
             AdBannerSlot(
               ads: widget.dependencies.adService,
               placement: BannerPlacement.reveal,
@@ -1049,14 +1056,18 @@ class _RitualPageState extends State<RitualPage>
                                           : Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  _quotaBadge(
-                                    accentColor: _isQuotaExhausted
-                                        ? const Color(0xFFE27C7C)
-                                        : _isCooldown
-                                        ? const Color(0xFFE2A84B)
-                                        : CompassColors.blueLight,
-                                  ),
+                                  if (widget
+                                      .dependencies
+                                      .monetizationEnabled) ...[
+                                    const SizedBox(height: 4),
+                                    _quotaBadge(
+                                      accentColor: _isQuotaExhausted
+                                          ? const Color(0xFFE27C7C)
+                                          : _isCooldown
+                                          ? const Color(0xFFE2A84B)
+                                          : CompassColors.blueLight,
+                                    ),
+                                  ],
                                 ],
                               ),
                             ),
@@ -1111,7 +1122,8 @@ class _RitualPageState extends State<RitualPage>
                 onTap: _watchAdAndUnlock,
               ),
             ],
-            if (!energySnapshot.isPlusActive) ...[
+            if (widget.dependencies.monetizationEnabled &&
+                !energySnapshot.isPlusActive) ...[
               SizedBox(height: compact ? 10 : 14),
               AnalysisEnergyPlusCard(
                 key: const Key('ritual_energy_plus_card'),
@@ -1142,7 +1154,8 @@ class _RitualPageState extends State<RitualPage>
   /// all six, may opt in to a rewarded ad for a bonus credit. Plus never
   /// waits on a cooldown, so it is never offered one for that.
   bool _offersRewardedCredit(ReadingEnergySnapshot snapshot) =>
-      _isQuotaExhausted || (!snapshot.isPlusActive && _isCooldown);
+      widget.dependencies.monetizationEnabled &&
+      (_isQuotaExhausted || (!snapshot.isPlusActive && _isCooldown));
 
   ReadingEnergySnapshot _currentEnergySnapshot() {
     return ReadingEnergySnapshot.fromQuota(
@@ -1155,6 +1168,7 @@ class _RitualPageState extends State<RitualPage>
   }
 
   Future<void> _openPlusSheet() async {
+    if (!widget.dependencies.monetizationEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       await showAstraCueVipStatusSheet(

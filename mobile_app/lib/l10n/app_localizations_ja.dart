@@ -1234,4 +1234,54 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get compassPillarAnimal => '十二支';
+
+  @override
+  String get legalPrivacy => 'プライバシーポリシー';
+
+  @override
+  String get legalTerms => '利用規約';
+
+  @override
+  String get legalSupport => 'サポート';
+
+  @override
+  String get legalPublishedPage => '公開ページを開く';
+
+  @override
+  String get legalPrivacyBody =>
+      '名前、生年月日などの出生情報、設定、リーディング履歴は、象徴的な計算のため端末に保存されます。これらはAIサービスやAstraCueのアカウント用サーバーには送信されません。共有を選ぶと、選択したテキストが別のアプリに渡されます。\n\n任意の利用状況分析は、設定され有効になっている場合にFirebaseを使用します。広告パートナーは端末識別子、広告への反応、診断情報、ネットワークから推定したおおよその位置、同意設定を処理する場合があります。iOSでのアプリ間トラッキングには別途許可が必要で、拒否しても利用できます。購入はAppleが処理し、確認済みの購入識別子をPlusの管理に使用します。\n\n利用状況分析と利用可能な広告プライバシー設定は「責任ある利用」画面で変更できます。アプリを削除すると通常は端末内データも削除されますが、バックアップ、Appleの購入記録、提供元が保有するデータにはそれぞれの保存規則が適用されます。プライバシーに関する依頼はサポートへご連絡ください。AstraCueには削除対象のオンラインアカウントはありません。';
+
+  @override
+  String get legalTermsBody =>
+      'AstraCueは日常の選択について、個人に合わせた象徴的な振り返りを提供します。割合や日々のエネルギーは現実の確率、測定値、保証された予測ではありません。判断はご自身の責任で行ってください。「責任ある利用」に従い、医療、法律、金融、緊急の問題は専門家に相談してください。\n\n提供される場合、Plusは買い切りの非消耗型アップグレードで、毎日のリーディング枠と購入前に表示される特典を提供します。枠は現地時間の午前0時にリセットされ、繰り越されません。購入、返金、復元にはストアの規則が適用されます。リワード広告の視聴は任意であり、提供元が完了を確認した後にのみ報酬が付与されます。\n\nアプリとコンテンツは個人利用のためにライセンスされます。不正利用、妨害、違法な利用は禁止します。提供状況や機能は変更される場合がありますが、法定の権利とストアの規約は引き続き適用されます。お問い合わせはサポートまで。';
+
+  @override
+  String get purchaseNotAvailable => '現在購入できません。後でもう一度お試しください。';
+
+  @override
+  String get purchasePending => 'お支払いは保留中です。この画面を閉じても、確認後にPlusが有効になります。';
+
+  @override
+  String get purchaseCanceled => '購入をキャンセルしました。';
+
+  @override
+  String get purchaseFailed => '購入を完了できませんでした。もう一度お試しください。';
+
+  @override
+  String get purchaseVerified => 'AstraCue Plusが有効になりました。';
+
+  @override
+  String get purchaseRestored => '購入を復元しました。';
+
+  @override
+  String get purchaseNothingToRestore => 'このストアアカウントにPlusの購入が見つかりませんでした。';
+
+  @override
+  String get purchaseRestoreFailed => '現在購入を復元できません。もう一度お試しください。';
+
+  @override
+  String get purchaseVerifying => '購入を確認しています…';
+
+  @override
+  String get purchaseLoadingPrice => 'ストアの価格を読み込み中…';
 }

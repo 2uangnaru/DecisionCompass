@@ -1355,4 +1355,59 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get compassPillarAnimal => 'EARTHLY BRANCH';
+
+  @override
+  String get legalPrivacy => 'Privacy Policy';
+
+  @override
+  String get legalTerms => 'Terms of Use';
+
+  @override
+  String get legalSupport => 'Support';
+
+  @override
+  String get legalPublishedPage => 'Open published page';
+
+  @override
+  String get legalPrivacyBody =>
+      'Your name, birth details, preferences and reading history are stored on your device and used for symbolic calculations. These details are not sent to an AI service or an AstraCue account server. Sharing a reading sends the text you choose to another app.\n\nOptional usage analytics uses Firebase when configured and enabled. Advertising partners may process device identifiers, ad interactions, diagnostics, network-derived approximate location and consent settings. On iOS, cross-app tracking requires separate permission; declining does not block use of the app. Apple processes purchases, and verified purchase identifiers are used to manage Plus.\n\nYou can change usage analytics and available ad privacy choices on the Responsible Use screen. Removing the app normally removes its local data; platform backups, Apple purchase records and provider-held data follow their own retention rules. Use Support for privacy requests. AstraCue has no online account to delete.';
+
+  @override
+  String get legalTermsBody =>
+      'AstraCue provides personalized symbolic reflections for everyday choices. Its percentages and daily energy are not real-world probabilities, measurements or guaranteed predictions. You remain responsible for your decisions. Follow the Responsible Use rules and seek qualified help for medical, legal, financial or emergency matters.\n\nWhere offered, Plus is a one-time, non-consumable unlock that provides a daily reading allowance and the benefits shown before purchase. The daily allowance resets at local midnight and does not accumulate. Purchases, refunds and restoration follow the applicable store rules. Rewarded ads are optional; a reward is granted only after the ad provider confirms completion.\n\nThe app and its content are licensed for personal use. Do not exploit the service, interfere with it or use it unlawfully. Availability and features may change; your statutory rights and the store terms still apply. Contact Support for assistance.';
+
+  @override
+  String get purchaseNotAvailable =>
+      'Purchases are unavailable right now. Please try again later.';
+
+  @override
+  String get purchasePending =>
+      'Payment is pending. You can close this screen; Plus will activate after confirmation.';
+
+  @override
+  String get purchaseCanceled => 'Purchase canceled.';
+
+  @override
+  String get purchaseFailed =>
+      'The purchase could not be completed. Please try again.';
+
+  @override
+  String get purchaseVerified => 'AstraCue Plus is active.';
+
+  @override
+  String get purchaseRestored => 'Your purchase has been restored.';
+
+  @override
+  String get purchaseNothingToRestore =>
+      'No Plus purchase was found for this store account.';
+
+  @override
+  String get purchaseRestoreFailed =>
+      'Your purchase could not be restored right now. Please try again.';
+
+  @override
+  String get purchaseVerifying => 'Confirming your purchase…';
+
+  @override
+  String get purchaseLoadingPrice => 'Loading store price…';
 }

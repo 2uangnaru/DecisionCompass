@@ -1,0 +1,8 @@
+// Public defaults. tool/ios_release_config.dart generates Owner.xcconfig.
+ASTRACUE_BUNDLE_ID = com.decisioncompass.decisionCompass
+ASTRACUE_DEVELOPMENT_TEAM =
+ASTRACUE_PLUS_PRODUCT_ID = astracue_plus_lifetime
+ASTRACUE_ADMOB_APP_ID =
+ASTRACUE_PRIVACY_POLICY_URL =
+ASTRACUE_TERMS_URL =
+ASTRACUE_SUPPORT_URL =

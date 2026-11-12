@@ -19,6 +19,9 @@ dependencies:
   flutter_timezone: ^5.1.0
   # Foreground one-shot position for the *current* location only.
   geolocator: ^14.0.3
+  # The iOS SPM package must honor BYPASS_PERMISSION_LOCATION_ALWAYS.
+  # Older 2.3.x packages still compile requestAlwaysAuthorization.
+  geolocator_apple: ^2.4.3
   # Local persistence for saved reading snapshots (history).
   shared_preferences: ^2.5.3
   country_picker: ^2.0.28

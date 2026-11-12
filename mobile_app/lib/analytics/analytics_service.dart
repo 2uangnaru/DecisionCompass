@@ -22,13 +22,14 @@ abstract interface class AnalyticsConsentStore {
 }
 
 class SharedPreferencesAnalyticsConsentStore implements AnalyticsConsentStore {
-  const SharedPreferencesAnalyticsConsentStore();
+  const SharedPreferencesAnalyticsConsentStore({this.defaultEnabled = true});
+  final bool defaultEnabled;
   static const key = 'usage_analytics_consent_v1';
   @override
   Future<bool> load() async {
     final prefs = await SharedPreferences.getInstance();
     if (!prefs.containsKey(key)) {
-      return true;
+      return defaultEnabled;
     }
     return prefs.get(key) == true;
   }

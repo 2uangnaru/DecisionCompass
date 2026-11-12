@@ -256,11 +256,11 @@ void main() {
     );
 
     testWidgets(
-      'displays quota badge counter accurately inside reveal orb (0/3, 1/3, 3/3, 3/3 (+1))',
+      'displays remaining turns inside reveal orb (3/3, 2/3, 0/3, 0/3 (+1))',
       (tester) async {
         useScreen(tester, size: const Size(393, 873));
 
-        // 1. Fresh state: 0/3
+        // 1. Fresh state: all three daily turns remain.
         final freshQuota = FakeReadingQuotaController(
           initialCooldown: false,
           initialUsed: 0,
@@ -284,9 +284,9 @@ void main() {
         );
         await tester.pump();
         expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
-        expect(find.text('0/3'), findsOneWidget);
+        expect(find.text('3/3'), findsOneWidget);
 
-        // 2. Cooldown after 1 reading: 1/3
+        // 2. Cooldown after one reading: two turns remain.
         final coolQuota = FakeReadingQuotaController(
           initialCooldown: true,
           initialUsed: 1,
@@ -310,9 +310,9 @@ void main() {
         );
         await tester.pump();
         expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
-        expect(find.text('1/3'), findsOneWidget);
+        expect(find.text('2/3'), findsOneWidget);
 
-        // 3. Exhausted daily quota: 3/3
+        // 3. Daily quota exhausted: zero turns remain.
         final exhaustQuota = FakeReadingQuotaController(
           initialCooldown: true,
           initialUsed: 3,
@@ -336,12 +336,12 @@ void main() {
         );
         await tester.pump();
         expect(find.byKey(const Key('ritual_quota_badge')), findsOneWidget);
-        expect(find.text('3/3'), findsOneWidget);
+        expect(find.text('0/3'), findsOneWidget);
 
-        // 4. Exhausted but with bonus from reward: 3/3 (+1)
+        // 4. Earned bonus is separate from the exhausted daily allowance.
         await exhaustQuota.earnBonusReading();
         await tester.pump();
-        expect(find.text('3/3 (+1)'), findsOneWidget);
+        expect(find.text('0/3 (+1)'), findsOneWidget);
       },
     );
   });

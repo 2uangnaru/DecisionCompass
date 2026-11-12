@@ -4,7 +4,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'analytics_event.dart';
 import 'analytics_service.dart';
 
-/// Remains dormant until a genuinely configured Android build explicitly
+/// Remains dormant until a genuinely configured build explicitly
 /// opts in using --dart-define=FIREBASE_ANALYTICS_ENABLED=true.
 class FirebaseAnalyticsSink implements AnalyticsSink {
   FirebaseAnalytics? _analytics;

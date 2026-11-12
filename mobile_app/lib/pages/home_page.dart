@@ -44,10 +44,16 @@ class HomePage extends StatefulWidget {
     super.key,
     required this.profile,
     required this.dependencies,
+    this.initialDailyBrief,
+    this.initialDailyBriefDate,
   });
 
   final AppProfile profile;
   final ReadingDependencies dependencies;
+  // Reuse onboarding's prefetch only for the same local day. Crossing midnight
+  // during the opening animation must still fetch the new day's signals.
+  final Future<engine.DailyBrief?>? initialDailyBrief;
+  final DateTime? initialDailyBriefDate;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -249,6 +255,7 @@ class _HomePageState extends State<HomePage>
   }
 
   void _openPlusSheet() {
+    if (!widget.dependencies.monetizationEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       showAstraCueVipStatusSheet(
@@ -290,8 +297,13 @@ class _HomePageState extends State<HomePage>
     WidgetsBinding.instance.addObserver(this);
     widget.dependencies.quotaManager.addListener(_onQuotaChanged);
     widget.dependencies.plus?.addListener(_onQuotaChanged);
-    _briefLocalDay = _dayKey(widget.dependencies.nowLocal());
-    _dailyBrief = widget.dependencies.dailyBriefProvider.preview(_profile);
+    final localNow = widget.dependencies.nowLocal();
+    _briefLocalDay = _dayKey(localNow);
+    _dailyBrief =
+        widget.initialDailyBrief != null &&
+            DateUtils.isSameDay(widget.initialDailyBriefDate, localNow)
+        ? widget.initialDailyBrief!
+        : widget.dependencies.dailyBriefProvider.preview(_profile);
     _loadDescription();
     _scheduleDayChange();
     _scheduleFreeEnergyRefresh();
@@ -579,7 +591,8 @@ class _HomePageState extends State<HomePage>
             ),
           ),
           // Plus is ad-free: no banner and no reserved blank slot.
-          if (!widget.dependencies.plusActive)
+          if (widget.dependencies.monetizationEnabled &&
+              !widget.dependencies.plusActive)
             AdBannerSlot(
               ads: widget.dependencies.adService,
               placement: BannerPlacement.home,
@@ -624,7 +637,11 @@ class _HomePageState extends State<HomePage>
                   borderRadius: BorderRadius.circular(16),
                   child: Row(
                     children: [
-                      ZodiacAvatar(size: 52, sign: _profile.zodiacSign, isVip: widget.dependencies.plusActive),
+                      ZodiacAvatar(
+                        size: 52,
+                        sign: _profile.zodiacSign,
+                        isVip: widget.dependencies.plusActive,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -660,18 +677,20 @@ class _HomePageState extends State<HomePage>
                 ),
               ),
             ),
-            const SizedBox(width: 6),
-            IgnorePointer(
-              ignoring: _isSettingsOpen,
-              child: AnimatedOpacity(
-                opacity: _isSettingsOpen ? 0.0 : 1.0,
-                duration: const Duration(milliseconds: 180),
-                child: AstraCuePlusHeaderBadge(
-                  onTap: _openPlusSheet,
-                  isVip: _currentEnergySnapshot().isPlusActive,
+            if (widget.dependencies.monetizationEnabled) ...[
+              const SizedBox(width: 6),
+              IgnorePointer(
+                ignoring: _isSettingsOpen,
+                child: AnimatedOpacity(
+                  opacity: _isSettingsOpen ? 0.0 : 1.0,
+                  duration: const Duration(milliseconds: 180),
+                  child: AstraCuePlusHeaderBadge(
+                    onTap: _openPlusSheet,
+                    isVip: _currentEnergySnapshot().isPlusActive,
+                  ),
                 ),
               ),
-            ),
+            ],
             const SizedBox(width: 8 + HeaderSettingsCapsule.collapsedWidth),
           ],
         ),
@@ -993,11 +1012,17 @@ class _HomePageState extends State<HomePage>
               ],
             ),
           ),
-          HomeEmbeddedEnergyTray(
-            snapshot: energySnapshot,
-            locale: widget.dependencies.localeController.locale,
-            onTapPlus: _openPlusSheet,
-          ),
+          if (widget.dependencies.monetizationEnabled)
+            HomeEmbeddedEnergyTray(
+              snapshot: energySnapshot,
+              locale: widget.dependencies.localeController.locale,
+              onTapPlus: _openPlusSheet,
+            )
+          else
+            DailyAuspiciousHourRow(
+              locale: widget.dependencies.localeController.locale,
+              window: _auspiciousHour(widget.dependencies.nowLocal()),
+            ),
         ],
       ),
     );

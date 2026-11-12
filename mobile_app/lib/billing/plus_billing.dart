@@ -7,6 +7,8 @@ import 'package:in_app_purchase_android/in_app_purchase_android.dart';
 import 'package:in_app_purchase_platform_interface/in_app_purchase_platform_interface.dart'
     show InAppPurchasePlatform;
 
+import '../services/ios_platform_bridge.dart';
+
 /// Build-time Plus configuration. Nothing here is a credential.
 class PlusBillingConfig {
   const PlusBillingConfig({required this.productId});
@@ -18,8 +20,17 @@ class PlusBillingConfig {
     defaultValue: 'astracue_plus_lifetime',
   );
 
-  static PlusBillingConfig fromEnvironment() =>
-      const PlusBillingConfig(productId: defaultProductId);
+  static PlusBillingConfig fromEnvironment() {
+    const iosProduct = String.fromEnvironment('IOS_PLUS_PRODUCT_ID');
+    return PlusBillingConfig(
+      productId:
+          !kIsWeb &&
+              defaultTargetPlatform == TargetPlatform.iOS &&
+              iosProduct.isNotEmpty
+          ? iosProduct
+          : defaultProductId,
+    );
+  }
 
   final String productId;
 }
@@ -149,10 +160,19 @@ abstract interface class PlusStore {
   Future<bool> complete(PlusPurchaseUpdate update);
 }
 
-class InAppPurchasePlusStore implements PlusStore {
+abstract interface class PlusPurchaseSynchronizer {
+  bool get requiresSynchronization;
+  Future<void> synchronizePurchases();
+}
+
+class InAppPurchasePlusStore implements PlusStore, PlusPurchaseSynchronizer {
   InAppPurchasePlusStore([InAppPurchase? iap])
     : _iap = iap ?? InAppPurchase.instance;
   final InAppPurchase _iap;
+
+  @override
+  bool get requiresSynchronization =>
+      !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
 
   @override
   Stream<List<PlusPurchaseUpdate>> get updates => _iap.purchaseStream.map(
@@ -241,6 +261,13 @@ class InAppPurchasePlusStore implements PlusStore {
   Future<void> restore() => _iap.restorePurchases();
 
   @override
+  Future<void> synchronizePurchases() async {
+    if (requiresSynchronization) {
+      await const IOSPlatformBridge().synchronizePurchases();
+    }
+  }
+
+  @override
   Future<bool> complete(PlusPurchaseUpdate update) async {
     final details = update.native! as PurchaseDetails;
     final platform = InAppPurchasePlatform.instance;
@@ -273,9 +300,51 @@ class UnconfiguredPlusVerifier implements PlusPurchaseVerifier {
       PlusVerdict.unavailable;
 }
 
-/// Production verifier: none exists yet, so activation stays fail-closed.
-/// A server adapter implementing the contract in `PLUS_BILLING.md` replaces
-/// this once the owner deploys one (the offline-guarantee test then needs a
-/// deliberate update, since it forbids HTTP in the production graph).
+/// Apple verifies StoreKit 2 transactions on-device. The native handler looks
+/// up the transaction itself; it does not trust a Dart flag or decode-only JWS.
+class IOSStoreKitPlusVerifier implements PlusPurchaseVerifier {
+  const IOSStoreKitPlusVerifier({
+    required this.productId,
+    this.bridge = const IOSPlatformBridge(),
+  });
+  final String productId;
+  final IOSPlatformBridge bridge;
+
+  @override
+  bool get isConfigured => true;
+
+  @override
+  Future<PlusVerdict> verify(PlusPurchaseProof proof) async {
+    final id = proof.purchaseId;
+    if (proof.source != 'app_store' ||
+        proof.productId != productId ||
+        id == null ||
+        !RegExp(r'^\d+$').hasMatch(id)) {
+      return PlusVerdict.invalid;
+    }
+    try {
+      final response = await bridge
+          .verifyPurchase(productId: productId, purchaseId: id)
+          .timeout(const Duration(seconds: 15));
+      if (response == null ||
+          response['productId'] != productId ||
+          response['purchaseId'] != id)
+        return PlusVerdict.unavailable;
+      return switch (response['status']) {
+        'valid' => PlusVerdict.valid,
+        'revoked' => PlusVerdict.revoked,
+        'invalid' => PlusVerdict.invalid,
+        _ => PlusVerdict.unavailable,
+      };
+    } catch (_) {
+      // Missing channel, native failure and timeout never grant or revoke.
+      return PlusVerdict.unavailable;
+    }
+  }
+}
+
+/// Android remains fail-closed until its server verifier is configured.
 PlusPurchaseVerifier plusVerifierFor(PlusBillingConfig config) =>
-    const UnconfiguredPlusVerifier();
+    !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS
+    ? IOSStoreKitPlusVerifier(productId: config.productId)
+    : const UnconfiguredPlusVerifier();

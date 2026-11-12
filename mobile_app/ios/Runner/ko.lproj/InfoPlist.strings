@@ -1,0 +1,2 @@
+"NSUserTrackingUsageDescription" = "허용하면 광고 파트너가 앱과 웹사이트 전반에서 광고 효과를 측정할 수 있습니다. 거부해도 AstraCue를 계속 이용할 수 있습니다.";
+"NSLocationWhenInUseUsageDescription" = "위치 정보는 리딩에 포함하기로 선택한 경우에만 사용됩니다. 대신 기기의 시간대를 사용할 수 있습니다.";

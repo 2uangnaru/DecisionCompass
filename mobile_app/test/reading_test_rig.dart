@@ -29,6 +29,7 @@ import 'package:decision_compass/services/ad_service.dart';
 import 'package:decision_compass/theme.dart';
 import 'package:decision_compass/widgets/header_settings_capsule.dart';
 import 'package:flutter/material.dart';
+import 'package:decision_compass/pages/compass_awakening_page.dart';
 import 'package:flutter/services.dart' show FontLoader, JSONMessageCodec;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -63,6 +64,7 @@ class ReadingTestRig {
     this.detectDeviceLocale = false,
     this.guidanceLocks,
     this.plus,
+    this.monetizationEnabled = true,
   }) : localeStore = localeStore ?? InMemoryLocaleStore(),
        startingLocale = locale,
        descriptionStore = descriptionStore ?? InMemoryHomeDescriptionStore(),
@@ -128,6 +130,7 @@ class ReadingTestRig {
   final ReadingQuotaController quotaManager;
   final AdService adService;
   final GuidanceLockStore? guidanceLocks;
+  final bool monetizationEnabled;
   final PlusEntitlementController? plus;
 
   /// Device wall clock the ritual reads to mute periods that are over.
@@ -159,6 +162,7 @@ class ReadingTestRig {
     adService: adService,
     guidanceLocks: guidanceLocks,
     plus: plus,
+    monetizationEnabled: monetizationEnabled,
     nowUtc: () {
       clockReads++;
       // A test that advances a live local clock is advancing the reader's own
@@ -519,6 +523,14 @@ Future<void> completeOnboarding(
   } else {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+    // The new opening ritual now sits between the profile and Home. Use its
+    // real tap-to-skip action so Home's one-shot animation can be observed.
+    final opening = find.byType(CompassAwakeningPage);
+    if (opening.evaluate().isNotEmpty) {
+      await tester.tap(opening);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 450));
+    }
   }
 }
 

@@ -386,5 +386,21 @@
   "compassPillarVedic": "CHIÊM TINH VỆ ĐÀ",
   "compassPillarLifePath": "SỐ CHỦ ĐẠO",
   "compassPillarElement": "BẢN MỆNH",
-  "compassPillarAnimal": "ĐỊA CHI"
+  "compassPillarAnimal": "ĐỊA CHI",
+  "legalPrivacy": "Chính sách quyền riêng tư",
+  "legalTerms": "Điều khoản sử dụng",
+  "legalSupport": "Hỗ trợ",
+  "legalPublishedPage": "Mở trang chính sách đã công bố",
+  "legalPrivacyBody": "Tên, thông tin sinh, tùy chọn và lịch sử phân tích được lưu trên thiết bị để thực hiện phép tính biểu tượng. Những thông tin này không được gửi đến dịch vụ AI hay máy chủ tài khoản AstraCue. Khi chia sẻ kết quả, nội dung bạn chọn được gửi sang ứng dụng khác.\n\nPhân tích sử dụng tùy chọn dùng Firebase khi đã được cấu hình và bật. Đối tác quảng cáo có thể xử lý mã định danh thiết bị, tương tác quảng cáo, dữ liệu chẩn đoán, vị trí gần đúng suy ra từ mạng và tùy chọn đồng ý. Trên iOS, theo dõi giữa các ứng dụng cần được cho phép riêng; từ chối không chặn việc sử dụng app. Apple xử lý giao dịch; mã giao dịch đã xác minh được dùng để quản lý Plus.\n\nBạn có thể thay đổi phân tích sử dụng và các tùy chọn quyền riêng tư quảng cáo hiện có tại màn Sử dụng có trách nhiệm. Gỡ app thường xóa dữ liệu cục bộ; bản sao lưu nền tảng, hồ sơ mua hàng Apple và dữ liệu do nhà cung cấp lưu tuân theo quy định lưu giữ riêng. Liên hệ Hỗ trợ khi có yêu cầu về quyền riêng tư. AstraCue không có tài khoản trực tuyến cần xóa.",
+  "legalTermsBody": "AstraCue cung cấp gợi ý biểu tượng được cá nhân hóa cho lựa chọn hằng ngày. Phần trăm và năng lượng ngày không phải xác suất đời thực, số đo hay dự báo được bảo đảm. Bạn tự chịu trách nhiệm cho quyết định của mình. Hãy tuân theo hướng dẫn Sử dụng có trách nhiệm và tìm trợ giúp chuyên môn cho vấn đề y tế, pháp lý, tài chính hoặc khẩn cấp.\n\nKhi được cung cấp, Plus là quyền mở khóa mua một lần, không tiêu hao, cung cấp hạn mức phân tích mỗi ngày và các quyền lợi hiển thị trước khi mua. Hạn mức ngày được đặt lại lúc nửa đêm địa phương và không cộng dồn. Mua hàng, hoàn tiền và khôi phục tuân theo quy định của cửa hàng. Quảng cáo nhận thưởng là tùy chọn; chỉ cấp thưởng sau khi nhà cung cấp xác nhận hoàn tất quảng cáo.\n\nApp và nội dung được cấp phép cho sử dụng cá nhân. Không khai thác lỗi, gây gián đoạn hoặc sử dụng trái pháp luật. Tính khả dụng và tính năng có thể thay đổi; quyền theo luật của bạn và điều khoản cửa hàng vẫn áp dụng. Liên hệ Hỗ trợ khi cần trợ giúp.",
+  "purchaseNotAvailable": "Hiện chưa thể mua hàng. Vui lòng thử lại sau.",
+  "purchasePending": "Thanh toán đang chờ xử lý. Bạn có thể đóng màn này; Plus sẽ được bật sau khi xác nhận.",
+  "purchaseCanceled": "Đã hủy giao dịch.",
+  "purchaseFailed": "Chưa thể hoàn tất giao dịch. Vui lòng thử lại.",
+  "purchaseVerified": "AstraCue Plus đã được kích hoạt.",
+  "purchaseRestored": "Đã khôi phục giao dịch của bạn.",
+  "purchaseNothingToRestore": "Không tìm thấy giao dịch Plus trên tài khoản cửa hàng này.",
+  "purchaseRestoreFailed": "Hiện chưa thể khôi phục giao dịch. Vui lòng thử lại.",
+  "purchaseVerifying": "Đang xác nhận giao dịch…",
+  "purchaseLoadingPrice": "Đang tải giá từ cửa hàng…"
 }

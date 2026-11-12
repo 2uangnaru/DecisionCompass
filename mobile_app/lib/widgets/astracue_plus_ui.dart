@@ -2,12 +2,66 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 
 import '../app_locale.dart';
 import '../billing/plus_entitlement.dart';
 import '../data/reading_quota_controller.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
+import '../l10n/app_localizations.dart';
+import '../pages/legal_page.dart';
+
+/// The same daily-hour information offered to everyone in the free edition.
+/// Uses the existing localized labels, with no VIP state, purchase or ad CTA.
+class DailyAuspiciousHourRow extends StatelessWidget {
+  const DailyAuspiciousHourRow({
+    super.key,
+    required this.locale,
+    required this.window,
+  });
+  final AppLocale locale;
+  final String window;
+
+  @override
+  Widget build(BuildContext context) {
+    final copy = _PlusLocalizedCopy.forLocale(locale);
+    return Padding(
+      key: const Key('daily_auspicious_hour'),
+      padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.schedule_rounded,
+            size: 18,
+            color: CompassColors.gold,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              spacing: 12,
+              runSpacing: 4,
+              children: [
+                Text(
+                  copy.vipAuspiciousTag,
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
+                Text(
+                  window,
+                  style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                    color: CompassColors.blueLight,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 /// Snapshot of the reader's daily Free reading turns (3/day, 3h cooldown)
 /// paired with the +3 AstraCue Plus instant turns preview.
@@ -53,6 +107,7 @@ class ReadingEnergySnapshot {
 
   /// Today's real daily limit from the quota: 3, or 6 with verified Plus.
   final int dailyMax;
+
   /// Whether the reader has unlocked AstraCue Plus (VIP Pass) lifetime or active entitlement.
   final bool isPlusActive;
 
@@ -177,7 +232,9 @@ class AstralVipGoldOrbsRow extends StatelessWidget {
       children: List.generate(totalTurns, (index) {
         final isActive = index < remainingTurns;
         return Padding(
-          padding: EdgeInsets.only(right: index == totalTurns - 1 ? 0 : spacing),
+          padding: EdgeInsets.only(
+            right: index == totalTurns - 1 ? 0 : spacing,
+          ),
           child: isActive
               ? _GoldPlusOrb(size: orbSize)
               : Container(
@@ -270,8 +327,9 @@ class _AstraCuePlusHeaderBadgeState extends State<AstraCuePlusHeaderBadge>
       Localizations.localeOf(context).languageCode,
     );
     final badgeLabel = widget.isVip ? copy.vipHeaderBadge : 'PLUS';
-    final semanticsLabel =
-        widget.isVip ? copy.vipSemanticsLabel : copy.headerSemanticsLabel;
+    final semanticsLabel = widget.isVip
+        ? copy.vipSemanticsLabel
+        : copy.headerSemanticsLabel;
 
     return Semantics(
       button: true,
@@ -633,10 +691,7 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
         localeName,
         ReadingEnergySnapshot.plusDailyMax,
       );
-      final vipStatusLine = copy.vipEnergyStatus(
-        remainingVipText,
-        maxVipText,
-      );
+      final vipStatusLine = copy.vipEnergyStatus(remainingVipText, maxVipText);
       final auspiciousHour =
           snapshot.auspiciousHourWindow ?? copy.vipAuspiciousDefaultWindow;
       final auspiciousNote =
@@ -687,21 +742,22 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF221A11),
-                                  Color(0xFF19130D),
-                                ],
+                                colors: [Color(0xFF221A11), Color(0xFF19130D)],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: CompassColors.gold.withValues(alpha: 0.55),
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.55,
+                                ),
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: CompassColors.gold.withValues(alpha: 0.10),
+                                  color: CompassColors.gold.withValues(
+                                    alpha: 0.10,
+                                  ),
                                   blurRadius: 10,
                                   spreadRadius: 0.2,
                                 ),
@@ -722,10 +778,15 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                           vertical: 1.5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: CompassColors.gold.withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(6),
+                                          color: CompassColors.gold.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           border: Border.all(
-                                            color: CompassColors.gold.withValues(alpha: 0.40),
+                                            color: CompassColors.gold
+                                                .withValues(alpha: 0.40),
                                             width: 0.6,
                                           ),
                                         ),
@@ -740,7 +801,8 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                                 style: TextStyle(fontSize: 9.0),
                                               ),
                                               Text(
-                                                copy.vipEnergyLabel.toUpperCase(),
+                                                copy.vipEnergyLabel
+                                                    .toUpperCase(),
                                                 maxLines: 1,
                                                 style: const TextStyle(
                                                   color: Color(0xFFFFDF99),
@@ -814,21 +876,20 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(
-                                colors: [
-                                  Color(0xFF0F1B2E),
-                                  Color(0xFF14243B),
-                                ],
+                                colors: [Color(0xFF0F1B2E), Color(0xFF14243B)],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
                               ),
                               borderRadius: BorderRadius.circular(14),
                               border: Border.all(
-                                color: const Color(0xFF67B8F7).withValues(alpha: 0.45),
+                                color: const Color(0xFF67B8F7)
+                                    .withValues(alpha: 0.45),
                                 width: 1.0,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: const Color(0xFF4A90E2).withValues(alpha: 0.12),
+                                  color: const Color(0xFF4A90E2)
+                                      .withValues(alpha: 0.12),
                                   blurRadius: 10,
                                   spreadRadius: 0.2,
                                 ),
@@ -849,10 +910,14 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                           vertical: 1.5,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: const Color(0xFF67B8F7).withValues(alpha: 0.15),
-                                          borderRadius: BorderRadius.circular(6),
+                                          color: const Color(0xFF67B8F7)
+                                              .withValues(alpha: 0.15),
+                                          borderRadius: BorderRadius.circular(
+                                            6,
+                                          ),
                                           border: Border.all(
-                                            color: const Color(0xFF67B8F7).withValues(alpha: 0.35),
+                                            color: const Color(0xFF67B8F7)
+                                                .withValues(alpha: 0.35),
                                             width: 0.6,
                                           ),
                                         ),
@@ -1852,10 +1917,8 @@ Future<void> showAstraCueVipStatusSheet(
     isScrollControlled: true,
     backgroundColor: Colors.transparent,
     barrierColor: Colors.black.withValues(alpha: 0.76),
-    builder: (sheetContext) => AstraCueVipStatusSheet(
-      locale: locale,
-      snapshot: snapshot,
-    ),
+    builder: (sheetContext) =>
+        AstraCueVipStatusSheet(locale: locale, snapshot: snapshot),
   );
 }
 
@@ -1920,7 +1983,10 @@ class AstraCueVipStatusSheet extends StatelessWidget {
 
                 // Crown Badge + Title
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: CompassColors.gold.withValues(alpha: 0.16),
                     borderRadius: BorderRadius.circular(999),
@@ -2166,6 +2232,43 @@ class AstraCuePlusSheet extends StatefulWidget {
 class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   late ReadingEnergySnapshot _snapshot = widget.snapshot;
   Timer? _tickTimer;
+  bool _checkoutUnavailable = false;
+  bool _showRestoreStatus = false;
+
+  bool get _ios => defaultTargetPlatform == TargetPlatform.iOS;
+  bool get _iosStorePrice => _ios && widget.plus?.product?.isPreview != true;
+  bool get _billingBusy =>
+      widget.plus != null &&
+      const {
+        PlusCheckoutState.purchasing,
+        PlusCheckoutState.verifying,
+        PlusCheckoutState.restoring,
+      }.contains(widget.plus!.checkout);
+
+  String? _billingStatus(AppLocalizations l10n) {
+    if (_checkoutUnavailable) return l10n.purchaseNotAvailable;
+    final plus = widget.plus;
+    if (plus == null) return null;
+    if (_billingBusy) return l10n.purchaseVerifying;
+    if (plus.checkout == PlusCheckoutState.pending) return l10n.purchasePending;
+    if (plus.isActive) return l10n.purchaseVerified;
+    if (_showRestoreStatus && plus.lastRestore != null)
+      return switch (plus.lastRestore!) {
+        PlusRestoreResult.restored => l10n.purchaseRestored,
+        PlusRestoreResult.nothingToRestore => l10n.purchaseNothingToRestore,
+        PlusRestoreResult.verificationUnavailable ||
+        PlusRestoreResult.failed => l10n.purchaseRestoreFailed,
+      };
+    return switch (plus.lastOutcome) {
+      PlusPurchaseOutcome.canceled => l10n.purchaseCanceled,
+      PlusPurchaseOutcome.failed ||
+      PlusPurchaseOutcome.invalid ||
+      PlusPurchaseOutcome.verificationUnavailable => l10n.purchaseFailed,
+      PlusPurchaseOutcome.pending => l10n.purchasePending,
+      PlusPurchaseOutcome.verified => l10n.purchaseVerified,
+      null => null,
+    };
+  }
 
   @override
   void initState() {
@@ -2190,13 +2293,38 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
   /// as it is, since no blocked-state presentation is approved yet.
   Future<void> _buy() async {
     final plus = widget.plus;
-    if (plus == null) return;
+    if (plus == null) {
+      if (_ios) setState(() => _checkoutUnavailable = true);
+      return;
+    }
+    if (_ios)
+      setState(() {
+        _checkoutUnavailable = false;
+        _showRestoreStatus = false;
+      });
     final launched = await plus.buy();
-    if (launched && mounted) Navigator.of(context).pop();
+    if (!mounted) return;
+    if (_ios) {
+      setState(() => _checkoutUnavailable = !launched);
+    } else if (launched) {
+      Navigator.of(context).pop();
+    }
   }
 
-  void _restore() {
+  Future<void> _restore() async {
     final plus = widget.plus;
+    if (_ios) {
+      if (plus == null) {
+        setState(() => _checkoutUnavailable = true);
+        return;
+      }
+      setState(() {
+        _checkoutUnavailable = false;
+        _showRestoreStatus = true;
+      });
+      await plus.restore();
+      return;
+    }
     if (plus != null) unawaited(plus.restore());
     Navigator.of(context).pop();
   }
@@ -2463,11 +2591,38 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                     originalPrice:
                         storePrice?.referencePrice ??
                         copy.originalPriceFormatted,
-                    salePrice: storePrice?.price ?? copy.salePriceFormatted,
+                    salePrice:
+                        storePrice?.price ??
+                        (_iosStorePrice
+                            ? AppLocalizations.of(context).purchaseLoadingPrice
+                            : copy.salePriceFormatted),
                     saleBadgeLabel: copy.p1SaleOffBadge,
-                    semanticsLabel: copy.sheetPrimaryCta,
-                    onTap: _buy,
+                    semanticsLabel: _iosStorePrice
+                        ? '${copy.sheetPrimaryCtaPrefix} ${storePrice?.price ?? AppLocalizations.of(context).purchaseLoadingPrice}'
+                        : copy.sheetPrimaryCta,
+                    showPromotion: !_iosStorePrice,
+                    onTap:
+                        _ios && (_billingBusy || widget.plus?.isActive == true)
+                        ? null
+                        : _buy,
                   ),
+                  if (_ios) ...[
+                    if (_billingStatus(AppLocalizations.of(context))
+                        case final String status)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 12),
+                        child: Semantics(
+                          liveRegion: true,
+                          child: Text(
+                            status,
+                            key: const Key('ios_billing_status'),
+                            textAlign: TextAlign.center,
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ),
+                      ),
+                    const IOSLegalLinks(),
+                  ],
                   const SizedBox(height: 8),
 
                   // Secondary Actions: Restore · Maybe later
@@ -2478,7 +2633,7 @@ class _AstraCuePlusSheetState extends State<AstraCuePlusSheet> {
                       children: [
                         TextButton(
                           key: const Key('astracue_plus_restore'),
-                          onPressed: _restore,
+                          onPressed: _ios && _billingBusy ? null : _restore,
                           style: TextButton.styleFrom(
                             foregroundColor: CompassColors.secondary,
                             padding: const EdgeInsets.symmetric(
@@ -2802,6 +2957,7 @@ class _Option3SaleCtaButton extends StatefulWidget {
     required this.saleBadgeLabel,
     required this.semanticsLabel,
     required this.onTap,
+    this.showPromotion = true,
   });
 
   final String ctaPrefix;
@@ -2809,7 +2965,8 @@ class _Option3SaleCtaButton extends StatefulWidget {
   final String salePrice;
   final String saleBadgeLabel;
   final String semanticsLabel;
-  final VoidCallback onTap;
+  final VoidCallback? onTap;
+  final bool showPromotion;
 
   @override
   State<_Option3SaleCtaButton> createState() => _Option3SaleCtaButtonState();
@@ -2852,7 +3009,9 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
   Widget _buildLooping(BuildContext context) {
     return Semantics(
       button: true,
-      label: '${widget.semanticsLabel}, ${widget.saleBadgeLabel}',
+      label: widget.showPromotion
+          ? '${widget.semanticsLabel}, ${widget.saleBadgeLabel}'
+          : widget.semanticsLabel,
       child: AnimatedBuilder(
         animation: _controller,
         builder: (context, _) {
@@ -2916,10 +3075,12 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
                                         ),
                                       ),
                                       const SizedBox(width: 6),
-                                      _DiagonalStrikePrice(
-                                        priceText: widget.originalPrice,
-                                      ),
-                                      const SizedBox(width: 6),
+                                      if (widget.showPromotion) ...[
+                                        _DiagonalStrikePrice(
+                                          priceText: widget.originalPrice,
+                                        ),
+                                        const SizedBox(width: 6),
+                                      ],
                                       Text(
                                         widget.salePrice,
                                         style: const TextStyle(
@@ -2968,60 +3129,61 @@ class _Option3SaleCtaButtonState extends State<_Option3SaleCtaButton>
               ),
 
               // Floating pulsing -60% OFF badge at top-right of CTA button
-              Positioned(
-                top: -10,
-                right: 12,
-                child: IgnorePointer(
-                  child: Transform.scale(
-                    scale: 1.0 + 0.08 * badgePulse,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 9,
-                        vertical: 2.5,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          colors: [
-                            Color(0xFFFF3B30),
-                            Color(0xFFD91B42),
-                            Color(0xFFB8142C),
+              if (widget.showPromotion)
+                Positioned(
+                  top: -10,
+                  right: 12,
+                  child: IgnorePointer(
+                    child: Transform.scale(
+                      scale: 1.0 + 0.08 * badgePulse,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 9,
+                          vertical: 2.5,
+                        ),
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(0xFFFF3B30),
+                              Color(0xFFD91B42),
+                              Color(0xFFB8142C),
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(99),
+                          border: Border.all(
+                            color: const Color(0xFFFFE49E),
+                            width: 1.2,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: const Color(0xFFFF3B30)
+                                  .withValues(alpha: 0.50 + 0.35 * badgePulse),
+                              blurRadius: 9 + 7 * badgePulse,
+                              offset: const Offset(0, 2),
+                            ),
+                            BoxShadow(
+                              color: const Color(0xFFFFD26E)
+                                  .withValues(alpha: 0.35 + 0.35 * badgePulse),
+                              blurRadius: 8 + 6 * badgePulse,
+                            ),
                           ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
                         ),
-                        borderRadius: BorderRadius.circular(99),
-                        border: Border.all(
-                          color: const Color(0xFFFFE49E),
-                          width: 1.2,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFFFF3B30)
-                                .withValues(alpha: 0.50 + 0.35 * badgePulse),
-                            blurRadius: 9 + 7 * badgePulse,
-                            offset: const Offset(0, 2),
+                        child: Text(
+                          widget.saleBadgeLabel,
+                          style: const TextStyle(
+                            color: Color(0xFFFFFDF7),
+                            fontSize: 10.5,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 0.4,
+                            height: 1.1,
                           ),
-                          BoxShadow(
-                            color: const Color(0xFFFFD26E)
-                                .withValues(alpha: 0.35 + 0.35 * badgePulse),
-                            blurRadius: 8 + 6 * badgePulse,
-                          ),
-                        ],
-                      ),
-                      child: Text(
-                        widget.saleBadgeLabel,
-                        style: const TextStyle(
-                          color: Color(0xFFFFFDF7),
-                          fontSize: 10.5,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 0.4,
-                          height: 1.1,
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
             ],
           );
         },

@@ -1,0 +1,2 @@
+mobile_app/tool/*.sh text eol=lf
+mobile_app/ios/scripts/*.sh text eol=lf

@@ -71,6 +71,7 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
+  final _shareAnchor = GlobalKey();
   engine.ReadingResponse get reading => widget.reading;
 
   /// The reader's current local day, watched rather than read once at build:
@@ -305,6 +306,7 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
   }
 
   Future<void> _openPlusSheet() async {
+    if (!widget.dependencies.monetizationEnabled) return;
     final snapshot = _currentEnergySnapshot();
     if (snapshot.isPlusActive) {
       await showAstraCueVipStatusSheet(
@@ -371,9 +373,14 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
     );
     final l10n = AppLocalizations.of(context);
     try {
+      final box = _shareAnchor.currentContext?.findRenderObject();
+      final origin = box is RenderBox && box.hasSize
+          ? box.localToGlobal(Offset.zero) & box.size
+          : null;
       await SharePlus.instance.share(
         ShareParams(
           text: shareTextForReading(l10n, intlLocaleOf(context), reading),
+          sharePositionOrigin: origin,
         ),
       );
     } catch (_) {
@@ -465,15 +472,18 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                       ),
                     ),
                   ),
-                  IconButton(
-                    key: const Key('result_share'),
-                    tooltip: l10n.shareTooltip,
-                    onPressed:
-                        reading.status == engine.ReadingStatus.ready ||
-                            reading.status == engine.ReadingStatus.balanced
-                        ? _shareReading
-                        : null,
-                    icon: const Icon(Icons.ios_share_rounded),
+                  SizedBox(
+                    key: _shareAnchor,
+                    child: IconButton(
+                      key: const Key('result_share'),
+                      tooltip: l10n.shareTooltip,
+                      onPressed:
+                          reading.status == engine.ReadingStatus.ready ||
+                              reading.status == engine.ReadingStatus.balanced
+                          ? _shareReading
+                          : null,
+                      icon: const Icon(Icons.ios_share_rounded),
+                    ),
                   ),
                 ],
               ),
@@ -546,7 +556,9 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                     locale: widget.dependencies.localeController.locale,
                     reading: reading,
                   ),
-                  blurred: _currentEnergySnapshot().isPlusActive ? false : (_guidanceLocked != false),
+                  blurred: _currentEnergySnapshot().isPlusActive
+                      ? false
+                      : (_guidanceLocked != false),
                   onWatchAd: _currentEnergySnapshot().isPlusActive
                       ? null
                       : (_guidanceLocked == true ? _watchAdForGuidance : null),
@@ -557,7 +569,8 @@ class _ResultPageState extends State<ResultPage> with WidgetsBindingObserver {
                   _LuckyWindows(reading: reading, period: _period),
                 ],
               ],
-              if (!_currentEnergySnapshot().isPlusActive) ...[
+              if (widget.dependencies.monetizationEnabled &&
+                  !_currentEnergySnapshot().isPlusActive) ...[
                 const SizedBox(height: 18),
                 AnalysisEnergyPlusCard(
                   key: const Key('result_energy_plus_card'),

@@ -1,7 +1,9 @@
 import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../app_profile.dart';
+import '../data/models/models.dart' as engine;
 import '../l10n/app_localizations.dart';
 import '../local_engine/astronomy/astronomy.dart';
 import '../local_engine/vedic/vedic.dart';
@@ -248,13 +250,18 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
     with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
   bool _navigated = false;
+  late final Future<engine.DailyBrief?> _prewarmedBrief;
+  late final DateTime _prewarmedDate;
 
   @override
   void initState() {
     super.initState();
 
     // Pre-warm HomePage readings under the hood concurrently
-    widget.dependencies.dailyBriefProvider.preview(widget.profile);
+    _prewarmedDate = widget.dependencies.nowLocal();
+    _prewarmedBrief = widget.dependencies.dailyBriefProvider
+        .preview(widget.profile)
+        .catchError((Object _) => null);
 
     _controller = AnimationController(
       vsync: this,
@@ -291,6 +298,8 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
         pageBuilder: (_, animation, secondaryAnimation) => HomePage(
           profile: widget.profile,
           dependencies: widget.dependencies,
+          initialDailyBrief: _prewarmedBrief,
+          initialDailyBriefDate: _prewarmedDate,
         ),
         transitionsBuilder: (_, animation, secondaryAnimation, child) =>
             FadeTransition(opacity: animation, child: child),
@@ -333,11 +342,13 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
             if (isCentralAwakened) {
               headline = l10n.compassAwakeningReady;
             } else if (n6) {
-              headline = '✦ ${l10n.orbitZiWei} · ${pillars.animalName} ${pillars.animalIcon}';
+              headline =
+                  '✦ ${l10n.orbitZiWei} · ${pillars.animalName} ${pillars.animalIcon}';
             } else if (n5) {
               headline = '✦ ${pillars.elementName} ${pillars.elementIcon}';
             } else if (n4) {
-              headline = '✦ ${l10n.compassPillarLifePath} ${pillars.lifePathNumber}';
+              headline =
+                  '✦ ${l10n.compassPillarLifePath} ${pillars.lifePathNumber}';
             } else if (n3) {
               headline = '✦ ${pillars.vedicNakshatra}';
             } else if (n2) {
@@ -371,7 +382,9 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               border: Border.all(
-                                color: CompassColors.gold.withValues(alpha: 0.15),
+                                color: CompassColors.gold.withValues(
+                                  alpha: 0.15,
+                                ),
                                 width: 1.2,
                               ),
                             ),
@@ -393,7 +406,8 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                           angle: -math.pi / 2, // 12 o'clock
                           radius: 128,
                           category: l10n.compassPillarZodiac,
-                          value: '${pillars.zodiacName} ${pillars.zodiacSign.glyph}',
+                          value:
+                              '${pillars.zodiacName} ${pillars.zodiacSign.glyph}',
                           glyph: pillars.zodiacSign.glyph,
                           isActive: n1,
                         ),
@@ -423,7 +437,8 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                           angle: math.pi / 2, // 6 o'clock
                           radius: 128,
                           category: l10n.compassPillarLifePath,
-                          value: '${l10n.compassPillarLifePath} ${pillars.lifePathNumber}',
+                          value:
+                              '${l10n.compassPillarLifePath} ${pillars.lifePathNumber}',
                           glyph: '${pillars.lifePathNumber}',
                           isActive: n4,
                         ),
@@ -433,7 +448,8 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                           angle: 5 * math.pi / 6, // 8 o'clock
                           radius: 128,
                           category: l10n.compassPillarElement,
-                          value: '${pillars.elementName} ${pillars.elementIcon}',
+                          value:
+                              '${pillars.elementName} ${pillars.elementIcon}',
                           glyph: pillars.elementIcon,
                           isActive: n5,
                         ),
@@ -498,7 +514,9 @@ class _CompassAwakeningPageState extends State<CompassAwakeningPage>
                           borderRadius: BorderRadius.circular(2),
                           child: LinearProgressIndicator(
                             value: t,
-                            backgroundColor: Colors.white.withValues(alpha: 0.08),
+                            backgroundColor: Colors.white.withValues(
+                              alpha: 0.08,
+                            ),
                             valueColor: const AlwaysStoppedAnimation<Color>(
                               CompassColors.gold,
                             ),
@@ -616,10 +634,12 @@ class _CelestialCompassRosePainter extends CustomPainter {
 
     // 4 Diagonal minor needle points
     final diagPaint1 = Paint()
-      ..color = const Color(0xFFD49B35).withValues(alpha: isAwakened ? 0.8 : 0.4)
+      ..color = const Color(0xFFD49B35)
+          .withValues(alpha: isAwakened ? 0.8 : 0.4)
       ..style = PaintingStyle.fill;
     final diagPaint2 = Paint()
-      ..color = const Color(0xFF996A1A).withValues(alpha: isAwakened ? 0.8 : 0.4)
+      ..color = const Color(0xFF996A1A)
+          .withValues(alpha: isAwakened ? 0.8 : 0.4)
       ..style = PaintingStyle.fill;
 
     void drawFacetedDiagonal(double angle) {
@@ -802,7 +822,9 @@ class _SatelliteNode extends StatelessWidget {
               height: 36,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isActive ? const Color(0xFF252026) : const Color(0xFF111726),
+                color: isActive
+                    ? const Color(0xFF252026)
+                    : const Color(0xFF111726),
                 border: Border.all(
                   color: isActive
                       ? CompassColors.gold
@@ -903,10 +925,7 @@ class _CosmicBackdropPainter extends CustomPainter {
     final radial = RadialGradient(
       center: Alignment.center,
       radius: 0.65,
-      colors: [
-        CompassColors.gold.withValues(alpha: 0.06),
-        Colors.transparent,
-      ],
+      colors: [CompassColors.gold.withValues(alpha: 0.06), Colors.transparent],
     );
     final auraPaint = Paint()
       ..shader = radial.createShader(
@@ -916,7 +935,8 @@ class _CosmicBackdropPainter extends CustomPainter {
 
     // Gentle fixed star sparkles
     final starPaint = Paint()..color = Colors.white.withValues(alpha: 0.6);
-    final goldStarPaint = Paint()..color = CompassColors.gold.withValues(alpha: 0.7);
+    final goldStarPaint = Paint()
+      ..color = CompassColors.gold.withValues(alpha: 0.7);
 
     final stars = <(double, double, double, bool)>[
       (size.width * 0.15, size.height * 0.12, 1.2, false),

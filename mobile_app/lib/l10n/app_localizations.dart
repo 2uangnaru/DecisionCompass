@@ -2438,6 +2438,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EARTHLY BRANCH'**
   String get compassPillarAnimal;
+
+  /// No description provided for @legalPrivacy.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get legalPrivacy;
+
+  /// No description provided for @legalTerms.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Use'**
+  String get legalTerms;
+
+  /// No description provided for @legalSupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get legalSupport;
+
+  /// No description provided for @legalPublishedPage.
+  ///
+  /// In en, this message translates to:
+  /// **'Open published page'**
+  String get legalPublishedPage;
+
+  /// No description provided for @legalPrivacyBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Your name, birth details, preferences and reading history are stored on your device and used for symbolic calculations. These details are not sent to an AI service or an AstraCue account server. Sharing a reading sends the text you choose to another app.\n\nOptional usage analytics uses Firebase when configured and enabled. Advertising partners may process device identifiers, ad interactions, diagnostics, network-derived approximate location and consent settings. On iOS, cross-app tracking requires separate permission; declining does not block use of the app. Apple processes purchases, and verified purchase identifiers are used to manage Plus.\n\nYou can change usage analytics and available ad privacy choices on the Responsible Use screen. Removing the app normally removes its local data; platform backups, Apple purchase records and provider-held data follow their own retention rules. Use Support for privacy requests. AstraCue has no online account to delete.'**
+  String get legalPrivacyBody;
+
+  /// No description provided for @legalTermsBody.
+  ///
+  /// In en, this message translates to:
+  /// **'AstraCue provides personalized symbolic reflections for everyday choices. Its percentages and daily energy are not real-world probabilities, measurements or guaranteed predictions. You remain responsible for your decisions. Follow the Responsible Use rules and seek qualified help for medical, legal, financial or emergency matters.\n\nWhere offered, Plus is a one-time, non-consumable unlock that provides a daily reading allowance and the benefits shown before purchase. The daily allowance resets at local midnight and does not accumulate. Purchases, refunds and restoration follow the applicable store rules. Rewarded ads are optional; a reward is granted only after the ad provider confirms completion.\n\nThe app and its content are licensed for personal use. Do not exploit the service, interfere with it or use it unlawfully. Availability and features may change; your statutory rights and the store terms still apply. Contact Support for assistance.'**
+  String get legalTermsBody;
+
+  /// No description provided for @purchaseNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchases are unavailable right now. Please try again later.'**
+  String get purchaseNotAvailable;
+
+  /// No description provided for @purchasePending.
+  ///
+  /// In en, this message translates to:
+  /// **'Payment is pending. You can close this screen; Plus will activate after confirmation.'**
+  String get purchasePending;
+
+  /// No description provided for @purchaseCanceled.
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase canceled.'**
+  String get purchaseCanceled;
+
+  /// No description provided for @purchaseFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'The purchase could not be completed. Please try again.'**
+  String get purchaseFailed;
+
+  /// No description provided for @purchaseVerified.
+  ///
+  /// In en, this message translates to:
+  /// **'AstraCue Plus is active.'**
+  String get purchaseVerified;
+
+  /// No description provided for @purchaseRestored.
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchase has been restored.'**
+  String get purchaseRestored;
+
+  /// No description provided for @purchaseNothingToRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'No Plus purchase was found for this store account.'**
+  String get purchaseNothingToRestore;
+
+  /// No description provided for @purchaseRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Your purchase could not be restored right now. Please try again.'**
+  String get purchaseRestoreFailed;
+
+  /// No description provided for @purchaseVerifying.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirming your purchase…'**
+  String get purchaseVerifying;
+
+  /// No description provided for @purchaseLoadingPrice.
+  ///
+  /// In en, this message translates to:
+  /// **'Loading store price…'**
+  String get purchaseLoadingPrice;
 }
 
 class _AppLocalizationsDelegate
