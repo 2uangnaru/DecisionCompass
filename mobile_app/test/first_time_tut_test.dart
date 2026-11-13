@@ -4,6 +4,7 @@ import 'package:decision_compass/data/models/models.dart' as engine;
 import 'package:decision_compass/data/ritual_tut_store.dart';
 import 'package:decision_compass/models.dart';
 import 'package:decision_compass/pages/ritual_page.dart';
+import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,12 +62,19 @@ void main() {
         reason: 'Hand TUT must not display text or coach bubble',
       );
 
-      // Anchored at lower-right rim of the Reveal orb without leaving orb bounds.
+      // Anchored strictly inside the lower-right core orb (with 0px tap-center drift).
       final orbRect = tester.getRect(revealOrb);
       final handRect = tester.getRect(handTut);
       expect(handRect.right, lessThanOrEqualTo(orbRect.right + 4));
       expect(handRect.left, greaterThan(orbRect.center.dx - 8));
       expect(handRect.top, greaterThan(orbRect.center.dy - 8));
+      final tapAnchorWorld = handRect.topLeft + const Offset(22, 22);
+      final coreRadius = orbRect.width * 0.825 / 2;
+      expect(
+        (tapAnchorWorld - orbRect.center).distance,
+        lessThan(coreRadius),
+        reason: 'Tap ripple center must stay inside the inner core orb',
+      );
 
       // Tapping Reveal dismisses the hand TUT immediately & persists dismissal.
       await tester.tap(revealOrb);
@@ -170,6 +178,22 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 400));
         expect(handTut, findsNothing);
+
+        // Tapping while in cooldown shows Celestial AstralHourglassIcon in the notice.
+        await tester.tap(revealOrb);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 350));
+        expect(
+          find.byKey(const Key('ritual_notice_hourglass_icon')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: find.byKey(const Key('ritual_locked_notice')),
+            matching: find.byType(AstralHourglassIcon),
+          ),
+          findsOneWidget,
+        );
       },
     );
 

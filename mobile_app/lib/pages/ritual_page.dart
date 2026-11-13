@@ -798,13 +798,17 @@ class _RitualPageState extends State<RitualPage>
                   children: [
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
-                      child: Icon(
-                        isSuccess
-                            ? Icons.auto_awesome
-                            : Icons.hourglass_bottom_rounded,
-                        size: 18,
-                        color: accentColor,
-                      ),
+                      child: isSuccess
+                          ? Icon(
+                              Icons.auto_awesome,
+                              size: 18,
+                              color: accentColor,
+                            )
+                          : AstralHourglassIcon(
+                              key: const Key('ritual_notice_hourglass_icon'),
+                              size: 18,
+                              color: accentColor,
+                            ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -1127,8 +1131,14 @@ class _RitualPageState extends State<RitualPage>
                           ),
                           if (_showHandTut)
                             Positioned(
-                              right: ringSize * 0.02,
-                              bottom: -ringSize * 0.03,
+                              left:
+                                  ringSize * 0.5 +
+                                  buttonSize * 0.24 -
+                                  _RevealHandTut.tapAnchor.dx,
+                              top:
+                                  ringSize * 0.5 +
+                                  buttonSize * 0.30 -
+                                  _RevealHandTut.tapAnchor.dy,
                               child: IgnorePointer(
                                 child: ExcludeSemantics(
                                   child: _RevealHandTut(
@@ -1431,8 +1441,10 @@ class _CategoryBadge extends StatelessWidget {
   }
 }
 
-/// First-time animated Celestial Gold Outline Hand & tap ripples anchored at
-/// the lower-right rim of the Reveal orb (hand + ripples only, no card/text).
+/// First-time animated Ghost Filigree Celestial Hand & luminous `✦` beacon
+/// (`Phương án T2`) anchored cleanly inside the lower-right quadrant of the
+/// Reveal core orb, with mathematically locked forward kinematics (`0.0 px`
+/// fingertip-to-ripple offset at tap impact).
 class _RevealHandTut extends StatelessWidget {
   const _RevealHandTut({
     super.key,
@@ -1440,18 +1452,21 @@ class _RevealHandTut extends StatelessWidget {
     required this.reduceMotion,
   });
 
+  static const Size canvasSize = Size(60, 60);
+  static const Offset tapAnchor = Offset(22, 22);
+
   final Animation<double> animation;
   final bool reduceMotion;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 56,
-      height: 56,
+      width: canvasSize.width,
+      height: canvasSize.height,
       child: AnimatedBuilder(
         animation: animation,
         builder: (context, child) {
-          final t = reduceMotion ? 0.0 : animation.value;
+          final t = reduceMotion ? 0.38 : animation.value;
           return CustomPaint(painter: _RevealHandTutPainter(progress: t));
         },
       ),
@@ -1464,41 +1479,35 @@ class _RevealHandTutPainter extends CustomPainter {
 
   final double progress;
 
-  // Hand path authored on 38x44 viewBox, scaled to 36x42 anchored at (10, 12).
-  static const double _handScale = 36 / 38;
-  static const Offset _handOrigin = Offset(10, 12);
-  // Index fingertip rests near (16.5, 6.5) inside the 38x44 hand box.
-  static const Offset _tapCenter = Offset(
-    10 + 16.5 * _handScale,
-    12 + 6.5 * _handScale,
-  );
-  // Rotate around upper-left wrist/knuckle region matching CSS `6px 4px`.
-  static const Offset _handPivot = Offset(
-    10 + 6 * _handScale,
-    12 + 4 * _handScale,
-  );
+  static const Offset _tapCenter = _RevealHandTut.tapAnchor;
+  // Index fingertip pad center in the local 38x46 slim celestial hand box.
+  static const Offset _fingertipLocal = Offset(15.5, 4.5);
 
-  static final Path _handPath = _buildHandPath();
+  static final Path _handPath = _buildSlimHandPath();
 
-  static Path _buildHandPath() {
+  static Path _buildSlimHandPath() {
     return Path()
-      ..moveTo(13, 6.5)
-      ..cubicTo(13, 4.567, 14.567, 3, 16.5, 3)
-      ..cubicTo(18.433, 3, 20, 4.567, 20, 6.5)
-      ..lineTo(20, 19.2)
-      ..cubicTo(20.7, 18.6, 21.6, 18.2, 22.6, 18.2)
-      ..cubicTo(24.2, 18.2, 25.5, 19.2, 25.9, 20.6)
-      ..cubicTo(26.6, 20.1, 27.5, 19.8, 28.4, 19.8)
-      ..cubicTo(30.4, 19.8, 32, 21.4, 32, 23.4)
-      ..lineTo(32, 29.5)
-      ..cubicTo(32, 35.8, 27.2, 40.5, 21, 40.5)
-      ..lineTo(17.5, 40.5)
-      ..cubicTo(13.6, 40.5, 10.6, 38.4, 8.7, 35.1)
-      ..lineTo(4.6, 27.8)
-      ..cubicTo(3.6, 26, 4.2, 23.7, 6, 22.7)
-      ..cubicTo(7.6, 21.8, 9.6, 22.3, 10.7, 23.8)
-      ..lineTo(13, 26.8)
-      ..lineTo(13, 6.5)
+      ..moveTo(13.2, 5.2)
+      ..cubicTo(13.2, 3.6, 14.2, 2.5, 15.5, 2.5)
+      ..cubicTo(16.8, 2.5, 17.8, 3.6, 17.8, 5.2)
+      ..lineTo(17.8, 17.5)
+      // Graceful middle-finger tuck
+      ..cubicTo(18.6, 16.9, 19.8, 16.7, 20.9, 17.1)
+      ..cubicTo(22.0, 17.5, 22.8, 18.4, 23.0, 19.5)
+      // Ring finger
+      ..cubicTo(23.8, 18.9, 25.0, 18.8, 26.0, 19.3)
+      ..cubicTo(27.0, 19.8, 27.6, 20.8, 27.7, 21.9)
+      // Pinky finger
+      ..cubicTo(28.5, 21.6, 29.5, 21.8, 30.2, 22.5)
+      ..cubicTo(30.9, 23.2, 31.1, 24.2, 31.0, 25.6)
+      ..lineTo(30.6, 30.8)
+      ..cubicTo(30.2, 36.2, 26.2, 40.5, 20.5, 40.5)
+      ..lineTo(17.2, 40.5)
+      ..cubicTo(13.5, 40.5, 10.6, 38.4, 8.9, 35.1)
+      ..lineTo(5.4, 28.4)
+      ..cubicTo(4.6, 26.8, 5.2, 24.9, 6.7, 24.2)
+      ..cubicTo(8.0, 23.6, 9.6, 24.1, 10.5, 25.4)
+      ..lineTo(13.2, 29.0)
       ..close();
   }
 
@@ -1506,85 +1515,157 @@ class _RevealHandTutPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final t = progress.clamp(0.0, 1.0);
 
-    // Subtle fingertip tap glow dot (peaks at press impact ~0.38).
+    // Subtle tap impact weight (peaks smoothly at t = 0.38).
     final impactWeight = t <= 0.38
         ? (t / 0.38)
         : (1.0 - ((t - 0.38) / 0.62)).clamp(0.0, 1.0);
-    final dotRadius = 3.5 + impactWeight * 2.2;
-    canvas.drawCircle(
-      _tapCenter,
-      dotRadius,
-      Paint()
-        ..color = CompassColors.blueLight.withValues(
-          alpha: 0.35 + impactWeight * 0.55,
-        ),
-    );
-    canvas.drawCircle(
-      _tapCenter,
-      1.8,
-      Paint()..color = Colors.white.withValues(alpha: 0.5 + impactWeight * 0.5),
-    );
 
-    // Twin expanding ripples (`blueLight` then `gold`).
+    // 1. Soft radial celestial touch aura centered strictly at _tapCenter.
+    const haloRadius = 16.0;
+    final haloPaint = Paint()
+      ..shader = RadialGradient(
+        colors: [
+          const Color(0xFFFFE8A3).withValues(alpha: 0.44 * impactWeight),
+          CompassColors.blueLight.withValues(alpha: 0.24 * impactWeight),
+          CompassColors.blueLight.withValues(alpha: 0.0),
+        ],
+        stops: const [0.0, 0.5, 1.0],
+      ).createShader(Rect.fromCircle(center: _tapCenter, radius: haloRadius));
+    canvas.drawCircle(_tapCenter, haloRadius, haloPaint);
+
+    // 2. Twin expanding astral ripples (`blueLight` then `gold`) around _tapCenter.
     _drawRipple(
       canvas,
       t,
-      start: 0.34,
-      end: 0.90,
+      start: 0.36,
+      end: 0.92,
       color: CompassColors.blueLight,
+      strokeWidth: 1.35,
     );
-    _drawRipple(canvas, t, start: 0.46, end: 1.00, color: CompassColors.gold);
+    _drawRipple(
+      canvas,
+      t,
+      start: 0.46,
+      end: 1.00,
+      color: CompassColors.gold,
+      strokeWidth: 1.15,
+    );
 
-    // Hand tap motion: 0 -> 0.38 press down-left, 0.38 -> 0.54 release back.
+    // 3. Luminous 4-point star beacon pulsing at the exact touch point.
+    _drawFourPointStar(
+      canvas,
+      _tapCenter,
+      3.2 + impactWeight * 3.8,
+      const Color(0xFFFFF5D6).withValues(alpha: 0.35 + impactWeight * 0.65),
+    );
+
+    // 4. Hand press motion: smooth descent diagonally onto _tapCenter.
     final double press;
     if (t <= 0.38) {
       press = Curves.easeInOut.transform(t / 0.38);
-    } else if (t <= 0.54) {
-      press = 1.0 - Curves.easeInOut.transform((t - 0.38) / 0.16);
+    } else if (t <= 0.58) {
+      press = 1.0 - Curves.easeInOut.transform((t - 0.38) / 0.20);
     } else {
       press = 0.0;
     }
 
-    final dx = -3.0 * press;
-    final dy = -4.0 * press;
-    final scale = 1.0 - 0.12 * press;
-    final angleRad = (-6.0 - 4.0 * press) * math.pi / 180.0;
+    // Forward kinematics pinned on _fingertipLocal so at press == 1.0
+    // (hover = 0,0), the index fingertip meets _tapCenter with 0.0 px error.
+    final hoverX = 5.5 * (1.0 - press);
+    final hoverY = 6.5 * (1.0 - press);
+    final handScale = 0.74 * (1.0 - 0.04 * press);
+    final angleRad = (-8.0 + 4.0 * press) * math.pi / 180.0;
 
-    canvas.save();
-    canvas.translate(dx, dy);
-    canvas.translate(_handPivot.dx, _handPivot.dy);
+    canvas.saveLayer(
+      Offset.zero & size,
+      Paint()..color = const Color.fromRGBO(255, 255, 255, 0.72),
+    );
+    canvas.translate(_tapCenter.dx + hoverX, _tapCenter.dy + hoverY);
     canvas.rotate(angleRad);
-    canvas.scale(scale, scale);
-    canvas.translate(-_handPivot.dx, -_handPivot.dy);
-    canvas.translate(_handOrigin.dx, _handOrigin.dy);
-    canvas.scale(_handScale, _handScale);
+    canvas.scale(handScale, handScale);
+    canvas.translate(-_fingertipLocal.dx, -_fingertipLocal.dy);
 
-    // Soft celestial shadow beneath outline hand.
+    // Soft midnight drop shadow beneath the ghost hand.
     canvas.save();
-    canvas.translate(0, 2.2);
+    canvas.translate(0, 2.5);
     canvas.drawPath(
       _handPath,
       Paint()
-        ..color = Colors.black.withValues(alpha: 0.55)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0),
+        ..color = const Color(0xFF040812).withValues(alpha: 0.55)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.2),
     );
     canvas.restore();
 
-    canvas.drawPath(_handPath, Paint()..color = CompassColors.raised);
+    // Frosted midnight glass body gradient.
+    final handBounds = _handPath.getBounds();
     canvas.drawPath(
       _handPath,
       Paint()
-        ..color = CompassColors.gold
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFF182642).withValues(alpha: 0.92),
+            const Color(0xFF0D1426).withValues(alpha: 0.78),
+          ],
+        ).createShader(handBounds),
+    );
+
+    // Slim champagne-gold metallic outline (`T2` ghost filigree).
+    canvas.drawPath(
+      _handPath,
+      Paint()
+        ..shader = const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFFFFF5D4),
+            CompassColors.gold,
+            Color(0xFF9E7B34),
+          ],
+          stops: [0.0, 0.55, 1.0],
+        ).createShader(handBounds)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 2.0
-        ..strokeJoin = StrokeJoin.round,
+        ..strokeWidth = 1.15
+        ..strokeJoin = StrokeJoin.round
+        ..strokeCap = StrokeCap.round,
     );
-    canvas.drawCircle(
-      const Offset(16.5, 7.5),
-      2.1,
-      Paint()..color = CompassColors.blueLight.withValues(alpha: 0.85),
+
+    // Subtle filigree palm sheen line.
+    canvas.drawLine(
+      const Offset(15.5, 22.0),
+      const Offset(15.5, 29.0),
+      Paint()
+        ..color = const Color(0xFFFFE8A3).withValues(alpha: 0.25)
+        ..strokeWidth = 0.9
+        ..strokeCap = StrokeCap.round,
     );
+
+    // Delicate 4-point starlight pinpoint at the fingertip pad.
+    _drawFourPointStar(
+      canvas,
+      const Offset(15.5, 5.2),
+      2.4,
+      const Color(0xFF8FD4F8).withValues(alpha: 0.85),
+    );
+
     canvas.restore();
+  }
+
+  void _drawFourPointStar(
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Color color,
+  ) {
+    final path = Path()
+      ..moveTo(center.dx, center.dy - radius)
+      ..quadraticBezierTo(center.dx, center.dy, center.dx + radius, center.dy)
+      ..quadraticBezierTo(center.dx, center.dy, center.dx, center.dy + radius)
+      ..quadraticBezierTo(center.dx, center.dy, center.dx - radius, center.dy)
+      ..quadraticBezierTo(center.dx, center.dy, center.dx, center.dy - radius)
+      ..close();
+    canvas.drawPath(path, Paint()..color = color);
   }
 
   void _drawRipple(
@@ -1593,19 +1674,20 @@ class _RevealHandTutPainter extends CustomPainter {
     required double start,
     required double end,
     required Color color,
+    required double strokeWidth,
   }) {
     if (t < start || t > end) return;
     final local = ((t - start) / (end - start)).clamp(0.0, 1.0);
     final eased = Curves.easeOut.transform(local);
-    final radius = 5.5 + eased * 20.5;
-    final alpha = (1.0 - eased) * 0.90;
+    final radius = 4.0 + eased * 22.0;
+    final alpha = (1.0 - eased) * 0.88;
     canvas.drawCircle(
       _tapCenter,
       radius,
       Paint()
         ..color = color.withValues(alpha: alpha)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.8,
+        ..strokeWidth = strokeWidth,
     );
   }
 

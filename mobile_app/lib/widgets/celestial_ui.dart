@@ -660,3 +660,151 @@ class WatchAdButton extends StatelessWidget {
     );
   }
 }
+
+/// Celestial Astral Hourglass icon (`Phương án C2`) used for 3-hour reading
+/// cooldown timers and cooldown banners across `HomePage`, `ResultPage`,
+/// `RitualPage`, and `ProfilePage`.
+///
+/// Painted purely with canvas vectors so it stays razor-sharp at any DPI and
+/// adapts cleanly to gold, coral, or muted states without falling back to an OS
+/// stopwatch emoji or generic Material icon.
+class AstralHourglassIcon extends StatelessWidget {
+  const AstralHourglassIcon({
+    super.key,
+    this.size = 16,
+    this.color = CompassColors.gold,
+  });
+
+  final double size;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return ExcludeSemantics(
+      child: SizedBox.square(
+        dimension: size,
+        child: CustomPaint(painter: _AstralHourglassPainter(color: color)),
+      ),
+    );
+  }
+}
+
+class _AstralHourglassPainter extends CustomPainter {
+  const _AstralHourglassPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+    final cx = w * 0.5;
+    final cy = h * 0.5;
+    final r = w * 0.36;
+    final hw = r * 0.80;
+    final hh = r * 1.02;
+
+    final strokeWidth = (w * 0.082).clamp(1.05, 1.9);
+    final framePaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round
+      ..strokeJoin = StrokeJoin.round;
+
+    // Top & bottom filigree horizontal caps.
+    canvas.drawLine(Offset(cx - hw, cy - hh), Offset(cx + hw, cy - hh), framePaint);
+    canvas.drawLine(Offset(cx - hw, cy + hh), Offset(cx + hw, cy + hh), framePaint);
+
+    // Tapered hourglass bulbs meeting smoothly at the waist.
+    final bulbX = hw * 0.82;
+    final bulbs = Path()
+      ..moveTo(cx - bulbX, cy - hh)
+      ..cubicTo(
+        cx - bulbX,
+        cy - hh * 0.25,
+        cx - w * 0.05,
+        cy - hh * 0.14,
+        cx,
+        cy,
+      )
+      ..cubicTo(
+        cx + w * 0.05,
+        cy + hh * 0.14,
+        cx + bulbX,
+        cy + hh * 0.25,
+        cx + bulbX,
+        cy + hh,
+      )
+      ..moveTo(cx + bulbX, cy - hh)
+      ..cubicTo(
+        cx + bulbX,
+        cy - hh * 0.25,
+        cx + w * 0.05,
+        cy - hh * 0.14,
+        cx,
+        cy,
+      )
+      ..cubicTo(
+        cx - w * 0.05,
+        cy + hh * 0.14,
+        cx - bulbX,
+        cy + hh * 0.25,
+        cx - bulbX,
+        cy + hh,
+      );
+    canvas.drawPath(bulbs, framePaint);
+
+    // Luminous sand mound settling in the lower bulb.
+    final mound = Path()
+      ..moveTo(cx - hw * 0.58, cy + hh * 0.90)
+      ..quadraticBezierTo(cx, cy + hh * 0.42, cx + hw * 0.58, cy + hh * 0.90)
+      ..close();
+    canvas.drawPath(
+      mound,
+      Paint()
+        ..color = color.withValues(alpha: 0.28)
+        ..style = PaintingStyle.fill,
+    );
+    canvas.drawPath(
+      mound,
+      Paint()
+        ..color = color.withValues(alpha: 0.92)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = (w * 0.055).clamp(0.85, 1.35)
+        ..strokeCap = StrokeCap.round
+        ..strokeJoin = StrokeJoin.round,
+    );
+
+    // Subtle upper sand trickle hint in upper bulb.
+    canvas.drawLine(
+      Offset(cx - hw * 0.28, cy - hh * 0.66),
+      Offset(cx + hw * 0.28, cy - hh * 0.66),
+      Paint()
+        ..color = color.withValues(alpha: 0.45)
+        ..strokeWidth = (w * 0.055).clamp(0.85, 1.3)
+        ..strokeCap = StrokeCap.round,
+    );
+
+    // Crisp 4-point celestial star spark at the hourglass waist.
+    final starRadius = w * 0.115;
+    final starColor = Color.lerp(color, const Color(0xFFFFF5D6), 0.65)!;
+    final starPath = Path()
+      ..moveTo(cx, cy - starRadius)
+      ..quadraticBezierTo(cx, cy, cx + starRadius, cy)
+      ..quadraticBezierTo(cx, cy, cx, cy + starRadius)
+      ..quadraticBezierTo(cx, cy, cx - starRadius, cy)
+      ..quadraticBezierTo(cx, cy, cx, cy - starRadius)
+      ..close();
+    canvas.drawCircle(
+      Offset(cx, cy),
+      starRadius * 1.1,
+      Paint()..color = color.withValues(alpha: 0.25),
+    );
+    canvas.drawPath(starPath, Paint()..color = starColor);
+  }
+
+  @override
+  bool shouldRepaint(covariant _AstralHourglassPainter oldDelegate) =>
+      oldDelegate.color != color;
+}

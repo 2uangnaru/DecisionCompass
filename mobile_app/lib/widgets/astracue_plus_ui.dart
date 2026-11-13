@@ -8,6 +8,7 @@ import '../billing/plus_entitlement.dart';
 import '../data/reading_quota_controller.dart';
 import '../localized_presentation.dart';
 import '../theme.dart';
+import 'celestial_ui.dart';
 
 /// Snapshot of the reader's daily Free reading turns (3/day, 3h cooldown)
 /// paired with the +3 AstraCue Plus instant turns preview.
@@ -602,8 +603,8 @@ class _OrbitingGoldBorderPainter extends CustomPainter {
 /// `_TodaySignalTile`s (*Màu sắc hôm nay* & *Con số hôm nay*).
 ///
 /// - Left cell: Current Free turns (`3 cyan orbs`) + live turn count &
-///   cooldown countdown (`Còn 3/3 lượt` or `2/3 · ⏱ 02:59:41` — never shows
-///   "Cách nhau 3h").
+///   cooldown countdown (`Còn 3/3 lượt` or `2/3 · [AstralHourglassIcon] 02:59:41`
+///   — never shows "Cách nhau 3h").
 /// - Right cell: Luxury gold Plus cell (`✦ PLUS` + `3 gold orbs` +
 ///   `6 lượt · Tắt Ads ›`).
 class HomeEmbeddedEnergyTray extends StatelessWidget {
@@ -938,30 +939,32 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
     final freeMaxText = formatWholeNumber(localeName, snapshot.dailyMax);
 
     final String statusLine;
+    final String? countdownText;
     final Color statusColor;
     if (snapshot.isDailyFreeExhausted) {
-      final countdown = formatEnergyCountdown(
+      countdownText = formatEnergyCountdown(
         context,
         snapshot.timeUntilMidnight,
       );
       statusLine = copy.t3TimerStatus(
         freeRemainingText,
         freeMaxText,
-        countdown,
+        countdownText,
       );
       statusColor = const Color(0xFFF09898);
     } else if (snapshot.isCoolingDown) {
-      final countdown = formatEnergyCountdown(
+      countdownText = formatEnergyCountdown(
         context,
         snapshot.cooldownRemaining,
       );
       statusLine = copy.t3TimerStatus(
         freeRemainingText,
         freeMaxText,
-        countdown,
+        countdownText,
       );
       statusColor = const Color(0xFFF5D98E);
     } else {
+      countdownText = null;
       statusLine = copy.t3ReadyStatus(freeRemainingText, freeMaxText);
       statusColor = CompassColors.blueLight;
     }
@@ -1050,19 +1053,12 @@ class HomeEmbeddedEnergyTray extends StatelessWidget {
                                 ],
                               ),
                               const SizedBox(height: 6),
-                              FittedBox(
-                                fit: BoxFit.scaleDown,
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  statusLine,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color: statusColor,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w700,
-                                    height: 1.2,
-                                  ),
-                                ),
+                              _EnergyCooldownStatusLine(
+                                remainingText: freeRemainingText,
+                                maxText: freeMaxText,
+                                statusText: statusLine,
+                                countdownText: countdownText,
+                                color: statusColor,
                               ),
                             ],
                           ),
@@ -1146,30 +1142,32 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
     final freeMaxText = formatWholeNumber(localeName, snapshot.dailyMax);
 
     final String statusLine;
+    final String? countdownText;
     final Color statusColor;
     if (snapshot.isDailyFreeExhausted) {
-      final countdown = formatEnergyCountdown(
+      countdownText = formatEnergyCountdown(
         context,
         snapshot.timeUntilMidnight,
       );
       statusLine = copy.t3TimerStatus(
         freeRemainingText,
         freeMaxText,
-        countdown,
+        countdownText,
       );
       statusColor = const Color(0xFFF09898);
     } else if (snapshot.isCoolingDown) {
-      final countdown = formatEnergyCountdown(
+      countdownText = formatEnergyCountdown(
         context,
         snapshot.cooldownRemaining,
       );
       statusLine = copy.t3TimerStatus(
         freeRemainingText,
         freeMaxText,
-        countdown,
+        countdownText,
       );
       statusColor = const Color(0xFFF5D98E);
     } else {
+      countdownText = null;
       statusLine = copy.t3ReadyStatus(freeRemainingText, freeMaxText);
       statusColor = CompassColors.blueLight;
     }
@@ -1231,19 +1229,12 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
                           ],
                         ),
                         const SizedBox(height: 6),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Text(
-                            statusLine,
-                            maxLines: 1,
-                            style: TextStyle(
-                              color: statusColor,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w700,
-                              height: 1.2,
-                            ),
-                          ),
+                        _EnergyCooldownStatusLine(
+                          remainingText: freeRemainingText,
+                          maxText: freeMaxText,
+                          statusText: statusLine,
+                          countdownText: countdownText,
+                          color: statusColor,
                         ),
                       ],
                     ),
@@ -1263,6 +1254,64 @@ class AnalysisEnergyPlusCard extends StatelessWidget {
             ],
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Renders either a plain ready turn count (`3/3 turns left`) or a Celestial
+/// Astral Hourglass icon paired with tabular countdown figures (`2/3 · [hourglass] 02:59:41`).
+class _EnergyCooldownStatusLine extends StatelessWidget {
+  const _EnergyCooldownStatusLine({
+    required this.remainingText,
+    required this.maxText,
+    required this.statusText,
+    required this.countdownText,
+    required this.color,
+  });
+
+  final String remainingText;
+  final String maxText;
+  final String statusText;
+  final String? countdownText;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    final textStyle = TextStyle(
+      color: color,
+      fontSize: 12,
+      fontWeight: FontWeight.w700,
+      height: 1.2,
+    );
+    if (countdownText == null) {
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.centerLeft,
+        child: Text(statusText, maxLines: 1, style: textStyle),
+      );
+    }
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text('$remainingText/$maxText · ', maxLines: 1, style: textStyle),
+          AstralHourglassIcon(
+            key: const Key('energy_cooldown_hourglass_icon'),
+            size: 13.5,
+            color: color,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            countdownText!,
+            maxLines: 1,
+            style: textStyle.copyWith(
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -3287,7 +3336,7 @@ class _PlusLocalizedCopy {
     headerSemanticsLabel: 'AstraCue Plus, mở 6 lượt tức thì và tắt quảng cáo',
     t3CurrentLabel: 'Hiện tại',
     t3ReadyStatus: (rem, max) => 'Còn $rem/$max lượt',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6 lượt · Tắt Ads',
     p1HeaderSubtitle: 'Mở khóa trọn vẹn',
     p1LifetimeTag: 'Trọn đời',
@@ -3343,7 +3392,7 @@ class _PlusLocalizedCopy {
         'AstraCue Plus, unlock 6 instant turns and remove ads',
     t3CurrentLabel: 'Current',
     t3ReadyStatus: (rem, max) => '$rem/$max turns left',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6 turns · No Ads',
     p1HeaderSubtitle: 'Full access',
     p1LifetimeTag: 'Lifetime',
@@ -3400,7 +3449,7 @@ class _PlusLocalizedCopy {
         'AstraCue Plus, desbloquea 6 lecturas al instante y sin anuncios',
     t3CurrentLabel: 'Actual',
     t3ReadyStatus: (rem, max) => '$rem/$max turnos',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6 turnos · Sin Ads',
     p1HeaderSubtitle: 'Acceso total',
     p1LifetimeTag: 'De por vida',
@@ -3456,7 +3505,7 @@ class _PlusLocalizedCopy {
     headerSemanticsLabel: 'AstraCue Plus、即時6回リーディング＆広告非表示',
     t3CurrentLabel: '現在',
     t3ReadyStatus: (rem, max) => '残り $rem/$max 回',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6回即時 · 広告なし',
     p1HeaderSubtitle: 'フル解放',
     p1LifetimeTag: '永久版',
@@ -3510,7 +3559,7 @@ class _PlusLocalizedCopy {
     headerSemanticsLabel: 'AstraCue Plus ปลดล็อก 6 ครั้งทันทีและปิดโฆษณา',
     t3CurrentLabel: 'ปัจจุบัน',
     t3ReadyStatus: (rem, max) => 'เหลือ $rem/$max ครั้ง',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6 ครั้ง · ปิด Ads',
     p1HeaderSubtitle: 'ปลดล็อกครบ',
     p1LifetimeTag: 'ตลอดชีพ',
@@ -3565,7 +3614,7 @@ class _PlusLocalizedCopy {
         'AstraCue Plus, 6 तुरंत रीडिंग अनलॉक करें और विज्ञापन हटाएँ',
     t3CurrentLabel: 'वर्तमान',
     t3ReadyStatus: (rem, max) => '$rem/$max बारी शेष',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6 बारी · बिना Ads',
     p1HeaderSubtitle: 'पूर्ण अनलॉक',
     p1LifetimeTag: 'लाइफटाइम',
@@ -3620,7 +3669,7 @@ class _PlusLocalizedCopy {
     headerSemanticsLabel: 'AstraCue Plus，立即解锁每日6次解读并去除广告',
     t3CurrentLabel: '当前',
     t3ReadyStatus: (rem, max) => '剩余 $rem/$max 次',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6次即刻 · 免广告',
     p1HeaderSubtitle: '完整解锁',
     p1LifetimeTag: '永久版',
@@ -3674,7 +3723,7 @@ class _PlusLocalizedCopy {
     headerSemanticsLabel: 'AstraCue Plus, 즉시 6회 리딩 잠금 해제 및 광고 제거',
     t3CurrentLabel: '현재',
     t3ReadyStatus: (rem, max) => '$rem/$max회 남음',
-    t3TimerStatus: (rem, max, cd) => '$rem/$max · ⏱ $cd',
+    t3TimerStatus: (rem, max, cd) => '$rem/$max · $cd',
     t3PlusActionLabel: '6회 즉시 · 광고 제거',
     p1HeaderSubtitle: '전체 잠금 해제',
     p1LifetimeTag: '평생 소장',

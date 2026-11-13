@@ -2,6 +2,7 @@ import 'package:decision_compass/app_locale.dart';
 import 'package:decision_compass/data/reading_quota_controller.dart';
 import 'package:decision_compass/pages/result_page.dart';
 import 'package:decision_compass/widgets/astracue_plus_ui.dart';
+import 'package:decision_compass/widgets/celestial_ui.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -56,6 +57,10 @@ void main() {
   final card = find.byKey(const Key('result_energy_plus_card'));
   AnalysisEnergyPlusCard energyCard(WidgetTester tester) =>
       tester.widget<AnalysisEnergyPlusCard>(card);
+  final cardHourglass = find.descendant(
+    of: card,
+    matching: find.byType(AstralHourglassIcon),
+  );
   Iterable<String> cardText(WidgetTester tester) => tester
       .widgetList<Text>(find.descendant(of: card, matching: find.byType(Text)))
       .map((text) => text.data ?? '');
@@ -81,7 +86,8 @@ void main() {
           energyCard(tester).snapshot.cooldownRemaining,
           const Duration(seconds: 2),
         );
-        expect(cardText(tester).any((text) => text.contains('⏱')), isTrue);
+        expect(cardHourglass, findsOneWidget);
+        expect(cardText(tester).any((text) => text.contains('⏱')), isFalse);
 
         await tick(tester, const Duration(seconds: 1));
         expect(
@@ -94,7 +100,7 @@ void main() {
         expect(energyCard(tester).snapshot.cooldownRemaining, Duration.zero);
         expect(energyCard(tester).snapshot.isCoolingDown, isFalse);
         expect(energyCard(tester).snapshot.remainingFreeTurns, 2);
-        expect(cardText(tester).any((text) => text.contains('⏱')), isFalse);
+        expect(cardHourglass, findsNothing);
         // Repainting the countdown must not calculate, consume or alter a reading.
         expect(quota.dailyFreeReadingsUsed(local), 1);
         expect(quota.bonusReadings, 0);
@@ -116,7 +122,7 @@ void main() {
     local = local.add(const Duration(hours: 4));
     await tester.pump(const Duration(seconds: 1));
     expect(energyCard(tester).snapshot.isCoolingDown, isFalse);
-    expect(cardText(tester).any((text) => text.contains('⏱')), isFalse);
+    expect(cardHourglass, findsNothing);
   });
 
   resultTest(
@@ -153,7 +159,7 @@ void main() {
       await tick(tester, const Duration(seconds: 1));
       expect(energyCard(tester).snapshot.remainingFreeTurns, 3);
       expect(energyCard(tester).snapshot.isDailyFreeExhausted, isFalse);
-      expect(cardText(tester).any((text) => text.contains('⏱')), isFalse);
+      expect(cardHourglass, findsNothing);
       expect(quota.dailyFreeReadingsUsed(local), 0);
     },
   );

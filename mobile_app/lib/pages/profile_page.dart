@@ -394,8 +394,7 @@ class _ProfilePageState extends State<ProfilePage>
                   children: [
                     const Padding(
                       padding: EdgeInsets.only(top: 1),
-                      child: Icon(
-                        Icons.hourglass_bottom_rounded,
+                      child: AstralHourglassIcon(
                         size: 18,
                         color: CompassColors.gold,
                       ),
@@ -941,13 +940,12 @@ class _ProfilePageState extends State<ProfilePage>
                   ],
                 ),
               ),
-              Icon(
-                locked
-                    ? Icons.hourglass_bottom_rounded
-                    : Icons.chevron_right_rounded,
-                color: locked ? CompassColors.muted : null,
-                size: locked ? 18 : null,
-              ),
+              locked
+                  ? const AstralHourglassIcon(
+                      size: 18,
+                      color: CompassColors.muted,
+                    )
+                  : const Icon(Icons.chevron_right_rounded),
             ],
           ),
         ),
