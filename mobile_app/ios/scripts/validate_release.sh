@@ -3,6 +3,10 @@ set -eu
 [ "${CONFIGURATION:-}" = Release ] || exit 0
 [ "${PLATFORM_NAME:-}" = iphoneos ] || exit 0
 fail() { echo "error: AstraCue iOS release: $1" >&2; exit 1; }
+if [ "${ASTRACUE_UNSIGNED_BUILD:-}" = 1 ] && [ "${CODE_SIGNING_ALLOWED:-}" = NO ]; then
+  echo 'warning: AstraCue unsigned compile-only archive; not eligible for App Store upload.'
+  exit 0
+fi
 [ -n "${DEVELOPMENT_TEAM:-}" ] || fail 'Set your Apple Team ID through ios-release.local.json.'
 for setting in ASTRACUE_PRIVACY_POLICY_URL ASTRACUE_TERMS_URL ASTRACUE_SUPPORT_URL; do
   case "$setting" in

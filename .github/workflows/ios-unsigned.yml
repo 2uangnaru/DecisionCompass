@@ -1,0 +1,90 @@
+name: iOS unsigned build
+
+on:
+  push:
+    branches: [codex/ios]
+    paths:
+      - .github/workflows/ios-unsigned.yml
+      - mobile_app/**
+      - assets/**
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-unsigned-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  archive:
+    if: github.ref == 'refs/heads/codex/ios'
+    runs-on: macos-26
+    timeout-minutes: 45
+    env:
+      BYPASS_PERMISSION_LOCATION_ALWAYS: '1'
+      CI: 'true'
+      FLUTTER_SUPPRESS_ANALYTICS: 'true'
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Install the project's Flutter SDK
+        run: |
+          set -euo pipefail
+          sdk="$RUNNER_TEMP/astracue-flutter"
+          git clone --depth 1 --branch 3.47.5 https://github.com/flutter/flutter.git "$sdk"
+          test "$(git -C "$sdk" rev-parse HEAD)" = 6a19cca56475dbfba1478ee68d7bd0c2ef891da1
+          echo "$sdk/bin" >> "$GITHUB_PATH"
+          "$sdk/bin/flutter" config --no-analytics
+          "$sdk/bin/flutter" precache --ios
+          xcodebuild -version
+          xcrun --sdk iphoneos --show-sdk-version
+
+      # Build only, as requested: no flutter analyze/test or native/UI tests.
+      - name: Resolve dependencies and compile unsigned release archive
+        working-directory: mobile_app
+        run: |
+          set -euo pipefail
+          flutter pub get --enforce-lockfile
+          bash tool/build_ios.sh --unsigned
+
+      - name: Package archive and build information
+        working-directory: mobile_app
+        run: |
+          set -euo pipefail
+          mkdir -p build/ios/cloud-artifacts
+          output=build/ios/cloud-artifacts
+          /usr/bin/ditto -c -k --sequesterRsrc --keepParent \
+            build/ios/archive/Runner.xcarchive \
+            "$output/AstraCue-iOS-UNSIGNED.xcarchive.zip"
+          {
+            echo 'AstraCue iOS — UNSIGNED RELEASE ARCHIVE'
+            echo "Commit: $GITHUB_SHA"
+            echo "Run: https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+            echo 'Edition: free iOS; monetization, ads, ATT and Firebase analytics disabled.'
+            flutter --version
+            xcodebuild -version
+            echo "iPhoneOS SDK: $(xcrun --sdk iphoneos --show-sdk-version)"
+            echo
+            echo 'Build only. Automated and device tests were not run in this workflow.'
+            echo 'This is NOT an uploadable IPA and cannot be installed directly on an iPhone.'
+            echo 'Apple signing/provisioning and owner release configuration are still required.'
+            echo 'For App Store release, use tool/build_ios.sh with the real release JSON.'
+            echo 'Do not submit or merely rename this ZIP to IPA.'
+          } > "$output/BUILD-INFO.txt"
+          shasum -a 256 "$output/AstraCue-iOS-UNSIGNED.xcarchive.zip" > "$output/SHA256SUMS.txt"
+          cat "$output/BUILD-INFO.txt" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload unsigned archive
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: AstraCue-iOS-UNSIGNED-${{ github.run_number }}
+          path: mobile_app/build/ios/cloud-artifacts/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1

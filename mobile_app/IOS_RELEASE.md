@@ -56,7 +56,40 @@ dart tool/export_legal_pages.dart --publisher="YOUR REAL LEGAL NAME" --email=YOU
 
 Replace both placeholders with actual details. Review against your actual data processing and legal obligations, then host over HTTPS. Defaults: `privacy.html`, `terms.html`, `support.html`; eight localized alternatives are included. Support includes the real contact email. No publishing occurs in the script. Configure these URLs in the release JSON and App Store Connect; review/re-export if processing changes.
 
-## Build on macOS
+## Cloud compilation without an Apple account
+
+The `iOS unsigned build` GitHub Actions workflow runs on the standard `macos-26`
+runner for pushes affecting the app on `codex/ios`. It installs Flutter 3.47.5
+(Dart 3.13.4), resolves the committed dependencies and compiles a release archive.
+It does **not** run Flutter analysis, automated tests or device tests. Ads, VIP,
+ATT and Firebase analytics remain disabled for this iOS build.
+
+Download `AstraCue-iOS-UNSIGNED-<run number>` from the successful workflow run's
+Artifacts section within one day. It contains the `.xcarchive.zip`, build
+information and a checksum. The archive preserves bundle permissions/symlinks.
+This is **not** a signed IPA: it cannot be directly installed on iPhone, used for
+TestFlight or uploaded to App Store Connect. Do not rename it to `.ipa`.
+
+The same compile-only command on a Mac is:
+
+```sh
+cd mobile_app
+export BYPASS_PERMISSION_LOCATION_ALWAYS=1
+flutter pub get --enforce-lockfile
+bash tool/build_ios.sh --unsigned
+```
+
+Unsigned compilation explicitly opts out of owner preflight only when Xcode's
+`CODE_SIGNING_ALLOWED` is also `NO`. Normal signed builds keep the Team ID,
+published legal/support URLs and production configuration checks. When Apple
+setup is ready, build/export again with the real release JSON below.
+
+Standard hosted runners for a public repository have no compute charge. Artifact
+storage has separate limits; this workflow retains its output for one day and
+does not configure billing, caches, Apple accounts or store upload. See
+https://docs.github.com/en/billing/concepts/product-billing/github-actions.
+
+## Build and sign for distribution on macOS
 
 Need Apple Developer Program membership, signing access, Xcode 26+ / iOS 26 SDK+, and Flutter with **Dart 3.13.4+ within 3.x**, matching `pubspec.yaml`. An older stable Flutter may not meet this constraint. Accept Xcode agreements, install iOS simulators/platform support, sign in under Xcode Settings > Accounts and run `flutter doctor -v`. Deployment remains iOS 15.
 
