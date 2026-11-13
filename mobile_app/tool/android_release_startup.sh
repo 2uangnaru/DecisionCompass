@@ -15,7 +15,7 @@ java -jar diagnostic/bundletool.jar build-apks --bundle=diagnostic/app-release.a
   --ks-pass=pass:android --ks-key-alias=diagnostic --key-pass=pass:android
 java -jar diagnostic/bundletool.jar install-apks --apks=diagnostic/app.apks
 adb logcat -c
-adb shell am start -W -n "$package/$activity" > diagnostic/evidence/launch.txt 2>&1 || true
+timeout 30s adb shell am start -W -n "$package/$activity" > diagnostic/evidence/launch.txt 2>&1 || true
 # This bounded delay observes native startup / the first Flutter route.
 sleep 20
 adb logcat -d -v threadtime > diagnostic/evidence/logcat.txt
