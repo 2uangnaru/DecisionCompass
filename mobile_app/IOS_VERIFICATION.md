@@ -1,5 +1,35 @@
 # iOS preparation verification
 
+## Native cloud build — 2026-11-13
+
+Commit `4503df024e1e2a254e47fd4a86b8e4c7b4ab24f6` successfully compiled on
+GitHub's standard macOS 26 runner with Flutter 3.47.5 / Dart 3.13.4,
+Xcode 26.6 (17F113) and iPhoneOS SDK 26.5.
+[Completed build and logs](https://github.com/2uangnaru/DecisionCompass/actions/runs/43350528827).
+
+- `flutter pub get --enforce-lockfile`: success; SwiftPM dependencies resolved.
+- `bash tool/build_ios.sh --unsigned`: success; release `Runner.xcarchive`
+  produced (243.5 MB uncompressed), version 0.1.0 (1), deployment target 15.0.
+- Packaged Info.plist and PrivacyInfo.xcprivacy passed `plutil -lint`; the
+  archived executable passed the script's Always Location selector check.
+- Artifact `AstraCue-iOS-UNSIGNED-1` downloaded to the local ignored
+  `build/ios/cloud-artifacts/` directory; outer and inner SHA256 verified.
+  Archive ZIP SHA256:
+  `b795df77fac681785a4bd910ef0dbcd880a1606e683ce0e1883239c3ddc6bb18`.
+- iOS monetization, ads, ATT, Firebase analytics and demo billing are disabled.
+- At the owner's request, no Flutter analysis/tests, native tests or device QA
+  were rerun. Compilation is not a claim of runtime/device verification.
+
+No signing or IPA export occurred. This unsigned archive cannot be installed
+directly on iPhone or submitted to TestFlight/App Store Connect. Apple team,
+provisioning, published owner URLs and signed distribution remain outstanding.
+
+The sections below are the historical Windows verification from 2026-11-12;
+their statements about native compilation and archive plist/selector checks
+are superseded only by the specific successful build checks above.
+
+## Historical Windows preparation
+
 Date: 2026-11-12. Host: Windows. Branch: `codex/ios`, base `5b4b32e`.
 Flutter used: 3.47.5, Dart 3.13.4. No native iOS build or account setup took place.
 
