@@ -99,6 +99,9 @@ android {
 
     buildTypes {
         release {
+            // Room's generated database is instantiated through reflection by
+            // WorkManager before Flutter starts. Preserve its no-arg constructor.
+            proguardFiles("proguard-rules.pro")
             // Picks up mobile_app/android/key.properties when present; falls back
             // to debug keys only when key.properties is absent during dev testing.
             signingConfig = signingConfigs.findByName("release")

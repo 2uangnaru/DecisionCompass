@@ -1,7 +1,7 @@
 name: decision_compass
 description: AstraCue Cosmic Decisions vertical-slice mobile prototype.
 publish_to: none
-version: 0.1.0+10
+version: 0.1.0+11
 
 environment:
   sdk: ^3.13.4
